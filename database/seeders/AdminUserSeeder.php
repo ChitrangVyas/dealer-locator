@@ -18,8 +18,8 @@ class AdminUserSeeder extends Seeder
             'name' => "Mehul",
             'email' => "admin@admin.com",
             'password' => '$2y$10$qNgt.O4kXnGVrRThkRa4COLxsaENfO/gCRUpv1Pe7l2A1X9CRq8K2',
-            'email_verified_at' => "",
-            'remember_token' => "",
+            'email_verified_at' => NULL,
+            'remember_token' => NULL,
             'created_at' => date('Y-m-d H:i:s'),
             'updated_at' => date('Y-m-d H:i:s'),
         ]);

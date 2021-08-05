@@ -5,10 +5,10 @@
         <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
       </li>
       <li class="nav-item d-none d-sm-inline-block">
-        <a href="/" class="nav-link">Home</a>
+        <a href="/" class="nav-link">@if (trans()->has('lang.home')) {{ __('lang.home') }} @else Home @endif</a>
       </li>
       <li class="nav-item d-none d-sm-inline-block">
-        <a href="#" class="nav-link">Contact</a>
+        <a href="#" class="nav-link">@if (trans()->has('lang.contact')) {{ __('lang.contact') }} @else Contact @endif</a>
       </li>
     </ul>
 
@@ -16,9 +16,12 @@
     <ul class="navbar-nav ml-auto">
       <!-- Navbar Search -->
       <li class="nav-item">
-        <a class="nav-link" data-widget="navbar-search" href="#" role="button">
+        <a class="nav-link float-left" data-widget="navbar-search" href="#" role="button">
           <i class="fas fa-search"></i>
         </a>
+        <a class="nav-link float-left" data-widget="navbar-sign-out" href="{{ __('logout') }}" role="button">
+          <i class="fas fa-sign-out-alt">@if (trans()->has('lang.sign_out')) {{ __('lang.sign_out') }} @else {{__('Sign Out')}} @endif   </i>
+        </a> 
         <div class="navbar-search-block">
           <form class="form-inline">
             <div class="input-group input-group-sm">

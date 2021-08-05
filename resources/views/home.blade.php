@@ -1,5 +1,7 @@
 @extends('layouts.adminlte')
-
+@section('title')
+{{$title}}
+@endsection
 @section('content')
     <!-- Main content -->
     <section class="content">
@@ -586,3 +588,5 @@
     <!-- /.content -->
   
 @endsection
+
+@section('plugins.Chartjs', true)

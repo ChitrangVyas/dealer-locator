@@ -24,6 +24,11 @@ class HomeController extends Controller
     public function index()
     {
         $elementActive="home";
-        return view('home',compact('elementActive'));
+        $title = 'Dashboard';
+        return view('home',compact('elementActive','title'));
+    }
+    public function nikul()
+    {
+        dd('Hello');
     }
 }

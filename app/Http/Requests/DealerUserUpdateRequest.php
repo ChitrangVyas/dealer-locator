@@ -26,12 +26,7 @@ class DealerUserUpdateRequest extends FormRequest
     {
         
         return [
-             'email' => 'required|email|unique:users',
-            /* 'email' => [
-                'required',
-                Rule::unique('users')->withoutTrashed('deleted_at')
-                ->ignore($this->route('user')),
-            ], */
+            'email' => 'required|email|unique:users',
             'name' => 'required|string|max:100',            
             'mobile' => 'required',
             'address' => 'required',

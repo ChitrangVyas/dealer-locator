@@ -66,6 +66,14 @@
                 Dealer
               </p>
             </a>
+          </li>
+          <li class="nav-item">
+            <a href="/admin/retailer" class="nav-link  {{ $elementActive == 'users' ? 'active' : '' }}">
+            <i class="nav-icon fas fa-users"></i>
+              <p>
+                Retailer
+              </p>
+            </a>
           </li>  
         </ul>
       </nav>

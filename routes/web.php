@@ -24,8 +24,10 @@ Route::group(['prefix'=>'admin','middleware'=>['auth']],function () {
     Route::get('/get-value', [App\Http\Controllers\CommonController::class, 'index'])->name('get_value');
     Route::get('staff/listajaxdata', [App\Http\Controllers\Admin\AdminUserController::class,'listAjaxData'])->name('stafflistajax');
     Route::get('dealer/listajaxdata', [App\Http\Controllers\Admin\DealerUserController::class,'listAjaxData'])->name('dealerlistajax');
+    Route::get('retailer/listajaxdata', [App\Http\Controllers\Admin\RetailerUserController::class,'listAjaxData'])->name('retailerlistajax');
     Route::resource('staff', App\Http\Controllers\Admin\AdminUserController::class);
     Route::resource('dealer', App\Http\Controllers\Admin\DealerUserController::class);   
+    Route::resource('retailer', App\Http\Controllers\Admin\RetailerUserController::class);   
 });
 
 

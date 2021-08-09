@@ -1,5 +1,6 @@
 /node_modules
 /public/hot
+public/fonts
 /public/storage
 /storage/*.key
 /vendor
@@ -16,3 +17,5 @@ composer-lock.json
 package-lock.json
 /.idea
 /.vscode
+public/js/app.js
+public/css/app.css

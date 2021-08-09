@@ -15,7 +15,6 @@ class AlterTableUsers extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
             $table->String('mobile',15)->nullable();
-            $table->foreignId('user_address_id')->nullable()->index();
             $table->foreignId('users_group_id')->nullable()->index();
             $table->bigInteger('parent_id')->unsigned()->nullable()->index();
             $table->bigInteger('created_by')->unsigned()->nullable()->index();
@@ -32,7 +31,7 @@ class AlterTableUsers extends Migration
     public function down()
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->dropColumn(['user_address_id', 'users_group_id', 'parent_id','created_by','updated_by']);
+            $table->dropColumn(['users_group_id', '','city_id', 'state_id', 'zipcode', 'parent_id','created_by','updated_by']);
         });
     }
 }

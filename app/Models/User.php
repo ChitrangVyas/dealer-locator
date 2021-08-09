@@ -4,12 +4,13 @@ namespace App\Models;
 
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
 class User extends Authenticatable
 {
-    use HasFactory, Notifiable;
+    use HasFactory, Notifiable, SoftDeletes;
 
     /**
      * The attributes that are mass assignable.
@@ -21,6 +22,14 @@ class User extends Authenticatable
         'email',
         'password',
         'mobile',
+        'users_group_id',
+        'created_by',
+        'updated_by',
+        'parent_id',
+        'address',
+        'city_id',
+        'state_id',
+        'zipcode'
     ];
 
     /**
@@ -45,5 +54,11 @@ class User extends Authenticatable
     public function userGroup()
     {
         return $this->belongsTo(UserGroup::class);
+    }
+    public function city(){
+        return $this->belongsTo(City::class);
+    }
+    public function state(){
+        return $this->belongsTo(State::class);
     }
 }

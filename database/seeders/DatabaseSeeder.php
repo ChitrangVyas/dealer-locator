@@ -18,7 +18,8 @@ class DatabaseSeeder extends Seeder
             AdminUserSeeder::class,            
             CountriesTableSeeder::class,            
             StatesTableSeeder::class,
-            CitiesTableSeeder::class,            
+            CitiesTableSeeder::class, 
+            UserGroupSeeder::class           
         ]);
     }
 }

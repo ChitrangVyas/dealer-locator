@@ -15,8 +15,7 @@ class AlterUsersTableAddForeignKey extends Migration
     {
         //
         Schema::table('users', function (Blueprint $table) {
-            $table->foreign('user_address_id')->references('id')->on('user_address')->onDelete('cascade');
-            $table->foreign('users_group_id')->references('id')->on('users_group')->onDelete('cascade');
+            $table->foreign('users_group_id')->references('id')->on('users_group')->onDelete('cascade');            
         });
     }
 
@@ -29,7 +28,6 @@ class AlterUsersTableAddForeignKey extends Migration
     {
         //
         Schema::table('users', function (Blueprint $table) {
-            $table->dropForeign(['user_address_id']);
             $table->dropForeign(['users_group_id']);
         });
     }

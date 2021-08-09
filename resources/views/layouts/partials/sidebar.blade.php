@@ -13,7 +13,7 @@
           <img src="{{ asset('assets/img/user2-160x160.jpg') }}" class="img-circle elevation-2" alt="User Image">
         </div>
         <div class="info">
-          <a href="#" class="d-block">Mehul</a>
+          <a href="#" class="d-block">{{auth()->user()->name}}</a>
         </div>
       </div>
 
@@ -56,6 +56,14 @@
             <i class="nav-icon fas fa-users"></i>
               <p>
                 Staff User
+              </p>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="/admin/dealer" class="nav-link  {{ $elementActive == 'users' ? 'active' : '' }}">
+            <i class="nav-icon fas fa-users"></i>
+              <p>
+                Dealer
               </p>
             </a>
           </li>  

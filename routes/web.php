@@ -18,13 +18,16 @@ Route::get('/', function () {
     return redirect('/home');
 });
 
+Auth::routes(['register' => false]);
 Route::group(['prefix'=>'admin','middleware'=>['auth']],function () {
     Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
-    Route::get('/staff', [App\Http\Controllers\UserController::class, 'create'])->name('staff');
-    Route::post('/staff/add', [App\Http\Controllers\UserController::class, 'store'])->name('add_staff');
+    Route::get('/get-value', [App\Http\Controllers\CommonController::class, 'index'])->name('get_value');
+    Route::get('staff/listajaxdata', [App\Http\Controllers\Admin\AdminUserController::class,'listAjaxData'])->name('stafflistajax');
+    Route::get('dealer/listajaxdata', [App\Http\Controllers\Admin\DealerUserController::class,'listAjaxData'])->name('dealerlistajax');
+    Route::resource('staff', App\Http\Controllers\Admin\AdminUserController::class);
+    Route::resource('dealer', App\Http\Controllers\Admin\DealerUserController::class);   
 });
 
-Auth::routes(['register' => false]);
 
 Route::get('/logout', function(){
     Auth::logout();

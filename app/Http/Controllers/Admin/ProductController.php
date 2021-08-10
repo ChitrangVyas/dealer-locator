@@ -16,9 +16,10 @@ use View;
 
 class ProductController extends Controller
 {
-    
-    public function __construct()
+    private $product;
+    public function __construct(Product $product)
     {
+        $this->product = $product;
         View::share('title', 'Product');
         View::share('elementActive', 'product');
     }
@@ -64,7 +65,7 @@ class ProductController extends Controller
             $file_path = '/storage/' . $filePath;
         }
         try{
-            $brand = Product::create([
+            $product = Product::create([
                 'name' => $request_data['name'],
                 'description' => $request_data['description'],
                 'brand_id' => $request_data['brand_id'],
@@ -72,6 +73,8 @@ class ProductController extends Controller
                 // 'category' => $request_data['category'],
                 'image' => $file_path
             ]);
+            $categories = Category::find($request_data['categories']);
+            $product->categories()->attach($categories);
         }catch(Exception $e){
             print_r([
                 'name' => $request_data['name'],
@@ -111,7 +114,8 @@ class ProductController extends Controller
         //
         $brands = Brand::withoutTrashed()->get();        
         $product = Product::findOrFail($id);
-        return view('admin.product.create',array('brands'=>$brands,'product'=>$product));
+        $categories = Category::withoutTrashed()->get();
+        return view('admin.product.create',array('brands'=>$brands,'product'=>$product,'categories'=>$categories));
     }
 
     /**
@@ -143,7 +147,9 @@ class ProductController extends Controller
             $upload_data['image']  = $file_path;
         }
 
-        $brand = $product->update($upload_data);
+        $product = $product->update($upload_data);
+        $categories = Category::find($request_data['categories']);
+        $product->categories()->attach($categories);
     
         return redirect(route('product.index'));
     }

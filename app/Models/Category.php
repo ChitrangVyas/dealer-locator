@@ -14,5 +14,9 @@ class Category extends Model
         'image',
         'parent_category',        
     ];
-   
+
+   public function products()
+   {
+       return $this->belongsToMany(Product::class,'product_category');
+   }
 }

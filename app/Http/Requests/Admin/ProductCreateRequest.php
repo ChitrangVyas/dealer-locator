@@ -31,4 +31,16 @@ class ProductCreateRequest extends FormRequest
             // 'category' => 'required'
         ];
     }
+    
+    /**
+     * messages
+     *
+     * @return array
+     */
+    public function messages()
+    {
+        return [
+            'brand_id.required' => 'Please select a brand.'
+        ];
+    }
 }

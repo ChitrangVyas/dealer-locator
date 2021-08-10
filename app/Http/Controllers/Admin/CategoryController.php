@@ -151,22 +151,24 @@ class CategoryController extends MainController
         $start =  $request['start'];
         $length=  $request['length'];
         $search = $request['search']['value'];
-        $where = '';
+        $where = 'categories.deleted_at is NULL';
         $where .= (!empty($search)) ? " AND (name like '$search%' OR parent_category like '$search%')":'';
         $categories = DB::table('categories')
         ->selectRaw('categories.id,categories.name,categories.parent_category,categories.image')
-        ->where('categories.deleted_at', NULL)
+        ->whereRaw($where)
         ->offset($start)
         ->limit($length)
         ->orderBy($request['columns'][$request['order'][0]['column']]['name'],$request['order'][0]['dir'])
         ->get();
         $total_users = Category::where('deleted_at','=',Null)->count();
         $data = [];
-        foreach($categories as $category){            
+        foreach($categories as $category){
+            $parent_category = Category::find($category->parent_category);
+            $parent_category = (!empty($parent_category))?$parent_category->name:'N/A';
             $category_logo_html = (!empty($category->image))?"<img class='img image' src=".url($category->image)." width=50 />":'Image not found';
             $action_html = "<span><a href=".route('category.edit',$category->id)." class='btn btn-primary'>Edit</a></span>";
             $action_html .= "<span class='ml-3'><button type=submit data-user=$category->id class='btn btn-danger' onClick=deleteUser($category->id)>Delete</button></span>";
-            $data[] = [$category->id,$category->name,$category->parent_category,$category_logo_html,$action_html];
+            $data[] = [$category->id,$category->name,$parent_category,$category_logo_html,$action_html];
         }
         $return_array = array();
         $return_array['draw'] = $request['draw'];

@@ -56,7 +56,6 @@ class ProductController extends Controller
     public function store(ProductCreateRequest $request)
     {
         //
-        //
         $request_data = $request->all();
         $file_path = '';
         if($request->file()) {

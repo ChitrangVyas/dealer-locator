@@ -56,7 +56,23 @@
                                     <option {{ (!empty($product) && $product->brand_id==$brand->id)?"selected='selected'":'' }} value="{{$brand->id}}">{{$brand->name}}</option>
                                 @endforeach
                             </select>
-                            @error('email')
+                            @error('brand_id')
+                            <div class="alert alert-danger mt-2">{{ $message }}</div>
+                            @enderror
+                        </div>
+                    </div>
+
+                    <div class="col-sm-12 col-md-6">
+                        <!-- text input -->
+                        <div class="form-group">
+                            <label>Category</label>                            
+                            <select class="form-control categories" multiple="multiple" name="categories[]">
+                                <option value="">Please select</option>
+                                @foreach($categories as $category)
+                                    <option value="{{$category->id}}">{{$category->name}}</option>
+                                @endforeach
+                            </select>
+                            @error('category')
                             <div class="alert alert-danger mt-2">{{ $message }}</div>
                             @enderror
                         </div>
@@ -114,5 +130,14 @@
     <!-- /.card-body -->
 </div>
 @endsection
+@section('plugins.Select2', true)
 @section('js')
+<script>
+jQuery(document).ready(function(){
+    jQuery(".categories").select2({
+        tags: true,
+        tokenSeparators: [","],
+    });
+});
+</script>
 @endsection

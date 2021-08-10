@@ -27,11 +27,16 @@ Route::group(['prefix'=>'admin','middleware'=>['auth']],function () {
     Route::get('retailer/listajaxdata', [App\Http\Controllers\Admin\RetailerUserController::class,'listAjaxData'])->name('retailerlistajax');
     Route::get('manufacturer/listajaxdata', [App\Http\Controllers\Admin\ManufacturerController::class,'listAjaxData'])->name('manufacturerlistajax');
     Route::get('brand/listajaxdata', [App\Http\Controllers\Admin\BrandController::class,'listAjaxData'])->name('brandlistajax');
+    Route::get('category/listajaxdata', [App\Http\Controllers\Admin\CategoryController::class,'listAjaxData'])->name('categorylistajax');
+    Route::get('product/listajaxdata', [App\Http\Controllers\Admin\ProductController::class,'listAjaxData'])->name('productlistajax');
+
     Route::resource('staff', App\Http\Controllers\Admin\AdminUserController::class);
     Route::resource('dealer', App\Http\Controllers\Admin\DealerUserController::class);   
     Route::resource('retailer', App\Http\Controllers\Admin\RetailerUserController::class);   
     Route::resource('manufacturer', App\Http\Controllers\Admin\ManufacturerController::class);   
     Route::resource('brand', App\Http\Controllers\Admin\BrandController::class);   
+    Route::resource('category', App\Http\Controllers\Admin\CategoryController::class);
+    Route::resource('product', App\Http\Controllers\Admin\ProductController::class);   
 });
 
 

@@ -86,8 +86,14 @@
           </li>  
           <li class="nav-item">
             <a href="{{ route('brand.index') }}" class="nav-link  {{ $elementActive == 'users' ? 'active' : '' }}">
-            <i class="nav-icon fas fa-users"></i>
+            <i class="nav-icon fas fa-cube"></i>
               <p>Brand</p>
+            </a>
+          </li> 
+          <li class="nav-item">
+            <a href="{{ route('product.index') }}" class="nav-link  {{ $elementActive == 'users' ? 'active' : '' }}">
+            <i class="nav-icon fas fa-cubes"></i>
+              <p>Product</p>
             </a>
           </li>  
         </ul>

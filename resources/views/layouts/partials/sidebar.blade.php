@@ -102,6 +102,12 @@
               <p>Product</p>
             </a>
           </li> 
+          <li class="nav-item">
+            <a href="{{ route('inquiries-source.index') }}" class="nav-link  {{ $elementActive == 'users' ? 'active' : '' }}">
+            <i class="nav-icon fas fa-cubes"></i>
+              <p>Inquiry source</p>
+            </a>
+          </li> 
         </ul>
       </nav>
       <!-- /.sidebar-menu -->

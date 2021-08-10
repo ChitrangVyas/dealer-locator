@@ -29,6 +29,7 @@ Route::group(['prefix'=>'admin','middleware'=>['auth']],function () {
     Route::get('brand/listajaxdata', [App\Http\Controllers\Admin\BrandController::class,'listAjaxData'])->name('brandlistajax');
     Route::get('category/listajaxdata', [App\Http\Controllers\Admin\CategoryController::class,'listAjaxData'])->name('categorylistajax');
     Route::get('product/listajaxdata', [App\Http\Controllers\Admin\ProductController::class,'listAjaxData'])->name('productlistajax');
+    Route::get('inquiries_source/listajaxdata', [App\Http\Controllers\Admin\InquiriesSourceController::class,'listAjaxData'])->name('inquiries_sourcelistajax');
 
     Route::resource('staff', App\Http\Controllers\Admin\AdminUserController::class);
     Route::resource('dealer', App\Http\Controllers\Admin\DealerUserController::class);   
@@ -37,6 +38,7 @@ Route::group(['prefix'=>'admin','middleware'=>['auth']],function () {
     Route::resource('brand', App\Http\Controllers\Admin\BrandController::class);   
     Route::resource('category', App\Http\Controllers\Admin\CategoryController::class);
     Route::resource('product', App\Http\Controllers\Admin\ProductController::class);   
+    Route::resource('inquiries-source', App\Http\Controllers\Admin\InquiriesSourceController::class);   
 });
 
 

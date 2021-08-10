@@ -43,7 +43,7 @@
                         <!-- text input -->
                         <div class="form-group">
                             <label>Parent category</label>
-                            <select class="form-control select2 parent_category" id='parent_category' name='parent_category'>
+                            <select class="form-control select2" id='parent_category' name='parent_category'>
                                 <option value="">Select</option>
                                 <option value="0">no</option>
                                 @foreach($parent_category as $tc)

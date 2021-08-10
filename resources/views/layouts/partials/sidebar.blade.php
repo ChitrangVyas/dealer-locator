@@ -89,7 +89,14 @@
             <i class="nav-icon fas fa-users"></i>
               <p>Brand</p>
             </a>
-          </li>  
+          </li> 
+          <li class="nav-item">
+            <a href="{{ route('category.index') }}" class="nav-link  {{ $elementActive == 'users' ? 'active' : '' }}">
+            <i class="nav-icon fas fa-users"></i>
+              <p>Category</p>
+            </a>
+          </li> 
+           
         </ul>
       </nav>
       <!-- /.sidebar-menu -->

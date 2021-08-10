@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\Admin;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
 
-class AdminUserCreateRequest extends FormRequest
+class ManufacturerCreateRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -14,8 +14,7 @@ class AdminUserCreateRequest extends FormRequest
      */
     public function authorize()
     {
-        // return true;
-        return Auth::check();
+        return auth()->check();
     }
 
     /**
@@ -24,19 +23,15 @@ class AdminUserCreateRequest extends FormRequest
      * @return array
      */
     public function rules()
-    {
+    {        
         return [
             'email' => 'required|email|unique:users',
             'name' => 'required|string|max:100',
-            'password' => 'required|min:6|max:16',
-            'mobile' => 'required',
-            'state' => 'after_or_equal:1',
-            'city' => 'after_or_equal:1',
-            'zipcode' => 'min:5|max:7',
+            // 'logo' => 'mimes:png,jpeg,jpg,svg,webp|max:2048'
         ];
     }
 
-    /**
+     /**
      * Custom message for validation
      *
      * @return array
@@ -47,9 +42,7 @@ class AdminUserCreateRequest extends FormRequest
             'email.required' => 'Email is required!',
             'email.unique' => 'Email is already exist.',
             'email.email' => 'Invalid Email.',
-            'name.required' => 'Name is required!',
-            'password.required' => 'Password is required!',
-            'mobile.required'=> 'Mobile is required!',
+            'name.required' => 'Name is required!',            
         ];
     }
 }

@@ -1,12 +1,10 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\Admin;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Validation\Rule;
 
-class AdminUserUpdateRequest extends FormRequest
+class DealerUserCreateRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -15,8 +13,7 @@ class AdminUserUpdateRequest extends FormRequest
      */
     public function authorize()
     {
-        // return true;
-        return Auth::check();
+        return auth()->check();
     }
 
     /**
@@ -27,18 +24,14 @@ class AdminUserUpdateRequest extends FormRequest
     public function rules()
     {
         return [
-            // 'email' => 'required|email|unique:users',
-            'email' => [
-                'required',
-                Rule::unique('users', 'email')
-                ->where(static function ($query) {
-                    return $query->whereNull('deleted_at');
-                })
-                ->ignore($this->user),
-            ],
-            'name' => 'required|string|max:100',            
+            'email' => 'required|email|unique:users',
+            'name' => 'required|string|max:100',
+            'password' => 'required|min:6|max:16',
             'mobile' => 'required',
-            'zipcode' => 'min:5|max:7',
+            'address' => 'required',
+            'state' => 'required|after_or_equal:1',
+            'city' => 'required|after_or_equal:1',
+            'zipcode' => 'required|min:5|max:7',
         ];
     }
 
@@ -54,7 +47,12 @@ class AdminUserUpdateRequest extends FormRequest
             'email.unique' => 'Email is already exist.',
             'email.email' => 'Invalid Email.',
             'name.required' => 'Name is required!',
+            'password.required' => 'Password is required!',
             'mobile.required'=> 'Mobile is required!',
+            'address.required'=> 'Address is required!',
+            'state.required'=> 'State is required!',
+            'city.required'=> 'City is required!',
+            'zipcode.required' => 'Zipcode is required!'
         ];
     }
 }

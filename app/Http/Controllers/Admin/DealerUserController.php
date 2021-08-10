@@ -2,9 +2,8 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Requests\AdminUserCreateRequest;
-use App\Http\Requests\AdminUserUpdateRequest;
-use App\Http\Requests\DealerUserUpdateRequest;
+use App\Http\Requests\Admin\DealerUserCreateRequest;
+use App\Http\Requests\Admin\DealerUserUpdateRequest;
 use App\Models\User;
 use Exception;
 use Illuminate\Http\Request;
@@ -45,7 +44,7 @@ class DealerUserController extends MainController
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(AdminUserCreateRequest $request)
+    public function store(DealerUserCreateRequest $request)
     {   
         //
         $request_data = $request->all();

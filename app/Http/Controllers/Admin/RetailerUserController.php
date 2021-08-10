@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Admin\MainController;
-use App\Http\Requests\RetailerUserCreateRequest;
-use App\Http\Requests\RetailerUserUpdateRequest;
+use App\Http\Requests\Admin\RetailerUserCreateRequest;
+use App\Http\Requests\Admin\RetailerUserUpdateRequest;
 use App\Models\User;
 use Exception;
 use Illuminate\Http\Request;

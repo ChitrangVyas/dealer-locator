@@ -1,10 +1,11 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\Admin;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
 
-class DealerUserCreateRequest extends FormRequest
+class AdminUserCreateRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -13,7 +14,8 @@ class DealerUserCreateRequest extends FormRequest
      */
     public function authorize()
     {
-        return auth()->check();
+        // return true;
+        return Auth::check();
     }
 
     /**
@@ -28,10 +30,9 @@ class DealerUserCreateRequest extends FormRequest
             'name' => 'required|string|max:100',
             'password' => 'required|min:6|max:16',
             'mobile' => 'required',
-            'address' => 'required',
-            'state' => 'required|after_or_equal:1',
-            'city' => 'required|after_or_equal:1',
-            'zipcode' => 'required|min:5|max:7',
+            'state' => 'after_or_equal:1',
+            'city' => 'after_or_equal:1',
+            'zipcode' => 'min:5|max:7',
         ];
     }
 
@@ -49,10 +50,6 @@ class DealerUserCreateRequest extends FormRequest
             'name.required' => 'Name is required!',
             'password.required' => 'Password is required!',
             'mobile.required'=> 'Mobile is required!',
-            'address.required'=> 'Address is required!',
-            'state.required'=> 'State is required!',
-            'city.required'=> 'City is required!',
-            'zipcode.required' => 'Zipcode is required!'
         ];
     }
 }

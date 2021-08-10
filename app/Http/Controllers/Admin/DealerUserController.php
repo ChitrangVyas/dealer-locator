@@ -14,7 +14,7 @@ class DealerUserController extends MainController
 {
     public function __construct() {
         View::share ( 'title', 'Dealer' );
-        View::share ( 'elementActive', 'delaer' );
+        View::share ( 'elementActive', 'dealer' );
     }
     /**
      * Display a listing of the resource.

@@ -17,7 +17,7 @@ class InquiriesSourceController extends MainController
 {
     public function __construct() {
         View::share ( 'title', 'Inquiry Source' );
-        View::share ( 'elementActive', 'inquiriesSource' );
+        View::share ( 'elementActive', 'inquiries_source' );
     }
     /**
      * Display a listing of the resource.

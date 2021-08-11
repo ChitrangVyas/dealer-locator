@@ -61,7 +61,7 @@
             </a>
             <ul class="nav nav-treeview">  
               <li class="nav-item">
-                <a href="/admin/staff" class="nav-link  {{ $elementActive == 'staff' ? 'active' : '' }}">
+                <a href="{{route('staff.index')}}" class="nav-link  {{ $elementActive == 'staff' ? 'active' : '' }}">
                 <i class="nav-icon fas fa-users"></i>
                   <p>
                     Staff User
@@ -69,7 +69,7 @@
                 </a>
               </li>
               <li class="nav-item">
-                <a href="/admin/dealer" class="nav-link  {{ $elementActive == 'dealer' ? 'active' : '' }}">
+                <a href="{{route('dealer.index')}}" class="nav-link  {{ $elementActive == 'dealer' ? 'active' : '' }}">
                 <i class="nav-icon fas fa-users"></i>
                   <p>
                     Dealer
@@ -77,14 +77,21 @@
                 </a>
               </li>
               <li class="nav-item">
-                <a href="/admin/retailer" class="nav-link  {{ $elementActive == 'retailer' ? 'active' : '' }}">
+                <a href="{{route('retailer.index')}}" class="nav-link  {{ $elementActive == 'retailer' ? 'active' : '' }}">
                 <i class="nav-icon fas fa-users"></i>
                   <p>
                     Retailer
                   </p>
                 </a>
-              </li>  
               </li>
+              <li class="nav-item">
+                <a href="{{route('customer.index')}}" class="nav-link  {{ $elementActive == 'customer' ? 'active' : '' }}">
+                <i class="nav-icon fas fa-users"></i>
+                  <p>
+                    Customer
+                  </p>
+                </a>
+              </li>  
             </ul>
           </li>
           <li class="nav-item has-treeview">
@@ -137,9 +144,15 @@
             </ul>
           </li>
           <li class="nav-item">
-            <a href="{{ route('inquiries-source.index') }}" class="nav-link  {{ $elementActive == 'users' ? 'active' : '' }}">
+            <a href="{{ route('inquiries-source.index') }}" class="nav-link  {{ $elementActive == 'inquiries_source' ? 'active' : '' }}">
             <i class="nav-icon fas fa-link"></i>
               <p>Inquiry source</p>
+            </a>
+          </li> 
+          <li class="nav-item">
+            <a href="{{ route('inquiry.index') }}" class="nav-link  {{ $elementActive == 'inquiry' ? 'active' : '' }}">
+            <i class="nav-icon fas fa-phone-square"></i>
+              <p>Inquiry</p>
             </a>
           </li> 
         </ul>

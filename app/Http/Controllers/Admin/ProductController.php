@@ -12,16 +12,18 @@ use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use JeroenNoten\LaravelAdminLte\AdminLte;
 use View;
 
 class ProductController extends Controller
 {
     private $product;
-    public function __construct(Product $product)
+    public function __construct(Product $product,AdminLte $adminLte)
     {
         $this->product = $product;
         View::share('title', 'Product');
         View::share('elementActive', 'product');
+        View::share('adminlte',$adminLte);
     }
 
     /**
@@ -74,7 +76,7 @@ class ProductController extends Controller
                 'image' => $file_path
             ]);
             $categories = Category::find($request_data['categories']);
-            $product->categories()->attach($categories);
+            $product->categories()->sync($categories);
         }catch(Exception $e){
             print_r([
                 'name' => $request_data['name'],
@@ -114,8 +116,9 @@ class ProductController extends Controller
         //
         $brands = Brand::withoutTrashed()->get();        
         $product = Product::findOrFail($id);
+        $product_category = $product->categories()->pluck('category_id')->toArray();
         $categories = Category::withoutTrashed()->get();
-        return view('admin.product.create',array('brands'=>$brands,'product'=>$product,'categories'=>$categories));
+        return view('admin.product.create',array('brands'=>$brands,'product'=>$product,'product_category'=>$product_category,'categories'=>$categories));
     }
 
     /**
@@ -147,9 +150,11 @@ class ProductController extends Controller
             $upload_data['image']  = $file_path;
         }
 
-        $product = $product->update($upload_data);
+        $is_updated = $product->update($upload_data);
+        if($is_updated){
         $categories = Category::find($request_data['categories']);
-        $product->categories()->attach($categories);
+        $product->categories()->sync($categories);
+        }
     
         return redirect(route('product.index'));
     }

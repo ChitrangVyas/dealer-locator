@@ -31,7 +31,6 @@ class AlterUsersTable extends Migration
      */
     public function down()
     {
-        //
-        Schema::dropColumn(['address','city_id', 'state_id', 'zipcode',]);
+        Schema::dropColumns('users',['address','city_id', 'state_id', 'zipcode',]);
     }
 }

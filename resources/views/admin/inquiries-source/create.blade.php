@@ -39,7 +39,16 @@
                             @enderror
                         </div>
                     </div>       
-                   
+                    <div class="col-sm-12 col-md-6">
+                        <!-- text input -->
+                        <div class="form-group">
+                            <label class="col-12">Status</label>
+                            <input type="checkbox" name="status" id="status" class="form-control status" data-bootstrap-switch  data-on-text="Enable" data-off-text="Disable" data-off-color="danger" data-on-color="success" {{((!isset($inquiries_source)) || (!empty($inquiries_source->status)))? "checked" :"" }}>
+                            @error('name')
+                            <div class="alert alert-danger mt-2">{{ $message }}</div>
+                            @enderror
+                        </div>
+                    </div>
                 </div>
                 <div class="row">
                     <div class="col-sm-12">
@@ -52,5 +61,14 @@
 </div>
 @endsection
 @section('plugins.Select2', true)
+@section('plugins.BootstrapSwitch', true)
 @section('js')
+<script>
+    $(document).ready(function(){
+        $("input[data-bootstrap-switch]").each(function(){
+            $(this).bootstrapSwitch('state', $(this).prop('checked'));
+            // $(this).bootstrapSwitch();
+        });
+    });
+</script>
 @endsection

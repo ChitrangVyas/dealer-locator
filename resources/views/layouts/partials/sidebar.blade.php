@@ -43,68 +43,102 @@
               </p>
             </a>
           </li>
-          <li class="nav-item">
+          <!-- <li class="nav-item">
             <a href="/contact" class="nav-link  {{ $elementActive == 'contact' ? 'active' : '' }}">
             <i class="nav-icon fas fa-id-card-alt"></i>
               <p>
                 Contact us
               </p>
             </a>
-          </li>
-          <li class="nav-item">
-            <a href="/admin/staff" class="nav-link  {{ $elementActive == 'staff' ? 'active' : '' }}">
-            <i class="nav-icon fas fa-users"></i>
+          </li> -->
+          <li class="nav-item has-treeview">
+            <a href="#" class="nav-link">
+              <i class="nav-icon fas fa-users"></i>
               <p>
-                Staff User
+                User Management
+                <i class="right fas fa-angle-left"></i>
               </p>
             </a>
+            <ul class="nav nav-treeview">  
+              <li class="nav-item">
+                <a href="/admin/staff" class="nav-link  {{ $elementActive == 'staff' ? 'active' : '' }}">
+                <i class="nav-icon fas fa-users"></i>
+                  <p>
+                    Staff User
+                  </p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="/admin/dealer" class="nav-link  {{ $elementActive == 'dealer' ? 'active' : '' }}">
+                <i class="nav-icon fas fa-users"></i>
+                  <p>
+                    Dealer
+                  </p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="/admin/retailer" class="nav-link  {{ $elementActive == 'retailer' ? 'active' : '' }}">
+                <i class="nav-icon fas fa-users"></i>
+                  <p>
+                    Retailer
+                  </p>
+                </a>
+              </li>  
+              </li>
+            </ul>
           </li>
-          <li class="nav-item">
-            <a href="/admin/dealer" class="nav-link  {{ $elementActive == 'dealer' ? 'active' : '' }}">
-            <i class="nav-icon fas fa-users"></i>
+          <li class="nav-item has-treeview">
+          <a href="#" class="nav-link">
+              <i class="nav-icon fas fa-copy"></i>
               <p>
-                Dealer
+                Catalog Management
+                <i class="right fas fa-angle-left"></i>
               </p>
             </a>
-          </li>
-          <li class="nav-item">
-            <a href="/admin/retailer" class="nav-link  {{ $elementActive == 'retailer' ? 'active' : '' }}">
-            <i class="nav-icon fas fa-users"></i>
-              <p>
-                Retailer
-              </p>
-            </a>
-          </li>  
-          </li>
-          <li class="nav-item">
-            <a href="/admin/manufacturer" class="nav-link  {{ $elementActive == 'manufacturer' ? 'active' : '' }}">
-            <i class="nav-icon fas fa-users"></i>
-              <p>
-              Manufacturer
-              </p>
-            </a>
-          </li>  
-          <li class="nav-item">
-            <a href="{{ route('brand.index') }}" class="nav-link  {{ $elementActive == 'brand' ? 'active' : '' }}">
-            <i class="nav-icon fas fa-cube"></i>
-              <p>Brand</p>
-            </a>
+            <ul class="nav nav-treeview">
+              <li class="nav-item">
+                <a href="/admin/manufacturer" class="nav-link  {{ $elementActive == 'manufacturer' ? 'active' : '' }}">
+                  <i class="nav-icon fas fa-industry"></i>
+                  <p>
+                  Manufacturer
+                  </p>
+                </a>
+              </li>  
+              <li class="nav-item">
+                <a href="{{ route('brand.index') }}" class="nav-link  {{ $elementActive == 'brand' ? 'active' : '' }}">
+                <i class="nav-icon fas fa-cube"></i>
+                  <p>Brand</p>
+                </a>
+              </li> 
           </li> 
-          <li class="nav-item">
-            <a href="{{ route('category.index') }}" class="nav-link  {{ $elementActive == 'category' ? 'active' : '' }}">
-            <i class="nav-icon fas fa-list-alt"></i>
-              <p>Category</p>
-            </a>
+              </li> 
           </li> 
-          <li class="nav-item">
-            <a href="{{ route('product.index') }}" class="nav-link  {{ $elementActive == 'product' ? 'active' : '' }}">
-            <i class="nav-icon fas fa-cubes"></i>
-              <p>Product</p>
-            </a>
+              </li> 
+              <li class="nav-item">
+                <a href="{{ route('category.index') }}" class="nav-link  {{ $elementActive == 'category' ? 'active' : '' }}">
+                <i class="nav-icon fas fa-list-alt"></i>
+                  <p>Category</p>
+                </a>
+              </li> 
           </li> 
+              </li> 
+          </li> 
+              </li> 
+              <li class="nav-item">
+                <a href="{{ route('product.index') }}" class="nav-link  {{ $elementActive == 'product' ? 'active' : '' }}">
+                <i class="nav-icon fas fa-cubes"></i>
+                  <p>Product</p>
+                </a>
+              </li> 
+          </li> 
+              </li> 
+          </li> 
+              </li> 
+            </ul>
+          </li>
           <li class="nav-item">
             <a href="{{ route('inquiries-source.index') }}" class="nav-link  {{ $elementActive == 'users' ? 'active' : '' }}">
-            <i class="nav-icon fas fa-cubes"></i>
+            <i class="nav-icon fas fa-link"></i>
               <p>Inquiry source</p>
             </a>
           </li> 

@@ -54,6 +54,7 @@ class InquiriesSourceController extends MainController
         try{
             $inquiry = InquiriesSource::create([
                 'source' => $request_data['source'],
+                'status' => (!empty($request_data['status']))?'1':'0',
             ]);
         }catch(Exception $e){
             print_r([
@@ -103,7 +104,8 @@ class InquiriesSourceController extends MainController
         $request_data = $request->all();
         $file_path = '';
         $upload_data = [
-            'source' => $request_data['source']                   
+            'source' => $request_data['source'],
+            'status' => (!empty($request_data['status']))?'1':'0',                  
         ];
         $inquiry = InquiriesSource::where('id',$id)->update($upload_data);
     

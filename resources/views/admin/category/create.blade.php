@@ -44,8 +44,7 @@
                         <div class="form-group">
                             <label>Parent category</label>
                             <select class="form-control select2" id='parent_category' name='parent_category'>
-                                <option value="">Select</option>
-                                <option value="0">no</option>
+                                <option value="0">Select</option>
                                 @foreach($parent_category as $tc)
                                 <option value="{{$tc->id}}" {{ (!empty($category) && $category->parent_category == $tc->id ) ? 'selected' :''}} >{{$tc->name}}</option>
                                 @endforeach

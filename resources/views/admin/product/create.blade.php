@@ -69,7 +69,7 @@
                             <select class="form-control categories" multiple="multiple" name="categories[]">
                                 <option value="">Please select</option>
                                 @foreach($categories as $category)
-                                    <option value="{{$category->id}}">{{$category->name}}</option>
+                                    <option value="{{$category->id}}" {{(!empty($product_category) && in_array($category->id,$product_category))?'selected':''}}>{{$category->name}}</option>
                                 @endforeach
                             </select>
                             @error('category')

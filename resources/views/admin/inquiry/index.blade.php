@@ -63,7 +63,7 @@
     });
     function deleteUser(id){
             if(id){
-                let data = confirm("Are you sure? you wants to delete this user?");
+                let data = confirm("Are you sure? you wants to delete this inquiry?");
                 if(data){
                     var token = $("meta[name='csrf-token']").attr("content");
                     $.ajax(

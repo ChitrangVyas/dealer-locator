@@ -72,16 +72,7 @@ class BrandController extends MainController
                 'logo' => $file_path
             ]);
         }catch(Exception $e){
-            print_r([
-                'name' => $request_data['name'],
-                'description' => $request_data['description'],
-                'short_description' => $request_data['short_description'],
-                'manufacturer_id' => $request_data['manufacturer_id'],
-                'logo' => $file_path
-            ]);
-
-            echo $e; exit;
-            return redirect(route('brand.create'));
+            return redirect(route('brand.create'))->with('exception', $e->getMessage());
         }
 
         return redirect(route('brand.index'));

@@ -16,16 +16,24 @@ class Inquiry extends Model
         'customer_id',
         'dealer_id',
     ];
+    
     public function customer(){
         return $this->belongsTo(User::class);
     }
+
     public function dealer(){
         return $this->belongsTo(User::class);
     }
+
     public function source(){
         return $this->belongsTo(InquiriesSource::class);
     }
+
     public function product(){
         return $this->belongsTo(Product::class);
+    }
+
+    public function log(){
+        return $this->hasMany(InquiryLog::class);
     }
 }

@@ -43,6 +43,7 @@ Route::group(['prefix'=>'admin','middleware'=>['auth']],function () {
     Route::resource('product', App\Http\Controllers\Admin\ProductController::class);   
     Route::resource('inquiries-source', App\Http\Controllers\Admin\InquiriesSourceController::class);
     Route::resource('inquiry', App\Http\Controllers\Admin\InquiryController::class);
+    Route::resource('inquiry-log', App\Http\Controllers\Admin\InquiryLogController::class);
 });
 
 

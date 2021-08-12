@@ -59,7 +59,7 @@ class InquiryController extends Controller
                 'product_id'=>$request_data['product'],
             ]);
         }catch(Exception $e){
-            return redirect(route('inquiry.create'))->with('exception', $e->getMessage());;
+            return redirect(route('inquiry.create'))->with('exception', $e->getMessage());
         }
         return view('admin.inquiry.index');
     }
@@ -149,7 +149,9 @@ class InquiryController extends Controller
             $dealer = (!empty($inquiry->dealer))?$inquiry->dealer:'N/A';
             $action_html = "<span><a href=".route('inquiry.edit',$inquiry->id)." class='btn btn-primary'>Edit</a></span>";
             $action_html .= "<span class='ml-3'><button type=submit data-user=$inquiry->id class='btn btn-danger' onClick=deleteUser($inquiry->id)>Delete</button></span>";
-            $data[] = [$inquiry->id,$inquiry->source,$inquiry->customer,$inquiry->product,$dealer,$action_html];
+            $action_html .= "<span class='ml-3'><button type='button' id='addLog' class=' ml-3 btn btn-default' data-inquiry=$inquiry->id data-toggle='modal' data-target='#modal-lg'>Add Log</button></span>";
+            $action_html .= "<span class='ml-3'><a href=# class='btn btn-primary'>View</a></span>";            
+            $data[] = [$inquiry->id,$inquiry->product,$inquiry->customer,$inquiry->source,$dealer,$action_html];
         }
         $return_array = array();
         $return_array['draw'] = $request['draw'];

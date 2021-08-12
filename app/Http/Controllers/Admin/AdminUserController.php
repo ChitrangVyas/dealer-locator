@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Requests\AdminUserCreateRequest;
-use App\Http\Requests\AdminUserUpdateRequest;
+use App\Http\Requests\Admin\AdminUserCreateRequest;
+use App\Http\Requests\Admin\AdminUserUpdateRequest;
 use App\Models\User;
 use Exception;
 use Illuminate\Http\Request;
@@ -14,7 +14,7 @@ class AdminUserController extends MainController
 {
     public function __construct() {
         View::share ( 'title', 'Staff User' );
-        View::share ( 'elementActive', 'staf' );
+        View::share ( 'elementActive', 'staff' );
     }
     /**
      * Display a listing of the resource.

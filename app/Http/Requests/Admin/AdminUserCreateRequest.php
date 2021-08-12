@@ -1,10 +1,11 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\Admin;
 
 use Illuminate\Foundation\Http\FormRequest;
-
-class ManufacturerUpdateRequest extends FormRequest
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rule;
+class AdminUserCreateRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -13,7 +14,8 @@ class ManufacturerUpdateRequest extends FormRequest
      */
     public function authorize()
     {
-        return auth()->check();
+        // return true;
+        return Auth::check();
     }
 
     /**
@@ -23,13 +25,22 @@ class ManufacturerUpdateRequest extends FormRequest
      */
     public function rules()
     {
-        return [
-            'email' => 'required|email',
+        return [            
+            'email' => [
+                'required',
+                'email',
+                Rule::unique('users') ->where('deleted_at','IS' ,'NULL')
+            ],
             'name' => 'required|string|max:100',
+            'password' => 'required|min:6|max:16',
+            'mobile' => 'required',
+            'state' => 'after_or_equal:1',
+            'city' => 'after_or_equal:1',
+            'zipcode' => 'min:5|max:7',
         ];
     }
 
-     /**
+    /**
      * Custom message for validation
      *
      * @return array
@@ -41,6 +52,8 @@ class ManufacturerUpdateRequest extends FormRequest
             'email.unique' => 'Email is already exist.',
             'email.email' => 'Invalid Email.',
             'name.required' => 'Name is required!',
+            'password.required' => 'Password is required!',
+            'mobile.required'=> 'Mobile is required!',
         ];
     }
 }

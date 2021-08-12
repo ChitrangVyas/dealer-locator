@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\Admin;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class RetailerUserUpdateRequest extends FormRequest
+class RetailerUserCreateRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -25,7 +25,7 @@ class RetailerUserUpdateRequest extends FormRequest
     {
         return [
             'dealer' =>'required',
-            'email' => 'required|email',
+            'email' => 'required|email|unique:users',
             'name' => 'required|string|max:100',            
             'mobile' => 'required',
             'address' => 'required',

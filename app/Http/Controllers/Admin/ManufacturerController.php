@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Requests\ManufacturerCreateRequest;
-use App\Http\Requests\ManufacturerUpdateRequest;
+use App\Http\Requests\Admin\ManufacturerCreateRequest;
+use App\Http\Requests\Admin\ManufacturerUpdateRequest;
 use App\Models\Manufacturer;
 use App\Models\User;
 use Exception;

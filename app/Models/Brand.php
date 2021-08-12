@@ -11,7 +11,6 @@ class Brand extends Model
     use SoftDeletes;
     protected $fillable = [
         'name',
-        'email',
         'description',
         'short_description',
         'manufacturer_id',
@@ -19,5 +18,9 @@ class Brand extends Model
     ];
     public function manufacturer(){
         return $this->belongsTo(Manufacturer::class);
+    }
+
+    public function product(){
+        return $this->hasMany(Product::class);
     }
 }

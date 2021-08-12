@@ -19,7 +19,7 @@
         <a class="nav-link float-left" data-widget="navbar-search" href="#" role="button">
           <i class="fas fa-search"></i>
         </a>
-        <a class="nav-link float-left" data-widget="navbar-sign-out" href="{{ __('logout') }}" role="button">
+        <a class="nav-link float-left" data-widget="navbar-sign-out" href="{{ route('logout') }}" role="button">
           <i class="fas fa-sign-out-alt">@if (trans()->has('lang.sign_out')) {{ __('lang.sign_out') }} @else {{__('Sign Out')}} @endif   </i>
         </a> 
         <div class="navbar-search-block">

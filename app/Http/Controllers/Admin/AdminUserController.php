@@ -62,8 +62,8 @@ class AdminUserController extends MainController
                     'state_id' => $request_data['state'],
                     'zipcode' => $request_data['zipcode'],
                 ]);
-            }catch(Exception $e){
-                return redirect(route('staff.create'));
+            }catch(Exception $e){               
+                return redirect(route('staff.create'))->with('exception', $e);;
             }
         }
         return redirect(route('staff.index'));
@@ -121,7 +121,12 @@ class AdminUserController extends MainController
         }
 
         if($request_data['user_group'] == '1'){
-            $user = User::where('id',$id)->update($data);
+            try{
+                $user = User::where('id',$id)->update($data);
+            } catch(Exception $e){
+                return redirect(route('staff.edit'));
+            }
+
         }
         return redirect(route('staff.index'));
     }

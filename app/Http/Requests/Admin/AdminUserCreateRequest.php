@@ -4,7 +4,7 @@ namespace App\Http\Requests\Admin;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
-
+use Illuminate\Validation\Rule;
 class AdminUserCreateRequest extends FormRequest
 {
     /**
@@ -25,8 +25,14 @@ class AdminUserCreateRequest extends FormRequest
      */
     public function rules()
     {
-        return [
-            'email' => 'required|email|unique:users',
+        return [            
+            'email' => [
+                'required',
+                'email',
+                Rule::unique('users')->where(function ($query) {
+                    return $query->whereNull('deleted_at');
+                })
+            ],
             'name' => 'required|string|max:100',
             'password' => 'required|min:6|max:16',
             'mobile' => 'required',

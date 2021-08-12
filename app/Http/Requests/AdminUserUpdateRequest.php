@@ -26,16 +26,12 @@ class AdminUserUpdateRequest extends FormRequest
      */
     public function rules()
     {
-        return [
-            // 'email' => 'required|email|unique:users',
+        return [          
             'email' => [
                 'required',
-                Rule::unique('users', 'email')
-                ->where(static function ($query) {
-                    return $query->whereNull('deleted_at');
-                })
-                ->ignore($this->user),
-            ],
+                'email',
+                Rule::unique('users') ->where('deleted_at','IS' ,'NULL')->ignore($this->id)
+            ],            
             'name' => 'required|string|max:100',            
             'mobile' => 'required',
             'zipcode' => 'min:5|max:7',

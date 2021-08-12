@@ -63,18 +63,19 @@
                                 </ul>
                             </div>
                             <div class="card-body">
-                                <div class="tab-content" id="tab-email">
+                                <div class="tab-content" id="tab-content">
                                     <div class="tab-pane fade show active" id="tab-email" role="tabpanel" aria-labelledby="tab-email">
-                                        @include('layouts.partials.log-form')
+                                      @php $fname = "email"; @endphp  @include('layouts.partials.log-form')
                                     </div>
                                     <div class="tab-pane fade" id="tab-calls" role="tabpanel" aria-labelledby="tab-calls">
-                                        @include('layouts.partials.log-form')
+                                    @php $fname = "calls"; @endphp @include('layouts.partials.log-form')
+                                    <h1>CALL</h1>
                                     </div>
                                     <div class="tab-pane fade" id="tab-meetings" role="tabpanel" aria-labelledby="tab-meetings">
-                                        @include('layouts.partials.log-form')
+                                    @php $fname = "meets"; @endphp @include('layouts.partials.log-form')
                                     </div>
                                     <div class="tab-pane fade" id="tab-notes" role="tabpanel" aria-labelledby="tab-notes">
-                                        @include('layouts.partials.log-form')
+                                    @php $fname = "notes"; @endphp @include('layouts.partials.log-form')
                                     </div>
                                 </div>
                             </div>

@@ -29,7 +29,9 @@ class AdminUserCreateRequest extends FormRequest
             'email' => [
                 'required',
                 'email',
-                Rule::unique('users') ->where('deleted_at','IS' ,'NULL')
+                Rule::unique('users')->where(function ($query) {
+                    return $query->whereNull('deleted_at');
+                })
             ],
             'name' => 'required|string|max:100',
             'password' => 'required|min:6|max:16',

@@ -30,7 +30,9 @@ class AdminUserUpdateRequest extends FormRequest
             'email' => [
                 'required',
                 'email',
-                Rule::unique('users') ->where('deleted_at','IS' ,'NULL')->ignore($this->id)
+                Rule::unique('users')->where(function ($query) {
+                    return $query->whereNull('deleted_at');
+                })->ignore($this->id)
             ],            
             'name' => 'required|string|max:100',            
             'mobile' => 'required',

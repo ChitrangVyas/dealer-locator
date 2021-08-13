@@ -49,32 +49,31 @@
                             <div class="card-header p-0 pt-1 border-bottom-0">
                                 <ul class="nav nav-tabs" id="tabs" role="tablist">
                                     <li class="nav-item">
-                                        <a class="nav-link active" id="tab-email" data-tab="email" data-toggle="pill" href="#tab-email" role="tab" aria-controls="tab-email" aria-selected="true" onclick="activeTab(this)">Email</a>
+                                        <a class="nav-link active" id="tab-email" data-tab="email" data-toggle="pill" href="#nav-tab-email" role="tab" aria-controls="nav-tab-email" aria-selected="true" onclick="activeTab(this)">Email</a>
                                     </li>
                                     <li class="nav-item">
-                                        <a class="nav-link" id="tab-calls" data-tab="calls" data-toggle="pill" href="#tab-calls" role="tab" aria-controls="tab-calls" aria-selected="false" onclick="activeTab(this)">Calls</a>
+                                        <a class="nav-link" id="tab-calls" data-tab="calls" data-toggle="pill" href="#nav-tab-calls" role="tab" aria-controls="nav-tab-calls" aria-selected="false" onclick="activeTab(this)">Calls</a>
                                     </li>
                                     <li class="nav-item">
-                                        <a class="nav-link" id="tab-meetings" data-tab="meetings" data-toggle="pill" href="#tab-meetings" role="tab" aria-controls="tab-meetings" aria-selected="false" onclick="activeTab(this)">Meetings</a>
+                                        <a class="nav-link" id="tab-meetings" data-tab="meetings" data-toggle="pill" href="#nav-tab-meetings" role="tab" aria-controls="nav-tab-meetings" aria-selected="false" onclick="activeTab(this)">Meetings</a>
                                     </li>
                                     <li class="nav-item">
-                                        <a class="nav-link" id="tab-notes" data-tab="notes" data-toggle="pill" href="#tab-notes" role="tab" aria-controls="tab-notes" aria-selected="false" onclick="activeTab(this)">Notes</a>
+                                        <a class="nav-link" id="tab-notes" data-tab="notes" data-toggle="pill" href="#nav-tab-notes" role="tab" aria-controls="nav-tab-notes" aria-selected="false" onclick="activeTab(this)">Notes</a>
                                     </li>
                                 </ul>
                             </div>
                             <div class="card-body">
                                 <div class="tab-content" id="tab-content">
-                                    <div class="tab-pane fade show active" id="tab-email" role="tabpanel" aria-labelledby="tab-email">
+                                    <div class="tab-pane fade show active" id="nav-tab-email" role="tabpanel" aria-labelledby="tab-email">
                                       @php $fname = "email"; @endphp  @include('layouts.partials.log-form')
                                     </div>
-                                    <div class="tab-pane fade" id="tab-calls" role="tabpanel" aria-labelledby="tab-calls">
+                                    <div class="tab-pane fade" id="nav-tab-calls" role="tabpanel" aria-labelledby="tab-calls">
                                     @php $fname = "calls"; @endphp @include('layouts.partials.log-form')
-                                    <h1>CALL</h1>
                                     </div>
-                                    <div class="tab-pane fade" id="tab-meetings" role="tabpanel" aria-labelledby="tab-meetings">
-                                    @php $fname = "meets"; @endphp @include('layouts.partials.log-form')
+                                    <div class="tab-pane fade" id="nav-tab-meetings" role="tabpanel" aria-labelledby="tab-meetings">
+                                    @php $fname = "meetings"; @endphp @include('layouts.partials.log-form')
                                     </div>
-                                    <div class="tab-pane fade" id="tab-notes" role="tabpanel" aria-labelledby="tab-notes">
+                                    <div class="tab-pane fade" id="nav-tab-notes" role="tabpanel" aria-labelledby="tab-notes">
                                     @php $fname = "notes"; @endphp @include('layouts.partials.log-form')
                                     </div>
                                 </div>
@@ -131,7 +130,7 @@
             "serverSide": true,
             "ajax": "{{ route('inquirylistajax') }}",
         });
-        $('#datetimepicker').datetimepicker({
+        $('.datetimepicker').datetimepicker({
             icons: {
                     time: "fas fa-clock-o",
                     date: "fas fa-calendar",

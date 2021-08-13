@@ -10,13 +10,12 @@
     <input type="hidden" name="id" value="{{ (!empty($inquiry))?$inquiry->id:'' }}" />
     <input type="hidden" name="type" id="type" value="" />
 
-
     <div class="row">
         <div class="col-sm-12 col-md-6">
             <!-- text input -->
             <div class="form-group">
                 <label>Reminder</label>
-                <input type="text" class="form-control datetimepicker-input reminder" id="datetimepicker" name="reminder" data-toggle="datetimepicker" data-target="#datetimepicker" readonly />
+                <input type="text" class="form-control datetimepicker-input reminder datetimepicker {{$fname}}-datetimepicker" name="reminder" data-toggle="datetimepicker" data-target="#datetimepicker" readonly />
                 @error('reminder')
                 <div class="alert alert-danger mt-2">{{ $message }}</div>
                 @enderror

@@ -29,7 +29,8 @@ class User extends Authenticatable
         'address',
         'city_id',
         'state_id',
-        'zipcode'
+        'zipcode',
+        'contact_type',
     ];
 
     /**
@@ -60,5 +61,12 @@ class User extends Authenticatable
     }
     public function state(){
         return $this->belongsTo(State::class);
+    }
+    public function getCustomerType(){
+        if($this->contact_type==1){
+            return "Customer";
+        }else{
+            return "Vendor";
+        }
     }
 }

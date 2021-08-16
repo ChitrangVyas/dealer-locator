@@ -31,6 +31,7 @@ class CustomerUpdateRequest extends FormRequest
             'state' => 'required|after_or_equal:1',
             'city' => 'required|after_or_equal:1',
             'zipcode' => 'required|min:5|max:7',
+            'contact_type' => 'required',
         ];
     }
 }

@@ -10,7 +10,7 @@
                     <div class="card">
                         <div class="card-header">
                             <h2 class="card-title">{{ucwords($title)}}</h3>
-                            <div class="float-right"><a href="{{route('customer.create')}}" class="btn btn-primary btn-md">Add Customer</a></div>
+                            <div class="float-right"><a href="{{route('customer.create')}}" class="btn btn-primary btn-md">Add {{ucwords($title)}}</a></div>
                         </div>
                         <!-- /.card-header -->
                         <div class="card-body">

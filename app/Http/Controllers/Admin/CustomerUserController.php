@@ -14,7 +14,7 @@ use View;
 class CustomerUserController extends Controller
 {
     public function __construct() {
-        View::share ( 'title', 'Customer' );
+        View::share ( 'title', 'Contact' );
         View::share ( 'elementActive', 'customer' );
     }
     /**
@@ -51,18 +51,7 @@ class CustomerUserController extends Controller
         $request_data = $request->all();
         if($request_data['user_group'] == 4){
         try{
-            $user = User::create([
-                'name' => $request_data['name'],
-                'email' => $request_data['email'],
-                'password' => Hash::make('123456'),
-                'mobile' => $request_data['mobile'],
-                'users_group_id' => $request_data['user_group'],
-                'created_by' => $request_data['created_by'],
-                'address' => $request_data['address'],
-                'city_id' => $request_data['city'],
-                'state_id' => $request_data['state'],
-                'zipcode' => $request_data['zipcode'],
-            ]);
+            $user = User::create($request->all());
         }catch(Exception $e){
             return redirect(route('admin.customer.create'));
         }
@@ -106,16 +95,7 @@ class CustomerUserController extends Controller
         //
         $request_data = $request->all();
         if($request_data['user_group'] == 3){
-            $user = User::where('id',$id)->update([
-                'name' => $request_data['name'],
-                'email' => $request_data['email'],
-                'mobile' => $request_data['mobile'],
-                'updated_by' => $request_data['updated_by'],
-                'address' => $request_data['address'],
-                'city_id' => $request_data['city'],
-                'state_id' => $request_data['state'],
-                'zipcode' => $request_data['zipcode'],
-            ]);
+            $user = User::where('id',$id)->update($request->all());
         }
         return redirect(route('admin.customer.index'));
     }

@@ -88,7 +88,7 @@
                 <a href="{{route('customer.index')}}" class="nav-link  {{ $elementActive == 'customer' ? 'active' : '' }}">
                 <i class="nav-icon fas fa-users"></i>
                   <p>
-                    Customer
+                    Contacts
                   </p>
                 </a>
               </li>  

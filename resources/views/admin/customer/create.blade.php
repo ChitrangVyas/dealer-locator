@@ -5,7 +5,7 @@
 @section('content')
 <div class="card card-primary">
     <div class="card-header">
-    <h3 class="card-title">{{$title}} User</h3>
+    <h3 class="card-title">{{$title}}</h3>
     </div>
     <!-- /.card-header -->
     <div class="card-body">     
@@ -23,6 +23,24 @@
         
 
         <div class="row">
+        <div class="col-sm-12 col-md-4">
+                <!-- text input -->
+                <div class="form-group">
+                    <div class="form-check">
+                          <input class="form-check-input" type="radio" name="contact_type"  {{ (!empty($user) && $user->contact_type==1) ? 'checked' : '' }}  value="1">
+                          <label class="form-check-label">Customer</label>
+                    </div>
+                    <div class="form-check">
+                          <input class="form-check-input" type="radio" name="contact_type"  {{ (!empty($user) && $user->contact_type==1) ? 'checked' : '' }}  value="2">
+                          <label class="form-check-label">Vendor</label>
+                    </div>
+                    
+                    @error('contact_type')
+                        <div class="alert alert-danger mt-2">{{ $message }}</div>
+                    @enderror
+                </div>
+            </div>
+            
             <div class="col-sm-12 col-md-4">
                 <!-- text input -->
                 <div class="form-group">

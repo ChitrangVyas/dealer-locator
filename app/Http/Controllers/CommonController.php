@@ -20,17 +20,26 @@ class CommonController extends Controller
         if(!empty($request_data)){
         $table = $request_data['table'];
         $fields = (!empty($request_data['fields']))?$request_data['fields']:'id , name as text';
-        $where = (!empty($request_data['q']))?" name like '$request_data[q]%'":'';
+        $where = (!empty($request_data['q']))? $table.".name like '$request_data[q]%'" :'';
         $where .= (!empty($request_data['where']))?" and $request_data[where]":'';
+        $where .= (!empty($request_data['whereOr']))?" $request_data[whereOr]":'';
         $query = "select $fields from $table";
         if(!empty($where)){
             $query .= " where $where";
         }
-        $data = DB::table($table)
+        DB::enableQueryLog(); 
+        $obj = DB::table($table)
                      ->selectRaw($fields)
                      ->whereRaw($where)
-                     ->take(10)
-                     ->get();
+                     ->take(10);
+        if(!empty($request_data['joins'])){
+            foreach($request_data['joins'] as $join){
+                $type = (!empty($join['type']))?$join['type']:'inner';
+                $obj->join($join['join_table'], $join['to_column'], '=', $join['from_column'],$type);
+            }
+        }
+        $data = $obj->get();
+        // dd(DB::getQueryLog());
         echo json_encode($data);
         }
     }

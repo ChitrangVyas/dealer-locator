@@ -54,7 +54,13 @@ class CustomerUserController extends Controller
         if($request_data['users_group_id'] == 4 || $request_data['users_group_id'] == 5){
         try{
             $user = User::create($request_data);
+            if($request->ajax()){
+                return response()->json($user);
+            }
         }catch(Exception $e){
+            if($request->ajax()){
+                return response()->json($user);
+            }
             return redirect(route('customer.create'))->with('exception', $e->getMessage());
         }
     }
@@ -153,4 +159,14 @@ class CustomerUserController extends Controller
         return response(json_encode($return_array), 200)
         ->header('Content-Type', 'text/plain');
     }
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function createAjax()
+    {
+        //
+        return view('admin.customer.create_ajax');
+    }    
 }

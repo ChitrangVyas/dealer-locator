@@ -40,13 +40,19 @@
             <div class="col-sm-12 col-md-4">
                 <!-- text input -->
                 <div class="form-group">
-                    <label>Customer</label>
-                    <select class="form-control select2 customer" id='customer' name='customer'>
-                        <option value="">Select</option>
-                        @if(!empty($inquiry) && !empty($inquiry->customer_id))
-                            <option value="{{$inquiry->customer_id}}" selected>{{$inquiry->customer->name}}</option>
-                        @endif
-                    </select>
+                        <label>Customer</label>
+                        <div class="input-group input-group-sm">
+                        <select class="form-control select2 customer" id='customer' name='customer'>
+                            <option value="">Select</option>
+                            @if(!empty($inquiry) && !empty($inquiry->customer_id))
+                                <option value="{{$inquiry->customer_id}}" selected>{{$inquiry->customer->name}}</option>
+                            @endif
+                        </select>
+                        <span class="input-group-append">
+                            <!-- <button type="button" id="addCustomer" class="btn btn-primary btn-flat addCustomer">Add</button> -->
+                            <button id="addCustomer" class="btn btn-primary btn-flat addCustomer" data-toggle='modal' data-target='#modal-lg'>Add</button>
+                        </span>
+                    </div>
                     @error('customer')
                         <div class="alert alert-danger mt-2">{{ $message }}</div>
                     @enderror
@@ -92,6 +98,34 @@
     </div>
     <!-- /.card-body -->
 </div>
+<!-- modal -->
+<div class="modal fade" id="modal-lg">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Customer</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-12 col-sm-12">
+                        <div class="card card-primary card-outline">
+                            <div class="card-body" id="customerBody">
+                                
+                            </div>
+                            <!-- /.card -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+<!-- /.modal -->
 @endsection
 @section('plugins.Select2', true)
 @section('js')
@@ -107,7 +141,9 @@ jQuery(document).ready(function(){
                 return {
                     q: params.term, // search term
                     table:'users',
-                    where: 'users_group_id=2'
+                    fields: "users.id, CONCAT(`users`.`name`, ' - ', `zipcode`,' - ',`cities`.`name`) as text",
+                    whereOr: ` OR zipcode like '%${params.term}%' OR cities.name like '%${params.term}%' AND (users_group_id = 2)`,
+                    joins:[{'join_table':'cities','to_column':'city_id','from_column':'cities.id','type':'left'}]
                 };
             },
             processResults: function (data) {
@@ -126,7 +162,10 @@ jQuery(document).ready(function(){
                 return {
                     q: params.term, // search term
                     table:'users',
-                    where: 'users_group_id=4'
+                    fields: "users.id, CONCAT(`users`.`name`, ' - ', `zipcode`,' - ',`cities`.`name`) as text",
+                    // where: ` OR zipcode like '%${params.term}%' OR cities.name like '%${params.term}%' AND (users_group_id=4 OR users_group_id=5)`,
+                    whereOr: ` OR zipcode like '%${params.term}%' OR cities.name like '%${params.term}%' AND (users_group_id=4 OR users_group_id=5)`,
+                    joins:[{'join_table':'cities','to_column':'city_id','from_column':'cities.id','type':'left'}]
                 };
             },
             processResults: function (data) {
@@ -155,6 +194,27 @@ jQuery(document).ready(function(){
             }
         }
     });
+    $('#addCustomer').on('click',function(e){
+        e.preventDefault();
+        e.stopImmediatePropagation();
+        // var data = $('#saveInquiryLog').serialize();        
+        console.log("Add Customer Click");
+        $.ajax({
+            url: "{{ route('customerCreateAjax') }}",
+            type: 'GET',            
+            success: function (data) {                
+                $("#customerBody").html(data);
+                $("#modal-lg").modal("show");
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                console.log("Eror");
+                    /* Toast.fire({
+                        type: 'error',
+                        title: JSON.parse(jqXHR.responseText).message
+                    }); */
+            }
+        });
+    });     
 });
 </script>
 @endsection

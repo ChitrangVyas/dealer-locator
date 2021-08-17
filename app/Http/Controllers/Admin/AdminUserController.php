@@ -63,7 +63,7 @@ class AdminUserController extends MainController
                     'zipcode' => $request_data['zipcode'],
                 ]);
             }catch(Exception $e){               
-                return redirect(route('staff.create'))->with('exception', $e);;
+                return redirect(route('staff.create'))->with('exception', $e->getMessage());
             }
         }
         return redirect(route('staff.index'));

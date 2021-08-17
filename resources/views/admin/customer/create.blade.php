@@ -12,30 +12,29 @@
         @if(!empty($user))
             <form method="POST" action="{{ route('customer.update',$user->id) }}">
             @method('PUT')
-            <input type="hidden" name="updated_at" value="{{auth()->user()->id}}">
+            <input type="hidden" name="updated_by" value="{{auth()->user()->id}}">
         @else
             <form method="POST" action="{{ route('customer.index') }}">
             <input type="hidden" name="created_by" value="{{auth()->user()->id}}">
         @endif
         @csrf
         <input type="hidden" name="id" value="{{ (!empty($user))?$user->id:'' }}">
-        <input type="hidden" name="user_group" value="4">
         
 
         <div class="row">
-        <div class="col-sm-12 col-md-4">
+        <div class="col-sm-12 col-md-12">
                 <!-- text input -->
                 <div class="form-group">
-                    <div class="form-check">
-                          <input class="form-check-input" type="radio" name="contact_type"  {{ (!empty($user) && $user->contact_type==1) ? 'checked' : '' }}  value="1">
+                    <div class="form-check d-inline">
+                          <input class="form-check-input" type="radio" name="users_group_id"  {{ (old('users_group_id') == 4 || (!empty($user) && $user->users_group_id)==4) ? 'checked' : '' }}  value="4">
                           <label class="form-check-label">Customer</label>
                     </div>
-                    <div class="form-check">
-                          <input class="form-check-input" type="radio" name="contact_type"  {{ (!empty($user) && $user->contact_type==1) ? 'checked' : '' }}  value="2">
+                    <div class="form-check d-inline ml-3">
+                          <input class="form-check-input" type="radio" name="users_group_id"  {{ (old('users_group_id') == 5 || (!empty($user) && $user->users_group_id)==5) ? 'checked' : '' }}  value="5">
                           <label class="form-check-label">Vendor</label>
                     </div>
                     
-                    @error('contact_type')
+                    @error('users_group_id')
                         <div class="alert alert-danger mt-2">{{ $message }}</div>
                     @enderror
                 </div>
@@ -45,7 +44,7 @@
                 <!-- text input -->
                 <div class="form-group">
                     <label>Name</label>
-                    <input type="text" class="form-control" name="name" value="{{ (!empty($user))?$user->name:'' }}" placeholder="Full Name">
+                    <input type="text" class="form-control" name="name" value="{{ old('name',(!empty($user))?$user->name:'') }}" placeholder="Full Name">
                     @error('name')
                         <div class="alert alert-danger mt-2">{{ $message }}</div>
                     @enderror
@@ -55,7 +54,7 @@
                 <!-- text input -->
                 <div class="form-group">
                     <label>Email</label>
-                    <input type="email" class="form-control" name="email" value="{{ (!empty($user))?$user->email:'' }}" placeholder="Email" autocomplete="false">
+                    <input type="email" class="form-control" name="email" value="{{ old('email',(!empty($user))?$user->email:'') }}" placeholder="Email" autocomplete="false">
                     @error('email')
                         <div class="alert alert-danger mt-2">{{ $message }}</div>
                     @enderror
@@ -65,7 +64,7 @@
                 <!-- text input -->
                 <div class="form-group">
                     <label>Mobile</label>
-                    <input type="text" name="mobile" value="{{ (!empty($user))?$user->mobile:'' }}" class="form-control" placeholder="Mobile">
+                    <input type="text" name="mobile" value="{{ old('mobile',(!empty($user))?$user->mobile:'') }}" class="form-control" placeholder="Mobile">
                     @error('mobile')
                         <div class="alert alert-danger mt-2">{{ $message }}</div>
                     @enderror
@@ -75,7 +74,7 @@
                 <!-- text input -->
                 <div class="form-group">
                     <label>Address</label>
-                    <textarea class="form-control" name="address" rows="1" placeholder="Address">{{ (!empty($user))?$user->address:'' }}</textarea>
+                    <textarea class="form-control" name="address" rows="1" placeholder="Address">{{ old('address',(!empty($user))?$user->address:'') }}</textarea>
                     @error('address')
                         <div class="alert alert-danger mt-2">{{ $message }}</div>
                     @enderror
@@ -85,13 +84,13 @@
                 <!-- text input -->
                 <div class="form-group">
                     <label>State</label>
-                    <select class="form-control select2 state" id='state' name='state'>
+                    <select class="form-control select2 state" id='state' name='state_id'>
                         <option value="">Select</option>
                         @if(!empty($user) && $user->state_id)
                             <option value="{{$user->state_id}}" selected>{{$user->state->name}}</option>
                         @endif
                     </select>
-                    @error('state')
+                    @error('state_id')
                         <div class="alert alert-danger mt-2">{{ $message }}</div>
                     @enderror
                 </div>
@@ -100,13 +99,13 @@
                 <!-- text input -->
                 <div class="form-group">
                     <label>City</label>
-                    <select class="form-control select2 city" id='city' name='city'>
+                    <select class="form-control select2 city" id='city' name='city_id'>
                         <option value="">Select</option>
                         @if(!empty($user) && !empty($user->city_id))
                             <option value="{{$user->city_id}}" selected>{{$user->city->name}}</option>
                         @endif
                     </select>
-                    @error('city')
+                    @error('city_id')
                         <div class="alert alert-danger mt-2">{{ $message }}</div>
                     @enderror
                 </div>
@@ -115,7 +114,7 @@
                 <!-- text input -->
                 <div class="form-group">
                     <label>Zipcode</label>
-                    <input type="text" name="zipcode" value="{{ (!empty($user))?$user->zipcode:'' }}" class="form-control" placeholder="Enter zipcode">
+                    <input type="text" name="zipcode" value="{{ old('zipcode',(!empty($user))?$user->zipcode:'') }}" class="form-control" placeholder="Enter zipcode">
                     @error('zipcode')
                         <div class="alert alert-danger mt-2">{{ $message }}</div>
                     @enderror

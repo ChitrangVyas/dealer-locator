@@ -28,10 +28,17 @@ class CustomerUpdateRequest extends FormRequest
             'name' => 'required|string|max:100',            
             'mobile' => 'required',
             'address' => 'required',
-            'state' => 'required|after_or_equal:1',
-            'city' => 'required|after_or_equal:1',
+            'state_id' => 'required|after_or_equal:1',
+            'city_id' => 'required|after_or_equal:1',
             'zipcode' => 'required|min:5|max:7',
-            'contact_type' => 'required',
+            'users_group_id' => 'required',
+        ];
+    }
+
+    public function messages()
+    {
+        return [
+            'users_group_id.required' => 'Contact type is required.'
         ];
     }
 }

@@ -18,6 +18,7 @@
                                 <thead>
                                     <tr>
                                         <th>ID</th>
+                                        <th>Contact Type</th>
                                         <th>Name</th>
                                         <th>Email</th>
                                         <th>Mobile</th>
@@ -41,6 +42,7 @@
         $('#example').DataTable({
             "columns": [
                 { "name": "id" },
+                { "name": "users_group_id" },
                 { "name": "name" },
                 { "name": "email" },
                 { "name": "mobile" },
@@ -58,6 +60,7 @@
                 "visible": false
             },
         ],
+        aaSorting: [[0, 'desc']],
             "processing": true,
             "serverSide": true,
             "ajax": "{{ route('customerlistajax') }}",

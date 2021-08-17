@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\CustomerCreateRequest;
 use App\Http\Requests\Admin\CustomerUpdateRequest;
 use App\Models\User;
+use Dflydev\DotAccessData\Data;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -49,11 +50,12 @@ class CustomerUserController extends Controller
     {   
         //
         $request_data = $request->all();
-        if($request_data['user_group'] == 4){
+        $request_data['password'] = Hash::make('123456');
+        if($request_data['users_group_id'] == 4 || $request_data['users_group_id'] == 5){
         try{
-            $user = User::create($request->all());
+            $user = User::create($request_data);
         }catch(Exception $e){
-            return redirect(route('admin.customer.create'));
+            return redirect(route('customer.create'))->with('exception', $e->getMessage());
         }
     }
         return view('admin.customer.index');
@@ -93,11 +95,11 @@ class CustomerUserController extends Controller
     public function update(CustomerUpdateRequest $request, $id)
     {
         //
-        $request_data = $request->all();
-        if($request_data['user_group'] == 3){
-            $user = User::where('id',$id)->update($request->all());
+        $request_data = $request->except(['_token','_method']);
+        if($request_data['users_group_id'] == 4 || $request_data['users_group_id'] == 5){
+            $user = User::where('id',$id)->update($request_data);
         }
-        return redirect(route('admin.customer.index'));
+        return redirect(route('customer.index'));
     }
 
     /**
@@ -116,30 +118,32 @@ class CustomerUserController extends Controller
     }
 
     public function listAjaxData(Request $request){
+        // DB::enableQueryLog(); 
         $start =  $request['start'];
         $length=  $request['length'];
         $search = $request['search']['value'];
-        $where = 'users_group_id = 4';
-        $where .= (!empty($search)) ? " AND (users.name like '$search%' OR email like '$search%' OR mobile like '$search%' OR cities.name like '$search%' OR states.name like '$search%')":'';
+        $where = 'users_group_id IN (4,5)';
+        $where .= (!empty($search)) ? " AND (users.name like '$search%' OR email like '$search%' OR mobile like '$search%' OR cities.name like '$search%' OR states.name like '$search%' OR users_group.name like '$search%')":'';
         $users = DB::table('users')
-        ->selectRaw('users.id,users.name,email,mobile,cities.name as city, states.name as state')
-        ->join('cities','users.city_id','=','cities.id')
-        ->join('states','users.state_id','=','states.id')
+        ->selectRaw('users_group.name as contact_type,users.id,users.name,email,mobile,cities.name as city, states.name as state')
+        ->join('users_group','users.users_group_id','=','users_group.id','left')
+        ->join('cities','users.city_id','=','cities.id','left')
+        ->join('states','users.state_id','=','states.id','left')
         ->whereRaw($where)
-        ->where('deleted_at', NULL)
+        ->where('users.deleted_at', NULL)
         ->offset($start)
         ->limit($length)
         ->orderBy($request['columns'][$request['order'][0]['column']]['name'],$request['order'][0]['dir'])
-        ->get();
-
-        $total_users = User::where('users_group_id','=','4')->count();
+        ->get(); 
+        $total_users = User::whereIN('users_group_id',['4','5'])->count();
+        // dd(DB::getQueryLog());
         $data = [];
         foreach($users as $user){
-            $city = (!empty($user->city))?$user->city:'';
-            $state = (!empty($user->state))?$user->state:'';
+            $city = (!empty($user->city))?$user->city:'N/A';
+            $state = (!empty($user->state))?$user->state:'N/A';
             $action_html = "<span><a href=".route('customer.edit',$user->id)." class='btn btn-primary'>Edit</a></span>";
             $action_html .= "<span class='ml-3'><button type=submit data-user=$user->id class='btn btn-danger' onClick=deleteUser($user->id)>Delete</button></span>";
-            $data[] = [$user->id,$user->name,$user->email,$user->mobile,$city,$state,$action_html];
+            $data[] = [$user->id,$user->contact_type,$user->name,$user->email,$user->mobile,$city,$state,$action_html];
         }
         $return_array = array();
         $return_array['draw'] = $request['draw'];

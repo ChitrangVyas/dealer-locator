@@ -62,7 +62,7 @@ class DealerUserController extends MainController
                 'zipcode' => $request_data['zipcode'],
             ]);
         }catch(Exception $e){
-            return redirect(route('dealer.create'));
+            return redirect(route('dealer.create'))->with('exception', $e->getMessage());
         }
         return redirect(route('dealer.index'));
     }

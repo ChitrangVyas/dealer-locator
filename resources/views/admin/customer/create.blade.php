@@ -26,11 +26,11 @@
                 <!-- text input -->
                 <div class="form-group">
                     <div class="form-check d-inline">
-                          <input class="form-check-input" type="radio" name="users_group_id"  {{ (old('users_group_id') == 4 || (!empty($user) && $user->users_group_id)==4) ? 'checked' : '' }}  value="4">
+                          <input class="form-check-input" type="radio" name="users_group_id"  {{ (old('users_group_id') == 4 || (!empty($user) && $user->users_group_id==4)) ? 'checked' : '' }}  value="4">
                           <label class="form-check-label">Customer</label>
                     </div>
                     <div class="form-check d-inline ml-3">
-                          <input class="form-check-input" type="radio" name="users_group_id"  {{ (old('users_group_id') == 5 || (!empty($user) && $user->users_group_id)==5) ? 'checked' : '' }}  value="5">
+                          <input class="form-check-input" type="radio" name="users_group_id"  {{ (old('users_group_id') == 5 || (!empty($user) && $user->users_group_id==5)) ? 'checked' : '' }}  value="5">
                           <label class="form-check-label">Vendor</label>
                     </div>
                     

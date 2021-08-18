@@ -14,14 +14,14 @@
         @endif
         @csrf
         <input type="hidden" name="id" value="{{ (!empty($user))?$user->id:'' }}">
+        <input type="hidden" name="users_group_id" value="{{(!empty($user) && $user->users_group_id==4) ? $user->users_group_id : '4'}}">
         
 
         <div class="row">
-        <div class="col-sm-12 col-md-12">
-                <!-- text input -->
+            <!-- <div class="col-sm-12 col-md-12">
                 <div class="form-group">
                     <div class="form-check d-inline">
-                          <input class="form-check-input" type="radio" name="users_group_id"  {{ old('name',(!empty($user) && $user->users_group_id==4)) ? 'checked' : '' }}  value="4">
+                          <input class="form-check-input" type="radio" name="users_group_id"  {{ old('users_group_id',(!empty($user) && $user->users_group_id==4)) ? 'checked' : '' }}  value="4">
                           <label class="form-check-label">Customer</label>
                     </div>
                     <div class="form-check d-inline ml-3">
@@ -30,7 +30,7 @@
                     </div>
                     
                 </div>
-            </div>
+            </div> -->
             
             <div class="col-sm-12 col-md-4">
                 <!-- text input -->

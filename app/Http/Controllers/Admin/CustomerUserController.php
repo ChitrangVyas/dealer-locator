@@ -54,12 +54,15 @@ class CustomerUserController extends Controller
         if($request_data['users_group_id'] == 4 || $request_data['users_group_id'] == 5){
         try{
             $user = User::create($request_data);
+            $user['city'] = $user->city;
+            //$user_data = $user->withAndWhereHas('city', function($query) use ($user){$query->where('id', $user->city_id);})->get()->toArray();
+            
             if($request->ajax()){
-                return response()->json($user);
+                return response()->json($user,200,[],1);
             }
         }catch(Exception $e){
             if($request->ajax()){
-                return response()->json($user);
+                return response()->json(['exception'=> $e->getMessage()]);
             }
             return redirect(route('customer.create'))->with('exception', $e->getMessage());
         }

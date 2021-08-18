@@ -179,22 +179,13 @@ jQuery(document).ready(function(){
             url: "{{ route('customer.store') }}",
             type: 'POST',            
             data: $('#customerForm').serialize(),
-            success: function (data) {                
-                // $("#customerBody").html(data);
-                //console.log(data);
-                $("#modal-lg").modal("hide");
-                var data = {
-                    id: data.id,
-                    text: data.name+" - "+data.zipcode
-                };
-
-                var newOption = new Option(data.text, data.id, true, true);
+            success: function (data) { 
+                $("#modal-lg").modal("hide");                
+                var newOption = new Option(data.name+" - " + data.zipcode + " - " + data.city.name, data.id, true, true);
                 $('#customer').append(newOption).trigger('change');
             },
             error: function (jqXHR, textStatus, errorThrown) {
-                console.log(jqXHR.responseText);
                 var err = JSON.parse(jqXHR.responseText).errors;
-                console.log(err);
                 $.each(err,function(key,val){                
                     $(`[name=${key}]`).closest('.form-group').after(`<div class="alert alert-danger mt-2">${val}</div>`);                                        
                 });

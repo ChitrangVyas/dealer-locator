@@ -34,7 +34,7 @@ class InquiryLogController extends Controller
     public function create()
     {
         //
-        return view('admin.inquiry.log');
+        return view('layouts.partials.log-form');
     }
 
     /**
@@ -47,12 +47,21 @@ class InquiryLogController extends Controller
     {
         if($request->ajax()){
             try{
-                $inquiry = InquiryLog::create($request->all());
+                $requestDefault = $request->all();
+                $request_data = $request->all();
+                $request_data['is_reminder']=0;
+                $request_data['reminder']=NULL;
+                $inquiry = InquiryLog::create($request_data);
+                if(!empty($requestDefault['is_reminder'])){
+                    $requestDefault['is_reminder'] = 1;
+                    $requestDefault['description']='';
+                    $inquiry = InquiryLog::create($requestDefault);
+                }
+                
                 if(!empty($inquiry))
-                return response()->json(['status' => 'successful','code'=>1,'message'=>'Inquiry Successfully saved.']);
-            } catch(Exception $e) {
-                return response('',422)->json(['status' => 'error','code' => 0,'message' => $e->getMessage()]);
-                // return redirect(route('inquiry.create'))->with('exception', $e->getMessage());
+                    return response()->json(['status' => 'successful','code'=>1,'message'=>'Inquiry Successfully saved.']);
+            } catch(Exception $e) { 
+                return response()->json(['status' => 'error','code' => 0,'message' => $e->getMessage()]);                
             }
         } else {
             return response('',422)->json(['status' => 'error','message'=>'Invalid request','code' => 0]);
@@ -68,6 +77,9 @@ class InquiryLogController extends Controller
     public function show($id)
     {
         //
+        
+        // $inquiry_logs = InquiryLog::where('inquiry_id','=',$id)->groupBy('created_at')->get();
+        return view('admin.inquiry.view');
     }
 
     /**

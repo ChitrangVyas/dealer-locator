@@ -11,13 +11,15 @@ class InquiryLog extends Model
     use HasFactory;
     use SoftDeletes;
     protected $table = 'inquiries_log';
-    protected $fillable = [
+    /* protected $fillable = [
         'type',
         'reminder',
         'description',
         'inquiry_id',
         'logged_by',
-    ];
+    ]; */
+
+    protected $guarded = [];
 
     public function inquiry(){
         return $this->belongsTo(Inquiry::class);

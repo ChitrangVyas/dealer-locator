@@ -49,32 +49,18 @@
                             <div class="card-header p-0 pt-1 border-bottom-0">
                                 <ul class="nav nav-tabs" id="tabs" role="tablist">
                                     <li class="nav-item">
-                                        <a class="nav-link active" id="tab-email" data-tab="email" data-toggle="pill" href="#nav-tab-email" role="tab" aria-controls="nav-tab-email" aria-selected="true" onclick="activeTab(this)">Email</a>
+                                        <a class="nav-link active" id="tab-view" data-tab="view" data-toggle="pill" href="#nav-tab-view" role="tab" aria-controls="nav-tab-view" aria-selected="true" onclick="activeTab(this)">View Log</a>
                                     </li>
                                     <li class="nav-item">
-                                        <a class="nav-link" id="tab-calls" data-tab="calls" data-toggle="pill" href="#nav-tab-calls" role="tab" aria-controls="nav-tab-calls" aria-selected="false" onclick="activeTab(this)">Calls</a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a class="nav-link" id="tab-meetings" data-tab="meetings" data-toggle="pill" href="#nav-tab-meetings" role="tab" aria-controls="nav-tab-meetings" aria-selected="false" onclick="activeTab(this)">Meetings</a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a class="nav-link" id="tab-notes" data-tab="notes" data-toggle="pill" href="#nav-tab-notes" role="tab" aria-controls="nav-tab-notes" aria-selected="false" onclick="activeTab(this)">Notes</a>
+                                        <a class="nav-link" id="tab-add" data-tab="add" data-toggle="pill" href="#nav-tab-add" role="tab" aria-controls="nav-tab-add" aria-selected="false" onclick="activeTab(this)">Add Log</a>
                                     </li>
                                 </ul>
                             </div>
                             <div class="card-body">
                                 <div class="tab-content" id="tab-content">
-                                    <div class="tab-pane fade show active" id="nav-tab-email" role="tabpanel" aria-labelledby="tab-email">
-                                      @php $fname = "email"; @endphp  @include('layouts.partials.log-form')
+                                    <div class="tab-pane fade show active" id="nav-tab-view" data-tab="view" role="tabpanel" aria-labelledby="tab-view">
                                     </div>
-                                    <div class="tab-pane fade" id="nav-tab-calls" role="tabpanel" aria-labelledby="tab-calls">
-                                    @php $fname = "calls"; @endphp @include('layouts.partials.log-form')
-                                    </div>
-                                    <div class="tab-pane fade" id="nav-tab-meetings" role="tabpanel" aria-labelledby="tab-meetings">
-                                    @php $fname = "meetings"; @endphp @include('layouts.partials.log-form')
-                                    </div>
-                                    <div class="tab-pane fade" id="nav-tab-notes" role="tabpanel" aria-labelledby="tab-notes">
-                                    @php $fname = "notes"; @endphp @include('layouts.partials.log-form')
+                                    <div class="tab-pane fade" id="nav-tab-add" data-tab="add" role="tabpanel" aria-labelledby="tab-add">
                                     </div>
                                 </div>
                             </div>
@@ -130,21 +116,23 @@
             "serverSide": true,
             "ajax": "{{ route('inquirylistajax') }}",
         });
-        $('.datetimepicker').datetimepicker({
-            icons: {
-                    time: "fas fa-clock-o",
-                    date: "fas fa-calendar",
-            },
-            format:"YYYY/MM/DD HH:mm:00",
-        })
+        $('.datetimepicker-input').datetimepicker({
+            format: 'YYYY-MM-DD HH:mm',
+            date: moment()
+        });
         $('.summernote').summernote({
             height: 150
         });
         $('body').on('click','#addLog',function(){
-            let inquiry_id = $(this).data('inquiry');
-            $('#inquiry_id').val(inquiry_id);
-            let selectedTab = $('.nav-tabs .active').data('tab');
-            $('#type').val(selectedTab);
+            var inquiry_id = $(this).data('inquiry');
+            var view_url = $(this).data('view-url');
+            var add_url = $(this).data('add-url');
+            console.log("Inquiry id",inquiry_id);
+            getTabData(view_url,'view');
+            getTabData(add_url,'add').then(function(){
+                $('#inquiry_id').val(inquiry_id);
+            });
+            $('#modal-lg').attr("data-inquiry",inquiry_id);
         });
         $('#saveInquiryLog').on('submit', function(e){
             e.preventDefault();
@@ -154,15 +142,12 @@
                         showConfirmButton: false,
                         timer: 5000
                         });
-            var data = $('#saveInquiryLog').serialize();
-            var url = "{{ route('inquiry-log.store') }}";
             $.ajax({
-                url: url,
+                url: "{{ route('inquiry-log.store') }}",
                 type: 'POST',
-                data: data,
+                data: $('#saveInquiryLog').serialize(),
                 dataType: 'JSON',
                 success: function (data) {
-                    console.log(data);
                     if(data.code == 1){
                         Toast.fire({
                             type: 'success',
@@ -177,19 +162,54 @@
                     }
                 },
                 error: function (jqXHR, textStatus, errorThrown) {
-                    console.log(jqXHR.responseText);
-                        Toast.fire({
-                            type: 'error',
-                            title: JSON.parse(jqXHR.responseText).message
-                        });
+                    var err = JSON.parse(jqXHR.responseText).errors;
+                    $.each(err,function(key,val){                
+                        $(`[name=${key}]`).closest('.form-group').after(`<div class="alert alert-danger mt-2">${val}</div>`);                                        
+                    });
+                    Toast.fire({
+                        type: 'error',
+                        title: JSON.parse(jqXHR.responseText).message
+                    });
                 }
             });
         });
-    });
+        $("body").on("click",".is-reminder",function(){
+            isReminderShow();
+        });
 
+        $("body").on('shown.bs.modal',function(){
+            var selectedTab = $(".modal-body .tab-content").find(".active");
+            activeTab(selectedTab);
+        });
+
+    });
+    function isReminderShow(){
+        if (!$("#saveInquiryLog .is-reminder").is(":checked")) {
+                $('.reminder').fadeOut("500");
+                $('.reminder').val('');
+            }else{
+                $('.reminder').show("500");
+            }
+    }
     function activeTab(ele){
         let selectedTab = $(ele).data('tab');
-        $('#type').val(selectedTab);
+    }
+    function getTabData(url,loadTo){
+         return $.ajax({
+            url: url,
+            type: 'GET',
+            success: function(res) {
+                $(`#nav-tab-${loadTo}`).html(res);
+                $('.datetimepicker-input').datetimepicker({
+                    format: 'YYYY-MM-DD HH:mm',
+                    date: moment()
+                });
+                $('.summernote').summernote({
+                    height: 150
+                });
+                isReminderShow();
+            }
+        });
     }
 
     function deleteUser(id) {

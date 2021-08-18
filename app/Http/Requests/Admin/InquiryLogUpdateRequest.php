@@ -25,7 +25,6 @@ class InquiryLogUpdateRequest extends FormRequest
     {
         return [
             'type' => 'required',
-            'reminder' => 'required',
             'description' => 'required',
             'inquiry_id'=>'required',
             'logged_by'=>'required',

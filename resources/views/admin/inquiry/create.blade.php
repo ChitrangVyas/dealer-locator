@@ -45,7 +45,7 @@
                         <select class="form-control select2 customer" id='customer' name='customer'>
                             <option value="">Select</option>
                             @if(!empty($inquiry) && !empty($inquiry->customer_id))
-                                <option value="{{$inquiry->customer_id}}" selected>{{$inquiry->customer->name}}</option>
+                                <option value="{{$inquiry->customer_id}}" selected>{{$inquiry->customer->name.' - ' .$inquiry->customer->zipcode.' - '. $inquiry->customer->city->name  }}</option>
                             @endif
                         </select>
                         <span class="input-group-append">
@@ -80,7 +80,7 @@
                     <select class="form-control select2 dealer" id='dealer' name='dealer'>
                         <option value="">Select</option>
                         @if(!empty($inquiry) && !empty($inquiry->dealer_id))
-                            <option value="{{$inquiry->dealer_id}}" selected>{{$inquiry->dealer->name}}</option>
+                            <option value="{{$inquiry->dealer_id}}" selected>{{$inquiry->dealer->name.' - ' .$inquiry->dealer->zipcode.' - '. $inquiry->dealer->city->name}}</option>
                         @endif
                     </select>
                     @error('dealer')

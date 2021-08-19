@@ -5,6 +5,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Models\InquiryLog;
+use Illuminate\Support\Facades\DB;
 
 class Inquiry extends Model
 {
@@ -35,5 +37,9 @@ class Inquiry extends Model
 
     public function log(){
         return $this->hasMany(InquiryLog::class);
+    }
+    public function getLogByDate($date){
+        $logs = InquiryLog::where(DB::raw("(DATE_FORMAT(for_created_at,'%Y-%m-%d'))"),'=',$date)->where('inquiry_id','=',$this->id)->get();        
+        return $logs;
     }
 }

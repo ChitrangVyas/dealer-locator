@@ -54,6 +54,9 @@
                                     <li class="nav-item">
                                         <a class="nav-link" id="tab-add" data-tab="add" data-toggle="pill" href="#nav-tab-add" role="tab" aria-controls="nav-tab-add" aria-selected="false" onclick="activeTab(this)">Add Log</a>
                                     </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" id="tab-task" data-tab="task" data-toggle="pill" href="#nav-tab-task" role="tab" aria-controls="nav-tab-task" aria-selected="false" onclick="activeTab(this)">Add Task</a>
+                                    </li>
                                 </ul>
                             </div>
                             <div class="card-body">
@@ -61,6 +64,8 @@
                                     <div class="tab-pane fade show active" id="nav-tab-view" data-tab="view" role="tabpanel" aria-labelledby="tab-view">
                                     </div>
                                     <div class="tab-pane fade" id="nav-tab-add" data-tab="add" role="tabpanel" aria-labelledby="tab-add">
+                                    </div>
+                                    <div class="tab-pane fade" id="nav-tab-task" data-tab="task" role="tabpanel" aria-labelledby="tab-task">
                                     </div>
                                 </div>
                             </div>
@@ -127,15 +132,73 @@
             var inquiry_id = $(this).data('inquiry');
             var view_url = $(this).data('view-url');
             var add_url = $(this).data('add-url');
+            var task_url = $(this).data('task-url');
             console.log("Inquiry id",inquiry_id);
             getTabData(view_url,'view');
             getTabData(add_url,'add').then(function(){
                 $('#inquiry_id').val(inquiry_id);
             });
+            getTabData(task_url,'task').then(function(){
+                $('#reminder_inquiry_id').val(inquiry_id);
+            });
             $('#modal-lg').attr("data-inquiry",inquiry_id);
         });
-        $('#saveInquiryLog').on('submit', function(e){
+        $('body').on('submit','#saveInquiryLog', function(e){
             e.preventDefault();
+            let url = "{{ route('inquiry-log.store') }}";
+            let data = $('#saveInquiryLog').serialize();
+            saveInquiryLog(url,data);
+        });
+        $('body').on('submit','#saveReminder', function(e){
+            e.preventDefault();
+            let url = "{{ route('storeReminder') }}";
+            let data = $('#saveReminder').serialize();
+
+            saveInquiryLog(url,data);
+        });
+        $("body").on("click",".is-reminder",function(){
+            isReminderShow();
+        });
+
+        $("body").on('shown.bs.modal',function(){
+            var selectedTab = $(".modal-body .tab-content").find(".active");
+            activeTab(selectedTab);
+        });
+
+    });
+    function isReminderShow(){
+        if (!$("#saveInquiryLog .is-reminder").is(":checked")) {
+                $('#saveInquiryLog .reminder').fadeOut("500");
+                $('#saveInquiryLog .reminder').val('');
+            }else{
+                $('#saveInquiryLog .reminder').show("500");
+            }
+    }
+    function activeTab(ele){
+        let selectedTab = $(ele).data('tab');
+    }
+    function getTabData(url,loadTo){
+         return $.ajax({
+            url: url,
+            type: 'GET',
+            success: function(res) {
+                $(`#nav-tab-${loadTo}`).html(res);
+                $('.datetimepicker-input').datetimepicker({
+                    format: 'YYYY-MM-DD HH:mm',
+                    date: moment()
+                });
+                $('.summernote').summernote({
+                    height: 150
+                });
+                isReminderShow();
+                if(loadTo == 'task'){
+                    $('#saveReminder .reminder').val('');
+                }
+            }
+        });
+    }
+
+    function saveInquiryLog(url,formData){
             const Toast = Swal.mixin({
                         toast: true,
                         position: 'top-end',
@@ -143,9 +206,9 @@
                         timer: 5000
                         });
             $.ajax({
-                url: "{{ route('inquiry-log.store') }}",
+                url: url,
                 type: 'POST',
-                data: $('#saveInquiryLog').serialize(),
+                data: formData,
                 dataType: 'JSON',
                 success: function (data) {
                     if(data.code == 1){
@@ -172,44 +235,6 @@
                     });
                 }
             });
-        });
-        $("body").on("click",".is-reminder",function(){
-            isReminderShow();
-        });
-
-        $("body").on('shown.bs.modal',function(){
-            var selectedTab = $(".modal-body .tab-content").find(".active");
-            activeTab(selectedTab);
-        });
-
-    });
-    function isReminderShow(){
-        if (!$("#saveInquiryLog .is-reminder").is(":checked")) {
-                $('.reminder').fadeOut("500");
-                $('.reminder').val('');
-            }else{
-                $('.reminder').show("500");
-            }
-    }
-    function activeTab(ele){
-        let selectedTab = $(ele).data('tab');
-    }
-    function getTabData(url,loadTo){
-         return $.ajax({
-            url: url,
-            type: 'GET',
-            success: function(res) {
-                $(`#nav-tab-${loadTo}`).html(res);
-                $('.datetimepicker-input').datetimepicker({
-                    format: 'YYYY-MM-DD HH:mm',
-                    date: moment()
-                });
-                $('.summernote').summernote({
-                    height: 150
-                });
-                isReminderShow();
-            }
-        });
     }
 
     function deleteUser(id) {

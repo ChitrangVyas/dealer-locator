@@ -4,11 +4,13 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\InquiryLogCreateRequest;
+use App\Http\Requests\Admin\ReminderCreateRequest;
 use App\Models\InquiryLog;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
 use View;
-
+use App\Models\Inquiry;
 class InquiryLogController extends Controller
 {
     public function __construct() {
@@ -50,7 +52,7 @@ class InquiryLogController extends Controller
                 $requestDefault = $request->all();
                 $request_data = $request->all();
                 $request_data['is_reminder']=0;
-                $request_data['reminder']=NULL;
+                $request_data['for_created_at']= date("Y-m-d H:i:s", time());
                 $inquiry = InquiryLog::create($request_data);
                 if(!empty($requestDefault['is_reminder'])){
                     $requestDefault['is_reminder'] = 1;
@@ -78,8 +80,9 @@ class InquiryLogController extends Controller
     {
         //
         
-        // $inquiry_logs = InquiryLog::where('inquiry_id','=',$id)->groupBy('created_at')->get();
-        return view('admin.inquiry.view');
+        $inquiry_logs = InquiryLog::where('inquiry_id','=',$id)->orderBy('for_created_at','desc')->get()->groupBy(function($date){ return Carbon::parse($date->for_created_at)->format('Y-m-d');});              
+        $inquiry = Inquiry::find($id);
+        return view('admin.inquiry.view',['inquiry_logs'=>$inquiry_logs,'inquiry'=>$inquiry]);
     }
 
     /**
@@ -102,11 +105,9 @@ class InquiryLogController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+     
     }
-
-    /**
-     * Remove the specified resource from storage.
+       /*
      *
      * @param  int  $id
      * @return \Illuminate\Http\Response
@@ -114,5 +115,29 @@ class InquiryLogController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    public function createReminder()
+    {
+        //
+        return view('admin.inquiry.reminder');
+    }
+
+    public function storeReminder(ReminderCreateRequest $request)
+    {
+        if($request->ajax()){
+            try{
+                $requestDefault = $request->all();
+                $requestDefault['is_reminder'] = 1;
+                $requestDefault['description']=(!empty($requestDefault['description'])) ? $requestDefault['description'] : '';
+                $inquiry = InquiryLog::create($requestDefault);
+                if(!empty($inquiry))
+                    return response()->json(['status' => 'successful','code'=>1,'message'=>'Reminder Successfully saved.']);
+            } catch(Exception $e) { 
+                return response()->json(['status' => 'error','code' => 0,'message' => $e->getMessage()]);                
+            }
+        } else {
+            return response('',422)->json(['status' => 'error','message'=>'Invalid request','code' => 0]);
+        }        
     }
 }

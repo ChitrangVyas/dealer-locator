@@ -40,8 +40,8 @@
                     <div class="icheck-primary d-inline">
                         <label for="checkboxPrimary1">Reminder</label>
                         <input type="checkbox" class="ml-3 is-reminder" name="is_reminder" id="checkboxPrimary1">
-                        <input type="text" class="form-control datetimepicker-input reminder" id="datetimepicker" name="reminder" data-toggle="datetimepicker" data-target="#datetimepicker" autocomplete="off" />
-                        @error('reminder')
+                        <input type="text" class="form-control datetimepicker-input reminder" id="datetimepicker" name="for_created_at" data-toggle="datetimepicker" data-target="#datetimepicker" autocomplete="off" />
+                        @error('for_created_at')
                             <div class="alert alert-danger mt-2">{{ $message }}</div>
                         @enderror
                     </div>

@@ -250,7 +250,7 @@
                         "_token": token,
                     },
                     success: function() {
-                        window.location.reload;
+                        window.location.reload();
                     }
                 });
             }

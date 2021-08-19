@@ -28,4 +28,8 @@ class Product extends Model
         return $this->belongsToMany(Category::class,'product_category')->withTimestamps();
     }
 
+    public function inquiries(){
+        return $this->belongsToMany(Inquiry::class,'inquiries_products');
+    }
+
 }

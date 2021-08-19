@@ -32,7 +32,7 @@ class Inquiry extends Model
     }
 
     public function product(){
-        return $this->belongsTo(Product::class);
+        return $this->belongsToMany(Product::class,'inquiries_products')->withTimestamps();
     }
 
     public function log(){

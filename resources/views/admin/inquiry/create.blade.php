@@ -62,10 +62,12 @@
                 <!-- text input -->
                 <div class="form-group">
                     <label>Product</label>
-                    <select class="form-control select2 product" id='product' name='product'>
+                    <select class="form-control select2 product" multiple="multiple" id='product' name='product[]'>
                         <option value="">Select</option>
-                        @if(!empty($inquiry) && $inquiry->product_id)
-                            <option value="{{$inquiry->product_id}}" selected>{{$inquiry->product->name}}</option>
+                        @if(!empty($inquiry) && $inquiry->product)
+                            @foreach ($inquiry->product as $product)
+                                <option value="{{$product->id}}" selected>{{$product->name}}</option>
+                            @endforeach
                         @endif
                     </select>
                     @error('state')

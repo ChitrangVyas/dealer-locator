@@ -10,6 +10,7 @@ use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Prophecy\Doubler\Generator\Node\ReturnTypeNode;
 use View;
 
 class RetailerUserController extends MainController
@@ -91,9 +92,25 @@ class RetailerUserController extends MainController
      */
     public function edit($id)
     {
-        //
-        $user = User::findOrFail($id);
-        return view('retailer.create',compact('user'));
+        //'
+        $parent_user = auth()->user();
+        $user = User::find($id);
+        if($parent_user && (empty($parent_user->users_group_id) || $parent_user->users_group_id == 2)){
+            if($parent_user->users_group_id == 2){
+                if($parent_user->id == $user->parent_id){
+                    if(!empty($user)){
+                        return view('retailer.create',compact('user'));
+                    }
+                }else{
+                    return abort(404);    
+                }
+            }else{
+                return view('retailer.create',compact('user'));
+                
+            }
+            
+        }
+        return abort(404);
     }
 
     /**
@@ -140,10 +157,17 @@ class RetailerUserController extends MainController
     }
 
     public function listAjaxData(Request $request){
+        $user =  auth()->user();
+        $parent_id = '';
+        if((!empty($user->userGroup)) && $user->userGroup->id == '2'){
+            $parent_id = $user->id;
+        }
+
         $start =  $request['start'];
         $length=  $request['length'];
         $search = $request['search']['value'];
         $where = 'users_group_id = 3';
+        $where .= (!empty($parent_id))?" AND parent_id=$parent_id":'';
         $where .= (!empty($search)) ? " AND (users.name like '$search%' OR email like '$search%' OR mobile like '$search%' OR cities.name like '$search%' OR states.name like '$search%')":'';
         $users = DB::table('users')
         ->selectRaw('users.id,users.name,email,mobile,cities.name as city, states.name as state')

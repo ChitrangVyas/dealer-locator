@@ -51,6 +51,7 @@
               </p>
             </a>
           </li> -->
+         @dealer
           <li class="nav-item has-treeview">
             <a href="#" class="nav-link">
               <i class="nav-icon fas fa-users"></i>
@@ -59,7 +60,9 @@
                 <i class="right fas fa-angle-left"></i>
               </p>
             </a>
-            <ul class="nav nav-treeview">  
+            <ul class="nav nav-treeview">
+              @enddealer
+              @admin  
               <li class="nav-item">
                 <a href="{{route('staff.index')}}" class="nav-link  {{ $elementActive == 'staff' ? 'active' : '' }}">
                 <i class="nav-icon fas fa-users"></i>
@@ -76,6 +79,8 @@
                   </p>
                 </a>
               </li>
+              @endadmin
+              @dealer
               <li class="nav-item">
                 <a href="{{route('retailer.index')}}" class="nav-link  {{ $elementActive == 'retailer' ? 'active' : '' }}">
                 <i class="nav-icon fas fa-users"></i>
@@ -91,9 +96,13 @@
                     Contacts
                   </p>
                 </a>
-              </li>  
+              </li>
+              @enddealer
+              @dealer  
             </ul>
+            @enddealer
           </li>
+          @admin
           <li class="nav-item has-treeview">
           <a href="#" class="nav-link">
               <i class="nav-icon fas fa-copy"></i>
@@ -143,6 +152,8 @@
               </li> 
             </ul>
           </li>
+          @endadmin
+          @notCustomer
           <li class="nav-item">
             <a href="{{ route('inquiries-source.index') }}" class="nav-link  {{ $elementActive == 'inquiries_source' ? 'active' : '' }}">
             <i class="nav-icon fas fa-link"></i>
@@ -154,7 +165,8 @@
             <i class="nav-icon fas fa-phone-square"></i>
               <p>Inquiry</p>
             </a>
-          </li> 
+          </li>
+          @endnotCustomer 
         </ul>
       </nav>
       <!-- /.sidebar-menu -->

@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class UserGroup extends Model
 {
     use HasFactory;
+    protected $table = "users_group";
     public function users()
     {
         return $this->hasMany(User::class);

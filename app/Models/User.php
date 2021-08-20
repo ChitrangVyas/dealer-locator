@@ -53,7 +53,7 @@ class User extends Authenticatable
 
     public function userGroup()
     {
-        return $this->belongsTo(UserGroup::class);
+        return $this->belongsTo(UserGroup::class,'users_group_id');
     }
     public function city(){
         return $this->belongsTo(City::class);

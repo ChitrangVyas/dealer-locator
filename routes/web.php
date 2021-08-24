@@ -35,6 +35,8 @@ Route::group(['prefix'=>'admin','middleware'=>['auth']],function () {
     Route::get('inquiry/listajaxdata', [App\Http\Controllers\Admin\InquiryController::class,'listAjaxData'])->name('inquirylistajax');
     Route::get('inquiry-log/reminder/add', [App\Http\Controllers\Admin\InquiryLogController::class,'createReminder'])->name('createReminder');
     Route::post('inquiry-log/reminder/add', [App\Http\Controllers\Admin\InquiryLogController::class,'storeReminder'])->name('storeReminder');
+    Route::post('order/quote/create', [App\Http\Controllers\Admin\OrderController::class,'quoteCreate'])->name('order.quote.create');
+    Route::post('order/quote/', [App\Http\Controllers\Admin\OrderController::class,'quoteStore'])->name('order.quote.store');
 
     Route::resource('staff', App\Http\Controllers\Admin\AdminUserController::class);
     Route::resource('dealer', App\Http\Controllers\Admin\DealerUserController::class);   
@@ -47,6 +49,7 @@ Route::group(['prefix'=>'admin','middleware'=>['auth']],function () {
     Route::resource('inquiries-source', App\Http\Controllers\Admin\InquiriesSourceController::class);
     Route::resource('inquiry', App\Http\Controllers\Admin\InquiryController::class);
     Route::resource('inquiry-log', App\Http\Controllers\Admin\InquiryLogController::class);
+    Route::resource('order', App\Http\Controllers\Admin\OrderController::class);
 });
 
 

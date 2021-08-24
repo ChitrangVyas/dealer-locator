@@ -72,23 +72,14 @@ class ProductController extends Controller
                 'description' => $request_data['description'],
                 'brand_id' => $request_data['brand_id'],
                 'inventory' => $request['inventory'],
+                'price' => $request['price'],
                 // 'category' => $request_data['category'],
                 'image' => $file_path
             ]);
             $categories = Category::find($request_data['categories']);
             $product->categories()->sync($categories);
         }catch(Exception $e){
-            print_r([
-                'name' => $request_data['name'],
-                'description' => $request_data['description'],
-                'brand_id' => $request_data['brand_id'],
-                'inventory' => $request['inventory'],
-                // 'category' => $request_data['category'],
-                'image' => $file_path
-            ]);
-
-            echo $e; exit;
-            return redirect(route('product.create'));
+            return redirect(route('product.create'))->with('exception', $e->getMessage());
         }
 
         return redirect(route('product.index'));
@@ -139,21 +130,25 @@ class ProductController extends Controller
             'description' => $request_data['description'],
             'brand_id' => $request_data['brand_id'],
             'inventory' => $request['inventory'],           
+            'price' => $request['price'],         
         ];
-        
-        if($request->file()) {
-            $filename = str_replace('/storage/uploads/products/', '', $product->image);
-            unlink(storage_path('app/public/uploads/products/'.$filename));
-            $fileName = time().'_'.$request->image->getClientOriginalName();
-            $filePath = $request->file('image')->storeAs('uploads/products', $fileName, 'public');
-            $file_path = '/storage/' . $filePath;
-            $upload_data['image']  = $file_path;
-        }
+        try{
+            if($request->file()) {
+                $filename = str_replace('/storage/uploads/products/', '', $product->image);
+                unlink(storage_path('app/public/uploads/products/'.$filename));
+                $fileName = time().'_'.$request->image->getClientOriginalName();
+                $filePath = $request->file('image')->storeAs('uploads/products', $fileName, 'public');
+                $file_path = '/storage/' . $filePath;
+                $upload_data['image']  = $file_path;
+            }
 
-        $is_updated = $product->update($upload_data);
-        if($is_updated){
-        $categories = Category::find($request_data['categories']);
-        $product->categories()->sync($categories);
+            $is_updated = $product->update($upload_data);
+            if($is_updated && !empty($request_data['categories'])){
+                $categories = Category::find($request_data['categories']);
+                $product->categories()->sync($categories);
+            }
+        }catch(Exception $e){
+            return redirect(route('product.create'))->with('exception', $e->getMessage());
         }
     
         return redirect(route('product.index'));

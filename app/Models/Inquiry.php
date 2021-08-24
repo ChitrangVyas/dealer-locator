@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Admin\Order;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -12,12 +13,13 @@ class Inquiry extends Model
 {
     use HasFactory;
     use SoftDeletes;
-    protected $fillable = [
+    /* protected $fillable = [
         'inquiries_source_id',
         'product_id',
         'customer_id',
         'dealer_id',
-    ];
+    ]; */
+    protected $guarded = [];
     
     public function customer(){
         return $this->belongsTo(User::class);
@@ -38,6 +40,11 @@ class Inquiry extends Model
     public function log(){
         return $this->hasMany(InquiryLog::class);
     }
+
+    public function order(){
+        return $this->belongsTo(Order::class);
+    }
+
     public function getLogByDate($date){
         $logs = InquiryLog::where(DB::raw("(DATE_FORMAT(for_created_at,'%Y-%m-%d'))"),'=',$date)->where('inquiry_id','=',$this->id)->get();        
         return $logs;

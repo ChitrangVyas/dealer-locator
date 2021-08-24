@@ -80,6 +80,24 @@
     <!-- /.modal-dialog -->
 </div>
 <!-- /.modal -->
+<!-- modal -->
+<div class="modal fade" id="quoteModal">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Quote</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+<!-- /.modal -->
 @endsection
 @section('plugins.Datatables', true)
 @section('plugins.tempusdominus', true)
@@ -143,12 +161,22 @@
             });
             $('#modal-lg').attr("data-inquiry",inquiry_id);
         });
+        $('body').on('click','#createQuote',function(){
+            var inquiry_id = $(this).data('inquiry');
+            var create_quote_url = $(this).data('create-quote-url');
+            let data = {'inquiry_id':inquiry_id};
+            getCreateQuote(create_quote_url,data).then(function(){
+                $('#inquiry_id').val(inquiry_id); 
+            });
+        });
+
         $('body').on('submit','#saveInquiryLog', function(e){
             e.preventDefault();
             let url = "{{ route('inquiry-log.store') }}";
             let data = $('#saveInquiryLog').serialize();
             saveInquiryLog(url,data);
         });
+
         $('body').on('submit','#saveReminder', function(e){
             e.preventDefault();
             let url = "{{ route('storeReminder') }}";
@@ -156,8 +184,41 @@
 
             saveInquiryLog(url,data);
         });
+
+        $('body').on('submit','#saveQuote', function(e){
+            e.preventDefault();
+            let url = "{{ route('order.quote.store') }}";
+            let data = $('#saveQuote').serialize();
+            let inquiry_id = $('#inquiry_id').val();
+            saveInquiryLog(url,data,'quoteModal').then(function(res){
+                if(res.code == 1){
+                  $(`.create-quote-${inquiry_id}`).hide();  
+                }
+            });
+        });
+
         $("body").on("click",".is-reminder",function(){
             isReminderShow();
+        });
+        
+        $("body").on("click",".product", function(){
+            var selected_product = $('input:checkbox:checked').length;
+            if(selected_product < 1){
+                alert("Please select at least one product.");
+                $(this).prop('checked',true);
+            }
+            toggleProductDetail($(this));
+            getTotal();
+        });
+        
+        $("body").on("change",".qty, .price", function(){
+            price = $(this).closest('.product-detail').find('.price').val();
+            qty =  $(this).closest('.product-detail').find('.qty').val();
+            // amount = ele.closest('.product-detail').find('.amount').val();
+
+            amount = price * qty;
+            $(this).closest('.product-detail').find('.amount').text(amount);
+            getTotal();
         });
 
         $("body").on('shown.bs.modal',function(){
@@ -174,6 +235,26 @@
                 $('#saveInquiryLog .reminder').show("500");
             }
     }
+
+    function toggleProductDetail(ele){
+        if (!ele.is(":checked")) {
+            ele.closest('.product-detail').find('input').not('input[type=checkbox]').attr('disabled',true)
+        }else{
+            ele.closest('.product-detail').find('input').not('input[type=checkbox]').attr('disabled',false)
+        }
+    }
+
+    function getTotal(){
+        // ele.closest('.product-detail').find('input').not('input[type=checkbox]').attr('disabled',true);
+        total = 0.00;
+        $('.amount').each(function(){
+            if($(this).closest('.product-detail').find('.product').is(':checked')){
+                total += parseFloat($(this).text());
+            }
+        });
+        $('#total').text(total);
+    }
+
     function activeTab(ele){
         let selectedTab = $(ele).data('tab');
     }
@@ -198,14 +279,14 @@
         });
     }
 
-    function saveInquiryLog(url,formData){
+    function saveInquiryLog(url,formData,modal="modal-lg"){
             const Toast = Swal.mixin({
                         toast: true,
                         position: 'top-end',
                         showConfirmButton: false,
                         timer: 5000
                         });
-            $.ajax({
+            return $.ajax({
                 url: url,
                 type: 'POST',
                 data: formData,
@@ -216,7 +297,7 @@
                             type: 'success',
                             title: data.message
                         });
-                        $('#modal-lg').modal('hide');
+                        $(`#${modal}`).modal('hide');
                     }else{
                         Toast.fire({
                             type: 'error',
@@ -235,6 +316,19 @@
                     });
                 }
             });
+    }
+
+    function getCreateQuote(url,data){
+        var token = $("meta[name='csrf-token']").attr("content");
+        return $.ajax({
+            url: url,
+            type: 'POST',
+            data:{data,'_token':token},
+            success: function(res) {
+                $(`#quoteModal .modal-body`).html(res);
+                // $('.product-detail input').not('input[type=checkbox]').attr('disabled',true);
+            }
+        });
     }
 
     function deleteUser(id) {

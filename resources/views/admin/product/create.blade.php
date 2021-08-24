@@ -114,7 +114,18 @@
                             <label>Inventory</label>
                             <input type="number" class="form-control" name="inventory"
                                 value="{{ (!empty($product))?$product->inventory:'' }}" placeholder="inventory">
-                            @error('name')
+                            @error('inventory')
+                            <div class="alert alert-danger mt-2">{{ $message }}</div>
+                            @enderror
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-6">
+                        <!-- text input -->
+                        <div class="form-group">
+                            <label>Price</label>
+                            <input type="number" class="form-control" name="price"
+                                value="{{ (!empty($product))?$product->price:'' }}" placeholder="Price" min=1 required>
+                            @error('price')
                             <div class="alert alert-danger mt-2">{{ $message }}</div>
                             @enderror
                         </div>

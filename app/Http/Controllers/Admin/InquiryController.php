@@ -2,8 +2,6 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\Controller;
-use App\Http\Requests\Admin\InquiriesUpdateRequest;
 use App\Http\Requests\Admin\InquiryCreateRequest;
 use App\Http\Requests\Admin\InquiryUpdateRequest;
 use App\Models\InquiriesSource;
@@ -14,7 +12,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use View;
 
-class InquiryController extends Controller
+class InquiryController extends MainController
 {
     public function __construct() {
         View::share ( 'title', 'Inquiry' );
@@ -57,6 +55,7 @@ class InquiryController extends Controller
             $inquiry = Inquiry::create([
                 'inquiries_source_id'=>$request_data['inquiry_source'],
                 'customer_id'=>$request_data['customer'],
+                'created_by'=>$request_data['created_by'],
                 // 'product_id'=>$request_data['product'],
             ]);
             if(!empty($request_data['product'])){
@@ -139,10 +138,17 @@ class InquiryController extends Controller
     }
 
     public function listAjaxData(Request $request){
+        $user =  auth()->user();
+        $dealer_id = '';
+        if((!empty($user->userGroup)) && $user->userGroup->id == '2'){
+            $dealer_id = $user->id;
+        }
+
         $start =  $request['start'];
         $length=  $request['length'];
         $search = $request['search']['value'];
         $where = 'inquiries.deleted_at is NULL';
+        $where .= (!empty($dealer_id))?" AND (dealer_id=$dealer_id OR inquiries.created_by=$dealer_id)":'';
         $where .= (!empty($search)) ? " AND (c.name like '$search%' OR p.name like '$search%' OR source like '%$search%' OR (d.name is NOT NULL AND d.name like '$search%'))":'';
         $inquiries = DB::table('inquiries')
         ->select(DB::raw('inquiries.id,source,c.name as customer,d.name as dealer,group_concat(p.name) as product'))
@@ -164,7 +170,8 @@ class InquiryController extends Controller
             $dealer = (!empty($inquiry->dealer))?$inquiry->dealer:'N/A';
             $action_html = "<span><a href=".route('inquiry.edit',$inquiry->id)." class='btn btn-primary'>Edit</a></span>";
             $action_html .= "<span class='ml-3'><button type=submit data-user=$inquiry->id class='btn btn-danger' onClick=deleteUser($inquiry->id)>Delete</button></span>";
-            $action_html .= "<span class='ml-3'><button type='button' id='addLog' class=' ml-3 btn btn-default' data-inquiry=$inquiry->id data-view-url='".route('inquiry-log.show',$inquiry->id)."' data-add-url='".route('inquiry-log.create')."' data-task-url='".route('createReminder')."' data-toggle='modal' data-target='#modal-lg'>Add Log</button></span>";
+            $action_html .= "<span class='ml-3'><button type='button' id='addLog' class=' ml-3 btn btn-default' data-inquiry=$inquiry->id data-view-url='".route('inquiry-log.show',$inquiry->id)."' data-add-url='".route('inquiry-log.create')."' data-task-url='".route('createReminder')."' data-toggle='modal' data-target='#modal-lg'>View Log</button></span>";
+            $action_html .= "<span class='ml-3'><button type='button' id='createQuote' class=' ml-3 btn btn-success create-quote-".$inquiry->id."' data-inquiry=$inquiry->id data-create-quote-url='".route('order.quote.create')."' data-toggle='modal' data-target='#quoteModal'>Quote</button></span>";
             // $action_html .= "<span class='ml-3'><a href=# class='btn btn-primary'>View</a></span>";            
             $data[] = [$inquiry->id,$inquiry->product,ucwords($inquiry->customer),$inquiry->source,$dealer,$action_html];
         }

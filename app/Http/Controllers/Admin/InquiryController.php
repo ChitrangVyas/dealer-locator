@@ -151,7 +151,7 @@ class InquiryController extends MainController
         $where .= (!empty($dealer_id))?" AND (dealer_id=$dealer_id OR inquiries.created_by=$dealer_id)":'';
         $where .= (!empty($search)) ? " AND (c.name like '$search%' OR p.name like '$search%' OR source like '%$search%' OR (d.name is NOT NULL AND d.name like '$search%'))":'';
         $inquiries = DB::table('inquiries')
-        ->select(DB::raw('inquiries.id,source,c.name as customer,d.name as dealer,group_concat(p.name) as product'))
+        ->select(DB::raw('inquiries.id, inquiries.status,source,c.name as customer,d.name as dealer,group_concat(p.name) as product'))
         ->join('inquiries_products','inquiries.id','=','inquiries_products.inquiry_id','left')
         ->join('inquiries_source','inquiries.inquiries_source_id','=','inquiries_source.id','left')
         ->join('users AS c','inquiries.customer_id','=','c.id','left')
@@ -171,7 +171,10 @@ class InquiryController extends MainController
             $action_html = "<span><a href=".route('inquiry.edit',$inquiry->id)." class='btn btn-primary'>Edit</a></span>";
             $action_html .= "<span class='ml-3'><button type=submit data-user=$inquiry->id class='btn btn-danger' onClick=deleteUser($inquiry->id)>Delete</button></span>";
             $action_html .= "<span class='ml-3'><button type='button' id='addLog' class=' ml-3 btn btn-default' data-inquiry=$inquiry->id data-view-url='".route('inquiry-log.show',$inquiry->id)."' data-add-url='".route('inquiry-log.create')."' data-task-url='".route('createReminder')."' data-toggle='modal' data-target='#modal-lg'>View Log</button></span>";
-            $action_html .= "<span class='ml-3'><button type='button' id='createQuote' class=' ml-3 btn btn-success create-quote-".$inquiry->id."' data-inquiry=$inquiry->id data-create-quote-url='".route('order.quote.create')."' data-toggle='modal' data-target='#quoteModal'>Quote</button></span>";
+            if(empty($inquiry->status)){
+                // $action_html .= "<span class='ml-3'><button type='button' id='createQuote' class=' ml-3 btn btn-success create-quote-".$inquiry->id."' data-inquiry=$inquiry->id data-create-quote-url='".route('order.quote.create')."' data-toggle='modal' data-target='#quoteModal'>Quote</button></span>";
+                $action_html .= "<span class='ml-3'><button type='button' id='createQuote' class=' ml-3 btn btn-success create-quote-".$inquiry->id."' data-inquiry=$inquiry->id data-create-quote-url='".route('cart.inquiryToQuote.create')."' data-toggle='modal' data-target='#quoteModal'>Create Quote</button></span>";
+            }
             // $action_html .= "<span class='ml-3'><a href=# class='btn btn-primary'>View</a></span>";            
             $data[] = [$inquiry->id,$inquiry->product,ucwords($inquiry->customer),$inquiry->source,$dealer,$action_html];
         }

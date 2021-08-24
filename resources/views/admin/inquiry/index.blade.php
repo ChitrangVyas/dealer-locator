@@ -85,7 +85,7 @@
     <div class="modal-dialog modal-xl">
         <div class="modal-content">
             <div class="modal-header">
-                <h4 class="modal-title">Quote</h4>
+                <h4 class="modal-title" id="cartTitle"></h4>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -100,6 +100,7 @@
 <!-- /.modal -->
 @endsection
 @section('plugins.Datatables', true)
+@section('plugins.Select2', true)
 @section('plugins.tempusdominus', true)
 @section('plugins.summernote', true)
 @section('plugins.Sweetalert2', true)
@@ -146,6 +147,14 @@
         $('.summernote').summernote({
             height: 150
         });
+
+        $(window).keydown(function(event){
+            if(event.keyCode == 13) {
+            event.preventDefault();
+            return false;
+            }
+        });
+
         $('body').on('click','#addLog',function(){
             var inquiry_id = $(this).data('inquiry');
             var view_url = $(this).data('view-url');
@@ -166,23 +175,27 @@
             var create_quote_url = $(this).data('create-quote-url');
             let data = {'inquiry_id':inquiry_id};
             getCreateQuote(create_quote_url,data).then(function(){
+                select2Product();
                 $('#inquiry_id').val(inquiry_id); 
             });
+            /* getCreateQuote(create_quote_url,data).then(function(){
+                $('#inquiry_id').val(inquiry_id); 
+                $('#quoteNumber').text("#"+$('#order_number').val());
+            });
+             */
         });
 
         $('body').on('submit','#saveInquiryLog', function(e){
             e.preventDefault();
             let url = "{{ route('inquiry-log.store') }}";
-            let data = $('#saveInquiryLog').serialize();
-            saveInquiryLog(url,data);
+            saveInquiryLog(url,$('#saveInquiryLog').serialize());
         });
 
         $('body').on('submit','#saveReminder', function(e){
             e.preventDefault();
             let url = "{{ route('storeReminder') }}";
-            let data = $('#saveReminder').serialize();
 
-            saveInquiryLog(url,data);
+            saveInquiryLog(url, $('#saveReminder').serialize());
         });
 
         $('body').on('submit','#saveQuote', function(e){
@@ -210,15 +223,31 @@
             toggleProductDetail($(this));
             getTotal();
         });
+        $("body").on("click","#addProductToCart",function(){
+            addProductToCart().then(function(){
+                select2Product();
+            });
+        });        
         
         $("body").on("change",".qty, .price", function(){
-            price = $(this).closest('.product-detail').find('.price').val();
+            /* price = $(this).closest('.product-detail').find('.price').val();
             qty =  $(this).closest('.product-detail').find('.qty').val();
-            // amount = ele.closest('.product-detail').find('.amount').val();
-
             amount = price * qty;
-            $(this).closest('.product-detail').find('.amount').text(amount);
-            getTotal();
+            // amount = ele.closest('.product-detail').find('.amount').val();
+            $(this).closest('.product-detail').find('.amount').text(amount); */
+            updateCart().then(function(){     
+                select2Product();
+            });
+        });
+
+        $("body").on("click",".delete",function(){
+            if(confirm("Do you want to remove this product from the cart?")){
+                console.log("Delete::",);
+                removeCartProduct($(this).data('product')).then(function(){
+                    select2Product();
+                });
+
+            }
         });
 
         $("body").on('shown.bs.modal',function(){
@@ -325,8 +354,71 @@
             type: 'POST',
             data:{data,'_token':token},
             success: function(res) {
+                $(`#quoteModal .modal-body`).html(res.data.cart_content);
+                $('#cartTitle').text(res.data.cart_title);
+                // $('.product-detail input').not('input[type=checkbox]').attr('disabled',true);
+            }
+        });
+    }
+
+    function addProductToCart(){
+        var token = $("meta[name='csrf-token']").attr("content");
+        return $.ajax({
+            url: "{{route('cart.product.add')}}",
+            type: 'POST',
+            data:{'_token':token,'id':$('#modalId').val(),'product_id':$('#selectProduct').val()},
+            success: function(res) {
                 $(`#quoteModal .modal-body`).html(res);
                 // $('.product-detail input').not('input[type=checkbox]').attr('disabled',true);
+            }
+        });
+    }
+
+    function updateCart(){
+        var token = $("meta[name='csrf-token']").attr("content");
+        return $.ajax({
+            url: "{{route('cart.update')}}",
+            type: 'PUT',
+            data:$('#saveQuote').serialize(),
+            success: function(res) {
+                $(`#quoteModal .modal-body`).html(res);
+                // $('.product-detail input').not('input[type=checkbox]').attr('disabled',true);
+            }
+        });
+    }
+
+    function removeCartProduct(product_id){
+        var token = $("meta[name='csrf-token']").attr("content");
+        return $.ajax({
+            url: "{{ route('cart.product.destroy') }}",
+            type: 'DELETE',
+            data:{'_token':token,'id':$('#modalId').val(),'product_id':product_id},
+            success: function(res) {
+                $(`#quoteModal .modal-body`).html(res);
+                // $('.product-detail input').not('input[type=checkbox]').attr('disabled',true);
+            }
+        });
+    }
+
+    function select2Product(){
+        $('.select-product').select2({
+            minimumInputLength: 2,
+            width:"100%",
+            ajax: {
+                url: "{{route('get_value')}}",
+                dataType: 'json',
+                data: function (params) {
+                    return {
+                        q: params.term, // search term
+                        table:'products',
+                        where: 'deleted_at is NULL'
+                    };
+                },
+                processResults: function (data) {
+                    return {
+                        results: data
+                    };
+                }
             }
         });
     }

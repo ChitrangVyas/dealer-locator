@@ -104,13 +104,18 @@ class OrderController extends MainController
             if(!empty($quote)){
                 $quote_product_data = [];
                 foreach($request_data['product'] as $key => $value){
-                    $quote_product_data[] = array('order_id' => $quote->id, 'product_id' => $value, 'qty' => $request_data['qty'][$key], 'amount' => $request_data['amount'][$key]);
+                    $quote_product_data[] = array('order_id' => $quote->id, 'product_id' => $value, 'qty' => $request_data['qty'][$value], 'amount' => $request_data['amount'][$value]);
                 }
                 // product_id | qty | price => amount
                 $order_product = '';
                 if(!empty($quote_product_data)){
                     $order_product = OrderProduct::insert($quote_product_data);
                 }
+                $inquiry = Inquiry::find($quote_data['inquiry_id']);
+                if(!empty($inquiry)){
+                    $inquiry->update(['status'=>1]);
+                }
+                
                 if(!empty($order_product)){
                     return response()->json(['status' => 'successful','code'=>1,'message'=>'Quote Successfully created.']);
                 }else{

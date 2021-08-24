@@ -5,8 +5,8 @@
     <form method="POST" id="saveQuote">
 @endif
         @csrf
-        <input type="hidden" name="from_user" value="{{$inquiry->customer->id}}" />
-        <input type="hidden" name="to_user" value="{{auth()->user()->id}}" />
+        <input type="hidden" name="from_user" value="{{auth()->user()->id}}" />
+        <input type="hidden" name="to_user" value="{{$inquiry->customer->id}}" />
         <input type="hidden" name="inquiry_id" id="inquiry_id" value="" />
         <input type="hidden" name="type" id="type" value="quote" />
         <input type="hidden" name="order_number" id="order_number" value="{{(!empty($quote_number))?$quote_number:''}}" />
@@ -20,10 +20,10 @@
                 </div>
             </div> -->
             <div class="row">
-                <div class="col-sm-13 col-md-6 mb-3 border-bottom">
+                <!-- <div class="col-sm-13 col-md-6 mb-3 border-bottom">
                     <h4><strong>Quote Number:</strong> #{{$quote_number}}</h4>
-                </div>
-                <div class="col-sm-13 col-md-6 mb-3 border-bottom">
+                </div> -->
+                <div class="col-sm-12 col-md-12 mb-3 border-bottom">
                     <div class="">
                         <h5 class="border-bottom"><strong>Customer Detail</strong></h5>
                         <ul class="list-unstyled">

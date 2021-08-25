@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Models\Admin\Order;
+use App\Models\Admin\OrderProduct;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -31,6 +33,10 @@ class Product extends Model
 
     public function inquiries(){
         return $this->belongsToMany(Inquiry::class,'inquiries_products');
+    }
+
+    public function orders(){
+        return $this->belongsToMany(Order::class);
     }
 
 }

@@ -121,11 +121,10 @@ class CartController extends MainController
         $id = "quote_".$request_data['data']['inquiry_id'];
         $inquiry = Inquiry::findOrFail($request_data['data']['inquiry_id']);
         $cart  = \Cart::session($id);
-        // dd($this->myCart->getTo($id));
         if($cart->isEmpty()){
-        $this->myCart->setTo($id,$inquiry->customer_id);
+        $order_number = random_int(100000, 999999);
+        $items = []; 
         foreach($inquiry->product as $product){
-            $items = []; 
             $items[] = array(
                 'id' => $product->id,
                 'name' => $product->name,
@@ -135,6 +134,9 @@ class CartController extends MainController
             );
         }             
             $cart->add($items);
+            $this->myCart->setOrderNumber($id,$order_number);
+            $this->myCart->setInquiryId($id,$inquiry->id);
+            $this->myCart->setTo($id,$inquiry->customer_id);
         }
         $json['cart_title'] = "Quote";
         $json['cart_content'] = $this->getInquiryToQuoteCart($id,$cart)->render();
@@ -143,7 +145,7 @@ class CartController extends MainController
     }
 
     public function getInquiryToQuoteCart($id,$cart){
-        return view('admin.order.cart',['cart'=>$cart,'id'=>$id,'to_user'=>$this->myCart->getTo($id)]);
+        return view('admin.order.cart',['cart'=>$cart,'id'=>$id,'to_user'=>$this->myCart->getTo($id),'order_number'=>$this->myCart->getOrderNumber($id),'inquiry_id'=>$this->myCart->getInquiryId($id)]);
     }
 
     public function addProductToCart(Request $request){

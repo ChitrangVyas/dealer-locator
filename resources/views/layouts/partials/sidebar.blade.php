@@ -166,6 +166,29 @@
               <p>Inquiry</p>
             </a>
           </li>
+          <li class="nav-item has-treeview {{ ($elementActive == 'quote' || $elementActive == 'po') ? 'menu-open' : ''}}">
+          <a href="#" class="nav-link">
+              <i class="nav-icon fas fa-copy"></i>
+              <p>
+                Order Management
+                <i class="right fas fa-angle-left"></i>
+              </p>
+            </a>
+            <ul class="nav nav-treeview">
+              <li class="nav-item">
+                <a href="{{ route('quote.index') }}" class="nav-link  {{ $elementActive == 'quote' ? 'active' : '' }}">
+                <i class="nav-icon fas fa-clipboard"></i>
+                  <p>Quote</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="{{ route('po.index') }}" class="nav-link  {{ $elementActive == 'po' ? 'active' : '' }}">
+                <i class="nav-icon fas fa-clipboard"></i>
+                  <p>PO</p>
+                </a>
+              </li>
+            </ul>
+          </li>
           @endnotCustomer 
         </ul>
       </nav>

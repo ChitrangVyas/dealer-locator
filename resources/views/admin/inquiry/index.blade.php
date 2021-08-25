@@ -355,7 +355,7 @@
             data:{data,'_token':token},
             success: function(res) {
                 $(`#quoteModal .modal-body`).html(res.data.cart_content);
-                $('#cartTitle').text(res.data.cart_title);
+                $('#cartTitle').text(res.data.cart_title + " #"+ $('#order_number').val());
                 // $('.product-detail input').not('input[type=checkbox]').attr('disabled',true);
             }
         });

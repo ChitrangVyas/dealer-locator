@@ -14,7 +14,7 @@ class AlterTableAddInquiryIdColumnToOrdersTable extends Migration
     public function up()
     {
         Schema::table('orders', function (Blueprint $table) {
-            $table->foreignId('inquiry_id')->nullable()->constrained();
+            $table->foreignId('inquiry_id')->after('from_user')->nullable()->constrained();
         });
     }
 

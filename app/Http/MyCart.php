@@ -25,6 +25,20 @@ class MyCart
         $this->session->put($cart_id,json_encode($json));        
     }
 
+    public function setOrderNumber($cart_id,$order_number){        
+        
+        $json = json_decode($this->session->get($cart_id,'{}'),true);
+        $json['order_number'] = $order_number;
+        
+        $this->session->put($cart_id,json_encode($json));        
+    }
+
+    public function setInquiryId($cart_id,$inquiry_id){        
+        $json = json_decode($this->session->get($cart_id,'{}'),true);
+        $json['inquiry_id'] = $inquiry_id;
+        $this->session->put($cart_id,json_encode($json));        
+    }
+
     public function getFrom($cart_id){        
         $json = json_decode($this->session->get($cart_id,[]),true);
         return $json['from'];
@@ -33,5 +47,15 @@ class MyCart
     public function getTo($cart_id){        
         $json = json_decode($this->session->get($cart_id,[]),true);
         return $json['to'];
+    }
+
+    public function getOrderNumber($cart_id){        
+        $json = json_decode($this->session->get($cart_id,[]),true);
+        return !empty($json['order_number'])?$json['order_number']:'';
+    }
+
+    public function getInquiryId($cart_id){        
+        $json = json_decode($this->session->get($cart_id,[]),true);
+        return !empty($json['inquiry_id'])?$json['inquiry_id']:'';
     }
 }

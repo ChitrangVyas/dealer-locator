@@ -151,7 +151,7 @@ class InquiryController extends MainController
         $where .= (!empty($dealer_id))?" AND (dealer_id=$dealer_id OR inquiries.created_by=$dealer_id)":'';
         $where .= (!empty($search)) ? " AND (c.name like '$search%' OR p.name like '$search%' OR source like '%$search%' OR (d.name is NOT NULL AND d.name like '$search%'))":'';
         $inquiries = DB::table('inquiries')
-        ->select(DB::raw('inquiries.id, inquiries.status,source,c.name as customer,d.name as dealer,group_concat(p.name) as product'))
+        ->select(DB::raw('inquiries.id, inquiries.status,source,c.name as customer,d.name as dealer,group_concat(p.name SEPARATOR "<br>") as product'))
         ->join('inquiries_products','inquiries.id','=','inquiries_products.inquiry_id','left')
         ->join('inquiries_source','inquiries.inquiries_source_id','=','inquiries_source.id','left')
         ->join('users AS c','inquiries.customer_id','=','c.id','left')

@@ -7,9 +7,9 @@
         @csrf
         <input type="hidden" name="from_user" value="{{auth()->user()->id}}" />
         <input type="hidden" name="to_user" value="{{ $to_user }}" />
-        <input type="hidden" name="inquiry_id" id="inquiry_id" value="" />
+        <input type="hidden" name="inquiry_id" id="inquiry_id" value="{{(!empty($inquiry_id)) ? $inquiry_id : ''}}" />
         <input type="hidden" name="type" id="type" value="quote" />
-        <input type="hidden" name="order_number" id="order_number" value="{{(!empty($quote_number))?$quote_number:'123'}}" />
+        <input type="hidden" name="order_number" id="order_number" value="{{(!empty($order_number)) ? $order_number : ''}}" />
         <input type="hidden" name="cart_id" id="modalId" value="{{$id}}" />
             <div class="row">
                 <div class="col-sm-12 col-md-4">

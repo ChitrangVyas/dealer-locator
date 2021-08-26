@@ -163,25 +163,14 @@
             }
         });
 
-        $('body').on('click','#addLog',function(){
-            var inquiry_id = $(this).data('inquiry');
-            var view_url = $(this).data('view-url');
-            var add_url = $(this).data('add-url');
-            var task_url = $(this).data('task-url');
-            console.log("Inquiry id",inquiry_id);
-            getTabData(view_url,'view');
-            getTabData(add_url,'add').then(function(){
-                $('#inquiry_id').val(inquiry_id);
-            });
-            getTabData(task_url,'task').then(function(){
-                $('#reminder_inquiry_id').val(inquiry_id);
-            });
-            $('#modal-lg').attr("data-inquiry",inquiry_id);
-        });
         $('body').on('click','.view-quote',function(){
             var view_url = $(this).data('url');
-            console.log(view_url);
-            getOrderData(view_url,{'order_id':$(this).data('order')});
+            getOrderData(view_url,{'order_id':$(this).data('order')}).then(function(res){
+                $('.dateimepicker-input').datetimepicker({
+                    format: 'YYYY-MM-DD HH:mm',
+                    date: moment(),
+                });
+            });
             /* var inquiry_id = $(this).data('inquiry');
             var create_quote_url = $(this).data('create-quote-url');
             let data = {'inquiry_id':inquiry_id};
@@ -196,33 +185,50 @@
              */
         });
 
-        $('body').on('submit','#saveInquiryLog', function(e){
-            e.preventDefault();
-            let url = "{{ route('inquiry-log.store') }}";
-            saveInquiryLog(url,$('#saveInquiryLog').serialize());
-        });
-
-        $('body').on('submit','#saveReminder', function(e){
-            e.preventDefault();
-            let url = "{{ route('storeReminder') }}";
-
-            saveInquiryLog(url, $('#saveReminder').serialize());
-        });
-
         $('body').on('submit','#saveQuote', function(e){
             e.preventDefault();
-            let url = "{{ route('order.quote.store') }}";
+            let url = "{{ route('order.po.store') }}";
             let data = $('#saveQuote').serialize();
-            let inquiry_id = $('#inquiry_id').val();
-            saveInquiryLog(url,data,'orderModal').then(function(res){
+            // let inquiry_id = $('#inquiry_id').val();
+            saveFormData(url,data,'orderModal').then(function(res){
                 if(res.code == 1){
-                  $(`.create-quote-${inquiry_id}`).hide();  
+                  $(`.create-po-${res.data.quote}`).hide();  
                 }
             });
         });
+        $('body').on('submit','#uploadPo',function(e){
+            e.preventDefault();
+            let url = "{{route('order.po.recieved')}}";
+            // let formData = new FormData($(this)[0]);
+            let formData = new FormData($('#uploadPo')[0]);
+            let file = $('input[type=file]')[0].files[0];
+            formData.append('file', file, file.name);
+            saveFormData(url,formData).then(function(res){
+                
+            });
+        });
+        
+        $('body').on('change','input[type="file"]',function(e){
+            var fileName = e.target.files[0].name;
+            $('.custom-file-label').html(fileName);
+        });
 
-        $("body").on("click",".is-reminder",function(){
-            isReminderShow();
+        $('body').on('click','#imageUpload',function(){
+            let formData = new FormData($('#uploadPo')[0]);
+            let url = "{{route('order.po.upload.image')}}";
+            let file = $('input[type=file]')[0].files[0];
+            formData.append('file', file, file.name);
+            saveFormData(url,formData).then(function(res){
+                let images = [];
+                if($('#uploadedImage').val() != "" && $('#uploadedImage').val().length !== 0){
+
+                    images.push($('#uploadedImage').val());
+                }
+                images.push(res.fileName);
+                $('#uploadedImage').val(images);
+                $('#exampleInputFile').val("");
+                $('.custom-file-label').html("");
+            });
         });
         
         $("body").on("click",".product", function(){
@@ -253,7 +259,6 @@
 
         $("body").on("click",".delete",function(){
             if(confirm("Do you want to remove this product from the cart?")){
-                console.log("Delete::",);
                 removeCartProduct($(this).data('product')).then(function(){
                     select2Product();
                 });
@@ -319,7 +324,7 @@
         });
     }
 
-    function saveInquiryLog(url,formData,modal="modal-lg"){
+    function saveFormData(url,formData,modal=''){
             const Toast = Swal.mixin({
                         toast: true,
                         position: 'top-end',
@@ -331,13 +336,17 @@
                 type: 'POST',
                 data: formData,
                 dataType: 'JSON',
+                contentType: false,
+                processData: false,
                 success: function (data) {
                     if(data.code == 1){
                         Toast.fire({
                             type: 'success',
                             title: data.message
                         });
-                        $(`#${modal}`).modal('hide');
+                        if(modal !== ''){
+                            $(`#${modal}`).modal('hide');
+                        }
                     }else{
                         Toast.fire({
                             type: 'error',

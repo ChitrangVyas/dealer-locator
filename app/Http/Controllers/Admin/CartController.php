@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\MyCart;
 use App\Models\Inquiry;
+use App\Models\Order;
 use App\Models\Product;
 use Illuminate\Http\Request;
 
@@ -119,7 +120,6 @@ class CartController extends MainController
         $inquiry = Inquiry::findOrFail($request_data['data']['inquiry_id']);
         $cart  = \Cart::session($id);
         if($cart->isEmpty()){
-        $order_number = random_int(100000, 999999);
         $items = []; 
         foreach($inquiry->product as $product){
             $items[] = array(
@@ -131,8 +131,10 @@ class CartController extends MainController
             );
         }             
             $cart->add($items);
-            $this->myCart->setOrderNumber($id,$order_number);
+            $this->myCart->setOrderNumber($id,random_int(100000, 999999));
             $this->myCart->setInquiryId($id,$inquiry->id);
+            $this->myCart->setType($id,'quote');
+            $this->myCart->setFrom($id,auth()->user()->id);
             $this->myCart->setTo($id,$inquiry->customer_id);
         }
         $json['cart_title'] = "Quote";
@@ -142,7 +144,7 @@ class CartController extends MainController
     }
 
     public function getInquiryToQuoteCart($id,$cart){
-        return view('admin.order.cart',['cart'=>$cart,'id'=>$id,'to_user'=>$this->myCart->getTo($id),'order_number'=>$this->myCart->getOrderNumber($id),'inquiry_id'=>$this->myCart->getInquiryId($id)]);
+        return view('admin.order.cart',['cart'=>$cart,'id'=>$id,'order_number'=>$this->myCart->getOrderNumber($id),'inquiry_id'=>$this->myCart->getInquiryId($id)]);
     }
 
     public function addProductToCart(Request $request){
@@ -164,6 +166,39 @@ class CartController extends MainController
         $cart  = \Cart::session($request->input('id'));
         $cart->remove($request->input('product_id'));
         return $this->getInquiryToQuoteCart($request->input('id'),$cart);
+    }
+
+    //PO
+
+    public function createPo(Request $request)
+    {
+        $request_data = $request->all();
+        $id = "po_".$request_data['data']['order_id'];
+        $order = Order::findOrFail($request_data['data']['order_id']);
+        $cart  = \Cart::session($id);
+        if($cart->isEmpty()){
+            $items = [];
+            foreach($order->orderProduct as $orderProduct){
+                $items[] = array(
+                    'id' => $orderProduct->product->id,
+                    'name' => $orderProduct->product->name,
+                    'price' => $orderProduct->amount,
+                    'quantity' => $orderProduct->qty,
+                    'attributes' => array(),
+                );
+            }
+            $cart->add($items);
+            $this->myCart->setOrderNumber($id,$order->order_number);
+            $this->myCart->setOrderReference($id,$order->id);
+            $this->myCart->setType($id,'po');
+            // from login user
+            $this->myCart->setFrom($id,auth()->user()->id);
+            // to parent user
+            $this->myCart->setTo($id,(!empty(auth()->user()->parent_id))?auth()->user()->parent_id:1);
+        }
+        $json['cart_title'] = "PO".(!empty($this->myCart->getOrderNumber($id)) ? " #".$this->myCart->getOrderNumber($id) : '');
+        $json['cart_content'] = $this->getInquiryToQuoteCart($id,$cart)->render();
+        return response()->json(['status' => 'successful','code'=>1, 'data'=>$json, 'message'=>'']);
     }
         
 }

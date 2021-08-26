@@ -31,6 +31,9 @@ class Order extends Model
         return $this->hasMany(OrderProduct::class);
     }
 
+    public function image(){
+        return $this->hasMany(OrderImage::class);
+    }
     // public function products(){
     //     return $this->belongsToMany(Product::class)->withPivot(['qty','amount'])->withTimestamps();
     // }

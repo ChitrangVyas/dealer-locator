@@ -43,3 +43,56 @@
         </table>
     </div>
 </div>
+<div class="row">
+    <form id="uploadPo" class="col-12" enctype="multipart/form-data">
+        @csrf
+        <input type="hidden" name="uploaded_by" value="{{auth()->user()->id}}">
+        <input type="hidden" name="order_id" value="{{ $order->id }}">
+        <fieldset class="border">
+            <legend class="w-auto m-2">PO Recieved</legend>
+            <div class="col-sm-12 col-md-12">
+                <!-- text input -->
+                <div class="form-group clearfix">
+                    <div class="icheck-primary d-inline">
+                        <input type="checkbox" class="mr-3 product" name="is_po_recieved" checked>
+                        <label>Recieved</label>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-12 col-md-12">
+                <!-- text input -->
+                <div class="form-group">
+                    <label for="recieved_date">Recieved Date</label>
+                    <input type="text" class="mr-3 product dateimepicker-input form-control col-md-6" name="recieved_date" id="datetimepicker" data-toggle="datetimepicker" data-target="#datetimepicker" value="" autocomplete="off" required />
+                </div>
+            </div>
+            <div class="col-sm-12 col-md-12">
+                <div class="form-group col-md-6">
+                    <label for="exampleInputFile">Image</label>
+                    <div class="input-group">
+                        <div class="custom-file">
+                            <input type="hidden" name="images[]" id="uploadedImage" value="" />
+                            <input type="file" class="custom-file-input" name="image" id="exampleInputFile" />
+                            <label class="custom-file-label" for="exampleInputFile">Choose file</label>
+                        </div>
+                        <div class="input-group-append">
+                            <span class="input-group-text" id="imageUpload">Upload</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row m-2">
+                <div class="col-lg-4 col-md-12 mb-12 mb-lg-0">
+                    <img
+                        src=""
+                        class="w-50"
+                    />
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-12 mt-2 mb-2">
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </div>
+        </fieldset>
+    </form>
+</div>

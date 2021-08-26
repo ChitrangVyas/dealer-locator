@@ -5,10 +5,7 @@
     <form method="POST" id="saveQuote">
 @endif
         @csrf
-        <input type="hidden" name="from_user" value="{{auth()->user()->id}}" />
-        <input type="hidden" name="to_user" value="{{ $to_user }}" />
         <input type="hidden" name="inquiry_id" id="inquiry_id" value="{{(!empty($inquiry_id)) ? $inquiry_id : ''}}" />
-        <input type="hidden" name="type" id="type" value="quote" />
         <input type="hidden" name="order_number" id="order_number" value="{{(!empty($order_number)) ? $order_number : ''}}" />
         <input type="hidden" name="cart_id" id="modalId" value="{{$id}}" />
             <div class="row">
@@ -44,7 +41,6 @@
                     <h5><strong>Amount</strong></h5>
                 </div>
             </div>
-            @php $total=0.00; @endphp
             @foreach ($cart->getContent() as $product)
             <div class="row product-detail" data-product="{{$product->id}}">
             <div class="col-sm-12 col-md-7">
@@ -80,7 +76,6 @@
                 </div>
             </div>
         </div>
-        @php $total += $product->price; @endphp
         @endforeach
         
         <div class="row border-top">

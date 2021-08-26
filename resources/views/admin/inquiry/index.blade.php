@@ -176,7 +176,6 @@
             let data = {'inquiry_id':inquiry_id};
             getCreateQuote(create_quote_url,data).then(function(){
                 select2Product();
-                $('#inquiry_id').val(inquiry_id); 
             });
             /* getCreateQuote(create_quote_url,data).then(function(){
                 $('#inquiry_id').val(inquiry_id); 
@@ -242,7 +241,6 @@
 
         $("body").on("click",".delete",function(){
             if(confirm("Do you want to remove this product from the cart?")){
-                console.log("Delete::",);
                 removeCartProduct($(this).data('product')).then(function(){
                     select2Product();
                 });

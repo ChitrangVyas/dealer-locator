@@ -2,15 +2,23 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Http\MyCart;
 use App\Models\Order;
 use App\Models\OrderProduct;
 use App\Models\Inquiry;
+use App\Models\OrderImage;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use View;
 class OrderController extends MainController
 {
+
+    private $myCart;
+    public function __construct(MyCart $myCart)
+    {
+        $this->myCart = $myCart;
+    }
     /**
      * Display a listing of the resource.
      *
@@ -109,10 +117,12 @@ class OrderController extends MainController
         $quote_number = random_int(100000, 999999); 
         return view('admin.order.quote',['inquiry'=>$inquiry,'quote_number'=>$quote_number]);
     }
+
     public function quoteStore(Request $request)
     {
         $request_data = $request->all();
-        $quote_data = $request->only(['type','order_number','status','from_user','to_user','inquiry_id']);
+        // $quote_data = $request->only(['type','order_number','status','from_user','to_user','inquiry_id']);
+        $quote_data = $this->myCart->getAll($request_data['cart_id']);
         $cart = \Cart::Session($request_data['cart_id']);
         $quote_data['status'] =  'sent';
         $quote_data['total'] = $cart->getTotal();
@@ -134,6 +144,7 @@ class OrderController extends MainController
                     $inquiry->update(['status'=>1]);
                 }
                 $cart->clear();
+                $this->myCart->clear($request_data['cart_id']);
                 if(!empty($order_product)){
                     return response()->json(['status' => 'successful','code'=>1,'message'=>'Quote Successfully created.']);
                 }else{
@@ -144,6 +155,76 @@ class OrderController extends MainController
             return response()->json(['status' => 'error','code' => 0,'message' => $e->getMessage()]);                
         }
     }
+    public function storePo(Request $request){
+        $request_data = $request->all();
+        $cart = \Cart::Session($request_data['cart_id']);
+        $cart_data = $this->myCart->getAll($request_data['cart_id']);        
+        $cart_data['status'] =  'sent';
+        $cart_data['total'] = $cart->getTotal();
+        try{
+            $order = Order::create($cart_data);
+            if(!empty($order)){
+                $order_product_data = [];
+                foreach($request_data['product'] as $key => $value){
+                    $cart_product = $cart->get($value);
+                    $order_product_data = array('order_id' => $order->id, 'product_id' => $cart_product->id, 'qty' => $cart_product->quantity, 'amount' => $cart_product->price);
+                    $order_product = '';
+                    if(!empty($order_product_data)){
+                        $order_product = OrderProduct::create($order_product_data);
+                    }
+                }
+                $cart->clear();
+                $this->myCart->clear($request_data['cart_id']);
+                if(!empty($order_product)){
+                    return response()->json(['status' => 'successful', 'data'=>['quote'=>$cart_data['order_reference']],'code'=>1,'message'=>'PO Successfully created.']);
+                }else{
+                    return response()->json(['status' => 'error','code'=>0,'message'=>'Something goes wrong.']);
+                }
+            }else{
+                return response()->json(['status' => 'error','code'=>0,'message'=>'Unable to generate PO.']);
+            }
+        }catch(Exception $e){
+            return response()->json(['status' => 'error','code' => 0,'message' => $e->getMessage()]);                
+        }
+    }
+
+    public function poRecived(Request $request){
+        $order = Order::findOrFail($request->post('order_id'));
+        $order->update(['is_po_recieved'=>(!empty($request->post('is_po_recieved')))?1:0, 'recieved_date'=>$request->post('recieved_date')]);
+        if($request->file()){
+            $filePath = $this->storeImage($request);
+        }
+        $orderImage = OrderImage::create(['order_id'=>$order->id,'image'=>$filePath,'uploaded_by'=>$request->post('uploaded_by')]);
+        if($orderImage){
+           return response()->json(['status' => 'successful', 'data'=>[$orderImage],'code'=>1,'message'=>'PO Successfully Uploaded.']);
+        }else{
+            return response()->json(['status' => 'error','code'=>0,'message'=>'Unable to upload PO.']);
+        }
+    }
+    public function uploadPoImage(Request $request){
+        $order = Order::findOrFail($request->post('order_id'));
+        $order->update(['is_po_recieved'=>(!empty($request->post('is_po_recieved')))?1:0, 'recieved_date'=>$request->post('recieved_date')]);
+        return response()->json(['status' => 'successful','code' =>1, 'fileName' => time().'_'.$request->image->getClientOriginalName(),'message'=>'Image has been uploded successfully']);
+        if($request->file()){
+            $filePath = $this->storeImage($request);
+        }
+        $orderImage = OrderImage::create(['order_id'=>$order->id,'image'=>$filePath,'uploaded_by'=>$request->post('uploaded_by')]);
+        if($filePath){
+           return response()->json(['status' => 'successful', 'data'=>['filePath'=>$filePath],'code'=>1,'message'=>'PO Successfully created.']);
+        }else{
+            return response()->json(['status' => 'error','code'=>0,'message'=>'Unable to upload image.']);
+        }
+    }
+
+    public function storeImage($request){
+        if($request->file()) {
+            $fileName = time().'_'.$request->image->getClientOriginalName();
+            $filePath = $request->file('image')->storeAs('uploads/po', $fileName, 'public');
+            return '/storage/' . $filePath;
+        }
+        return false;
+    }
+
     public function listQuoteAjaxData(Request $request){
         $user =  auth()->user();
         // $dealer_id = '';
@@ -175,6 +256,7 @@ class OrderController extends MainController
             $customer = (!empty($order->customer))?$order->customer:'N/A';
             $added_by  = (!empty($order->added_by))?$order->added_by:'N/A';
             $action_html = "<span><a data-url=".route('quote.show',$order->id)." data-order=".$order->id." class='btn btn-primary view-quote' data-toggle='modal' data-target='#orderModal'>View</a></span>";
+            $action_html .= "<span class='ml-3 create-po-".$order->id."'><a data-url=".route('cart.po.create')." data-order=".$order->id." class='btn btn-success view-quote' data-toggle='modal' data-target='#orderModal'>Generate PO</a></span>";
             // $action_html = "<span><a href=".route('order.edit',$order->id)." class='btn btn-primary'>Edit</a></span>";
             // $action_html .= "<span class='ml-3'><button type=submit data-user=$order->id class='btn btn-danger' onClick=deleteOrder($order->id)>Delete</button></span>";
             $data[] = [$order->id,$order->order_number,$order->amount, ucwords($added_by), ucwords($customer),$order->created_date, $action_html];

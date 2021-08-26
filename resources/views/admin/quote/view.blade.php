@@ -26,14 +26,19 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach ($order->products as $product)
+                @foreach ($order->orderProduct as $orderProduct)
                 <tr>
-                    <td>{{$product->name}}</td>
-                    <td>{{$product->pivot->qty}}</td>
-                    <td>{{ number_format($product->pivot->amount,2)}}</td>
-                    <td>{{number_format($product->getSubTotal(),2)}}</td>
+                    <td>{{$orderProduct->product->name}}</td>
+                    <td>{{$orderProduct->qty}}</td>
+                    <td>{{ number_format($orderProduct->amount,2)}}</td>
+                    <td>{{ number_format($orderProduct->getsubTotal(),2) }}</td>
                 </tr>
                 @endforeach
+                <tr>
+                    <td colspan="2"></td>
+                    <td><strong>Total</strong></td>
+                    <td>{{ number_format($order->total,2) }}</td>
+                </tr>
             </tbody>
         </table>
     </div>

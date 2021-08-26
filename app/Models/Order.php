@@ -27,11 +27,11 @@ class Order extends Model
     }
 
 
-    /* public function orderProduct(){
-        return $this->belongsToMany(OrderProduct::class);
-    } */
-
-    public function products(){
-        return $this->belongsToMany(Product::class)->withPivot(['qty','amount'])->withTimestamps();
+    public function orderProduct(){
+        return $this->hasMany(OrderProduct::class);
     }
+
+    // public function products(){
+    //     return $this->belongsToMany(Product::class)->withPivot(['qty','amount'])->withTimestamps();
+    // }
 }

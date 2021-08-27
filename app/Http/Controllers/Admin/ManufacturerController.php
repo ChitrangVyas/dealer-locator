@@ -65,7 +65,7 @@ class ManufacturerController extends MainController
                 'logo' => $file_path
             ]);
         }catch(Exception $e){
-            return redirect(route('manufacturer.create'));
+            return redirect(route('manufacturer.create'))->with('exception', $e->getMessage());            
         }
 
         return redirect(route('manufacturer.index'));

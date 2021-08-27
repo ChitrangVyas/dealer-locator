@@ -14,6 +14,7 @@ class Manufacturer extends Model
         'description',
         'short_description',
         'logo',
+        'email',
         'manufacturer_id',        
     ];
 

@@ -165,11 +165,19 @@
 
         $('body').on('click','.view-quote',function(){
             var view_url = $(this).data('url');
+            $("#uploadedPo").html("");
+            $(`#orderModal .modal-body`).html("");
+            $(`#cartTitle`).html("");
             getOrderData(view_url,{'order_id':$(this).data('order')}).then(function(res){
                 $('.dateimepicker-input').datetimepicker({
                     format: 'YYYY-MM-DD HH:mm',
                     date: moment(),
                 });
+                if($('input[name=order_id]').val()){
+                    getOrderImage("{{ route('order.po.image') }}",{'order_id':$('input[name=order_id]').val()}).then(function(res){
+                        
+                    });
+                }
             });
             /* var inquiry_id = $(this).data('inquiry');
             var create_quote_url = $(this).data('create-quote-url');
@@ -188,9 +196,9 @@
         $('body').on('submit','#saveQuote', function(e){
             e.preventDefault();
             let url = "{{ route('order.po.store') }}";
-            let data = $('#saveQuote').serialize();
+            let formData = new FormData($('#saveQuote')[0]);
             // let inquiry_id = $('#inquiry_id').val();
-            saveFormData(url,data,'orderModal').then(function(res){
+            saveFormData(url,formData,'orderModal').then(function(res){
                 if(res.code == 1){
                   $(`.create-po-${res.data.quote}`).hide();  
                 }
@@ -202,7 +210,9 @@
             // let formData = new FormData($(this)[0]);
             let formData = new FormData($('#uploadPo')[0]);
             let file = $('input[type=file]')[0].files[0];
-            formData.append('file', file, file.name);
+            if(file != '' && file != undefined && file.length != 0){
+                formData.append('file', file, file.name);
+            }
             saveFormData(url,formData).then(function(res){
                 
             });
@@ -228,6 +238,9 @@
                 $('#uploadedImage').val(images);
                 $('#exampleInputFile').val("");
                 $('.custom-file-label').html("");
+                getOrderImage("{{ route('order.po.image') }}",{'order_id':$('input[name=order_id]').val()}).then(function(res){
+
+                });
             });
         });
         
@@ -373,10 +386,36 @@
             url: url,
             type: 'POST',
             data:{data,'_token':token},
+            beforeSend : function(){
+                $('#loader').show();
+            },
             success: function(res) {
                 $(`#orderModal .modal-body`).html(res.data.cart_content);
                 $('#cartTitle').text(res.data.cart_title);
                 // $('.product-detail input').not('input[type=checkbox]').attr('disabled',true);
+            },
+            complete:function(){
+                $('#loader').hide();
+            }
+        });
+    }
+
+    function getOrderImage(url,data){
+        var token = $("meta[name='csrf-token']").attr("content");
+        return $.ajax({
+            url: url,
+            type: 'POST',
+            dataType: 'JSON',
+            data:{data,'_token':token},
+            beforeSend : function(){
+                $('#loader').show();
+            },
+            success: function(res) {
+                $(`#orderModal #uploadedPo`).html(res.data.image_content);
+                // $('.product-detail input').not('input[type=checkbox]').attr('disabled',true);
+            },
+            complete:function(){
+                $('#loader').hide();
             }
         });
     }

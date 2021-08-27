@@ -39,12 +39,15 @@ Route::group(['prefix'=>'admin','middleware'=>['auth']],function () {
     Route::post('order/quote/', [App\Http\Controllers\Admin\OrderController::class,'quoteStore'])->name('order.quote.store');
     Route::get('quote/', [App\Http\Controllers\Admin\OrderController::class,'quoteIndex'])->name('quote.index');
     Route::get('quote/listQuoteAjaxData', [App\Http\Controllers\Admin\OrderController::class,'listQuoteAjaxData'])->name('list.quote');
+    Route::get('po/listPoAjaxData', [App\Http\Controllers\Admin\OrderController::class,'listPoAjaxData'])->name('list.po');
     Route::post('quote/show', [App\Http\Controllers\Admin\OrderController::class,'showQuote'])->name('quote.show');
-    Route::get('po/', [App\Http\Controllers\Admin\OrderController::class,'quoteIndex'])->name('po.index');
+    Route::post('po/show', [App\Http\Controllers\Admin\OrderController::class,'showPo'])->name('po.show');
+    Route::get('po/', [App\Http\Controllers\Admin\OrderController::class,'poIndex'])->name('po.index');
     Route::post('cart/po/create', [App\Http\Controllers\Admin\CartController::class,'createPo'])->name('cart.po.create');
     Route::post('order/po/', [App\Http\Controllers\Admin\OrderController::class,'storePo'])->name('order.po.store');
     Route::post('order/po/recieved', [App\Http\Controllers\Admin\OrderController::class,'poRecived'])->name('order.po.recieved');
     Route::post('order/po/upload/image', [App\Http\Controllers\Admin\OrderController::class,'uploadPoImage'])->name('order.po.upload.image');
+    Route::post('order/po/image', [App\Http\Controllers\Admin\OrderController::class,'getPoImage'])->name('order.po.image');
     Route::post('cart/inquiry-to-quote/create', [App\Http\Controllers\Admin\CartController::class,'createInquiryToQuoteCart'])->name('cart.inquiryToQuote.create');
     Route::post('cart/product/add', [App\Http\Controllers\Admin\CartController::class,'addProductToCart'])->name('cart.product.add');
     Route::put('cart/product/update', [App\Http\Controllers\Admin\CartController::class,'update'])->name('cart.update');

@@ -118,6 +118,21 @@ class OrderController extends MainController
         return view('admin.order.quote',['inquiry'=>$inquiry,'quote_number'=>$quote_number]);
     }
 
+    //PO
+    public function poIndex(){
+        View::share ( 'title', 'PO' );
+        View::share ( 'elementActive', 'po' );
+        // id|number|product|qty|amount|created by|customer|created_date
+        return view('admin.po.index');
+    }
+
+    public function showPo(Request $request){
+        $order = Order::findOrFail($request->get('data')['order_id']);
+        $json['cart_title'] = "PO #$order->order_number";
+        $json['cart_content'] = view('admin.quote.view',['order'=>$order])->render();
+        return response()->json(['status' => 'successful','code'=>1, 'data'=>$json, 'message'=>'']);
+    }
+
     public function quoteStore(Request $request)
     {
         $request_data = $request->all();
@@ -190,27 +205,28 @@ class OrderController extends MainController
 
     public function poRecived(Request $request){
         $order = Order::findOrFail($request->post('order_id'));
-        $order->update(['is_po_recieved'=>(!empty($request->post('is_po_recieved')))?1:0, 'recieved_date'=>$request->post('recieved_date')]);
+        $updateOrder = $order->update(['is_po_recieved'=>(!empty($request->post('is_po_recieved')))?1:0, 'recieved_date'=>$request->post('recieved_date')]);
+        $orderImage = [];
         if($request->file()){
             $filePath = $this->storeImage($request);
+            $orderImage = OrderImage::create(['order_id'=>$order->id,'image'=>$filePath,'uploaded_by'=>$request->post('uploaded_by')]);
         }
-        $orderImage = OrderImage::create(['order_id'=>$order->id,'image'=>$filePath,'uploaded_by'=>$request->post('uploaded_by')]);
-        if($orderImage){
-           return response()->json(['status' => 'successful', 'data'=>[$orderImage],'code'=>1,'message'=>'PO Successfully Uploaded.']);
+        if($updateOrder){
+           return response()->json(['status' => 'successful', 'data'=>[$updateOrder,$orderImage],'code'=>1,'message'=>'PO has been successfully Uploaded.']);
         }else{
             return response()->json(['status' => 'error','code'=>0,'message'=>'Unable to upload PO.']);
         }
     }
     public function uploadPoImage(Request $request){
         $order = Order::findOrFail($request->post('order_id'));
-        $order->update(['is_po_recieved'=>(!empty($request->post('is_po_recieved')))?1:0, 'recieved_date'=>$request->post('recieved_date')]);
-        return response()->json(['status' => 'successful','code' =>1, 'fileName' => time().'_'.$request->image->getClientOriginalName(),'message'=>'Image has been uploded successfully']);
+        $updateOrder = $order->update(['is_po_recieved'=>(!empty($request->post('is_po_recieved')))?1:0, 'recieved_date'=>$request->post('recieved_date')]);
+        $orderImage = [];
         if($request->file()){
             $filePath = $this->storeImage($request);
+            $orderImage = OrderImage::create(['order_id'=>$order->id,'image'=>$filePath,'uploaded_by'=>$request->post('uploaded_by')]);
         }
-        $orderImage = OrderImage::create(['order_id'=>$order->id,'image'=>$filePath,'uploaded_by'=>$request->post('uploaded_by')]);
         if($filePath){
-           return response()->json(['status' => 'successful', 'data'=>['filePath'=>$filePath],'code'=>1,'message'=>'PO Successfully created.']);
+           return response()->json(['status' => 'successful', 'data'=>['filePath'=>url($filePath)],'code'=>1,'message'=>'PO image has been successfully uploaded.']);
         }else{
             return response()->json(['status' => 'error','code'=>0,'message'=>'Unable to upload image.']);
         }
@@ -225,6 +241,13 @@ class OrderController extends MainController
         return false;
     }
 
+    public function getPoImage(Request $request){
+        
+        $order = Order::findOrFail($request->post('data')['order_id']); 
+        $json['image_content'] = view('admin.quote.images',['order'=>$order])->render();
+        return response()->json(['status' => 'successful','code'=>1, 'data'=>$json, 'message'=>'']);
+    }
+
     public function listQuoteAjaxData(Request $request){
         $user =  auth()->user();
         // $dealer_id = '';
@@ -236,7 +259,12 @@ class OrderController extends MainController
         $length=  $request['length'];
         $search = $request['search']['value'];
         $where = 'orders.type = "quote" AND orders.deleted_at is NULL';
-        // $where .= (!empty($dealer_id))?" AND (dealer_id=$dealer_id OR inquiries.created_by=$dealer_id)":'';
+        if((!empty($user->userGroup)) && $user->userGroup->id == '2'){
+            $where .= (!empty($user->id))?" AND (from_user=$user->id OR to_user=$user->id)":'';
+        }
+        if((!empty($user->userGroup)) && $user->userGroup->id == '3'){
+            $where .= (!empty($user->id))?" AND from_user=$user->id":'';
+        }
         $where .= (!empty($search)) ? " AND (orders.order_number like '$search%' OR orders.total like '$search%' OR orders.created_at like '$search%' OR (c.name is NOT NULL AND c.name like '$search%') OR (d.name is NOT NULL AND d.name like '$search%'))":'';
         $orders = DB::table('orders')
         ->select(DB::raw('orders.id,order_number,c.name as customer,d.name as added_by, orders.total as amount, orders.created_at as created_date'))
@@ -257,6 +285,52 @@ class OrderController extends MainController
             $added_by  = (!empty($order->added_by))?$order->added_by:'N/A';
             $action_html = "<span><a data-url=".route('quote.show',$order->id)." data-order=".$order->id." class='btn btn-primary view-quote' data-toggle='modal' data-target='#orderModal'>View</a></span>";
             $action_html .= "<span class='ml-3 create-po-".$order->id."'><a data-url=".route('cart.po.create')." data-order=".$order->id." class='btn btn-success view-quote' data-toggle='modal' data-target='#orderModal'>Generate PO</a></span>";
+            // $action_html = "<span><a href=".route('order.edit',$order->id)." class='btn btn-primary'>Edit</a></span>";
+            // $action_html .= "<span class='ml-3'><button type=submit data-user=$order->id class='btn btn-danger' onClick=deleteOrder($order->id)>Delete</button></span>";
+            $data[] = [$order->id,$order->order_number,$order->amount, ucwords($added_by), ucwords($customer),$order->created_date, $action_html];
+        }
+        $return_array = array();
+        $return_array['draw'] = $request['draw'];
+        $return_array['recordsTotal'] = $total_order;
+        $return_array['recordsFiltered'] = $total_order;
+        $return_array['data'] = $data;
+        return response(json_encode($return_array), 200)
+        ->header('Content-Type', 'text/plain');
+    }
+
+    public function listPoAjaxData(Request $request){
+        $user =  auth()->user();
+        $start =  $request['start'];
+        $length=  $request['length'];
+        $search = $request['search']['value'];
+        $where = 'orders.type = "po" AND orders.deleted_at is NULL';
+        if((!empty($user->userGroup)) && $user->userGroup->id == '2'){
+            $where .= (!empty($user->id))?" AND (from_user=$user->id OR to_user=$user->id)":'';
+        }
+        if((!empty($user->userGroup)) && $user->userGroup->id == '3'){
+            $where .= (!empty($user->id))?" AND from_user=$user->id":'';
+        }
+        // $where .= (!empty($dealer_id))?" AND (dealer_id=$dealer_id OR inquiries.created_by=$dealer_id)":'';
+        $where .= (!empty($search)) ? " AND (orders.order_number like '$search%' OR orders.total like '$search%' OR orders.created_at like '$search%' OR (c.name is NOT NULL AND c.name like '$search%') OR (d.name is NOT NULL AND d.name like '$search%'))":'';
+        $orders = DB::table('orders')
+        ->select(DB::raw('orders.id,order_number,c.name as customer,d.name as added_by, orders.total as amount, orders.created_at as created_date'))
+        ->join('order_product AS op','orders.id','=','op.order_id','left')
+        ->join('users AS c','orders.to_user','=','c.id','left')
+        ->join('users AS d','orders.from_user','=','d.id','left')
+        ->whereRaw($where)
+        ->offset($start)
+        ->limit($length)
+        ->orderBy($request['columns'][$request['order'][0]['column']]['name'],$request['order'][0]['dir'])
+        ->groupby('orders.id')
+        ->get();
+        
+        $total_order = Order::where('type','po')->where('deleted_at',NULL)->count();
+        $data = [];
+        foreach($orders as $order){
+            $customer = (!empty($order->customer))?$order->customer:'N/A';
+            $added_by  = (!empty($order->added_by))?$order->added_by:'N/A';
+            $action_html = "<span><a data-url=".route('po.show',$order->id)." data-order=".$order->id." class='btn btn-primary view-po' data-toggle='modal' data-target='#orderModal'>View</a></span>";
+            // $action_html .= "<span class='ml-3 create-po-".$order->id."'><a data-url=".route('cart.po.create')." data-order=".$order->id." class='btn btn-success view-quote' data-toggle='modal' data-target='#orderModal'>Generate PO</a></span>";
             // $action_html = "<span><a href=".route('order.edit',$order->id)." class='btn btn-primary'>Edit</a></span>";
             // $action_html .= "<span class='ml-3'><button type=submit data-user=$order->id class='btn btn-danger' onClick=deleteOrder($order->id)>Delete</button></span>";
             $data[] = [$order->id,$order->order_number,$order->amount, ucwords($added_by), ucwords($customer),$order->created_date, $action_html];

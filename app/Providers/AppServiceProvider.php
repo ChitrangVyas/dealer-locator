@@ -34,6 +34,11 @@ class AppServiceProvider extends ServiceProvider
             return ($user &&(empty($user->users_group_id) || ($user->userGroup->id == 1 || $user->userGroup->id == 2)));
         });
 
+        Blade::if('retailer', function () {
+            $user = auth()->user();
+            return ($user && ($user->userGroup->id == 3));
+        });
+
         Blade::if('customer', function () {
             $user = auth()->user();
             return ($user && ($user->userGroup->id == 4 || $user->userGroup->id == 5));

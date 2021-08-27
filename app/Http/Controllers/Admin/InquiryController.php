@@ -51,11 +51,18 @@ class InquiryController extends MainController
     {   
         //
         $request_data = $request->all();
+        $dealer_id = NULL;
+        if(auth()->user()->users_group_id == '2'){
+            $dealer_id = auth()->user()->id;
+        }elseif (auth()->user()->users_group_id == '3') {
+            $dealer_id = auth()->user()->parent_id;
+        }
         try{
             $inquiry = Inquiry::create([
                 'inquiries_source_id'=>$request_data['inquiry_source'],
                 'customer_id'=>$request_data['customer'],
                 'created_by'=>$request_data['created_by'],
+                'dealer_id' => $dealer_id,
                 // 'product_id'=>$request_data['product'],
             ]);
             if(!empty($request_data['product'])){
@@ -142,6 +149,8 @@ class InquiryController extends MainController
         $dealer_id = '';
         if((!empty($user->userGroup)) && $user->userGroup->id == '2'){
             $dealer_id = $user->id;
+        }else if((!empty($user->userGroup)) && $user->userGroup->id == '3'){
+            $retailer_id = $user->id;
         }
 
         $start =  $request['start'];
@@ -149,14 +158,16 @@ class InquiryController extends MainController
         $search = $request['search']['value'];
         $where = 'inquiries.deleted_at is NULL';
         $where .= (!empty($dealer_id))?" AND (dealer_id=$dealer_id OR inquiries.created_by=$dealer_id)":'';
+        $where .= (!empty($retailer_id))?" AND (retailer_id=$retailer_id OR inquiries.created_by=$retailer_id)":'';
         $where .= (!empty($search)) ? " AND (c.name like '$search%' OR p.name like '$search%' OR source like '%$search%' OR (d.name is NOT NULL AND d.name like '$search%'))":'';
         $inquiries = DB::table('inquiries')
-        ->select(DB::raw('inquiries.id, inquiries.status,source,c.name as customer,d.name as dealer,group_concat(p.name SEPARATOR "<br>") as product'))
+        ->select(DB::raw('inquiries.id, inquiries.status, inquiries.created_by,source,c.name as customer,d.name as dealer, r.name as retailer,group_concat(p.name SEPARATOR "<br>") as product'))
         ->join('inquiries_products','inquiries.id','=','inquiries_products.inquiry_id','left')
         ->join('inquiries_source','inquiries.inquiries_source_id','=','inquiries_source.id','left')
         ->join('users AS c','inquiries.customer_id','=','c.id','left')
         ->join('products AS p','inquiries_products.product_id','=','p.id','left')
         ->join('users AS d','inquiries.dealer_id','=','d.id','left')
+        ->join('users AS r','inquiries.retailer_id','=','r.id','left')
         ->whereRaw($where)
         ->offset($start)
         ->limit($length)
@@ -168,8 +179,11 @@ class InquiryController extends MainController
         $data = [];
         foreach($inquiries as $inquiry){
             $dealer = (!empty($inquiry->dealer))?$inquiry->dealer:'N/A';
-            $action_html = "<span><a href=".route('inquiry.edit',$inquiry->id)." class='btn btn-primary'>Edit</a></span>";
-            $action_html .= "<span class='ml-3'><button type=submit data-user=$inquiry->id class='btn btn-danger' onClick=deleteUser($inquiry->id)>Delete</button></span>";
+            $action_html = "";
+            if(empty($user->userGroup) || ((($user->id == $inquiry->dealer || $user->id == $inquiry->retailer) && $user->id == $inquiry->created_by) || ($user->id == $inquiry->created_by))){
+                $action_html .= "<span><a href=".route('inquiry.edit',$inquiry->id)." class='btn btn-primary'>Edit</a></span>";
+                $action_html .= "<span class='ml-3'><button type=submit data-user=$inquiry->id class='btn btn-danger' onClick=deleteUser($inquiry->id)>Delete</button></span>";
+            }
             $action_html .= "<span class='ml-3'><button type='button' id='addLog' class=' ml-3 btn btn-default' data-inquiry=$inquiry->id data-view-url='".route('inquiry-log.show',$inquiry->id)."' data-add-url='".route('inquiry-log.create')."' data-task-url='".route('createReminder')."' data-toggle='modal' data-target='#modal-lg'>View Log</button></span>";
             if(empty($inquiry->status)){
                 // $action_html .= "<span class='ml-3'><button type='button' id='createQuote' class=' ml-3 btn btn-success create-quote-".$inquiry->id."' data-inquiry=$inquiry->id data-create-quote-url='".route('order.quote.create')."' data-toggle='modal' data-target='#quoteModal'>Quote</button></span>";

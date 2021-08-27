@@ -43,6 +43,7 @@
         </table>
     </div>
 </div>
+@if($order->type == 'quote')
 <div class="row">
     <form id="uploadPo" class="col-12" enctype="multipart/form-data">
         @csrf
@@ -81,14 +82,10 @@
                     </div>
                 </div>
             </div>
-            <div class="row m-2">
-                <div class="col-lg-4 col-md-12 mb-12 mb-lg-0">
-                    <img
-                        src=""
-                        class="w-50"
-                    />
-                    </div>
-                </div>
+            <div class="col-sm-12 col-md-12" id="loader" style="display: none;">
+                <div class="loading text-center"><i class="fas fa-circle-notch fa-spin fa-2x text-secondary"></i></div>
+            </div>
+            <div class="col-sm-12 col-md-12" id="uploadedPo">
             </div>
             <div class="col-sm-12 mt-2 mb-2">
                 <button type="submit" class="btn btn-primary">Submit</button>
@@ -96,3 +93,4 @@
         </fieldset>
     </form>
 </div>
+@endif

@@ -75,6 +75,7 @@
                     @enderror
                 </div>
             </div>
+            @admin()
             <div class="col-sm-12 col-md-4">
                 <!-- text input -->
                 <div class="form-group">
@@ -90,6 +91,7 @@
                     @enderror
                 </div>
             </div>
+            @endadmin
         </div>
         <div class="row">
             <div class="col-sm-12">

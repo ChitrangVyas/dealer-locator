@@ -19,7 +19,11 @@ class Order extends Model
     }
 
     public function customer(){
-        return $this->belongsTo(User::class,'to_user','id');
+        if($this->type == 'po'){
+            return $this->belongsTo(User::class,'from_user','id');
+        }else{
+            return $this->belongsTo(User::class,'to_user','id');
+        }
     }
 
     public function addedBy(){
@@ -31,7 +35,7 @@ class Order extends Model
         return $this->hasMany(OrderProduct::class);
     }
 
-    public function image(){
+    public function orderImage(){
         return $this->hasMany(OrderImage::class);
     }
     // public function products(){

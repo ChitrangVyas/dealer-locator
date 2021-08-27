@@ -67,6 +67,11 @@
 @endif
 
 @yield('js')
+<script>
+  $("document").ready(function(){    
+    $(".nav-link.active").parent().parent().parent().addClass("menu-is-opening menu-open");
+  });
+</script>
 <!-- jQuery -->
 
 </body>

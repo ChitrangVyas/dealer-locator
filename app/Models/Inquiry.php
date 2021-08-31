@@ -29,6 +29,10 @@ class Inquiry extends Model
         return $this->belongsTo(User::class);
     }
 
+    public function retailer(){
+        return $this->belongsTo(User::class);
+    }
+
     public function source(){
         return $this->belongsTo(InquiriesSource::class);
     }

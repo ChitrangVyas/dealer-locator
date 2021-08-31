@@ -70,7 +70,7 @@
                             @endforeach
                         @endif
                     </select>
-                    @error('state')
+                    @error('product')
                         <div class="alert alert-danger mt-2">{{ $message }}</div>
                     @enderror
                 </div>
@@ -92,6 +92,31 @@
                 </div>
             </div>
             @endadmin
+            @dealer()
+            @if(auth()->user()->users_group_id == 2)
+                <input type="hidden" id='parent_user' value="{{ auth()->user()->id }}">
+            @endif()
+            <div class="col-sm-12 col-md-4">
+                <!-- text input -->
+                <div class="form-group">
+                    <label>Retailer</label>
+                    <select class="form-control select2 retailer" id='retailer' name='retailer'>
+                        <option value="">Select</option>
+                        @if(!empty($inquiry) && !empty($inquiry->retailer_id))
+                            <option value="{{$inquiry->retailer_id}}" selected>{{ $inquiry->retailer->name.' - ' .$inquiry->retailer->zipcode.' - '. $inquiry->retailer->city->name }}</option>
+                            <input type="hidden" id="selected_retailer" value="{{$inquiry->retailer_id}}">
+                        @endif
+
+                    </select>
+                    @admin()
+                        <label><span class="text-red"><strong>Note:</strong> Please select the dealer before select the retailer.</span></label>
+                    @endadmin
+                    @error('retailer')
+                        <div class="alert alert-danger mt-2">{{ $message }}</div>
+                    @enderror
+                </div>
+            </div>
+            @enddealer
         </div>
         <div class="row">
             <div class="col-sm-12">
@@ -146,7 +171,8 @@ jQuery(document).ready(function(){
                     q: params.term, // search term
                     table:'users',
                     fields: "users.id, CONCAT(`users`.`name`, ' - ', `zipcode`,' - ',`cities`.`name`) as text",
-                    whereOr: ` OR zipcode like '%${params.term}%' OR cities.name like '%${params.term}%' AND (users_group_id = 2)`,
+                    where:`(users_group_id = 2) AND (`,
+                    whereOr: ` OR zipcode like '%${params.term}%' OR cities.name like '%${params.term}%')`,
                     joins:[{'join_table':'cities','to_column':'city_id','from_column':'cities.id','type':'left'}]
                 };
             },
@@ -198,6 +224,11 @@ jQuery(document).ready(function(){
             }
         }
     });
+    $('.retailer').select2();
+    $('.dealer').on('change',function(){
+        getRetailers($(this).val())
+    });
+
     $('#addCustomer').on('click',function(e){
         e.preventDefault();
         e.stopImmediatePropagation();
@@ -218,7 +249,62 @@ jQuery(document).ready(function(){
                     }); */
             }
         });
-    });     
+    });
+
+    if($('#parent_user').val()){
+        getRetailers($('#parent_user').val());
+    }
+    if($('#dealer').val()){
+        getRetailers($('#dealer').val());
+    }
+    
+    // ratiler
+    function getRetailers(param){
+        
+       return $.ajax({
+            headers: { 'X-CSRF-Token' : $('meta[name=_token]').attr('content') },
+            url: "{{ route('get_value') }}",
+            type: 'GET',            
+            data: {
+                    // q: param, // search term
+                    table:'users',
+                    fields: "users.id, CONCAT(`users`.`name`, ' - ', `zipcode`,' - ',`cities`.`name`) as text",
+                    where:` (users_group_id = 3) AND (parent_id = ${param}) `,
+                    joins:[{'join_table':'cities','to_column':'city_id','from_column':'cities.id','type':'left'}]
+            },
+            contentType:'json',
+            success: function (data) { 
+                data = JSON.parse(data);
+                var newOption = new Option();
+                let selected_reatiler = $('#retailer').val();
+                $('#retailer').empty();
+                var selected_option = '';
+                newOption = new Option('Select','' , false, false);
+                $('#retailer').append(newOption).trigger('change');
+                if($('#parent_user').val()){
+                    selected_option = $('#selected_retailer').val();
+                }else if($('#dealer').val()){
+                    selected_option = selected_reatiler;
+                }
+                var selected = false;
+                $.each(data,function(key,val){
+                    selected = (selected_option == val.id)? true : false ;
+                    newOption = new Option(val.text, val.id, selected, selected);
+                    $('#retailer').append(newOption).trigger('change');
+                 });
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                var err = JSON.parse(jqXHR.responseText).errors;
+                $.each(err,function(key,val){                
+                    $(`[name=${key}]`).closest('.form-group').after(`<div class="alert alert-danger mt-2">${val}</div>`);                                        
+                });
+                    /* Toast.fire({
+                        type: 'error',
+                        title: JSON.parse(jqXHR.responseText).message
+                    }); */
+            }
+        });
+    }
 });
 </script>
 @endsection

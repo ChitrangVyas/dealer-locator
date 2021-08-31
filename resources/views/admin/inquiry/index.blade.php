@@ -22,6 +22,7 @@
                                     <th>Customer</th>
                                     <th>Source</th>
                                     <th>Dealer</th>
+                                    <th>Retailer</th>
                                     <th>Action</th>
                                 </tr>
                             </thead>
@@ -98,6 +99,23 @@
     <!-- /.modal-dialog -->
 </div>
 <!-- /.modal -->
+<div class="modal fade" id="assignToRetailer" data-keyboard="false" data-backdrop="static">
+    <div class="modal-dialog modal-md">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="title">Assign to retailer</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+<!-- /.modal -->
 @endsection
 @section('plugins.Datatables', true)
 @section('plugins.Select2', true)
@@ -107,7 +125,7 @@
 @section('js')
 <script>
     jQuery(document).ready(function() {
-        $('#example').DataTable({
+        var table =  $('#example').DataTable({
             "columns": [{
                     "name": "inquiries.id"
                 },
@@ -124,11 +142,18 @@
                     "name": "d.name"
                 },
                 {
+                    "name": "r.name"
+                },
+                {
                     "name": "action"
-                }
+                },
             ],
             "columnDefs": [{
                     "targets": [5],
+                    "orderable": false
+                },
+                {
+                    "targets": [6],
                     "orderable": false
                 },
                 {
@@ -136,9 +161,25 @@
                     "visible": false
                 },
             ],
+            order: [[0, 'desc']],
             "processing": true,
             "serverSide": true,
             "ajax": "{{ route('inquirylistajax') }}",
+            "fnDrawCallback":function() {
+                let is_admin = "{{((empty(auth()->user()->users_group_id)) || auth()->user()->users_group_id == 1 ||auth()->user()->users_group_id == 2 )? true : false }}";
+                let is_dealer = "{{auth()->user()->users_group_id == 2}}";
+                if(is_admin){
+                    table.column(5).visible();
+                }else{
+                    table.column(5).visible(false);
+                }
+                if(is_dealer){
+                    table.column(4).visible(false);
+                }else{
+                    table.column(4).visible();
+                }
+                
+            }
         });
         $('.datetimepicker-input').datetimepicker({
             format: 'YYYY-MM-DD HH:mm',
@@ -160,7 +201,6 @@
             var view_url = $(this).data('view-url');
             var add_url = $(this).data('add-url');
             var task_url = $(this).data('task-url');
-            console.log("Inquiry id",inquiry_id);
             getTabData(view_url,'view');
             getTabData(add_url,'add').then(function(){
                 $('#inquiry_id').val(inquiry_id);
@@ -182,6 +222,28 @@
                 $('#quoteNumber').text("#"+$('#order_number').val());
             });
              */
+        });
+
+        $('body').on('click','#assignRetailer',function(){
+            var inquiry_id = $(this).data('inquiry');
+            var assign_to_retailer_url = $(this).data('assign-to-retailer-url');
+            let data = {'inquiry_id':inquiry_id};
+
+            getRetailers(assign_to_retailer_url,data).then(function(){
+                $('.retailer').select2({
+                    width:'100%',
+                });
+                $("#frmAssignToRetailer #inquiry_id").val(inquiry_id);
+            });
+        });
+        $('body').on('submit','#frmAssignToRetailer',function(e){
+            e.preventDefault();
+            e.stopImmediatePropagation();
+            inquiryAssignToretailer("{{route('inquiry.update.ajax')}}",$('#frmAssignToRetailer').serialize()).then(function(res){
+                /* if(res.code == 1){
+                  $(`.create-quote-${inquiry_id}`).hide();  
+                } */
+            });
         });
 
         $('body').on('submit','#saveInquiryLog', function(e){
@@ -307,7 +369,7 @@
     }
 
     function saveInquiryLog(url,formData,modal="modal-lg"){
-            const Toast = Swal.mixin({
+        const Toast = Swal.mixin({
                         toast: true,
                         position: 'top-end',
                         showConfirmButton: false,
@@ -418,6 +480,59 @@
                     };
                 }
             }
+        });
+    }
+
+    function getRetailers(url,data){
+        var token = $("meta[name='csrf-token']").attr("content");
+        return $.ajax({
+            url: url,
+            type: 'POST',
+            data:{data,'_token':token},
+            success: function(res) {
+                $(`#assignToRetailer .modal-body`).html(res);
+                // $('.product-detail input').not('input[type=checkbox]').attr('disabled',true);
+            }
+        });
+    }
+    function inquiryAssignToretailer(url,data){
+        const Toast = Swal.mixin({
+                        toast: true,
+                        position: 'top-end',
+                        showConfirmButton: false,
+                        timer: 5000
+                        });
+        var token = $("meta[name='csrf-token']").attr("content");
+        $('#assignToRetailer .alert').remove();
+        return $.ajax({
+            url: url,
+            type: 'POST',
+            data:data,
+            success: function(res) {
+                if(res.code == 1){
+                        Toast.fire({
+                            type: 'success',
+                            title: res.message
+                        });
+                        $(`#assignToRetailer`).modal('hide');
+                        $('#example').DataTable().ajax.reload(null, false);
+                    }else{
+                        Toast.fire({
+                            type: 'error',
+                            title: res.message
+                        })
+                    }
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                    var err = JSON.parse(jqXHR.responseText).errors;
+                    $.each(err,function(key,val){                
+                        $(`[name=${key}]`).closest('#assignToRetailer .form-group').after(`<div class="alert alert-danger mt-2">${val}</div>`);                                        
+                    });
+                    Toast.fire({
+                        type: 'error',
+                        title: JSON.parse(jqXHR.responseText).message
+                    });
+                }
         });
     }
 

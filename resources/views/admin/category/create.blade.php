@@ -88,7 +88,9 @@
 @endsection
 @section('plugins.Select2', true)
 @section('js')
-@endsection
 <script>
-      $('.parent_category').select2();
+    jQuery(document).ready(function() {
+      $('#parent_category').select2();
+    });
 </script>
+@endsection

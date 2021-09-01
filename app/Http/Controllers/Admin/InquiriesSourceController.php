@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Requests\Admin\InquiriesCreateRequest;
-use App\Http\Requests\Admin\InquiriesUpdateRequest;
+use App\Http\Requests\Admin\InquiriesSourceCreateRequest;
+use App\Http\Requests\Admin\InquiriesSourceUpdateRequest;
 use App\Models\InquiriesSource;
 use Exception;
 use Illuminate\Http\Request;
@@ -47,7 +47,7 @@ class InquiriesSourceController extends MainController
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(InquiriesCreateRequest $request)
+    public function store(InquiriesSourceCreateRequest $request)
     {
         //
         $request_data = $request->all();
@@ -98,7 +98,7 @@ class InquiriesSourceController extends MainController
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(InquiriesUpdateRequest $request, $id)
+    public function update(InquiriesSourceUpdateRequest $request, $id)
     {
         //
         $request_data = $request->all();

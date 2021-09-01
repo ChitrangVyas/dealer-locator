@@ -32,7 +32,7 @@
                         <!-- text input -->
                         <div class="form-group">
                             <label>Manufacturer</label>                            
-                            <select class="form-control" name="manufacturer_id">
+                            <select class="form-control" id="manufacturer_id" name="manufacturer_id">
                                 <option value="">Please select</option>
                                 @foreach($manufacturers as $manufacturer)
                                     <option {{ (!empty($brand) && $brand->manufacturer_id==$manufacturer->id)?"selected='selected'":'' }} value="{{$manufacturer->id}}">{{$manufacturer->name}}</option>
@@ -106,5 +106,11 @@
     <!-- /.card-body -->
 </div>
 @endsection
+@section('plugins.Select2', true)
 @section('js')
+<script>
+    jQuery(document).ready(function() {
+      $('#manufacturer_id').select2();
+    });
+</script>
 @endsection

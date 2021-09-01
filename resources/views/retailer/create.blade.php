@@ -59,7 +59,7 @@
                 <!-- text input -->
                 <div class="form-group">
                     <label>Password</label>
-                    <input type="password" name="password" value="" class="form-control" placeholder="Password">
+                    <input type="password" name="password" value="{{old('password')}}" class="form-control" placeholder="Password">
                     @error('password')
                         <div class="alert alert-danger mt-2">{{ $message }}</div>
                     @enderror
@@ -95,6 +95,7 @@
                             <option value="{{$user->state_id}}" selected>{{$user->state->name}}</option>
                         @endif
                     </select>
+                    <input type="hidden" id="state_id" value="{{old('state')}}">
                     @error('state')
                         <div class="alert alert-danger mt-2">{{ $message }}</div>
                     @enderror
@@ -110,6 +111,7 @@
                             <option value="{{$user->city_id}}" selected>{{$user->city->name}}</option>
                         @endif
                     </select>
+                    <input type="hidden" id="city_id" value="{{old('city')}}">
                     @error('city')
                         <div class="alert alert-danger mt-2">{{ $message }}</div>
                     @enderror
@@ -204,6 +206,30 @@ jQuery(document).ready(function(){
             });
         }
     });
+
+    if ($('#state_id').val() || $('#city_id').val()) {
+        getStateCity('states',` id=${$('#state_id').val()}`,'state');
+        getStateCity('cities', ` id=${$('#city_id').val()}`,'city');
+    }
+
+    function getStateCity(table,where,eleClass) {
+        if($('#state_id').val() || $('#city_id').val()){
+            $.ajax({
+                url: "{{route('get_value')}}",
+                type: 'GET',
+                data: {
+                    table: table,
+                    where: where,
+                },
+                success: function(res) {
+                    $.each(JSON.parse(res), function(key, val) {
+                        var newOption = new Option(val.text, val.id, true, true);
+                        $(`.${eleClass}`).append(newOption).trigger('change');
+                    })
+                }
+            });
+        }
+    }
 });
 </script>
 @endsection

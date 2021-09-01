@@ -161,6 +161,7 @@
 <script>
 jQuery(document).ready(function(){
     var base_url = "{{url('/admin')}}";
+    $('#inquiry_source').select2();
     $('.dealer').select2({
         minimumInputLength: 2,
         ajax: {

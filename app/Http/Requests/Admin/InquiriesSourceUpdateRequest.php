@@ -4,7 +4,7 @@ namespace App\Http\Requests\Admin;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class InquiryUpdateRequest extends FormRequest
+class InquiriesSourceUpdateRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,7 +24,7 @@ class InquiryUpdateRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+            'source'=>'required|string|min:2'
         ];
     }
 }

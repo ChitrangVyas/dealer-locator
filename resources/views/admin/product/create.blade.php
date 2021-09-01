@@ -50,7 +50,7 @@
                         <!-- text input -->
                         <div class="form-group">
                             <label>Brand</label>                            
-                            <select class="form-control" name="brand_id">
+                            <select class="form-control" id="brand_id" name="brand_id">
                                 <option value="">Please select</option>
                                 @foreach($brands as $brand)
                                     <option {{ old('brand_id', (!empty($product) && $product->brand_id))==$brand->id?"selected='selected'":'' }} value="{{$brand->id}}">{{$brand->name}}</option>
@@ -148,6 +148,9 @@ jQuery(document).ready(function(){
     jQuery(".categories").select2({
         tags: true,
         tokenSeparators: [","],
+    });
+    jQuery(document).ready(function() {
+      $("#brand_id").select2();
     });
 });
 </script>

@@ -163,7 +163,7 @@
             }
         });
 
-        $('body').on('click','.view-po',function(){
+        $('body').on('click','.view-order',function(){
             var view_url = $(this).data('url');
             $(`#orderModal .modal-body`).html("");
             getOrderData(view_url,{'order_id':$(this).data('order')});
@@ -174,11 +174,7 @@
             let url = "{{ route('order.po.store') }}";
             let data = $('#saveQuote').serialize();
             // let inquiry_id = $('#inquiry_id').val();
-            saveFormData(url,data,'orderModal').then(function(res){
-                if(res.code == 1){
-                  $(`.create-po-${res.data.quote}`).hide();  
-                }
-            });
+            saveFormData(url,data,'orderModal');
         });
         $('body').on('submit','#uploadPo',function(e){
             e.preventDefault();
@@ -325,8 +321,6 @@
                 type: 'POST',
                 data: formData,
                 dataType: 'JSON',
-                contentType: false,
-                processData: false,
                 success: function (data) {
                     if(data.code == 1){
                         Toast.fire({

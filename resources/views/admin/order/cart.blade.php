@@ -7,6 +7,7 @@
         @csrf
         <input type="hidden" name="inquiry_id" id="inquiry_id" value="{{(!empty($inquiry_id)) ? $inquiry_id : ''}}" />
         <input type="hidden" name="order_number" id="order_number" value="{{(!empty($order_number)) ? $order_number : ''}}" />
+        <input type="hidden" id="type" value="{{(!empty($type)) ? $type : ''}}">
         <input type="hidden" name="cart_id" id="modalId" value="{{$id}}" />
             <div class="row">
                 <div class="col-sm-12 col-md-4">

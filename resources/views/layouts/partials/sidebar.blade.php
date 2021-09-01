@@ -2,7 +2,7 @@
     <!-- Brand Logo -->
     <a href="/" class="brand-link">
       <img src="{{ asset('assets/img/AdminLTELogo.png') }}" alt="Logo" class="brand-image img-circle elevation-3" style="opacity: .8">
-      <span class="brand-text font-weight-light">TechCelerity</span>
+      <span class="brand-text font-weight-light">{{ucwords(config('app.name'))}}</span>
     </a>
 
     <!-- Sidebar -->
@@ -166,7 +166,7 @@
               <p>Inquiry</p>
             </a>
           </li>
-          <li class="nav-item has-treeview {{ ($elementActive == 'quote' || $elementActive == 'po') ? 'menu-open' : ''}}">
+          <li class="nav-item has-treeview {{ ($elementActive == 'quote' || $elementActive == 'po' || $elementActive == 'sales') ? 'menu-open' : ''}}">
           <a href="#" class="nav-link">
               <i class="nav-icon fas fa-copy"></i>
               <p>
@@ -183,8 +183,14 @@
               </li>
               <li class="nav-item">
                 <a href="{{ route('po.index') }}" class="nav-link  {{ $elementActive == 'po' ? 'active' : '' }}">
-                <i class="nav-icon fas fa-clipboard"></i>
+                <i class="nav-icon fas fa-shopping-bag"></i>
                   <p>PO</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="{{ route('sale.index') }}" class="nav-link  {{ $elementActive == 'sales' ? 'active' : '' }}">
+                <i class="nav-icon fas fa-shopping-cart"></i>
+                  <p>Sales</p>
                 </a>
               </li>
             </ul>

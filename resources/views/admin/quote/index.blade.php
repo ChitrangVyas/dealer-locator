@@ -163,7 +163,7 @@
             }
         });
 
-        $('body').on('click','.view-quote',function(){
+        $('body').on('click','.view-order',function(){
             var view_url = $(this).data('url');
             $("#uploadedPo").html("");
             $(`#orderModal .modal-body`).html("");
@@ -173,34 +173,23 @@
                     format: 'YYYY-MM-DD HH:mm',
                     date: moment(),
                 });
+                select2Product();
                 if($('input[name=order_id]').val()){
-                    getOrderImage("{{ route('order.po.image') }}",{'order_id':$('input[name=order_id]').val()}).then(function(res){
-                        
+                    getOrderImage("{{ route('order.po.image') }}",{'order_id':$('input[name=order_id]').val()}).then(function(res){    
                     });
                 }
             });
-            /* var inquiry_id = $(this).data('inquiry');
-            var create_quote_url = $(this).data('create-quote-url');
-            let data = {'inquiry_id':inquiry_id};
-            getCreateQuote(create_quote_url,data).then(function(){
-                select2Product();
-                $('#inquiry_id').val(inquiry_id); 
-            }); */
-            /* getCreateQuote(create_quote_url,data).then(function(){
-                $('#inquiry_id').val(inquiry_id); 
-                $('#quoteNumber').text("#"+$('#order_number').val());
-            });
-             */
         });
 
         $('body').on('submit','#saveQuote', function(e){
             e.preventDefault();
-            let url = "{{ route('order.po.store') }}";
+
+            let url = ($('#type').val() == 'sale')?"{{ route('order.sale.store') }}":"{{ route('order.po.store') }}";
             let formData = new FormData($('#saveQuote')[0]);
             // let inquiry_id = $('#inquiry_id').val();
             saveFormData(url,formData,'orderModal').then(function(res){
-                if(res.code == 1){
-                  $(`.create-po-${res.data.quote}`).hide();  
+                if(res.code == 1 && $('#type').val() == 'sale'){
+                  $(`.create-sale-${res.data.quote}`).hide();
                 }
             });
         });

@@ -1,27 +1,55 @@
 <div class="row">
-    <div class="col-sm-12 col-md-12 mb-3 border-bottom">
-        <div class="">
-            <h5 class="border-bottom"><strong>Customer Detail</strong></h5>
-            <ul class="list-unstyled">
-                <li><strong>{{ucwords($order->customer->name)}}</strong></li>
-                <li><strong>{{ucwords($order->customer->address)}},</strong></li>
-                <li><strong>{{ucwords($order->customer->city->name)}},</strong></li>
-                <li><strong>{{ucwords($order->customer->state->name)}} - {{$order->customer->zipcode}}</strong></li>
-                <li><strong>Mobile: {{$order->customer->mobile}}</strong></li>
-                <li><strong>Email: {{$order->customer->email}}</strong></li>
-            </ul>
-        </div>
+    <div class="col-12">
+        <h4>
+            <i class="fas fa-globe"></i> {{config('app.name')}}
+            <small class="float-right">Date: {{date('d/m/Y',strtotime($order->created_at))}}</small>
+        </h4>
     </div>
+    <!-- /.col -->
+</div>
+<!-- info row -->
+<div class="row invoice-info">
+    <div class="col-sm-4 invoice-col">
+        From
+        <address>
+            <strong>{{ucwords($order->addedBy->name)}}</strong><br>
+            {{ucwords($order->addedBy->address)}},<br>
+            {{ucwords($order->addedBy->city->name)}},<br>
+            {{ucwords($order->addedBy->state->name)}} - {{$order->addedBy->zipcode}}<br>
+            Phone: {{$order->addedBy->mobile}}<br>
+            Email: {{$order->addedBy->email}}
+        </address>
+    </div>
+    <!-- /.col -->
+    <div class="col-sm-4 invoice-col">
+        To
+        <address>
+            <strong>{{ucwords($order->customer->name)}}</strong><br>
+            {{ucwords($order->customer->address)}},<br>
+            {{ucwords($order->customer->city->name)}},<br>
+            {{ucwords($order->customer->state->name)}} - {{$order->customer->zipcode}}<br>
+            Phone: {{$order->customer->mobile}}<br>
+            Email: {{$order->customer->email}}
+        </address>
+    </div>
+    @if ($order->type == 'sale')
+    <!-- /.col -->
+    <div class="col-sm-4 invoice-col">
+        <b>Invoice #{{$order->order_number}}</b><br>
+        <br>
+    </div>
+    <!-- /.col -->
+    @endif
 </div>
 <div class="row">
     <div class="col-sm-12 col-md-12">
-    <h5><strong>Order Detail</strong></h5>
+        <h5><strong>Order Detail</strong></h5>
         <table class="table table-striped">
             <thead>
                 <tr>
                     <th style="width: 70%">Product</th>
-                    <th>Qty</th>
                     <th>Price</th>
+                    <th>Qty</th>
                     <th>Amount</th>
                 </tr>
             </thead>
@@ -29,8 +57,8 @@
                 @foreach ($order->orderProduct as $orderProduct)
                 <tr>
                     <td>{{$orderProduct->product->name}}</td>
-                    <td>{{$orderProduct->qty}}</td>
                     <td>{{ number_format($orderProduct->amount,2)}}</td>
+                    <td>{{$orderProduct->qty}}</td>
                     <td>{{ number_format($orderProduct->getsubTotal(),2) }}</td>
                 </tr>
                 @endforeach

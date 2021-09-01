@@ -7,6 +7,7 @@ use App\Models\Order;
 use App\Models\OrderProduct;
 use App\Models\Inquiry;
 use App\Models\OrderImage;
+use App\Models\User;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -248,6 +249,55 @@ class OrderController extends MainController
         return response()->json(['status' => 'successful','code'=>1, 'data'=>$json, 'message'=>'']);
     }
 
+    //sale
+    public function saleIndex(){
+        View::share ( 'title', 'Sales' );
+        View::share ( 'elementActive', 'sales' );
+        // id|number|total|from|to|created_date
+        return view('admin.sale.index');
+    }
+
+    public function showSale(Request $request){
+        $order = Order::findOrFail($request->get('data')['order_id']);
+        $json['cart_title'] = "Sale #$order->order_number";
+        $json['cart_content'] = view('admin.quote.view',['order'=>$order])->render();
+        return response()->json(['status' => 'successful','code'=>1, 'data'=>$json, 'message'=>'']);
+    }
+
+    public function storeSale(Request $request){
+        $request_data = $request->all();
+        $cart = \Cart::Session($request_data['cart_id']);
+        $cart_data = $this->myCart->getAll($request_data['cart_id']);        
+        $cart_data['status'] =  'sent';
+        $cart_data['total'] = $cart->getTotal();
+        try{
+            $order = Order::create($cart_data);
+            if(!empty($order)){
+                $order_product_data = [];
+                foreach($request_data['product'] as $key => $value){
+                    $cart_product = $cart->get($value);
+                    $order_product_data = array('order_id' => $order->id, 'product_id' => $cart_product->id, 'qty' => $cart_product->quantity, 'amount' => $cart_product->price);
+                    $order_product = '';
+                    if(!empty($order_product_data)){
+                        $order_product = OrderProduct::create($order_product_data);
+                    }
+                }
+                $cart->clear();
+                $this->myCart->clear($request_data['cart_id']);
+                if(!empty($order_product)){
+                    return response()->json(['status' => 'successful', 'data'=>['quote'=>$cart_data['order_reference']],'code'=>1,'message'=>'Sales Successfully created.']);
+                }else{
+                    return response()->json(['status' => 'error','code'=>0,'message'=>'Something goes wrong.']);
+                }
+            }else{
+                return response()->json(['status' => 'error','code'=>0,'message'=>'Unable to generate Sale.']);
+            }
+        }catch(Exception $e){
+            return response()->json(['status' => 'error','code' => 0,'message' => $e->getMessage()]);                
+        }
+    }
+
+
     public function listQuoteAjaxData(Request $request){
         $user =  auth()->user();
         // $dealer_id = '';
@@ -281,10 +331,14 @@ class OrderController extends MainController
         $total_order = Order::where('type','quote')->where('deleted_at',NULL)->count();
         $data = [];
         foreach($orders as $order){
+            $is_sale_generated = Order::where('type','sale')->where('order_reference',$order->id)->where('deleted_at',NULL)->count();
             $customer = (!empty($order->customer))?$order->customer:'N/A';
             $added_by  = (!empty($order->added_by))?$order->added_by:'N/A';
-            $action_html = "<span><a data-url=".route('quote.show',$order->id)." data-order=".$order->id." class='btn btn-primary view-quote' data-toggle='modal' data-target='#orderModal'>View</a></span>";
-            $action_html .= "<span class='ml-3 create-po-".$order->id."'><a data-url=".route('cart.po.create')." data-order=".$order->id." class='btn btn-success view-quote' data-toggle='modal' data-target='#orderModal'>Generate PO</a></span>";
+            $action_html = "<span><a data-url=".route('quote.show',$order->id)." data-order=".$order->id." class='btn btn-primary view-order' data-toggle='modal' data-target='#orderModal'>View</a></span>";
+            $action_html .= "<span class='ml-3 create-po-".$order->id."'><a data-url=".route('cart.po.create')." data-order=".$order->id." class='btn btn-success view-order' data-toggle='modal' data-target='#orderModal'>Generate PO</a></span>";
+            if(empty($is_sale_generated)){
+                $action_html .= "<span class='ml-3 create-sale-".$order->id."'><a data-url=".route('cart.sale.create')." data-order=".$order->id." class='btn btn-default view-order' data-toggle='modal' data-target='#orderModal'>Generate Sale</a></span>";
+            }
             // $action_html = "<span><a href=".route('order.edit',$order->id)." class='btn btn-primary'>Edit</a></span>";
             // $action_html .= "<span class='ml-3'><button type=submit data-user=$order->id class='btn btn-danger' onClick=deleteOrder($order->id)>Delete</button></span>";
             $data[] = [$order->id,$order->order_number,$order->amount, ucwords($added_by), ucwords($customer),$order->created_date, $action_html];
@@ -313,6 +367,58 @@ class OrderController extends MainController
         // $where .= (!empty($dealer_id))?" AND (dealer_id=$dealer_id OR inquiries.created_by=$dealer_id)":'';
         $where .= (!empty($search)) ? " AND (orders.order_number like '$search%' OR orders.total like '$search%' OR orders.created_at like '$search%' OR (c.name is NOT NULL AND c.name like '$search%') OR (d.name is NOT NULL AND d.name like '$search%'))":'';
         $orders = DB::table('orders')
+        ->select(DB::raw('orders.id,order_number,orders.to_user,c.name as customer,d.name as added_by, orders.total as amount, orders.created_at as created_date'))
+        ->join('order_product AS op','orders.id','=','op.order_id','left')
+        ->join('users AS c','orders.to_user','=','c.id','left')
+        ->join('users AS d','orders.from_user','=','d.id','left')
+        ->whereRaw($where)
+        ->offset($start)
+        ->limit($length)
+        ->orderBy($request['columns'][$request['order'][0]['column']]['name'],$request['order'][0]['dir'])
+        ->groupby('orders.id')
+        ->get();
+        
+        $total_order = Order::where('type','po')->where('deleted_at',NULL)->count();
+        $data = [];
+        foreach($orders as $order){
+            $customer = (!empty($order->customer))?$order->customer:'N/A';
+            $added_by  = (!empty($order->added_by))?$order->added_by:'N/A';
+            $action_html = "<span><a data-url=".route('po.show',$order->id)." data-order=".$order->id." class='btn btn-primary view-order' data-toggle='modal' data-target='#orderModal'>View</a></span>";
+            if((auth()->user()->id == $order->to_user)||((empty($user->userGroup) && $user->id == 1)||$user->userGroup == '1')){
+                $action_html .= "<span class='ml-3 create-sale-".$order->id."'><a data-url=".route('cart.sale.create')." data-order=".$order->id." class='btn btn-default view-order' data-toggle='modal' data-target='#orderModal'>Generate Sale</a></span>";
+            }
+            // $action_html .= "<span class='ml-3 create-po-".$order->id."'><a data-url=".route('cart.po.create')." data-order=".$order->id." class='btn btn-success view-quote' data-toggle='modal' data-target='#orderModal'>Generate PO</a></span>";
+            // $action_html = "<span><a href=".route('order.edit',$order->id)." class='btn btn-primary'>Edit</a></span>";
+            // $action_html .= "<span class='ml-3'><button type=submit data-user=$order->id class='btn btn-danger' onClick=deleteOrder($order->id)>Delete</button></span>";
+            $data[] = [$order->id,$order->order_number,$order->amount, ucwords($added_by), ucwords($customer),$order->created_date, $action_html];
+        }
+        $return_array = array();
+        $return_array['draw'] = $request['draw'];
+        $return_array['recordsTotal'] = $total_order;
+        $return_array['recordsFiltered'] = $total_order;
+        $return_array['data'] = $data;
+        return response(json_encode($return_array), 200)
+        ->header('Content-Type', 'text/plain');
+    }
+
+
+    public function listSaleAjaxData(Request $request){
+        $user =  auth()->user();
+        $start =  $request['start'];
+        $length=  $request['length'];
+        $search = $request['search']['value'];
+        $where = 'orders.type = "sale" AND orders.deleted_at is NULL';
+        if((!empty($user->userGroup)) && $user->userGroup->id == '2'){
+            $users = implode(',',User::where('parent_id',$user->id)->get()->pluck('id')->toArray());
+            $where .= (!empty($user->id))?" AND (from_user=$user->id OR to_user=$user->id ":'';
+            $where .= (!empty($users)) ? " OR from_user in ($users) )" :")";
+        }
+        if((!empty($user->userGroup)) && $user->userGroup->id == '3'){
+            $where .= (!empty($user->id))?" AND from_user=$user->id":'';
+        }
+        // $where .= (!empty($dealer_id))?" AND (dealer_id=$dealer_id OR inquiries.created_by=$dealer_id)":'';
+        $where .= (!empty($search)) ? " AND (orders.order_number like '$search%' OR orders.total like '$search%' OR orders.created_at like '$search%' OR (c.name is NOT NULL AND c.name like '$search%') OR (d.name is NOT NULL AND d.name like '$search%'))":'';
+        $orders = DB::table('orders')
         ->select(DB::raw('orders.id,order_number,c.name as customer,d.name as added_by, orders.total as amount, orders.created_at as created_date'))
         ->join('order_product AS op','orders.id','=','op.order_id','left')
         ->join('users AS c','orders.to_user','=','c.id','left')
@@ -329,7 +435,7 @@ class OrderController extends MainController
         foreach($orders as $order){
             $customer = (!empty($order->customer))?$order->customer:'N/A';
             $added_by  = (!empty($order->added_by))?$order->added_by:'N/A';
-            $action_html = "<span><a data-url=".route('po.show',$order->id)." data-order=".$order->id." class='btn btn-primary view-po' data-toggle='modal' data-target='#orderModal'>View</a></span>";
+            $action_html = "<span><a data-url=".route('sale.show',$order->id)." data-order=".$order->id." class='btn btn-primary view-po' data-toggle='modal' data-target='#orderModal'>View</a></span>";
             // $action_html .= "<span class='ml-3 create-po-".$order->id."'><a data-url=".route('cart.po.create')." data-order=".$order->id." class='btn btn-success view-quote' data-toggle='modal' data-target='#orderModal'>Generate PO</a></span>";
             // $action_html = "<span><a href=".route('order.edit',$order->id)." class='btn btn-primary'>Edit</a></span>";
             // $action_html .= "<span class='ml-3'><button type=submit data-user=$order->id class='btn btn-danger' onClick=deleteOrder($order->id)>Delete</button></span>";

@@ -27,7 +27,11 @@ class Order extends Model
     }
 
     public function addedBy(){
-        return $this->belongsTo(User::class,'from_user','id');
+        if($this->type == 'po'){
+            return $this->belongsTo(User::class,'to_user','id');
+        }else{
+            return $this->belongsTo(User::class,'from_user','id');
+        }
     }
 
 

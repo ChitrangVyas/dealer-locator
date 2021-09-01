@@ -32,25 +32,36 @@ Route::group(['prefix'=>'admin','middleware'=>['auth']],function () {
     Route::get('inquiries_source/listajaxdata', [App\Http\Controllers\Admin\InquiriesSourceController::class,'listAjaxData'])->name('inquiries_sourcelistajax');
     Route::get('customer/listajaxdata', [App\Http\Controllers\Admin\CustomerUserController::class,'listAjaxData'])->name('customerlistajax');
     Route::get('customer/createAjax', [App\Http\Controllers\Admin\CustomerUserController::class,'createAjax'])->name('customerCreateAjax');
+    //inquiry & inquiry-log
     Route::get('inquiry/listajaxdata', [App\Http\Controllers\Admin\InquiryController::class,'listAjaxData'])->name('inquirylistajax');
     Route::post('inquiry/assign/retailer', [App\Http\Controllers\Admin\InquiryController::class,'assignToRetailer'])->name('inquiry.assign.retailer');
     Route::post('inquiry/assign/retailer/update', [App\Http\Controllers\Admin\InquiryController::class,'updateInquiry'])->name('inquiry.update.ajax');
     Route::get('inquiry-log/reminder/add', [App\Http\Controllers\Admin\InquiryLogController::class,'createReminder'])->name('createReminder');
     Route::post('inquiry-log/reminder/add', [App\Http\Controllers\Admin\InquiryLogController::class,'storeReminder'])->name('storeReminder');
+    //qoute
     Route::post('order/quote/create', [App\Http\Controllers\Admin\OrderController::class,'quoteCreate'])->name('order.quote.create');
     Route::post('order/quote/', [App\Http\Controllers\Admin\OrderController::class,'quoteStore'])->name('order.quote.store');
     Route::get('quote/', [App\Http\Controllers\Admin\OrderController::class,'quoteIndex'])->name('quote.index');
     Route::get('quote/listQuoteAjaxData', [App\Http\Controllers\Admin\OrderController::class,'listQuoteAjaxData'])->name('list.quote');
-    Route::get('po/listPoAjaxData', [App\Http\Controllers\Admin\OrderController::class,'listPoAjaxData'])->name('list.po');
     Route::post('quote/show', [App\Http\Controllers\Admin\OrderController::class,'showQuote'])->name('quote.show');
-    Route::post('po/show', [App\Http\Controllers\Admin\OrderController::class,'showPo'])->name('po.show');
+    //po
     Route::get('po/', [App\Http\Controllers\Admin\OrderController::class,'poIndex'])->name('po.index');
-    Route::post('cart/po/create', [App\Http\Controllers\Admin\CartController::class,'createPo'])->name('cart.po.create');
+    Route::get('po/listPoAjaxData', [App\Http\Controllers\Admin\OrderController::class,'listPoAjaxData'])->name('list.po');
+    Route::post('po/show', [App\Http\Controllers\Admin\OrderController::class,'showPo'])->name('po.show');
     Route::post('order/po/', [App\Http\Controllers\Admin\OrderController::class,'storePo'])->name('order.po.store');
     Route::post('order/po/recieved', [App\Http\Controllers\Admin\OrderController::class,'poRecived'])->name('order.po.recieved');
     Route::post('order/po/upload/image', [App\Http\Controllers\Admin\OrderController::class,'uploadPoImage'])->name('order.po.upload.image');
     Route::post('order/po/image', [App\Http\Controllers\Admin\OrderController::class,'getPoImage'])->name('order.po.image');
+    //sale
+    Route::get('sale/', [App\Http\Controllers\Admin\OrderController::class,'saleIndex'])->name('sale.index');
+    Route::get('sale/listSaleAjaxData', [App\Http\Controllers\Admin\OrderController::class,'listSaleAjaxData'])->name('list.sale');
+    Route::post('sale/show', [App\Http\Controllers\Admin\OrderController::class,'showSale'])->name('sale.show');
+    Route::post('cart/sale/create', [App\Http\Controllers\Admin\CartController::class,'createSale'])->name('cart.sale.create');
+    Route::post('order/sale/', [App\Http\Controllers\Admin\OrderController::class,'storeSale'])->name('order.sale.store');
+    //cart
     Route::post('cart/inquiry-to-quote/create', [App\Http\Controllers\Admin\CartController::class,'createInquiryToQuoteCart'])->name('cart.inquiryToQuote.create');
+    Route::post('cart/po/create', [App\Http\Controllers\Admin\CartController::class,'createPo'])->name('cart.po.create');
+    Route::post('cart/sale/create', [App\Http\Controllers\Admin\CartController::class,'createSale'])->name('cart.sale.create');
     Route::post('cart/product/add', [App\Http\Controllers\Admin\CartController::class,'addProductToCart'])->name('cart.product.add');
     Route::put('cart/product/update', [App\Http\Controllers\Admin\CartController::class,'update'])->name('cart.update');
     Route::delete('cart/product/', [App\Http\Controllers\Admin\CartController::class,'removeCartProduct'])->name('cart.product.destroy');

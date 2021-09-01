@@ -144,7 +144,7 @@ class CartController extends MainController
     }
 
     public function getInquiryToQuoteCart($id,$cart){
-        return view('admin.order.cart',['cart'=>$cart,'id'=>$id,'order_number'=>$this->myCart->getOrderNumber($id),'inquiry_id'=>$this->myCart->getInquiryId($id)]);
+        return view('admin.order.cart',['cart'=>$cart,'id'=>$id,'order_number'=>$this->myCart->getOrderNumber($id),'type'=>$this->myCart->getType($id),'inquiry_id'=>$this->myCart->getInquiryId($id)]);
     }
 
     public function addProductToCart(Request $request){
@@ -200,5 +200,38 @@ class CartController extends MainController
         $json['cart_content'] = $this->getInquiryToQuoteCart($id,$cart)->render();
         return response()->json(['status' => 'successful','code'=>1, 'data'=>$json, 'message'=>'']);
     }
-        
+     
+    
+    //SALE
+
+    public function createSale(Request $request)
+    {
+        $request_data = $request->all();
+        $id = "sale_".$request_data['data']['order_id'];
+        $order = Order::findOrFail($request_data['data']['order_id']);
+        $cart  = \Cart::session($id);
+        if($cart->isEmpty()){
+            $items = [];
+            foreach($order->orderProduct as $orderProduct){
+                $items[] = array(
+                    'id' => $orderProduct->product->id,
+                    'name' => $orderProduct->product->name,
+                    'price' => $orderProduct->amount,
+                    'quantity' => $orderProduct->qty,
+                    'attributes' => array(),
+                );
+            }
+            $cart->add($items);
+            $this->myCart->setOrderNumber($id,$order->order_number);
+            $this->myCart->setOrderReference($id,$order->id);
+            $this->myCart->setType($id,'sale');
+            // from login user
+            $this->myCart->setFrom($id,auth()->user()->id);
+            // to parent user
+            $this->myCart->setTo($id,$order->to_user);
+        }
+        $json['cart_title'] = "Sale".(!empty($this->myCart->getOrderNumber($id)) ? " #".$this->myCart->getOrderNumber($id) : '');
+        $json['cart_content'] = $this->getInquiryToQuoteCart($id,$cart)->render();
+        return response()->json(['status' => 'successful','code'=>1, 'data'=>$json, 'message'=>'']);
+    }
 }

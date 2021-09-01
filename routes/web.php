@@ -33,6 +33,8 @@ Route::group(['prefix'=>'admin','middleware'=>['auth']],function () {
     Route::get('customer/listajaxdata', [App\Http\Controllers\Admin\CustomerUserController::class,'listAjaxData'])->name('customerlistajax');
     Route::get('customer/createAjax', [App\Http\Controllers\Admin\CustomerUserController::class,'createAjax'])->name('customerCreateAjax');
     Route::get('inquiry/listajaxdata', [App\Http\Controllers\Admin\InquiryController::class,'listAjaxData'])->name('inquirylistajax');
+    Route::post('inquiry/assign/retailer', [App\Http\Controllers\Admin\InquiryController::class,'assignToRetailer'])->name('inquiry.assign.retailer');
+    Route::post('inquiry/assign/retailer/update', [App\Http\Controllers\Admin\InquiryController::class,'updateInquiry'])->name('inquiry.update.ajax');
     Route::get('inquiry-log/reminder/add', [App\Http\Controllers\Admin\InquiryLogController::class,'createReminder'])->name('createReminder');
     Route::post('inquiry-log/reminder/add', [App\Http\Controllers\Admin\InquiryLogController::class,'storeReminder'])->name('storeReminder');
     Route::post('order/quote/create', [App\Http\Controllers\Admin\OrderController::class,'quoteCreate'])->name('order.quote.create');

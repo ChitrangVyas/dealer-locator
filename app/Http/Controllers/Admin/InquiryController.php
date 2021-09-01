@@ -2,14 +2,22 @@
 
 namespace App\Http\Controllers\Admin;
 
+<<<<<<< HEAD
 use App\Http\Requests\Admin\InquiriesCreateRequest;
 use App\Http\Requests\Admin\InquiriesUpdateRequest;
+=======
+use App\Http\Requests\Admin\InquiriesUpdateRequest;
+use App\Http\Requests\Admin\InquiryCreateRequest;
+use App\Http\Requests\Admin\InquiryUpdateRequest;
+>>>>>>> 636895ac7d6ae88510f9ff1c441210870cb91d44
 use App\Models\InquiriesSource;
 use App\Models\Inquiry;
 use App\Models\Product;
+use App\Models\User;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
 use View;
 
 class InquiryController extends MainController
@@ -56,8 +64,20 @@ class InquiryController extends MainController
             $dealer_id = auth()->user()->id;
         }elseif (auth()->user()->users_group_id == '3') {
             $dealer_id = auth()->user()->parent_id;
+            $retailer_id = (!empty($request_data['retailer']))?$request_data['retailer']:auth()->user()->id;
+        }
+        $inquiry_data = [
+            'inquiries_source_id'=>$request_data['inquiry_source'],
+            'customer_id'=>$request_data['customer'],
+            'created_by'=>$request_data['created_by'],
+            'dealer_id' => $dealer_id,
+            // 'product_id'=>$request_data['product'],
+        ];
+        if(!empty($retailer_id)){
+            $inquiry_data['retailer_id'] = $retailer_id;
         }
         try{
+<<<<<<< HEAD
             $inquiry = Inquiry::create([
                 'inquiries_source_id'=>$request_data['inquiry_source_id'],
                 'customer_id'=>$request_data['customer'],
@@ -65,6 +85,9 @@ class InquiryController extends MainController
                 'dealer_id' => $dealer_id,
                 // 'product_id'=>$request_data['product'],
             ]);
+=======
+            $inquiry = Inquiry::create($inquiry_data);
+>>>>>>> 636895ac7d6ae88510f9ff1c441210870cb91d44
             if(!empty($request_data['product'])){
                 $products = Product::find($request_data['product']);
                 $inquiry->product()->sync($products);
@@ -117,10 +140,17 @@ class InquiryController extends MainController
             'customer_id'=>$request_data['customer'],
             // 'product_id'=>$request_data['product'],
         ];
-        if($request_data['dealer']){
+        if(!empty($request_data['dealer'])){
             $update_data['dealer_id'] = $request_data['dealer'];
         }
-        $is_inquiry_updated = $inquiry->where('id',$id)->update($update_data);
+        if(!empty($request_data['retailer'])){
+            $update_data['retailer_id']=$request_data['retailer'];
+        }
+        try{
+            $is_inquiry_updated = $inquiry->where('id',$id)->update($update_data);
+        }catch(Exception $e){
+            return redirect(route('inquiry.create'))->with('exception', $e->getMessage());
+        }
         $products= [];
         if($is_inquiry_updated && (!empty($request_data['product']))){
             $products = Product::find($request_data['product']);
@@ -143,6 +173,35 @@ class InquiryController extends MainController
             $user->delete();
         }
     }
+
+    public function assignToRetailer(Request $request)
+    {
+        $retailers = User::where('users_group_id',3)->where('parent_id',auth()->user()->id)->get();
+        return view('admin.inquiry.assignretailer',['retailers'=>$retailers]);
+    }
+
+    public function updateInquiry(Request $request){
+        Validator::make($request->all(), [
+            'retailer' => 'required',
+            'id' => 'required',
+        ])->validate();
+        if($request->ajax()){
+            $update_data['retailer_id'] = $request->input('retailer');
+            $inquiry = Inquiry::findOrFail($request->input('id'));
+            
+            try{
+                $is_inquiry_updated = $inquiry->where('id',$request->input('id'))->update($update_data);
+            }catch(Exception $e){
+                return response()->json(['status' => 'error','code'=>0,'message'=>$e->getMessage()]);
+            }
+            if(!empty($is_inquiry_updated)){
+                return response()->json(['status' => 'successful', 'data'=>[],'code'=>1,'message'=>'Retailer has been successfully assigned.']);
+            }
+        }else{
+            return response()->json(['status' => 'error','code'=>0,'message'=>'Bad Method Call.']);
+        }
+    }
+
 
     public function listAjaxData(Request $request){
         $user =  auth()->user();
@@ -175,22 +234,26 @@ class InquiryController extends MainController
         ->groupby('inquiries.id')
         ->get();
         
-        $total_inquiries = Inquiry::where('deleted_at',NULL)->count();
+        $total_inquiries = Inquiry::whereRaw($where)->count();
         $data = [];
         foreach($inquiries as $inquiry){
             $dealer = (!empty($inquiry->dealer))?$inquiry->dealer:'N/A';
+            $retailer = (!empty($inquiry->retailer))?$inquiry->retailer:'N/A';
             $action_html = "";
-            if(empty($user->userGroup) || ((($user->id == $inquiry->dealer || $user->id == $inquiry->retailer) && $user->id == $inquiry->created_by) || ($user->id == $inquiry->created_by))){
-                $action_html .= "<span><a href=".route('inquiry.edit',$inquiry->id)." class='btn btn-primary'>Edit</a></span>";
-                $action_html .= "<span class='ml-3'><button type=submit data-user=$inquiry->id class='btn btn-danger' onClick=deleteUser($inquiry->id)>Delete</button></span>";
-            }
             $action_html .= "<span class='ml-3'><button type='button' id='addLog' class=' ml-3 btn btn-default' data-inquiry=$inquiry->id data-view-url='".route('inquiry-log.show',$inquiry->id)."' data-add-url='".route('inquiry-log.create')."' data-task-url='".route('createReminder')."' data-toggle='modal' data-target='#modal-lg'>View Log</button></span>";
+            if((!empty($user->userGroup)) && $user->userGroup->id == '2'){
+                $action_html .= "<span class='ml-3'><button type='button' id='assignRetailer' class=' ml-3 btn btn-default' data-inquiry=$inquiry->id data-assign-to-retailer-url='".route('inquiry.assign.retailer')."' data-task-url='".route('createReminder')."' data-toggle='modal' data-target='#assignToRetailer'>Assign to retailer</button></span>";
+            }
             if(empty($inquiry->status)){
                 // $action_html .= "<span class='ml-3'><button type='button' id='createQuote' class=' ml-3 btn btn-success create-quote-".$inquiry->id."' data-inquiry=$inquiry->id data-create-quote-url='".route('order.quote.create')."' data-toggle='modal' data-target='#quoteModal'>Quote</button></span>";
-                $action_html .= "<span class='ml-3'><button type='button' id='createQuote' class=' ml-3 btn btn-success create-quote-".$inquiry->id."' data-inquiry=$inquiry->id data-create-quote-url='".route('cart.inquiryToQuote.create')."' data-toggle='modal' data-target='#quoteModal'>Create Quote</button></span>";
+                $action_html .= "<span class='ml-3'><button type='button' id='createQuote' class=' ml-3 btn btn-success create-quote-".$inquiry->id."' data-inquiry=$inquiry->id data-create-quote-url='".route('cart.inquiryToQuote.create')."' data-toggle='modal' data-target='#quoteModal'><i class='fas fa-clipboard' title='Create Qute'></i></button></span>";
             }
-            // $action_html .= "<span class='ml-3'><a href=# class='btn btn-primary'>View</a></span>";            
-            $data[] = [$inquiry->id,$inquiry->product,ucwords($inquiry->customer),$inquiry->source,$dealer,$action_html];
+            if(empty($user->userGroup) || ((($user->id == $inquiry->dealer || $user->id == $inquiry->retailer) && $user->id == $inquiry->created_by) || ($user->id == $inquiry->created_by))){
+                $action_html .= "<span class='ml-3'><a href=".route('inquiry.edit',$inquiry->id)." class='btn btn-primary'><i class='fas fa-pen' title='Edit'></i></a></span>";
+                $action_html .= "<span class='ml-3'><button type=submit data-user=$inquiry->id class='btn btn-danger' onClick=deleteUser($inquiry->id)><i class='fas fa-trash' title='Delete'></i></button></span>";
+            }
+            // $action_html .= "<span class='ml-3'><a href=# class='btn btn-primary'>View</a></span>";
+            $data[] = [$inquiry->id,$inquiry->product,ucwords($inquiry->customer),$inquiry->source,$dealer,$retailer,$action_html];
         }
         $return_array = array();
         $return_array['draw'] = $request['draw'];

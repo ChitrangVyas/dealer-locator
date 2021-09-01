@@ -22,7 +22,7 @@
                 <!-- text input -->
                 <div class="form-group">
                     <label>Name</label>
-                    <input type="text" class="form-control" name="name" value="{{ (!empty($manufacturer))?$manufacturer->name:'' }}" placeholder="Full Name">
+                    <input type="text" class="form-control" name="name" value="{{ old('name',(!empty($manufacturer))?$manufacturer->name:'') }}" placeholder="Full Name">
                     @error('name')
                         <div class="alert alert-danger mt-2">{{ $message }}</div>
                     @enderror
@@ -32,7 +32,7 @@
                 <!-- text input -->
                 <div class="form-group">
                     <label>Email</label>
-                    <input type="email" class="form-control" name="email" value="{{ (!empty($manufacturer))?$manufacturer->email:'' }}" placeholder="Email" autocomplete="false">
+                    <input type="email" class="form-control" name="email" value="{{old('email',(!empty($manufacturer))?$manufacturer->email:'') }}" placeholder="Email" autocomplete="false">
                     @error('email')
                         <div class="alert alert-danger mt-2">{{ $message }}</div>
                     @enderror

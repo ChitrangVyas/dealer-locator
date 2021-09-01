@@ -24,7 +24,7 @@
                 <!-- text input -->
                 <div class="form-group">
                     <label>Name</label>
-                    <input type="text" class="form-control" name="name" value="{{ (!empty($user))?$user->name:'' }}" placeholder="Full Name">
+                    <input type="text" class="form-control" name="name" value="{{ old('name',(!empty($user))?$user->name:'') }}" placeholder="Full Name">
                     @error('name')
                         <div class="alert alert-danger mt-2">{{ $message }}</div>
                     @enderror
@@ -34,7 +34,7 @@
                 <!-- text input -->
                 <div class="form-group">
                     <label>Email</label>
-                    <input type="email" class="form-control" name="email" value="{{ (!empty($user))?$user->email:'' }}" placeholder="Email" autocomplete="false">
+                    <input type="email" class="form-control" name="email" value="{{ old('email',(!empty($user))?$user->email:'') }}" placeholder="Email" autocomplete="false">
                     @error('email')
                         <div class="alert alert-danger mt-2">{{ $message }}</div>
                     @enderror
@@ -54,7 +54,7 @@
                 <!-- text input -->
                 <div class="form-group">
                     <label>Mobile</label>
-                    <input type="text" name="mobile" value="{{ (!empty($user))?$user->mobile:'' }}" class="form-control" placeholder="Mobile">
+                    <input type="text" name="mobile" value="{{old('mobile', (!empty($user))?$user->mobile:'') }}" class="form-control" placeholder="Mobile">
                     @error('mobile')
                         <div class="alert alert-danger mt-2">{{ $message }}</div>
                     @enderror
@@ -64,7 +64,7 @@
                 <!-- text input -->
                 <div class="form-group">
                     <label>Address</label>
-                    <textarea class="form-control" name="address" rows="1" placeholder="Address">{{ (!empty($user))?$user->address:'' }}</textarea>
+                    <textarea class="form-control" name="address" rows="1" placeholder="Address">{{ old('address',(!empty($user))?$user->address:'') }}</textarea>
                     @error('address')
                         <div class="alert alert-danger mt-2">{{ $message }}</div>
                     @enderror
@@ -104,7 +104,7 @@
                 <!-- text input -->
                 <div class="form-group">
                     <label>Zipcode</label>
-                    <input type="text" name="zipcode" value="{{ (!empty($user))?$user->zipcode:'' }}" class="form-control" placeholder="Enter zipcode">
+                    <input type="text" name="zipcode" value="{{ old('zipcode',(!empty($user))?$user->zipcode:'')}}" class="form-control" placeholder="Enter zipcode">
                     @error('zipcode')
                         <div class="alert alert-danger mt-2">{{ $message }}</div>
                     @enderror

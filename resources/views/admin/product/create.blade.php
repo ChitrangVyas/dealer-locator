@@ -39,7 +39,7 @@
                         <div class="form-group">
                             <label>Name</label>
                             <input type="text" class="form-control" name="name"
-                                value="{{ (!empty($product))?$product->name:'' }}" placeholder="Full Name">
+                                value="{{ old('name',(!empty($product))?$product->name:'') }}" placeholder="Full Name">
                             @error('name')
                             <div class="alert alert-danger mt-2">{{ $message }}</div>
                             @enderror
@@ -53,7 +53,7 @@
                             <select class="form-control" name="brand_id">
                                 <option value="">Please select</option>
                                 @foreach($brands as $brand)
-                                    <option {{ (!empty($product) && $product->brand_id==$brand->id)?"selected='selected'":'' }} value="{{$brand->id}}">{{$brand->name}}</option>
+                                    <option {{ old('brand_id', (!empty($product) && $product->brand_id))==$brand->id?"selected='selected'":'' }} value="{{$brand->id}}">{{$brand->name}}</option>
                                 @endforeach
                             </select>
                             @error('brand_id')
@@ -69,7 +69,7 @@
                             <select class="form-control categories" multiple="multiple" name="categories[]">
                                 <option value="">Please select</option>
                                 @foreach($categories as $category)
-                                    <option value="{{$category->id}}" {{(!empty($product_category) && in_array($category->id,$product_category))?'selected':''}}>{{$category->name}}</option>
+                                    <option value="{{$category->id}}" {{old('categories[]', (!empty($product_category) && in_array($category->id,$product_category)))?'selected':''}}>{{$category->name}}</option>
                                 @endforeach
                             </select>
                             @error('category')
@@ -102,7 +102,7 @@
                         <!-- text input -->
                         <div class="form-group">
                             <label>Description</label>                            
-                            <textarea name="description" class="form-control" >{{ (!empty($product))?$product->description:'' }}</textarea>
+                            <textarea name="description" class="form-control" >{{ old('description',(!empty($product))?$product->description:'') }}</textarea>
                             @error('description')
                             <div class="alert alert-danger mt-2">{{ $message }}</div>
                             @enderror
@@ -113,7 +113,7 @@
                         <div class="form-group">
                             <label>Inventory</label>
                             <input type="number" class="form-control" name="inventory"
-                                value="{{ (!empty($product))?$product->inventory:'' }}" placeholder="inventory">
+                                value="{{ old('inventory',(!empty($product))?$product->inventory:'') }}" placeholder="inventory">
                             @error('inventory')
                             <div class="alert alert-danger mt-2">{{ $message }}</div>
                             @enderror
@@ -124,7 +124,7 @@
                         <div class="form-group">
                             <label>Price</label>
                             <input type="number" class="form-control" name="price"
-                                value="{{ (!empty($product))?$product->price:'' }}" placeholder="Price" min=1 required>
+                                value="{{ old('price',(!empty($product))?$product->price:'') }}" placeholder="Price" min=1 required>
                             @error('price')
                             <div class="alert alert-danger mt-2">{{ $message }}</div>
                             @enderror

@@ -33,7 +33,7 @@
                         <div class="form-group">
                             <label>Name</label>
                             <input type="text" class="form-control" name="name"
-                                value="{{ (!empty($category))?$category->name:'' }}" placeholder="Full Name">
+                                value="{{ old('name',(!empty($category))?$category->name:'') }}" placeholder="Full Name">
                             @error('name')
                             <div class="alert alert-danger mt-2">{{ $message }}</div>
                             @enderror

@@ -13,10 +13,14 @@
         From
         <address>
             <strong>{{ucwords($order->addedBy->name)}}</strong><br>
+            @if(!empty($order->addedBy->city))
             {{ucwords($order->addedBy->address)}},<br>
             {{ucwords($order->addedBy->city->name)}},<br>
             {{ucwords($order->addedBy->state->name)}} - {{$order->addedBy->zipcode}}<br>
+            @endif
+            @if(!empty($order->addedBy->mobile))
             Phone: {{$order->addedBy->mobile}}<br>
+            @endif
             Email: {{$order->addedBy->email}}
         </address>
     </div>

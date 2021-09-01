@@ -48,7 +48,7 @@
                         <div class="form-group">
                             <label>Name</label>
                             <input type="text" class="form-control" name="name"
-                                value="{{ (!empty($brand))?$brand->name:'' }}" placeholder="Full Name">
+                                value="{{ old('name',(!empty($brand))?$brand->name:'') }}" placeholder="Full Name">
                             @error('name')
                             <div class="alert alert-danger mt-2">{{ $message }}</div>
                             @enderror
@@ -79,7 +79,7 @@
                         <!-- text input -->
                         <div class="form-group">
                             <label>Description</label>                            
-                            <textarea name="description" class="form-control" >{{ (!empty($brand))?$brand->description:'' }}</textarea>
+                            <textarea name="description" class="form-control" >{{ old('description',(!empty($brand))?$brand->description:'') }}</textarea>
                             @error('description')
                             <div class="alert alert-danger mt-2">{{ $message }}</div>
                             @enderror
@@ -89,7 +89,7 @@
                         <!-- text input -->
                         <div class="form-group">
                             <label>Short Description</label>                            
-                            <textarea name="short_description" class="form-control" >{{ (!empty($brand))?$brand->short_description:'' }}</textarea>
+                            <textarea name="short_description" class="form-control" >{{ old('short_description',(!empty($brand))?$brand->short_description:'') }}</textarea>
                             @error('short_description')
                             <div class="alert alert-danger mt-2">{{ $message }}</div>
                             @enderror

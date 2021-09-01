@@ -2,9 +2,14 @@
 
 namespace App\Http\Controllers\Admin;
 
+<<<<<<< HEAD
+use App\Http\Requests\Admin\InquiriesCreateRequest;
+use App\Http\Requests\Admin\InquiriesUpdateRequest;
+=======
 use App\Http\Requests\Admin\InquiriesUpdateRequest;
 use App\Http\Requests\Admin\InquiryCreateRequest;
 use App\Http\Requests\Admin\InquiryUpdateRequest;
+>>>>>>> 636895ac7d6ae88510f9ff1c441210870cb91d44
 use App\Models\InquiriesSource;
 use App\Models\Inquiry;
 use App\Models\Product;
@@ -50,7 +55,7 @@ class InquiryController extends MainController
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(InquiryCreateRequest $request)
+    public function store(InquiriesCreateRequest $request)
     {   
         //
         $request_data = $request->all();
@@ -72,7 +77,17 @@ class InquiryController extends MainController
             $inquiry_data['retailer_id'] = $retailer_id;
         }
         try{
+<<<<<<< HEAD
+            $inquiry = Inquiry::create([
+                'inquiries_source_id'=>$request_data['inquiry_source_id'],
+                'customer_id'=>$request_data['customer'],
+                'created_by'=>$request_data['created_by'],
+                'dealer_id' => $dealer_id,
+                // 'product_id'=>$request_data['product'],
+            ]);
+=======
             $inquiry = Inquiry::create($inquiry_data);
+>>>>>>> 636895ac7d6ae88510f9ff1c441210870cb91d44
             if(!empty($request_data['product'])){
                 $products = Product::find($request_data['product']);
                 $inquiry->product()->sync($products);
@@ -115,7 +130,7 @@ class InquiryController extends MainController
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(InquiryUpdateRequest $request, $id)
+    public function update(InquiriesUpdateRequest $request, $id)
     {
         $inquiry = Inquiry::findOrFail($id);
         $request_data = $request->all();

@@ -24,7 +24,9 @@ class InquiriesUpdateRequest extends FormRequest
     public function rules()
     {
         return [
-            'source' => 'required|string',        
+            'inquiry_source' => 'required|numeric',  
+            'customer' => 'required',
+            'product' => 'required',      
         ];
     }
 }

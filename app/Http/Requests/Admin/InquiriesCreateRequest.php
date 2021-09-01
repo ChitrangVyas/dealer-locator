@@ -23,9 +23,11 @@ class InquiriesCreateRequest extends FormRequest
      */
     public function rules()
     {        
-        return [            
-            'source' => 'required|string',                   
-                           
+        return [                               
+            'inquiry_source' => 'required|numeric',  
+            'customer' => 'required',
+            'product' => 'required',
+                         
         ];
     }
 }

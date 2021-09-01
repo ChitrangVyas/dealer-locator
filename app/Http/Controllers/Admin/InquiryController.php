@@ -59,6 +59,9 @@ class InquiryController extends MainController
         }elseif (auth()->user()->users_group_id == '3') {
             $dealer_id = auth()->user()->parent_id;
             $retailer_id = (!empty($request_data['retailer']))?$request_data['retailer']:auth()->user()->id;
+        }else{
+            $dealer_id = $request_data['dealer'];
+            $retailer_id = $request_data['retailer'];
         }
         $inquiry_data = [
             'inquiries_source_id'=>$request_data['inquiry_source'],
@@ -190,6 +193,7 @@ class InquiryController extends MainController
     public function listAjaxData(Request $request){
         $user =  auth()->user();
         $dealer_id = '';
+        $retailer_id = '';
         if((!empty($user->userGroup)) && $user->userGroup->id == '2'){
             $dealer_id = $user->id;
         }else if((!empty($user->userGroup)) && $user->userGroup->id == '3'){
@@ -217,7 +221,6 @@ class InquiryController extends MainController
         ->orderBy($request['columns'][$request['order'][0]['column']]['name'],$request['order'][0]['dir'])
         ->groupby('inquiries.id')
         ->get();
-        
         $total_inquiries = Inquiry::whereRaw($where)->count();
         $data = [];
         foreach($inquiries as $inquiry){

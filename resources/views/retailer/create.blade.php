@@ -142,11 +142,10 @@
 @section('js')
 <script>
 jQuery(document).ready(function(){
-    var base_url = "{{url('/admin')}}";
     $('.dealer').select2({
         minimumInputLength: 2,
         ajax: {
-            url: `${base_url}/get-value`,
+            url: "{{route(get_value)}}",
             dataType: 'json',
             data: function (params) {
                 return {
@@ -165,7 +164,7 @@ jQuery(document).ready(function(){
     $('.state').select2({
         minimumInputLength: 2,
         ajax: {
-            url: `${base_url}/get-value`,
+            url: "{{route(get_value)}}",
             dataType: 'json',
             data: function (params) {
                 return {
@@ -187,7 +186,7 @@ jQuery(document).ready(function(){
             $('.city').select2({
                 minimumInputLength: 2,
                 ajax: {
-                    url: `${base_url}/get-value`,
+                    url: "{{route(get_value)}}",
                     dataType: 'json',
                     data: function (params) {
                         return {

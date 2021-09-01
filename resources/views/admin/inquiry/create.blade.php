@@ -160,12 +160,11 @@
 @section('js')
 <script>
 jQuery(document).ready(function(){
-    var base_url = "{{url('/admin')}}";
     $('#inquiry_source').select2();
     $('.dealer').select2({
         minimumInputLength: 2,
         ajax: {
-            url: `${base_url}/get-value`,
+            url: "{{route(get_value)}}",
             dataType: 'json',
             data: function (params) {
                 return {
@@ -187,7 +186,7 @@ jQuery(document).ready(function(){
     $('.customer').select2({
         minimumInputLength: 2,
         ajax: {
-            url: `${base_url}/get-value`,
+            url: "{{route(get_value)}}",
             dataType: 'json',
             data: function (params) {
                 return {
@@ -209,7 +208,7 @@ jQuery(document).ready(function(){
     $('.product').select2({
         minimumInputLength: 2,
         ajax: {
-            url: `${base_url}/get-value`,
+            url: "{{route(get_value)}}",
             dataType: 'json',
             data: function (params) {
                 return {

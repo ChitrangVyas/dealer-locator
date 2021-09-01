@@ -63,28 +63,8 @@
 @section('js')
 <script>
 jQuery(document).ready(function(){
-    var base_url = "{{url('/admin')}}";
     $('.type').select2();
     $('#datetimepicker').datetimepicker();
-    /* $('.dealer').select2({
-        minimumInputLength: 2,
-        ajax: {
-            url: `${base_url}/get-value`,
-            dataType: 'json',
-            data: function (params) {
-                return {
-                    q: params.term, // search term
-                    table:'users',
-                    where: 'users_group_id=2'
-                };
-            },
-            processResults: function (data) {
-                return {
-                    results: data
-                };
-            }
-        }
-    }); */
 });
 </script>
 @endsection

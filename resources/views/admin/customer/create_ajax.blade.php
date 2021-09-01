@@ -107,7 +107,7 @@ jQuery(document).ready(function(){
     $('.dealer').select2({
         minimumInputLength: 2,
         ajax: {
-            url: "{{route(get_value)}}",
+            url: "{{route('get_value')}}",
             dataType: 'json',
             data: function (params) {
                 return {
@@ -127,7 +127,7 @@ jQuery(document).ready(function(){
         minimumInputLength: 2,
         width:"100%",
         ajax: {
-            url: "{{route(get_value)}}",
+            url: "{{route('get_value')}}",
             dataType: 'json',
             data: function (params) {
                 return {
@@ -150,7 +150,7 @@ jQuery(document).ready(function(){
                 minimumInputLength: 2,
                 width:"100%",
                 ajax: {
-                    url: "{{route(get_value)}}",
+                    url: "{{route('get_value')}}",
                     dataType: 'json',
                     data: function (params) {
                         return {

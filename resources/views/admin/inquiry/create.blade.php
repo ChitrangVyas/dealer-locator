@@ -164,7 +164,7 @@ jQuery(document).ready(function(){
     $('.dealer').select2({
         minimumInputLength: 2,
         ajax: {
-            url: "{{route(get_value)}}",
+            url: "{{route('get_value')}}",
             dataType: 'json',
             data: function (params) {
                 return {
@@ -186,7 +186,7 @@ jQuery(document).ready(function(){
     $('.customer').select2({
         minimumInputLength: 2,
         ajax: {
-            url: "{{route(get_value)}}",
+            url: "{{route('get_value')}}",
             dataType: 'json',
             data: function (params) {
                 return {
@@ -208,7 +208,7 @@ jQuery(document).ready(function(){
     $('.product').select2({
         minimumInputLength: 2,
         ajax: {
-            url: "{{route(get_value)}}",
+            url: "{{route('get_value')}}",
             dataType: 'json',
             data: function (params) {
                 return {

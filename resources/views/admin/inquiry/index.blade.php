@@ -10,6 +10,9 @@
                 <div class="card">
                     <div class="card-header">
                         <h2 class="card-title">{{ucwords($title)}}</h3>
+                            @admin()
+                            <div class="float-right"><a href="{{route('inquiries-source.index')}}" class="btn btn-primary btn-md ml-2">Inquiry Source</a></div>
+                            @endadmin
                             <div class="float-right"><a href="{{route('inquiry.create')}}" class="btn btn-primary btn-md">Add Inquiry</a></div>
                     </div>
                     <!-- /.card-header -->
@@ -422,13 +425,26 @@
     }
 
     function addProductToCart(){
+        const Toast = Swal.mixin({
+                        toast: true,
+                        position: 'top-end',
+                        showConfirmButton: false,
+                        timer: 8000
+                        });
         var token = $("meta[name='csrf-token']").attr("content");
         return $.ajax({
             url: "{{route('cart.product.add')}}",
             type: 'POST',
             data:{'_token':token,'id':$('#modalId').val(),'product_id':$('#selectProduct').val()},
             success: function(res) {
-                $(`#quoteModal .modal-body`).html(res);
+                if(res.code == 1){
+                    $(`#quoteModal .modal-body`).html(res.data.cart_content);
+                }else{
+                    Toast.fire({
+                            type: 'error',
+                            title: res.message
+                        })
+                }
                 // $('.product-detail input').not('input[type=checkbox]').attr('disabled',true);
             }
         });

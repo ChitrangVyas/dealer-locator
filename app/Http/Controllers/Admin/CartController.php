@@ -150,16 +150,41 @@ class CartController extends MainController
     public function addProductToCart(Request $request){
         $product = Product::findOrFail($request->input('product_id'));
         $cart  = \Cart::session($request->input('id'));
-        $cart->add(
-            array(
-                'id' => $product->id,
-                'name' => $product->name,
-                'price' => $product->price,
-                'quantity' => '1',
-                'attributes' => array(),
-            )
-        );
-        return $this->getInquiryToQuoteCart($request->input('id'),$cart);
+        if($cart->isEmpty()){
+            $cart->add(
+                array(
+                    'id' => $product->id,
+                    'name' => $product->name,
+                    'price' => $product->price,
+                    'quantity' => '1',
+                    'attributes' => array(),
+                )
+            );
+            $this->myCart->setTo($request->input('id'),(!empty(auth()->user()->parent_id))?auth()->user()->parent_id:$product->brand->manufacturer->id);
+        }else{
+            //
+            $items = $cart->getContent();
+            foreach($items as $row) {
+                 $cart_product_id = $row->id; 
+                 break;
+            }
+            $cart_product = Product::findOrFail($cart_product_id);
+            if($product->brand->manufacturer->id == $cart_product->brand->manufacturer->id){
+                $cart->add(
+                    array(
+                        'id' => $product->id,
+                        'name' => $product->name,
+                        'price' => $product->price,
+                        'quantity' => '1',
+                        'attributes' => array(),
+                    )
+                );
+            }else{
+                return response()->json(['status' => 'error','code' => 0, 'data'=>'', 'message'=>'Selected product is from diffrent manufacturer.']);
+            }
+        }
+        $json['cart_content'] = $this->getInquiryToQuoteCart($request->input('id'),$cart)->render();
+        return response()->json(['status' => 'successful','code'=>1, 'data'=>$json, 'message'=>'']);
     }
 
     public function removeCartProduct(Request $request){
@@ -178,6 +203,8 @@ class CartController extends MainController
         $cart  = \Cart::session($id);
         if($cart->isEmpty()){
             $items = [];
+            $manufacturer='';
+            $is_dealer = ($order->addedBy->users_group_id == 2) ? 1 : 0;
             foreach($order->orderProduct as $orderProduct){
                 $items[] = array(
                     'id' => $orderProduct->product->id,
@@ -186,6 +213,13 @@ class CartController extends MainController
                     'quantity' => $orderProduct->qty,
                     'attributes' => array(),
                 );
+                if($is_dealer){
+                  $manufacturer = (empty($manufacturer))?$orderProduct->product->brand->manufacturer->id:$manufacturer;
+                  if($manufacturer != $orderProduct->product->brand->manufacturer->id){
+                    $json['cart_title'] = "PO".(!empty($this->myCart->getOrderNumber($id)) ? " #".$this->myCart->getOrderNumber($id) : '');
+                    return response()->json(['status' => 'error','code'=>0, 'data'=>$json, 'message'=>'Please Select the Same Manufacturer Product']);    
+                  }
+                }
             }
             $cart->add($items);
             $this->myCart->setOrderNumber($id,$order->order_number);
@@ -194,7 +228,7 @@ class CartController extends MainController
             // from login user
             $this->myCart->setFrom($id,auth()->user()->id);
             // to parent user
-            $this->myCart->setTo($id,(!empty(auth()->user()->parent_id))?auth()->user()->parent_id:1);
+            $this->myCart->setTo($id,(!empty(auth()->user()->parent_id))?auth()->user()->parent_id:$manufacturer);
         }
         $json['cart_title'] = "PO".(!empty($this->myCart->getOrderNumber($id)) ? " #".$this->myCart->getOrderNumber($id) : '');
         $json['cart_content'] = $this->getInquiryToQuoteCart($id,$cart)->render();
@@ -226,9 +260,9 @@ class CartController extends MainController
             $this->myCart->setOrderReference($id,$order->id);
             $this->myCart->setType($id,'sale');
             // from login user
-            $this->myCart->setFrom($id,auth()->user()->id);
+            $this->myCart->setFrom($id,$order->to_user);
             // to parent user
-            $this->myCart->setTo($id,$order->to_user);
+            $this->myCart->setTo($id,$order->from_user);
         }
         $json['cart_title'] = "Sale".(!empty($this->myCart->getOrderNumber($id)) ? " #".$this->myCart->getOrderNumber($id) : '');
         $json['cart_content'] = $this->getInquiryToQuoteCart($id,$cart)->render();

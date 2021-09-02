@@ -246,7 +246,7 @@
             addProductToCart().then(function(){
                 select2Product();
             });
-        });        
+        });    
         
         $("body").on("change",".qty, .price", function(){
             /* price = $(this).closest('.product-detail').find('.price').val();
@@ -371,16 +371,34 @@
 
     function getOrderData(url,data){
         var token = $("meta[name='csrf-token']").attr("content");
+        const Toast = Swal.mixin({
+                        toast: true,
+                        position: 'top-end',
+                        showConfirmButton: false,
+                        timer: 5000
+                        });
         return $.ajax({
             url: url,
             type: 'POST',
             data:{data,'_token':token},
+            dataType: 'JSON',
             beforeSend : function(){
                 $('#loader').show();
             },
             success: function(res) {
-                $(`#orderModal .modal-body`).html(res.data.cart_content);
-                $('#cartTitle').text(res.data.cart_title);
+                if(res.code == 1){
+                    $(`#orderModal .modal-body`).html(res.data.cart_content);
+                    $('#cartTitle').text(res.data.cart_title);
+                    $(`#orderModal`).modal('show');
+                }else{
+                        Toast.fire({
+                            type: 'error',
+                            title: res.message
+                        });
+                        setTimeout(function(){
+                            $(`#orderModal`).modal('hide');
+                        },1000);  
+                    }
                 // $('.product-detail input').not('input[type=checkbox]').attr('disabled',true);
             },
             complete:function(){
@@ -410,13 +428,26 @@
     }
 
     function addProductToCart(){
+        const Toast = Swal.mixin({
+                        toast: true,
+                        position: 'top-end',
+                        showConfirmButton: false,
+                        timer: 8000
+                        });
         var token = $("meta[name='csrf-token']").attr("content");
         return $.ajax({
             url: "{{route('cart.product.add')}}",
             type: 'POST',
             data:{'_token':token,'id':$('#modalId').val(),'product_id':$('#selectProduct').val()},
             success: function(res) {
-                $(`#orderModal .modal-body`).html(res);
+                if(res.code == 1){
+                    $('#orderModal .modal-body').html(res.data.cart_content);
+                } else {
+                    Toast.fire({
+                            type: 'error',
+                            title: res.message
+                        });
+                }
                 // $('.product-detail input').not('input[type=checkbox]').attr('disabled',true);
             }
         });

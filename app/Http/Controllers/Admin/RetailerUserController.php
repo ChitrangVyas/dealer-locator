@@ -51,10 +51,11 @@ class RetailerUserController extends MainController
     {   
         //
         $request_data = $request->all();
-        if($request_data['user_group'] == 3){
+        $dealer = (auth()->user()->users_group_id == 2)?auth()->user()->id:$request_data['dealer'];
+        if($request_data['user_group'] == 3 && (!empty($dealer))){
         try{
             $user = User::create([
-                'parent_id' => $request_data['dealer'],
+                'parent_id' => $dealer,
                 'name' => $request_data['name'],
                 'email' => $request_data['email'],
                 'password' => Hash::make($request_data['password']),
@@ -67,7 +68,7 @@ class RetailerUserController extends MainController
                 'zipcode' => $request_data['zipcode'],
             ]);
         }catch(Exception $e){
-            return redirect(route('retailer.create'));
+            return redirect(route('retailer.create'))->with('exception', $e->getMessage());
         }
     }
         return redirect(route('retailer.index'));

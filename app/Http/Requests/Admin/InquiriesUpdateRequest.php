@@ -26,7 +26,6 @@ class InquiriesUpdateRequest extends FormRequest
         return [
             'inquiry_source' => 'required|numeric',  
             'customer' => 'required',
-            'product' => 'required',      
         ];
     }
 }

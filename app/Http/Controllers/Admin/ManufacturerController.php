@@ -57,13 +57,10 @@ class ManufacturerController extends MainController
             $fileName = time().'_'.$request->logo->getClientOriginalName();
             $filePath = $request->file('logo')->storeAs('uploads', $fileName, 'public');
             $file_path = '/storage/' . $filePath;
+            $request_data['logo'] = $file_path;
         }
         try{
-            $manufacturer = Manufacturer::create([
-                'name' => $request_data['name'],
-                'email' => $request_data['email'],
-                'logo' => $file_path
-            ]);
+            $manufacturer = Manufacturer::create($request_data);
         }catch(Exception $e){
             return redirect(route('manufacturer.create'))->with('exception', $e->getMessage());            
         }
@@ -105,21 +102,17 @@ class ManufacturerController extends MainController
     public function update(ManufacturerUpdateRequest $request, $id)
     {
         //
-        $request_data = $request->all();
-        $file_path = '';
-        $upload_data = [
-            'name' => $request_data['name'],
-            'email' => $request_data['email'],
-        ];
+        $request_data = $request->except(['_method','_token','id']);
+        $file_path = '';   
         
         if($request->file()) {
             $fileName = time().'_'.$request->logo->getClientOriginalName();
             $filePath = $request->file('logo')->storeAs('uploads', $fileName, 'public');
             $file_path = '/storage/' . $filePath;
-            $upload_data['logo']  = $file_path;
+            $request_data['logo']  = $file_path;
         }
 
-        $manufacturer = Manufacturer::where('id',$id)->update($upload_data);
+        $manufacturer = Manufacturer::where('id',$id)->update($request_data);
     
         return redirect(route('manufacturer.index'));
     }
@@ -148,7 +141,7 @@ class ManufacturerController extends MainController
         $where = '';
         $where .= (!empty($search)) ? " AND (name like '$search%' OR email like '$search%')":'';
         $manufacturers = DB::table('manufacturers')
-        ->selectRaw('id,name,email,logo')
+        ->selectRaw('id,name,email,mobile,logo')
         ->where('deleted_at', NULL)
         ->offset($start)
         ->limit($length)
@@ -160,7 +153,7 @@ class ManufacturerController extends MainController
             $manufacturer_logo_html = (!empty($manufacturer->logo))?"<img class='img logo' src=".url($manufacturer->logo)." width=50 />":'Image not found';
             $action_html = "<span><a href=".route('manufacturer.edit',$manufacturer->id)." class='btn btn-primary'>Edit</a></span>";
             $action_html .= "<span class='ml-3'><button type=submit data-user=$manufacturer->id class='btn btn-danger' onClick=deleteUser($manufacturer->id)>Delete</button></span>";
-            $data[] = [$manufacturer->id,$manufacturer->name,$manufacturer->email,$manufacturer_logo_html,$action_html];
+            $data[] = [$manufacturer->id,$manufacturer->name,$manufacturer->email,$manufacturer->mobile,$manufacturer_logo_html,$action_html];
         }
         $return_array = array();
         $return_array['draw'] = $request['draw'];

@@ -19,8 +19,12 @@ class Order extends Model
     }
 
     public function customer(){
-        if($this->type == 'po'){
-            return $this->belongsTo(User::class,'from_user','id');
+        if($this->type == 'po'){            
+            if($this->getUser($this->from_user)->users_group_id == 2){
+                return $this->belongsTo(Manufacturer::class,'to_user','id');
+            } else {
+                return $this->belongsTo(User::class,'to_user','id');
+            }
         }else{
             return $this->belongsTo(User::class,'to_user','id');
         }
@@ -28,10 +32,23 @@ class Order extends Model
 
     public function addedBy(){
         if($this->type == 'po'){
-            return $this->belongsTo(User::class,'to_user','id');
+            return $this->belongsTo(User::class,'from_user','id');
         }else{
             return $this->belongsTo(User::class,'from_user','id');
         }
+    }
+
+    public function toUser(){
+        if($this->type == 'po' && $this->getUser($this->from_user)->users_group_id == 2){
+            $user = Manufacturer::where('id','=',$this->to_user)->first();
+            return $user->name;
+        } else {
+            $user = User::where('id','=',$this->to_user)->first();
+            return $user->name;
+        }
+    }
+    public function getUser($user_id){
+        return User::findOrfail($user_id);
     }
 
 

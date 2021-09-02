@@ -18,7 +18,7 @@
         @csrf
         <input type="hidden" name="id" value="{{ (!empty($manufacturer))?$manufacturer->id:'' }}">
         <div class="row">
-            <div class="col-sm-12 col-md-6">
+            <div class="col-sm-12 col-md-4">
                 <!-- text input -->
                 <div class="form-group">
                     <label>Name</label>
@@ -28,7 +28,7 @@
                     @enderror
                 </div>
             </div>
-            <div class="col-sm-12 col-md-6">
+            <div class="col-sm-12 col-md-4">
                 <!-- text input -->
                 <div class="form-group">
                     <label>Email</label>
@@ -38,7 +38,17 @@
                     @enderror
                 </div>
             </div>
-            <div class="col-sm-12 col-md-6">
+            <div class="col-sm-12 col-md-4">
+                <!-- text input -->
+                <div class="form-group">
+                    <label>Mobile</label>
+                    <input type="text" name="mobile" value="{{old('mobile', (!empty($manufacturer))?$manufacturer->mobile:'') }}" class="form-control" placeholder="Mobile">
+                    @error('mobile')
+                        <div class="alert alert-danger mt-2">{{ $message }}</div>
+                    @enderror
+                </div>
+            </div>
+            <div class="col-sm-12 col-md-4">
                 <!-- file input -->
                 <div class="form-group">
                     <label>Logo</label>
@@ -58,6 +68,58 @@
                     @enderror
                 </div>
             </div>
+            <div class="col-sm-12 col-md-4">
+                <!-- text input -->
+                <div class="form-group">
+                    <label>Address</label>
+                    <textarea class="form-control" name="address" rows="1" placeholder="Address">{{ old('address',(!empty($manufacturer))?$manufacturer->address:'') }}</textarea>
+                    @error('address')
+                        <div class="alert alert-danger mt-2">{{ $message }}</div>
+                    @enderror
+                </div>
+            </div>
+            <div class="col-sm-12 col-md-4">
+                <!-- text input -->
+                <div class="form-group">
+                    <label>State</label>
+                    <select class="form-control select2 state" id='state' name='state_id'>
+                        <option value="">Select</option>
+                        @if(!empty($manufacturer) && $manufacturer->state_id)
+                            <option value="{{$manufacturer->state_id}}" selected>{{$manufacturer->state->name}}</option>
+                        @endif
+                    </select>
+                    <input type="hidden" id="state_id" value="{{old('state_id')}}">
+                    @error('state_id')
+                        <div class="alert alert-danger mt-2">{{ $message }}</div>
+                    @enderror
+                </div>
+            </div>
+            <div class="col-sm-12 col-md-4">
+                <!-- text input -->
+                <div class="form-group">
+                    <label>City</label>
+                    <select class="form-control select2 city" id='city' name='city_id'>
+                        <option value="">Select</option>
+                        @if(!empty($manufacturer) && !empty($manufacturer->city_id))
+                            <option value="{{$manufacturer->city_id}}" selected>{{$manufacturer->city->name}}</option>
+                        @endif
+                    </select>
+                    <input type="hidden" id="city_id" value="{{old('city_id')}}">
+                    @error('city_id')
+                        <div class="alert alert-danger mt-2">{{ $message }}</div>
+                    @enderror
+                </div>
+            </div>
+            <div class="col-sm-12 col-md-4">
+                <!-- text input -->
+                <div class="form-group">
+                    <label>Zipcode</label>
+                    <input type="text" name="zipcode" value="{{ old('zipcode',(!empty($manufacturer))?$manufacturer->zipcode:'')}}" class="form-control" placeholder="Enter zipcode">
+                    @error('zipcode')
+                        <div class="alert alert-danger mt-2">{{ $message }}</div>
+                    @enderror
+                </div>
+            </div>
         </div>
         <div class="row">
             <div class="col-sm-12">
@@ -69,5 +131,78 @@
     <!-- /.card-body -->
 </div>
 @endsection
+@section('plugins.Select2', true)
 @section('js')
+<script>
+jQuery(document).ready(function(){
+    $('.state').select2({
+        minimumInputLength: 2,
+        ajax: {
+            url: "{{route('get_value')}}",
+            dataType: 'json',
+            data: function (params) {
+                return {
+                    q: params.term, // search term
+                    table:'states',
+                    where: 'country_id=101'
+                };
+            },
+            processResults: function (data) {
+                return {
+                    results: data
+                };
+            }
+        }
+    });
+    $('.city').select2();
+    $('.state').on('change', function(){
+        if($('.state').val()){
+            $('.city').select2({
+                minimumInputLength: 2,
+                ajax: {
+                    url: "{{route('get_value')}}",
+                    dataType: 'json',
+                    data: function (params) {
+                        return {
+                            q: params.term, // search term
+                            table:'cities',
+                            page: params.page,
+                            where: `state_id=${$('#state').val()}`
+                        };
+                    },
+                    processResults: function (data) {
+                        return {
+                            results: data
+                        };
+                    }
+                }
+            });
+        }
+    });
+
+    if ($('#state_id').val() || $('#city_id').val()) {
+        getStateCity('states',` id=${$('#state_id').val()}`,'state');
+        getStateCity('cities', ` id=${$('#city_id').val()}`,'city');
+    }
+
+    function getStateCity(table,where,eleClass) {
+        if($('#state_id').val() || $('#city_id').val()){
+            $.ajax({
+                url: "{{route('get_value')}}",
+                type: 'GET',
+                data: {
+                    table: table,
+                    where: where,
+                },
+                success: function(res) {
+                    $.each(JSON.parse(res), function(key, val) {
+                        var newOption = new Option(val.text, val.id, true, true);
+                        $(`.${eleClass}`).append(newOption).trigger('change');
+                    })
+                }
+            });
+        }
+    }
+});
+</script>
 @endsection

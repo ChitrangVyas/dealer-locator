@@ -56,7 +56,7 @@
             <a href="#" class="nav-link">
               <i class="nav-icon fas fa-users"></i>
               <p>
-                User Management
+                Users
                 <i class="right fas fa-angle-left"></i>
               </p>
             </a>
@@ -89,14 +89,6 @@
                   </p>
                 </a>
               </li>
-              <li class="nav-item">
-                <a href="{{route('customer.index')}}" class="nav-link  {{ $elementActive == 'customer' ? 'active' : '' }}">
-                <i class="nav-icon fas fa-users"></i>
-                  <p>
-                    Contacts
-                  </p>
-                </a>
-              </li>
               @enddealer
               @dealer  
             </ul>
@@ -107,7 +99,7 @@
           <a href="#" class="nav-link">
               <i class="nav-icon fas fa-copy"></i>
               <p>
-                Catalog Management
+                Catalog
                 <i class="right fas fa-angle-left"></i>
               </p>
             </a>
@@ -155,12 +147,6 @@
           @endadmin
           @notCustomer
           <li class="nav-item">
-            <a href="{{ route('inquiries-source.index') }}" class="nav-link  {{ $elementActive == 'inquiries_source' ? 'active' : '' }}">
-            <i class="nav-icon fas fa-link"></i>
-              <p>Inquiry source</p>
-            </a>
-          </li> 
-          <li class="nav-item">
             <a href="{{ route('inquiry.index') }}" class="nav-link  {{ $elementActive == 'inquiry' ? 'active' : '' }}">
             <i class="nav-icon fas fa-phone-square"></i>
               <p>Inquiry</p>
@@ -170,15 +156,46 @@
           <a href="#" class="nav-link">
               <i class="nav-icon fas fa-copy"></i>
               <p>
-                Order Management
+                Sales
+                <i class="right fas fa-angle-left"></i>
+              </p>
+            </a>
+            <ul class="nav nav-treeview">
+            <li class="nav-item">
+                <a href="{{route('customer.index')}}" class="nav-link  {{ $elementActive == 'customer' ? 'active' : '' }}">
+                <i class="nav-icon fas fa-users"></i>
+                  <p>
+                    Customer
+                  </p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="{{ route('quote.index') }}" class="nav-link  {{ $elementActive == 'quote' ? 'active' : '' }}">
+                <i class="nav-icon fas fa-clipboard"></i>
+                  <p>Quote</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="{{ route('sale.index') }}" class="nav-link  {{ $elementActive == 'sales' ? 'active' : '' }}">
+                <i class="nav-icon fas fa-shopping-cart"></i>
+                  <p>Sales</p>
+                </a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-item has-treeview {{ ($elementActive == 'vendor' || $elementActive == 'po' || $elementActive == 'bill') ? 'menu-open' : ''}}">
+          <a href="#" class="nav-link">
+              <i class="nav-icon fas fa-copy"></i>
+              <p>
+                Purchase
                 <i class="right fas fa-angle-left"></i>
               </p>
             </a>
             <ul class="nav nav-treeview">
               <li class="nav-item">
-                <a href="{{ route('quote.index') }}" class="nav-link  {{ $elementActive == 'quote' ? 'active' : '' }}">
-                <i class="nav-icon fas fa-clipboard"></i>
-                  <p>Quote</p>
+                <a href="#" class="nav-link  {{ $elementActive == 'vendor' ? 'active' : '' }}">
+                <i class="nav-icon fas fa-shopping-bag"></i>
+                  <p>Vendor</p>
                 </a>
               </li>
               <li class="nav-item">
@@ -188,9 +205,9 @@
                 </a>
               </li>
               <li class="nav-item">
-                <a href="{{ route('sale.index') }}" class="nav-link  {{ $elementActive == 'sales' ? 'active' : '' }}">
-                <i class="nav-icon fas fa-shopping-cart"></i>
-                  <p>Sales</p>
+                <a href="#" class="nav-link  {{ $elementActive == 'bill' ? 'active' : '' }}">
+                <i class="nav-icon fas fa-shopping-bag"></i>
+                  <p>Bill</p>
                 </a>
               </li>
             </ul>

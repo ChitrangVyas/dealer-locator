@@ -20,6 +20,7 @@
         <input type="hidden" name="user_group" value="3">
         <input type="hidden" name="created_by" value="{{auth()->user()->id}}">
         <div class="row">
+        @admin()
         <div class="col-sm-12 col-md-4">
                 <!-- text input -->
                 <div class="form-group">
@@ -35,6 +36,10 @@
                     @enderror
                 </div>
             </div>
+        @endadmin
+        @if(auth()->user()->users_group_id == 2)
+        <input type="hidden" name="dealer" value="{{auth()->user()->id}}">
+        @endif
             <div class="col-sm-12 col-md-4">
                 <!-- text input -->
                 <div class="form-group">

@@ -74,9 +74,18 @@ class InquiryController extends MainController
             $inquiry_data['retailer_id'] = $retailer_id;
         }
         try{
-            $inquiry = Inquiry::create($inquiry_data);
             if(!empty($request_data['product'])){
                 $products = Product::find($request_data['product']);
+                $manufacturer = '';
+                foreach($products as $product){
+                    $manufacturer = (empty($manufacturer))?$product->brand->manufacturer->id:$manufacturer;
+                    if($manufacturer != $product->brand->manufacturer->id){
+                        return redirect(route('inquiry.create'))->with('exception', 'Please Select the Same Manufacturer Product');
+                    }
+                }
+            }
+            $inquiry = Inquiry::create($inquiry_data);
+            if(!empty($request_data['product'])){
                 $inquiry->product()->sync($products);
             }
         }catch(Exception $e){
@@ -227,13 +236,13 @@ class InquiryController extends MainController
             $dealer = (!empty($inquiry->dealer))?$inquiry->dealer:'N/A';
             $retailer = (!empty($inquiry->retailer))?$inquiry->retailer:'N/A';
             $action_html = "";
-            $action_html .= "<span class='ml-3'><button type='button' id='addLog' class=' ml-3 btn btn-default' data-inquiry=$inquiry->id data-view-url='".route('inquiry-log.show',$inquiry->id)."' data-add-url='".route('inquiry-log.create')."' data-task-url='".route('createReminder')."' data-toggle='modal' data-target='#modal-lg'>View Log</button></span>";
+            $action_html .= "<span class='ml-3'><button type='button' id='addLog' class='btn btn-default' data-inquiry=$inquiry->id data-view-url='".route('inquiry-log.show',$inquiry->id)."' data-add-url='".route('inquiry-log.create')."' data-task-url='".route('createReminder')."' data-toggle='modal' data-target='#modal-lg'>View Log</button></span>";
             if((!empty($user->userGroup)) && $user->userGroup->id == '2'){
-                $action_html .= "<span class='ml-3'><button type='button' id='assignRetailer' class=' ml-3 btn btn-default' data-inquiry=$inquiry->id data-assign-to-retailer-url='".route('inquiry.assign.retailer')."' data-task-url='".route('createReminder')."' data-toggle='modal' data-target='#assignToRetailer'>Assign to retailer</button></span>";
+                $action_html .= "<span class='ml-3'><button type='button' id='assignRetailer' class='btn btn-default' data-inquiry=$inquiry->id data-assign-to-retailer-url='".route('inquiry.assign.retailer')."' data-task-url='".route('createReminder')."' data-toggle='modal' data-target='#assignToRetailer'>Assign to retailer</button></span>";
             }
             if(empty($inquiry->status)){
                 // $action_html .= "<span class='ml-3'><button type='button' id='createQuote' class=' ml-3 btn btn-success create-quote-".$inquiry->id."' data-inquiry=$inquiry->id data-create-quote-url='".route('order.quote.create')."' data-toggle='modal' data-target='#quoteModal'>Quote</button></span>";
-                $action_html .= "<span class='ml-3'><button type='button' id='createQuote' class=' ml-3 btn btn-success create-quote-".$inquiry->id."' data-inquiry=$inquiry->id data-create-quote-url='".route('cart.inquiryToQuote.create')."' data-toggle='modal' data-target='#quoteModal'><i class='fas fa-clipboard' title='Create Qute'></i></button></span>";
+                $action_html .= "<span class='ml-3'><button type='button' id='createQuote' class='btn btn-success create-quote-".$inquiry->id."' data-inquiry=$inquiry->id data-create-quote-url='".route('cart.inquiryToQuote.create')."' data-toggle='modal' data-target='#quoteModal'><i class='fas fa-clipboard' title='Create Qute'></i></button></span>";
             }
             if(empty($user->userGroup) || ((($user->id == $inquiry->dealer || $user->id == $inquiry->retailer) && $user->id == $inquiry->created_by) || ($user->id == $inquiry->created_by))){
                 $action_html .= "<span class='ml-3'><a href=".route('inquiry.edit',$inquiry->id)." class='btn btn-primary'><i class='fas fa-pen' title='Edit'></i></a></span>";

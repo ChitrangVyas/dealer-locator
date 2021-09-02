@@ -26,6 +26,11 @@ class ManufacturerUpdateRequest extends FormRequest
         return [
             'email' => 'required|email',
             'name' => 'required|string|max:100',
+            'mobile' => 'required',
+            'address' => 'required',
+            'state_id' => 'required|after_or_equal:1',
+            'city_id' => 'required|after_or_equal:1',
+            'zipcode' => 'required|min:5|max:7',
         ];
     }
 
@@ -41,6 +46,8 @@ class ManufacturerUpdateRequest extends FormRequest
             'email.unique' => 'Email is already exist.',
             'email.email' => 'Invalid Email.',
             'name.required' => 'Name is required!',
+            'state_id.required'=> 'Please select state',
+            'city_id.required'=> 'Please select city',
         ];
     }
 }

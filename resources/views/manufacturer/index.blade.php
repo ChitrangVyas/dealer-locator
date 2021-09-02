@@ -20,6 +20,7 @@
                                         <th>ID</th>
                                         <th>Name</th>
                                         <th>Email</th>
+                                        <th>Phone</th>
                                         <th>Logo</th>
                                         <th>Action</th>
                                     </tr>
@@ -46,7 +47,7 @@
             ],
             "columnDefs": [
             {
-                "targets": [ 4 ],
+                "targets": [ 5 ],
                 "orderable": false
             },
             {

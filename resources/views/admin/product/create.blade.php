@@ -53,7 +53,7 @@
                             <select class="form-control" id="brand_id" name="brand_id">
                                 <option value="">Please select</option>
                                 @foreach($brands as $brand)
-                                    <option {{ old('brand_id', (!empty($product) && $product->brand_id))==$brand->id?"selected='selected'":'' }} value="{{$brand->id}}">{{$brand->name}}</option>
+                                    <option {{ old('brand_id', (!empty($product) && $product->brand_id == $brand->id))== $brand->id ? "selected='selected'" : '' }} value="{{$brand->id}}">{{$brand->name}}</option>
                                 @endforeach
                             </select>
                             @error('brand_id')

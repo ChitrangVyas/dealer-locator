@@ -163,15 +163,17 @@
             }
         });
 
-        $('body').on('click','.view-po',function(){
+        $('body').on('click','.view-order',function(){
             var view_url = $(this).data('url');
             $(`#orderModal .modal-body`).html("");
-            getOrderData(view_url,{'order_id':$(this).data('order')});
+            getOrderData(view_url,{'order_id':$(this).data('order')}).then(function(res){
+                select2Product();
+            });
         });
 
         $('body').on('submit','#saveQuote', function(e){
             e.preventDefault();
-            let url = "{{ route('order.po.store') }}";
+            let url = ($('#type').val() == 'sale')?"{{ route('order.sale.store') }}":"{{ route('order.po.store') }}";
             let data = $('#saveQuote').serialize();
             // let inquiry_id = $('#inquiry_id').val();
             saveFormData(url,data,'orderModal').then(function(res){
@@ -397,13 +399,26 @@
     }
 
     function addProductToCart(){
+        const Toast = Swal.mixin({
+                        toast: true,
+                        position: 'top-end',
+                        showConfirmButton: false,
+                        timer: 8000
+                        });
         var token = $("meta[name='csrf-token']").attr("content");
         return $.ajax({
             url: "{{route('cart.product.add')}}",
             type: 'POST',
             data:{'_token':token,'id':$('#modalId').val(),'product_id':$('#selectProduct').val()},
             success: function(res) {
-                $(`#orderModal .modal-body`).html(res);
+                if(res.code == 1){
+                    $('#orderModal .modal-body').html(res.data.cart_content);
+                }else{
+                    Toast.fire({
+                            type: 'error',
+                            title: res.message
+                        });
+                }
                 // $('.product-detail input').not('input[type=checkbox]').attr('disabled',true);
             }
         });

@@ -46,6 +46,7 @@ Route::group(['prefix'=>'admin','middleware'=>['auth']],function () {
     Route::post('quote/show', [App\Http\Controllers\Admin\OrderController::class,'showQuote'])->name('quote.show');
     //po
     Route::get('po/', [App\Http\Controllers\Admin\OrderController::class,'poIndex'])->name('po.index');
+    Route::post('po/create', [App\Http\Controllers\Admin\OrderController::class,'poCreate'])->name('po.create');
     Route::get('po/listPoAjaxData', [App\Http\Controllers\Admin\OrderController::class,'listPoAjaxData'])->name('list.po');
     Route::post('po/show', [App\Http\Controllers\Admin\OrderController::class,'showPo'])->name('po.show');
     Route::post('order/po/', [App\Http\Controllers\Admin\OrderController::class,'storePo'])->name('order.po.store');
@@ -63,6 +64,7 @@ Route::group(['prefix'=>'admin','middleware'=>['auth']],function () {
     Route::post('cart/po/create', [App\Http\Controllers\Admin\CartController::class,'createPo'])->name('cart.po.create');
     Route::post('cart/sale/create', [App\Http\Controllers\Admin\CartController::class,'createSale'])->name('cart.sale.create');
     Route::post('cart/product/add', [App\Http\Controllers\Admin\CartController::class,'addProductToCart'])->name('cart.product.add');
+    Route::post('cart/product/new/', [App\Http\Controllers\Admin\CartController::class,'addNewProductToCart'])->name('cart.product.new');
     Route::put('cart/product/update', [App\Http\Controllers\Admin\CartController::class,'update'])->name('cart.update');
     Route::delete('cart/product/', [App\Http\Controllers\Admin\CartController::class,'removeCartProduct'])->name('cart.product.destroy');
 

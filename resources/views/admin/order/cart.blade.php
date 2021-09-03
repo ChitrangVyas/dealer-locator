@@ -8,8 +8,18 @@
         <input type="hidden" name="inquiry_id" id="inquiry_id" value="{{(!empty($inquiry_id)) ? $inquiry_id : ''}}" />
         <input type="hidden" name="order_number" id="order_number" value="{{(!empty($order_number)) ? $order_number : ''}}" />
         <input type="hidden" id="type" value="{{(!empty($type)) ? $type : ''}}">
+        <input type="hidden" name="is_new_product" id="is_new_product" value="{{(!empty($is_new_product)) ? $is_new_product : ''}}">
         <input type="hidden" name="cart_id" id="modalId" value="{{$id}}" />
             <div class="row">
+                @if($is_new_product)
+                <div class="col-sm-12 col-md-4 mt-2">
+                    <!-- text input -->
+                    <label></label>
+                    <div class="form-group">
+                        <button type="button" id="addNewProductToCart" class="btn btn-primary">Add Product</button>
+                    </div>
+                </div>
+                @else
                 <div class="col-sm-12 col-md-4">
                     <!-- text input -->
                     <div class="form-group">
@@ -26,6 +36,7 @@
                         <button type="button" id="addProductToCart" class="btn btn-primary">Add</button>
                     </div>
                 </div>
+                @endif
             </div>
             @if(!$cart->isEmpty())
             <div class="row">
@@ -48,9 +59,13 @@
                 <!-- text input -->
                 <div class="form-group clearfix">
                     <div class="icheck-primary d-inline">
-                    <input type="hidden" name="product[]" value="{{ $product->id }}" />
                         <!-- <input type="checkbox" class="mr-3 product" name="product[]" value="{{$product->id}}" checked> -->
-                        <label>{{$product->name}}</label>
+                        @if ($is_new_product)
+                        <input type="text" class="form-control product d-inline" value="{{$product->name}}" name="product[{{$product->id}}]" />
+                            @else
+                            <input type="hidden" name="product[]" value="{{ $product->id }}" />
+                            <label>{{$product->name}}</label>
+                        @endif
                     </div>
                 </div>
             </div>

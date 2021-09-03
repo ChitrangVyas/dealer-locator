@@ -1,6 +1,6 @@
 <div class="card card-primary">
     <div class="card-header">
-    <h3 class="card-title">{{$title}}</h3>
+    <h3 class="card-title">{{ ($vendor)? 'Vendor' :$title}}</h3>
     </div>
     <!-- /.card-header -->
     <div class="card-body">     
@@ -14,8 +14,11 @@
         @endif
         @csrf
         <input type="hidden" name="id" value="{{ (!empty($user))?$user->id:'' }}">
-        <input type="hidden" name="users_group_id" value="{{(!empty($user) && $user->users_group_id==4) ? $user->users_group_id : '4'}}">
-        
+        @if (!empty($vendor))
+            <input type="hidden" name="users_group_id" value="5">
+        @else
+            <input type="hidden" name="users_group_id" value="{{(!empty($user) && $user->users_group_id==4) ? $user->users_group_id : '4'}}">
+        @endif
 
         <div class="row">
             <!-- <div class="col-sm-12 col-md-12">
@@ -173,15 +176,27 @@ jQuery(document).ready(function(){
         e.preventDefault();
         e.stopImmediatePropagation();
         $("#customerForm .alert").remove();
-        $.ajax({
+        let contact = ($("input[name=users_group_id]").val() == 5) ? 'vendor' : 'customer';
+        $("#modal-lg").modal("hide");
+        createCustomer().then(function(data){
+            $("#modal-lg").modal("hide");                
+            if(contact == 'customer'){
+                var newOption = new Option(data.name+" - " + data.zipcode + " - " + data.city.name, data.id, true, true);
+            }else{
+                var newOption = new Option(data.name, data.id, true, true);
+            }
+            $(`#${contact}`).append(newOption).trigger('change');
+        });
+    })
+
+    function createCustomer(){
+       return $.ajax({
             headers: { 'X-CSRF-Token' : $('meta[name=_token]').attr('content') },
             url: "{{ route('customer.store') }}",
             type: 'POST',            
             data: $('#customerForm').serialize(),
             success: function (data) { 
-                $("#modal-lg").modal("hide");                
-                var newOption = new Option(data.name+" - " + data.zipcode + " - " + data.city.name, data.id, true, true);
-                $('#customer').append(newOption).trigger('change');
+                
             },
             error: function (jqXHR, textStatus, errorThrown) {
                 var err = JSON.parse(jqXHR.responseText).errors;
@@ -194,7 +209,8 @@ jQuery(document).ready(function(){
                     }); */
             }
         });
-    })
+
+    }
     
 
 });

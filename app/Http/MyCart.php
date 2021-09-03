@@ -62,12 +62,13 @@ class MyCart
     }
 
     public function getOrderNumber($cart_id){        
-        $json = json_decode($this->session->get($cart_id,[]),true);
+        
+        $json = (!empty($this->session->get($cart_id)))?json_decode($this->session->get($cart_id,[]),true):'';
         return !empty($json['order_number'])?$json['order_number']:'';
     }
 
     public function getInquiryId($cart_id){        
-        $json = json_decode($this->session->get($cart_id,[]),true);
+        $json = (!empty($this->session->get($cart_id)))?json_decode($this->session->get($cart_id,[]),true):'';
         return !empty($json['inquiry_id'])?$json['inquiry_id']:'';
     }
 
@@ -77,7 +78,7 @@ class MyCart
     }
 
     public function getType($cart_id){        
-        $json = json_decode($this->session->get($cart_id,[]),true);
+        $json = (!empty($this->session->get($cart_id)))?json_decode($this->session->get($cart_id,[]),true):'';
         return !empty($json['type'])?$json['type']:'';
     }
 

@@ -167,9 +167,9 @@ class CustomerUserController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function createAjax()
+    public function createAjax(Request $request)
     {
         //
-        return view('admin.customer.create_ajax');
+        return view('admin.customer.create_ajax',['vendor'=>(!empty($request['vendor']))?1:0]);
     }    
 }

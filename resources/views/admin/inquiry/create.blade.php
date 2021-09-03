@@ -162,7 +162,9 @@
 jQuery(document).ready(function(){
     $('#inquiry_source').select2();
     $('.dealer').select2({
+        placeholder: "Select",
         minimumInputLength: 2,
+        allowClear: true,
         ajax: {
             url: "{{route('get_value')}}",
             dataType: 'json',
@@ -184,7 +186,9 @@ jQuery(document).ready(function(){
         }
     });
     $('.customer').select2({
+        placeholder: "Select",
         minimumInputLength: 2,
+        allowClear: true,
         ajax: {
             url: "{{route('get_value')}}",
             dataType: 'json',
@@ -224,7 +228,10 @@ jQuery(document).ready(function(){
             }
         }
     });
-    $('.retailer').select2();
+    $('.retailer').select2({
+        placeholder: "Select",
+        allowClear: true,
+    });
     $('.dealer').on('change',function(){
         getRetailers($(this).val())
     });
@@ -233,7 +240,6 @@ jQuery(document).ready(function(){
         e.preventDefault();
         e.stopImmediatePropagation();
         // var data = $('#saveInquiryLog').serialize();        
-        console.log("Add Customer Click");
         $.ajax({
             url: "{{ route('customerCreateAjax') }}",
             type: 'GET',            

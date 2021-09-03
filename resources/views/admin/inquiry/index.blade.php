@@ -21,8 +21,9 @@
                             <thead>
                                 <tr>
                                     <th>ID</th>
-                                    <th>Product</th>
                                     <th>Customer</th>
+                                    <th>Email</th>
+                                    <th>Phone</th>
                                     <th>Source</th>
                                     <th>Dealer</th>
                                     <th>Retailer</th>
@@ -139,7 +140,10 @@
                     "name": "c.name"
                 },
                 {
-                    "name": "p.name"
+                    "name": "c.email"
+                },
+                {
+                    "name": "c.phone"
                 },
                 {
                     "name": "d.name"
@@ -152,11 +156,11 @@
                 },
             ],
             "columnDefs": [{
-                    "targets": [5],
+                    "targets": [4],
                     "orderable": false
                 },
                 {
-                    "targets": [6],
+                    "targets": [5],
                     "orderable": false
                 },
                 {

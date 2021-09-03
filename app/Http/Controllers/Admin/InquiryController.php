@@ -217,7 +217,7 @@ class InquiryController extends MainController
         $where .= (!empty($retailer_id))?" AND (retailer_id=$retailer_id OR inquiries.created_by=$retailer_id)":'';
         $where .= (!empty($search)) ? " AND (c.name like '$search%' OR p.name like '$search%' OR source like '%$search%' OR (d.name is NOT NULL AND d.name like '$search%'))":'';
         $inquiries = DB::table('inquiries')
-        ->select(DB::raw('inquiries.id, inquiries.status, inquiries.created_by,source,c.name as customer,d.name as dealer, r.name as retailer,group_concat(p.name SEPARATOR "<br>") as product'))
+        ->select(DB::raw('inquiries.id, inquiries.status, inquiries.created_by,source,c.name as customer,c.email AS customer_email,c.mobile AS customer_mobile,d.name as dealer, r.name as retailer,group_concat(p.name SEPARATOR "<br>") as product'))
         ->join('inquiries_products','inquiries.id','=','inquiries_products.inquiry_id','left')
         ->join('inquiries_source','inquiries.inquiries_source_id','=','inquiries_source.id','left')
         ->join('users AS c','inquiries.customer_id','=','c.id','left')
@@ -249,7 +249,7 @@ class InquiryController extends MainController
                 $action_html .= "<span class='ml-3'><button type=submit data-user=$inquiry->id class='btn btn-danger' onClick=deleteUser($inquiry->id)><i class='fas fa-trash' title='Delete'></i></button></span>";
             }
             // $action_html .= "<span class='ml-3'><a href=# class='btn btn-primary'>View</a></span>";
-            $data[] = [$inquiry->id,$inquiry->product,ucwords($inquiry->customer),$inquiry->source,$dealer,$retailer,$action_html];
+            $data[] = [$inquiry->id,ucwords($inquiry->customer),$inquiry->customer_email,$inquiry->customer_mobile,$inquiry->source,$dealer,$retailer,$action_html];
         }
         $return_array = array();
         $return_array['draw'] = $request['draw'];

@@ -126,6 +126,11 @@ class OrderController extends MainController
         // id|number|product|qty|amount|created by|customer|created_date
         return view('admin.po.index');
     }
+    public function poCreate(Request $request){
+        $json['modal_title'] = "Create PO";
+        $json['modal_content'] = view('admin.po.create')->render();
+        return response()->json(['status' => 'successful','code'=>1, 'data'=>$json, 'message'=>'']);
+    }
 
     public function showPo(Request $request){
         $order = Order::findOrFail($request->get('data')['order_id']);

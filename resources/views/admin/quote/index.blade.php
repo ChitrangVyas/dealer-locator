@@ -10,6 +10,7 @@
                 <div class="card">
                     <div class="card-header">
                         <h2 class="card-title">{{ucwords($title)}}</h3>
+                        <div class="float-right"><a id="newQuote" data-create-quote-url="{{route('cart.inquiryToQuote.create')}}" data-toggle='modal' data-target='#quoteModal' class="btn btn-primary btn-md create-quote-0">Add quote</a></div>
                     </div>
                     <!-- /.card-header -->
                     <div class="card-body">
@@ -178,6 +179,13 @@
                     getOrderImage("{{ route('order.po.image') }}",{'order_id':$('input[name=order_id]').val()}).then(function(res){    
                     });
                 }
+            });
+        });
+
+        $('body').on('click','#newQuote',function(){
+            var create_quote_url = $(this).data('create-quote-url');
+            getCreateQuote(create_quote_url,'').then(function(){
+                select2Product();
             });
         });
 

@@ -63,7 +63,7 @@
                         @if ($is_new_product)
                         <input type="text" class="form-control product d-inline" value="{{$product->name}}" name="product[{{$product->id}}]" />
                             @else
-                            <input type="hidden" name="product[]" value="{{ $product->id }}" />
+                            <input type="hidden" name="product[{{$product->id}}]" value="{{ $product->name }}" />
                             <label>{{$product->name}}</label>
                         @endif
                     </div>

@@ -29,10 +29,7 @@ class CustomerUpdateRequest extends FormRequest
             // 'email' => 'required|email',
             'email' => [
                 'required',
-                'email', 
-                Rule::unique('users')->where(function ($query) use($request_data) {
-                    return $query->whereNull('deleted_at')->whereIn('users_group_id',[$request_data['users_group_id']]);
-                })->ignore($request_data['id'])
+                'email',
             ],
             'name' => 'required|string|max:100',            
             'mobile' => 'required',

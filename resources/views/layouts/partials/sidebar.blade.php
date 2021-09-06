@@ -193,7 +193,7 @@
             </a>
             <ul class="nav nav-treeview">
               <li class="nav-item">
-                <a href="#" class="nav-link  {{ $elementActive == 'vendor' ? 'active' : '' }}">
+                <a href="{{route('vendor.index')}}" class="nav-link  {{ $elementActive == 'vendor' ? 'active' : '' }}">
                 <i class="nav-icon fas fa-shopping-bag"></i>
                   <p>Vendor</p>
                 </a>

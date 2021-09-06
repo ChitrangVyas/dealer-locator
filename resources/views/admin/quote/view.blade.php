@@ -60,7 +60,7 @@
             <tbody>
                 @foreach ($order->orderProduct as $orderProduct)
                 <tr>
-                    <td>{{$orderProduct->product->name}}</td>
+                    <td>{{(!empty($orderProduct->product_name))?$orderProduct->product_name:$orderProduct->product->name}}</td>
                     <td>{{ number_format($orderProduct->amount,2)}}</td>
                     <td>{{$orderProduct->qty}}</td>
                     <td>{{ number_format($orderProduct->getsubTotal(),2) }}</td>

@@ -80,7 +80,7 @@ class CartController extends MainController
         $cart  = \Cart::session($request->input('cart_id'));
         if(!$cart->isEmpty()){
             if($request->input('is_new_product') == 1){
-                foreach($request->input('product') as $key=>$val){
+                foreach($request->input('product') as $key=>$val){      
                     $cart->remove($key);
                     $cart->add(array(
                         'id' => $key,
@@ -91,20 +91,20 @@ class CartController extends MainController
                     ));
                 }
             }else{
-                foreach($request->input('product') as $product){
-                    $product_data = Product::findOrFail($product);
-                    $cart->remove($product);
+                foreach($request->input('product') as $key=>$product){
+                    $product_data = Product::findOrFail($key);
+                    $cart->remove($key);
                     $cart->add(array(
-                        'id' => $product,
+                        'id' => $key,
                         'name' => $product_data->name,
-                        'price' => $request->input('amount')[$product],
-                        'quantity' => $request->input('qty')[$product],
+                        'price' => $request->input('amount')[$key],
+                        'quantity' => $request->input('qty')[$key],
                         'attributes' => array(),
                     ));
                 }
             }
         }
-        return $this->getInquiryToQuoteCart($request->input('cart_id'),$cart);
+        return $this->getInquiryToQuoteCart($request->input('cart_id'),$cart,$request->input('is_new_product'));
     }
 
     /**
@@ -157,7 +157,7 @@ class CartController extends MainController
             $cart  = \Cart::session($id);
             $cart->add(array(
                 'id' => 1,
-                'name' => '',
+                'name' => 'name',
                 'price' => 1,
                 'quantity' => '1',
                 'attributes' => array(),
@@ -170,8 +170,8 @@ class CartController extends MainController
 
     }
 
-    public function getInquiryToQuoteCart($id,$cart,$is_nexw_product = 0){
-        return view('admin.order.cart',['cart'=>$cart,'id'=>$id,'is_new_product' => '1','order_number'=>$this->myCart->getOrderNumber($id),'type'=>$this->myCart->getType($id),'inquiry_id'=>$this->myCart->getInquiryId($id)]);
+    public function getInquiryToQuoteCart($id,$cart,$is_new_product = 0){
+        return view('admin.order.cart',['cart'=>$cart,'id'=>$id,'is_new_product' => $is_new_product,'order_number'=>$this->myCart->getOrderNumber($id),'type'=>$this->myCart->getType($id),'inquiry_id'=>$this->myCart->getInquiryId($id)]);
     }
 
     public function addProductToCart(Request $request){
@@ -187,7 +187,6 @@ class CartController extends MainController
                     'attributes' => array(),
                 )
             );
-            $this->myCart->setTo($request->input('id'),(!empty(auth()->user()->parent_id))?auth()->user()->parent_id:$product->brand->manufacturer->id);
         }else{
             //
             $items = $cart->getContent();
@@ -210,6 +209,7 @@ class CartController extends MainController
                 return response()->json(['status' => 'error','code' => 0, 'data'=>'', 'message'=>'Selected product is from diffrent manufacturer.']);
             }
         }
+        $this->myCart->setTo($request->input('id'),(!empty(auth()->user()->parent_id))?auth()->user()->parent_id : $product->brand->manufacturer->id);
         $json['cart_content'] = $this->getInquiryToQuoteCart($request->input('id'),$cart)->render();
         return response()->json(['status' => 'successful','code'=>1, 'data'=>$json, 'message'=>'']);
     }
@@ -217,7 +217,7 @@ class CartController extends MainController
     public function removeCartProduct(Request $request){
         $cart  = \Cart::session($request->input('id'));
         $cart->remove($request->input('product_id'));
-        return $this->getInquiryToQuoteCart($request->input('id'),$cart);
+        return $this->getInquiryToQuoteCart($request->input('id'),$cart,$request->input('is_new_product'));
     }
 
     //PO
@@ -253,33 +253,46 @@ class CartController extends MainController
                 $cart->add($items);
                 $this->myCart->setOrderNumber($id,$order->order_number);
                 $this->myCart->setOrderReference($id,$order->id);
-                $this->myCart->setType($id,'po');
-                // from login user
-                $this->myCart->setFrom($id,auth()->user()->id);
-                // to parent user
                 $this->myCart->setTo($id,(!empty(auth()->user()->parent_id))?auth()->user()->parent_id:$manufacturer);
             }
         }else{
-            $id = "po_".auth()->user()->id;
+            $id = (!empty($request_data['data']['vendor'])) ? "po_vendor_".auth()->user()->id : "po_user_".auth()->user()->id;
             $cart  = \Cart::session($id);
-            if($cart->isEmpty()){
-                $cart->add(array(
-                    'id' => 1,
-                    'name' => 'name',
-                    'price' => 1,
-                    'quantity' => '1',
-                    'attributes' => array(),
-                ));
+            if(!empty($request_data['data']['vendor'])){
+                $to_user = (!empty($request_data['data']['vendor']))?$request_data['data']['vendor']:'';
+                if($cart->isEmpty()){
+                    $cart->add(array(
+                        'id' => 1,
+                        'name' => 'name',
+                        'price' => 1,
+                        'quantity' => '1',
+                        'attributes' => array(),
+                    ));
+                    $this->myCart->setOrderNumber($id,random_int(100000, 999999));
+                    $this->myCart->setTo($id,$to_user);
+                }
+                
+                $is_new_product = 1;
+            }else{
+                $is_new_product = 0;
+                $to_user = (!empty($request_data['data']['dealer']))?$request_data['data']['dealer']:'';
             }
-            $is_new_product = 1;
+            if($cart->isEmpty()){
+                $this->myCart->setTo($id,$to_user);
+                $this->myCart->setOrderNumber($id,random_int(100000, 999999));
+            }
         }
+        $this->myCart->setType($id,'po');
+        $this->myCart->setFrom($id,auth()->user()->id);
+        // dd($cart->getContent());
         $json['cart_title'] = "PO".(!empty($this->myCart->getOrderNumber($id)) ? " #".$this->myCart->getOrderNumber($id) : '');
         $json['cart_content'] = $this->getInquiryToQuoteCart($id,$cart,$is_new_product)->render();
         return response()->json(['status' => 'successful','code'=>1, 'data'=>$json, 'message'=>'']);
     }
 
     public function addNewProductToCart(Request $request){
-        $id = "po_".auth()->user()->id;
+        $user = explode('_',$request->input('id'));
+        $id = (!empty($user[1]=='vendor')) ? "po_vendor_".auth()->user()->id : "po_user_".auth()->user()->id;
         $cart  = \Cart::session($id);
         if($request->input('is_new_product')){
             $count = $cart->getContent()->count();
@@ -288,7 +301,6 @@ class CartController extends MainController
             }else{
                 $count = $cart->getContent()->last()->id + 1;
             }
-            
                 $cart->add(array(
                     'id' => $count,
                     'name' => 'name',

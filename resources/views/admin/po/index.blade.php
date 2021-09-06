@@ -17,8 +17,10 @@
                                 </button>
                                 <div class="dropdown-menu">
                                     <a href="javascript:void(0);" data-po='vendor' class="dropdown-item new-po">Add PO For Vendor</a>
+                                    @if((auth()->user()->users_group_id =='2' ) || (auth()->user()->users_group_id =='3' ))
                                     <div class="dropdown-divider"></div>
-                                    <a href="javascript:void(0);" data-po='dealer' class="dropdown-item new-po">Add PO For Dealer</a>
+                                    <a href="javascript:void(0);" data-po='dealer' class="dropdown-item new-po">Add PO For {{(auth()->user()->users_group_id =='3' )? 'Dealer' : 'Manufacturer'}}</a>
+                                    @endif
                                 </div>
                         </div>
                     </div>
@@ -172,10 +174,18 @@
 
         $('body').on('click','.new-po',function(){
             let type = $(this).data('po');
-            getData("{{route('po.create')}}",{'type':type},'PoModal','modalTitle').then(function(res){
-                select2Vendor();
-                $('#PoModal').modal('show');
-            });
+            if(type=='vendor'){
+                getData("{{route('po.create')}}",{'type':type},'PoModal','modalTitle').then(function(res){
+                    select2Vendor();
+                    $('#PoModal').modal('show');
+                });
+            }else{
+                getOrderData("{{route('cart.po.create')}}",{'dealer':"{{auth()->user()->parent_id}}"}).then(function(res){
+                    $('#orderModal').modal('show');
+                    select2Product();
+                });
+            }
+
         });
 
         $('body').on('submit','#saveQuote', function(e){
@@ -183,7 +193,9 @@
             let url = ($('#type').val() == 'sale')?"{{ route('order.sale.store') }}":"{{ route('order.po.store') }}";
             let data = $('#saveQuote').serialize();
             // let inquiry_id = $('#inquiry_id').val();
-            saveFormData(url,data,'orderModal');
+            saveFormData(url,data,'orderModal').then(function(res){
+                $('#example').DataTable().ajax.reload(null, false);
+            });
         });
         $('body').on('submit','#uploadPo',function(e){
             e.preventDefault();
@@ -204,7 +216,7 @@
             if($(this).val()){
                 //cart.po.create
                 $('#PoModal').modal('hide');
-                getOrderData("{{route('cart.po.create')}}",'').then(function(res){
+                getOrderData("{{route('cart.po.create')}}",{'vendor':$(this).val()}).then(function(res){
                     $('#orderModal').modal('show');
                     select2Product();
                 });
@@ -515,7 +527,7 @@
         return $.ajax({
             url: "{{ route('cart.product.destroy') }}",
             type: 'DELETE',
-            data:{'_token':token,'id':$('#modalId').val(),'product_id':product_id},
+            data:{'_token':token,'id':$('#modalId').val(),'product_id':product_id,'is_new_product':$('#is_new_product').val()},
             success: function(res) {
                 $(`#orderModal .modal-body`).html(res);
                 // $('.product-detail input').not('input[type=checkbox]').attr('disabled',true);
@@ -552,7 +564,7 @@
         $('.vendor').select2({
             placeholder: "Select",
             allowClear: true,
-            minimumInputLength: 2,
+            minimumInputLength: 1,
             width:"80%",
             ajax: {
                 url: "{{route('get_value')}}",

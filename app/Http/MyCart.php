@@ -24,6 +24,12 @@ class MyCart
         $json['to_user'] = $to;
         $this->session->put($cart_id,json_encode($json));        
     }
+    
+    public function setForManufacture($cart_id,$for_manufacturer){        
+        $json = json_decode($this->session->get($cart_id,'{}'),true);
+        $json['for_manufacturer'] = $for_manufacturer;
+        $this->session->put($cart_id,json_encode($json));        
+    }
 
     public function setOrderNumber($cart_id,$order_number){        
         

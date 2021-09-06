@@ -182,13 +182,14 @@ class OrderController extends MainController
         $cart_data = $this->myCart->getAll($request_data['cart_id']);
         $cart_data['status'] =  'sent';
         $cart_data['total'] = $cart->getTotal();
+        $cart_data['order_reference'] = (!empty($cart_data['order_reference']))?$cart_data['order_reference']:NULL;
         try{
             $order = Order::create($cart_data);
             if(!empty($order)){
-                $order_product_data = [];
+                $order_product_data = []; 
                 foreach($request_data['product'] as $key => $value){
-                    $cart_product = $cart->get($value);
-                    $order_product_data = array('order_id' => $order->id, 'product_id' => $cart_product->id, 'qty' => $cart_product->quantity, 'amount' => $cart_product->price);
+                    $cart_product = $cart->get($key);
+                    $order_product_data = array('order_id' => $order->id, 'product_id' => ($request_data['is_new_product']==1)?NULL:$cart_product->id, 'product_name'=>$cart_product->name, 'qty' => $cart_product->quantity, 'amount' => $cart_product->price);
                     $order_product = '';
                     if(!empty($order_product_data)){
                         $order_product = OrderProduct::create($order_product_data);
@@ -315,7 +316,7 @@ class OrderController extends MainController
         $search = $request['search']['value'];
         $where = 'orders.type = "quote" AND orders.deleted_at is NULL';
         if((!empty($user->userGroup)) && $user->userGroup->id == '2'){
-            $users = implode(',',User::where('parent_id',$user->id)->get()->pluck('id')->toArray());
+            // $users = implode(',',User::where('parent_id',$user->id)->get()->pluck('id')->toArray());
             $where .= (!empty($user->id))?" AND (from_user=$user->id OR to_user=$user->id ":'';
             $where .= (!empty($users)) ? " OR from_user in ($users) )" :")";
         }
@@ -366,12 +367,15 @@ class OrderController extends MainController
         $search = $request['search']['value'];
         $where = 'orders.type = "po" AND orders.deleted_at is NULL';
         if((!empty($user->userGroup)) && $user->userGroup->id == '2'){
-            $users = implode(',',User::where('parent_id',$user->id)->get()->pluck('id')->toArray());
+            // $users = implode(',',User::where('parent_id',$user->id)->get()->pluck('id')->toArray());
             $where .= (!empty($user->id))?" AND (from_user=$user->id OR to_user=$user->id ":'';
             $where .= (!empty($users)) ? " OR from_user in ($users) )" :")";
         }
         if((!empty($user->userGroup)) && $user->userGroup->id == '3'){
             $where .= (!empty($user->id))?" AND from_user=$user->id":'';
+        }else if(empty($user->userGroup) || $user->userGroup->id == '1'){
+            $where .= (!empty($user->id))?" AND (from_user=$user->id OR to_user=$user->id ":'';
+            $where .= (!empty($users)) ? " OR from_user in ($users) )" :")";
         }
         // $where .= (!empty($dealer_id))?" AND (dealer_id=$dealer_id OR inquiries.created_by=$dealer_id)":'';
         $where .= (!empty($search)) ? " AND (orders.order_number like '$search%' OR orders.total like '$search%' OR orders.created_at like '$search%' OR (c.name is NOT NULL AND c.name like '$search%') OR (d.name is NOT NULL AND d.name like '$search%'))":'';
@@ -386,7 +390,6 @@ class OrderController extends MainController
         ->orderBy($request['columns'][$request['order'][0]['column']]['name'],$request['order'][0]['dir'])
         ->groupby('orders.id')
         ->get();
-        
         $total_order = Order::where('type','po')->where('deleted_at',NULL)->count();
         $data = [];
         foreach($orders as $order){
@@ -419,11 +422,13 @@ class OrderController extends MainController
         $search = $request['search']['value'];
         $where = 'orders.type = "sale" AND orders.deleted_at is NULL';
         if((!empty($user->userGroup)) && $user->userGroup->id == '2'){
-            $users = implode(',',User::where('parent_id',$user->id)->get()->pluck('id')->toArray());
+            // $users = implode(',',User::where('parent_id',$user->id)->get()->pluck('id')->toArray());
             $where .= (!empty($user->id))?" AND (from_user=$user->id OR to_user=$user->id ":'';
             $where .= (!empty($users)) ? " OR from_user in ($users) )" :")";
         }
         if((!empty($user->userGroup)) && $user->userGroup->id == '3'){
+            $where .= (!empty($user->id))?" AND from_user=$user->id":'';
+        }else{
             $where .= (!empty($user->id))?" AND from_user=$user->id":'';
         }
         // $where .= (!empty($dealer_id))?" AND (dealer_id=$dealer_id OR inquiries.created_by=$dealer_id)":'';

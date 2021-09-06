@@ -37,7 +37,7 @@ class CustomerUserController extends Controller
     public function create()
     {
         //
-        return view('admin.customer.create');
+        return view('admin.customer.create',['users_group_id'=>4]);
     }
 
     /**
@@ -51,23 +51,25 @@ class CustomerUserController extends Controller
         //
         $request_data = $request->all();
         $request_data['password'] = Hash::make('123456');
-        if($request_data['users_group_id'] == 4 || $request_data['users_group_id'] == 5){
-        try{
-            $user = User::create($request_data);
-            $user['city'] = $user->city;
-            //$user_data = $user->withAndWhereHas('city', function($query) use ($user){$query->where('id', $user->city_id);})->get()->toArray();
-            
-            if($request->ajax()){
-                return response()->json($user,200,[],1);
+        if($request_data['users_group_id'] == 4){
+            try{
+                $user = User::create($request_data);
+                $user['city'] = $user->city;
+                //$user_data = $user->withAndWhereHas('city', function($query) use ($user){$query->where('id', $user->city_id);})->get()->toArray();
+                
+                if($request->ajax()){
+                    return response()->json($user,200,[],1);
+                }
+            }catch(Exception $e){
+                if($request->ajax()){
+                    return response()->json(['exception'=> $e->getMessage()]);
+                }
+                return redirect(route('customer.create'))->with('exception', $e->getMessage());
             }
-        }catch(Exception $e){
-            if($request->ajax()){
-                return response()->json(['exception'=> $e->getMessage()]);
-            }
-            return redirect(route('customer.create'))->with('exception', $e->getMessage());
+        }else{
+            return redirect(route('customer.create'))->with('exception', 'Invalid User Group');
         }
-    }
-        return view('admin.customer.index');
+        return view('admin.vendor.index');
     }
 
     /**
@@ -91,7 +93,8 @@ class CustomerUserController extends Controller
     {
         //
         $user = User::findOrFail($id);
-        return view('admin.customer.create',compact('user'));
+        $users_group_id = 4;
+        return view('admin.customer.create',compact('user','users_group_id'));
     }
 
     /**
@@ -105,8 +108,10 @@ class CustomerUserController extends Controller
     {
         //
         $request_data = $request->except(['_token','_method']);
-        if($request_data['users_group_id'] == 4 || $request_data['users_group_id'] == 5){
+        if($request_data['users_group_id'] == 4){
             $user = User::where('id',$id)->update($request_data);
+        }else{
+            return redirect(route('customer.create'))->with('exception', 'Invalid User Group');
         }
         return redirect(route('customer.index'));
     }
@@ -122,7 +127,9 @@ class CustomerUserController extends Controller
         //
         if(!empty($id)){
             $user = User::findOrFail($id);
-            $user->delete();
+            if($user->users_group_id == 4){
+                $user->delete();
+            }
         }
     }
 
@@ -131,7 +138,7 @@ class CustomerUserController extends Controller
         $start =  $request['start'];
         $length=  $request['length'];
         $search = $request['search']['value'];
-        $where = 'users_group_id IN (4,5)';
+        $where = 'users_group_id IN (4)';
         $where .= (!empty($search)) ? " AND (users.name like '$search%' OR email like '$search%' OR mobile like '$search%' OR cities.name like '$search%' OR states.name like '$search%' OR users_group.name like '$search%')":'';
         $users = DB::table('users')
         ->selectRaw('users_group.name as contact_type,users.id,users.name,email,mobile,cities.name as city, states.name as state')
@@ -144,7 +151,7 @@ class CustomerUserController extends Controller
         ->limit($length)
         ->orderBy($request['columns'][$request['order'][0]['column']]['name'],$request['order'][0]['dir'])
         ->get(); 
-        $total_users = User::whereIN('users_group_id',['4','5'])->count();
+        $total_users = User::whereIN('users_group_id',['4'])->count();
         // dd(DB::getQueryLog());
         $data = [];
         foreach($users as $user){

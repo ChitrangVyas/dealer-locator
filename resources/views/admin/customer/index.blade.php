@@ -46,17 +46,21 @@
                 { "name": "name" },
                 { "name": "email" },
                 { "name": "mobile" },
-                { "name": "states.name" },
                 { "name": "cities.name" },
+                { "name": "states.name" },
                 { "name": "action" }
             ],
             "columnDefs": [
             {
-                "targets": [ 6 ],
+                "targets": [ 7 ],
                 "orderable": false
             },
             {
                 "targets": [ 0 ],
+                "visible": false
+            },
+            {
+                "targets": [ 1 ],
                 "visible": false
             },
         ],
@@ -73,14 +77,14 @@
                     var token = $("meta[name='csrf-token']").attr("content");
                     $.ajax(
                     {
-                        url: "{{ url('/admin/retailer/') }}/"+id,
+                        url: "{{ url('/admin/customer/') }}/"+id,
                         type: 'DELETE',
                         data: {
                             "id": id,
                             "_token": token,
                         },
                         success: function (){
-                            window.location.reload;
+                            $('#example').DataTable().ajax.reload(null, false);
                         }
                     });
                 }

@@ -178,7 +178,7 @@ jQuery(document).ready(function(){
         $("#customerForm .alert").remove();
         let contact = ($("input[name=users_group_id]").val() == 5) ? 'vendor' : 'customer';
         $("#modal-lg").modal("hide");
-        createCustomer().then(function(data){
+        createCustomer((contact=='customer')?"{{ route('customer.store') }}":"{{ route('vendor.store') }}").then(function(data){
             $("#modal-lg").modal("hide");                
             if(contact == 'customer'){
                 var newOption = new Option(data.name+" - " + data.zipcode + " - " + data.city.name, data.id, true, true);
@@ -189,10 +189,10 @@ jQuery(document).ready(function(){
         });
     })
 
-    function createCustomer(){
+    function createCustomer(url){
        return $.ajax({
             headers: { 'X-CSRF-Token' : $('meta[name=_token]').attr('content') },
-            url: "{{ route('customer.store') }}",
+            url: url,
             type: 'POST',            
             data: $('#customerForm').serialize(),
             success: function (data) { 

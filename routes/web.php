@@ -32,6 +32,8 @@ Route::group(['prefix'=>'admin','middleware'=>['auth']],function () {
     Route::get('inquiries_source/listajaxdata', [App\Http\Controllers\Admin\InquiriesSourceController::class,'listAjaxData'])->name('inquiries_sourcelistajax');
     Route::get('customer/listajaxdata', [App\Http\Controllers\Admin\CustomerUserController::class,'listAjaxData'])->name('customerlistajax');
     Route::get('customer/createAjax', [App\Http\Controllers\Admin\CustomerUserController::class,'createAjax'])->name('customerCreateAjax');
+    Route::get('vendor/', [App\Http\Controllers\Admin\CustomerUserController::class,'vendorIndex'])->name('vendor.index');
+    Route::get('vendor/listajax', [App\Http\Controllers\Admin\VendorController::class,'vendorListAjaxData'])->name('vendorlistajax');
     //inquiry & inquiry-log
     Route::get('inquiry/listajaxdata', [App\Http\Controllers\Admin\InquiryController::class,'listAjaxData'])->name('inquirylistajax');
     Route::post('inquiry/assign/retailer', [App\Http\Controllers\Admin\InquiryController::class,'assignToRetailer'])->name('inquiry.assign.retailer');
@@ -81,6 +83,7 @@ Route::group(['prefix'=>'admin','middleware'=>['auth']],function () {
     Route::resource('inquiry', App\Http\Controllers\Admin\InquiryController::class);
     Route::resource('inquiry-log', App\Http\Controllers\Admin\InquiryLogController::class);
     Route::resource('order', App\Http\Controllers\Admin\OrderController::class);
+    Route::resource('vendor', App\Http\Controllers\Admin\VendorController::class);
 });
 
 

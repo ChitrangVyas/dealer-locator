@@ -37,46 +37,16 @@
     </div>
 </section>
 <!-- modal -->
-<div class="modal fade" id="modal-lg">
+<div class="modal fade" id="orderModal">
     <div class="modal-dialog modal-xl">
         <div class="modal-content">
             <div class="modal-header">
-                <h4 class="modal-title">Inquiry Log</h4>
+                <h4 class="modal-title" id="cartTitle"></h4>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
-                <div class="row">
-                    <div class="col-12 col-sm-12">
-                        <div class="card card-primary card-outline card-tabs">
-                            <div class="card-header p-0 pt-1 border-bottom-0">
-                                <ul class="nav nav-tabs" id="tabs" role="tablist">
-                                    <li class="nav-item">
-                                        <a class="nav-link active" id="tab-view" data-tab="view" data-toggle="pill" href="#nav-tab-view" role="tab" aria-controls="nav-tab-view" aria-selected="true" onclick="activeTab(this)">View Log</a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a class="nav-link" id="tab-add" data-tab="add" data-toggle="pill" href="#nav-tab-add" role="tab" aria-controls="nav-tab-add" aria-selected="false" onclick="activeTab(this)">Add Log</a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a class="nav-link" id="tab-task" data-tab="task" data-toggle="pill" href="#nav-tab-task" role="tab" aria-controls="nav-tab-task" aria-selected="false" onclick="activeTab(this)">Add Task</a>
-                                    </li>
-                                </ul>
-                            </div>
-                            <div class="card-body">
-                                <div class="tab-content" id="tab-content">
-                                    <div class="tab-pane fade show active" id="nav-tab-view" data-tab="view" role="tabpanel" aria-labelledby="tab-view">
-                                    </div>
-                                    <div class="tab-pane fade" id="nav-tab-add" data-tab="add" role="tabpanel" aria-labelledby="tab-add">
-                                    </div>
-                                    <div class="tab-pane fade" id="nav-tab-task" data-tab="task" role="tabpanel" aria-labelledby="tab-task">
-                                    </div>
-                                </div>
-                            </div>
-                            <!-- /.card -->
-                        </div>
-                    </div>
-                </div>
             </div>
         </div>
         <!-- /.modal-content -->
@@ -85,11 +55,29 @@
 </div>
 <!-- /.modal -->
 <!-- modal -->
-<div class="modal fade" id="orderModal">
+<div class="modal fade" id="PoModal" data-keyboard="false" data-backdrop="static">
+    <div class="modal-dialog modal-md">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="modalTitle"></h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+<!-- /.modal -->
+<!-- modal -->
+<div class="modal fade" id="modal-lg" data-keyboard="false" data-backdrop="static">
     <div class="modal-dialog modal-xl">
         <div class="modal-content">
             <div class="modal-header">
-                <h4 class="modal-title" id="cartTitle"></h4>
+                <h4 class="modal-title" id="modalTitle">Customer</h4>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -182,23 +170,41 @@
             });
         });
 
+        $('body').on('change','#customer',function(){
+            //$(this).val()
+            if($(this).val()){
+                //cart.po.create
+                $('#PoModal').modal('hide');
+                getOrderData("{{route('cart.quote.create')}}",{'customer':$(this).val()}).then(function(res){
+                    $('#orderModal').modal('show');
+                    select2Product();
+                });
+            }
+        });
+
         $('body').on('click','#newQuote',function(){
             var create_quote_url = $(this).data('create-quote-url');
-            getCreateQuote(create_quote_url,'').then(function(){
-                select2Product();
+            let type = $(this).data('quote');
+            getData("{{route('quote.create')}}",{'type':'vendor'},'PoModal','modalTitle').then(function(res){
+                $('#PoModal').modal('show');
+                select2Customer();
             });
+            /* getCreateQuote(create_quote_url,'').then(function(res){
+                select2Product();
+            }); */
         });
 
         $('body').on('submit','#saveQuote', function(e){
             e.preventDefault();
 
-            let url = ($('#type').val() == 'sale')?"{{ route('order.sale.store') }}":"{{ route('order.po.store') }}";
+            let url = ($('#type').val() == 'sale')?"{{ route('order.sale.store') }}":"{{ route('order.quote.store') }}";
             let formData = new FormData($('#saveQuote')[0]);
             // let inquiry_id = $('#inquiry_id').val();
             saveFormData(url,formData,'orderModal').then(function(res){
                 if(res.code == 1 && $('#type').val() == 'sale'){
                   $(`.create-sale-${res.data.quote}`).hide();
                 }
+                $('#example').DataTable().ajax.reload(null, false);
             });
         });
         $('body').on('submit','#uploadPo',function(e){
@@ -280,6 +286,28 @@
             var selectedTab = $(".modal-body .tab-content").find(".active");
             activeTab(selectedTab);
         });
+
+        $('body').on('click','#addCustomer',function(e){
+        e.preventDefault();
+        e.stopImmediatePropagation();
+        // var data = $('#saveInquiryLog').serialize();        
+        $.ajax({
+            url: "{{ route('customerCreateAjax') }}",
+            type: 'GET',
+            data: '',
+            success: function (data) {                
+                $("#modal-lg .modal-body").html(data);
+                $("#modal-lg").modal("show");
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                console.log("Eror");
+                    /* Toast.fire({
+                        type: 'error',
+                        title: JSON.parse(jqXHR.responseText).message
+                    }); */
+            }
+        });
+    });
 
     });
     function isReminderShow(){
@@ -489,6 +517,8 @@
 
     function select2Product(){
         $('.select-product').select2({
+            placeholder: "Select",
+            allowClear: true,
             minimumInputLength: 2,
             width:"100%",
             ajax: {
@@ -528,6 +558,86 @@
                 });
             }
         }
+    }
+
+    function getCreateQuote(url,data){
+        var token = $("meta[name='csrf-token']").attr("content");
+        return $.ajax({
+            url: url,
+            type: 'POST',
+            data:{data,'_token':token},
+            success: function(res) {
+                $(`#orderModal .modal-body`).html(res.data.cart_content);
+                $('#orderModal .modal-title').text(res.data.cart_title + " #"+ $('#order_number').val());
+                // $('.product-detail input').not('input[type=checkbox]').attr('disabled',true);
+            }
+        });
+    }
+
+    function getData(url,data,modal='',ele_class=''){
+        var token = $("meta[name='csrf-token']").attr("content");
+        return $.ajax({
+            url: url,
+            type: 'POST',
+            data:{data,'_token':token},
+            beforeSend : function(){
+                $('#loader').show();
+            },
+            success: function(res) {
+                if(modal !== ''){
+                    $(`#${modal} .modal-body`).html(res.data.modal_content);
+                }
+                if(ele_class !== ''){
+                    $(`#${ele_class}`).text(res.data.modal_title);
+                }
+                // $('.product-detail input').not('input[type=checkbox]').attr('disabled',true);
+            },
+            complete:function(){
+                $('#loader').hide();
+            }
+        }); 
+    }
+
+    function select2Customer(){
+        var option_group = [
+                            @if(auth()->user()->users_group_id==3 || auth()->user()->users_group_id==2)
+                            {name:'Customer',table:'users',where:'users_group_id = 4 AND deleted_at is NULL AND created_by={{auth()->user()->id}}'},
+                            @endif
+                            @if(auth()->user()->users_group_id==2 || (empty(auth()->user()->users_group_id) || auth()->user()->users_group_id==1))
+                            {name:'Retailer',table:'users',where:'users_group_id = 3 AND deleted_at is NULL' + "{{(empty(auth()->user()->users_group_id) || auth()->user()->users_group_id==1) ? '':  ' AND created_by='.auth()->user()->id}}"},
+                            @endif
+                            @if(empty(auth()->user()->users_group_id) || auth()->user()->users_group_id==1)
+                            {name:'Dealer',table:'users',where:'users_group_id = 2 AND deleted_at is NULL'},
+                            @endif
+
+                        ]
+        $('.customer').select2({
+            placeholder: "Select",
+            allowClear: true,
+            width:"80%",
+            ajax: {
+                url: "{{route('get_value')}}",
+                dataType: 'json',
+                data: function (params) {
+                    return {
+                        q: params.term, // search term
+                        table:'users',
+                        where: 'users_group_id = 4 AND deleted_at is NULL AND created_by={{auth()->user()->id}}',
+                        option_group:option_group
+                    };
+                },
+                processResults: function (data) {
+                    return {
+                        results:  $.map(data, function (item,key) {
+                                    return {
+                                        text: item.text,
+                                        children: item.children,
+                                    }
+                                })
+                    };
+                }
+            }
+        });
     }
 </script>
 @endsection

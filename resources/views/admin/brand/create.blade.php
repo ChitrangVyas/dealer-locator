@@ -110,7 +110,10 @@
 @section('js')
 <script>
     jQuery(document).ready(function() {
-      $('#manufacturer_id').select2();
+      $('#manufacturer_id').select2({
+        placeholder: "Select",
+        allowClear: true,
+      });
     });
 </script>
 @endsection

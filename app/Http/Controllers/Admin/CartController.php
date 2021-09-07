@@ -129,6 +129,24 @@ class CartController extends MainController
         return view('admin.order.quote',['inquiry'=>$inquiry,'quote_number'=>$quote_number]);
     }
 
+    public function createQuote(Request $request){
+        $request_data = $request->all();        
+        $is_new_product = 0;
+        if(!empty($request_data['data']['customer'])){
+            $id = "quote_user_".$request_data['data']['customer'];
+            $cart  = \Cart::session($id);
+            if($cart->isEmpty()){
+                $this->myCart->setOrderNumber($id,random_int(100000, 999999));
+            }
+            $this->myCart->setTo($id,$request_data['data']['customer']);
+        }
+        $this->myCart->setType($id,'quote');
+        $this->myCart->setFrom($id,auth()->user()->id);
+        $json['cart_title'] = "Quote".(!empty($this->myCart->getOrderNumber($id)) ? " #".$this->myCart->getOrderNumber($id) : '');
+        $json['cart_content'] = $this->getInquiryToQuoteCart($id,$cart,$is_new_product)->render();
+        return response()->json(['status' => 'successful','code'=>1, 'data'=>$json, 'message'=>'']);
+    }
+
     public function createInquiryToQuoteCart(Request $request){
         $request_data = $request->all();
         $is_new_product = 0;
@@ -174,7 +192,6 @@ class CartController extends MainController
 
     public function getInquiryToQuoteCart($id,$cart,$is_new_product = 0){
         $to_user = [];
-        // dd($this->myCart->getTo($id));
         if(!empty($this->myCart->getTo($id))){
             $to_user = (!empty($this->myCart->getForManufacture($id))) ? Manufacturer::findOrFail($this->myCart->getTo($id)) : User::findOrFail($this->myCart->getTo($id));
         }
@@ -216,7 +233,9 @@ class CartController extends MainController
                 return response()->json(['status' => 'error','code' => 0, 'data'=>'', 'message'=>'Selected product is from diffrent manufacturer.']);
             }
         }
-        $this->myCart->setTo($request->input('id'),(!empty(auth()->user()->parent_id))?auth()->user()->parent_id : $product->brand->manufacturer->id);
+        // if(empty($this->myCart->getTo($request->input('id')))){
+            $this->myCart->setTo($request->input('id'),(!empty(auth()->user()->parent_id))?auth()->user()->parent_id : $product->brand->manufacturer->id);
+        // }
         if(empty(auth()->user()->parent_id)){
             $this->myCart->setForManufacture($request->input('id'),$product->brand->manufacturer->id);
         }
@@ -285,7 +304,30 @@ class CartController extends MainController
                 }
                 $this->myCart->setTo($id,$to_user);
                 $is_new_product = 1;
+            }else{$id = (!empty($request_data['data']['vendor'])) ? "po_vendor_".$request_data['data']['vendor'] : "po_user_".auth()->user()->id;
+            $cart  = \Cart::session($id);
+            if(!empty($request_data['data']['vendor'])){
+                $to_user = (!empty($request_data['data']['vendor']))?$request_data['data']['vendor']:'';
+                if($cart->isEmpty()){
+                    $cart->add(array(
+                        'id' => 1,
+                        'name' => 'name',
+                        'price' => 1,
+                        'quantity' => '1',
+                        'attributes' => array(),
+                    ));
+                    $this->myCart->setOrderNumber($id,random_int(100000, 999999));
+                }
+                $this->myCart->setTo($id,$to_user);
+                $is_new_product = 1;
             }else{
+                $is_new_product = 0;
+                $to_user = (!empty($request_data['data']['dealer']))?$request_data['data']['dealer']:'';
+            }
+            if($cart->isEmpty()){
+                $this->myCart->setOrderNumber($id,random_int(100000, 999999));
+                $this->myCart->setTo($id,$to_user);
+            }
                 $is_new_product = 0;
                 $to_user = (!empty($request_data['data']['dealer']))?$request_data['data']['dealer']:'';
             }

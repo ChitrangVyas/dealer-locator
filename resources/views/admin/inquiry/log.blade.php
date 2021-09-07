@@ -63,7 +63,10 @@
 @section('js')
 <script>
 jQuery(document).ready(function(){
-    $('.type').select2();
+    $('.type').select2({
+        placeholder: "Select",
+        allowClear: true,
+    });
     $('#datetimepicker').datetimepicker();
 });
 </script>

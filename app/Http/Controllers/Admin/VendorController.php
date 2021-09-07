@@ -150,7 +150,7 @@ class VendorController extends Controller
         ->limit($length)
         ->orderBy($request['columns'][$request['order'][0]['column']]['name'],$request['order'][0]['dir'])
         ->get(); 
-        $total_users = User::whereIN('users_group_id',['5'])->count();
+        $total_users = User::whereIN('users_group_id',['5'])->where('created_by',auth()->user()->id)->count();
         // dd(DB::getQueryLog());
         $data = [];
         foreach($users as $user){

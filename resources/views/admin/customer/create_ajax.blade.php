@@ -108,6 +108,8 @@
 <script>
 jQuery(document).ready(function(){
     $('.dealer').select2({
+        placeholder: "Select",
+        allowClear: true,
         minimumInputLength: 2,
         ajax: {
             url: "{{route('get_value')}}",
@@ -127,6 +129,8 @@ jQuery(document).ready(function(){
         }
     });
     $('.state').select2({
+        placeholder: "Select",
+        allowClear: true,
         minimumInputLength: 2,
         width:"100%",
         ajax: {
@@ -150,6 +154,8 @@ jQuery(document).ready(function(){
     $('.state').on('change', function(){
         if($('.state').val()){
             $('.city').select2({
+                placeholder: "Select",
+                allowClear: true,
                 minimumInputLength: 2,
                 width:"100%",
                 ajax: {
@@ -169,6 +175,11 @@ jQuery(document).ready(function(){
                         };
                     }
                 }
+            });
+        }else{
+            $('.city').select2({
+                placeholder: "Select",
+                allowClear: true,
             });
         }
     });

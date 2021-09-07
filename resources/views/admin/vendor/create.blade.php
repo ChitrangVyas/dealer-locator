@@ -121,6 +121,8 @@
 <script>
 jQuery(document).ready(function() {
     $('.dealer').select2({
+        placeholder: "Select",
+        allowClear: true,
         minimumInputLength: 2,
         ajax: {
             url: "{{route('get_value')}}",
@@ -140,6 +142,8 @@ jQuery(document).ready(function() {
         }
     });
     $('.state').select2({
+        placeholder: "Select",
+        allowClear: true,
         minimumInputLength: 2,
         ajax: {
             url: "{{route('get_value')}}",
@@ -158,10 +162,15 @@ jQuery(document).ready(function() {
             }
         }
     });
-    $('.city').select2();
+    $('.city').select2({
+        placeholder: "Select",
+        allowClear: true,
+    });
     $('.state').on('change', function() {
         if ($('.state').val()) {
             $('.city').select2({
+                placeholder: "Select",
+                allowClear: true,
                 minimumInputLength: 2,
                 ajax: {
                     url: "{{route('get_value')}}",
@@ -180,6 +189,11 @@ jQuery(document).ready(function() {
                         };
                     }
                 }
+            });
+        }else {
+            $('.city').select2({
+                placeholder: "Select",
+                allowClear: true,
             });
         }
     });

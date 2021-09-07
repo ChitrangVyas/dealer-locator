@@ -64,7 +64,7 @@ class MyCart
 
     public function getTo($cart_id){        
         $json = json_decode($this->session->get($cart_id,[]),true);
-        return $json['to_user'];
+        return (!empty($json['to_user']))?$json['to_user']:'';
     }
 
     public function getOrderNumber($cart_id){        

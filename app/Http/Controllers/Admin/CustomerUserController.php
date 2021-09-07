@@ -138,7 +138,7 @@ class CustomerUserController extends Controller
         $start =  $request['start'];
         $length=  $request['length'];
         $search = $request['search']['value'];
-        $where = 'users_group_id IN (4)';
+        $where = 'users_group_id IN (4) AND created_by='.auth()->user()->id;
         $where .= (!empty($search)) ? " AND (users.name like '$search%' OR email like '$search%' OR mobile like '$search%' OR cities.name like '$search%' OR states.name like '$search%' OR users_group.name like '$search%')":'';
         $users = DB::table('users')
         ->selectRaw('users_group.name as contact_type,users.id,users.name,email,mobile,cities.name as city, states.name as state')
@@ -151,7 +151,7 @@ class CustomerUserController extends Controller
         ->limit($length)
         ->orderBy($request['columns'][$request['order'][0]['column']]['name'],$request['order'][0]['dir'])
         ->get(); 
-        $total_users = User::whereIN('users_group_id',['4'])->count();
+        $total_users = User::whereIN('users_group_id',['4'])->where('created_by',auth()->user()->id)->count();
         // dd(DB::getQueryLog());
         $data = [];
         foreach($users as $user){

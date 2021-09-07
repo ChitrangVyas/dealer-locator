@@ -42,6 +42,7 @@ Route::group(['prefix'=>'admin','middleware'=>['auth']],function () {
     Route::post('inquiry-log/reminder/add', [App\Http\Controllers\Admin\InquiryLogController::class,'storeReminder'])->name('storeReminder');
     //qoute
     Route::post('order/quote/create', [App\Http\Controllers\Admin\OrderController::class,'quoteCreate'])->name('order.quote.create');
+    Route::post('quote/create', [App\Http\Controllers\Admin\OrderController::class,'createQuote'])->name('quote.create');
     Route::post('order/quote/', [App\Http\Controllers\Admin\OrderController::class,'quoteStore'])->name('order.quote.store');
     Route::get('quote/', [App\Http\Controllers\Admin\OrderController::class,'quoteIndex'])->name('quote.index');
     Route::get('quote/listQuoteAjaxData', [App\Http\Controllers\Admin\OrderController::class,'listQuoteAjaxData'])->name('list.quote');
@@ -64,6 +65,7 @@ Route::group(['prefix'=>'admin','middleware'=>['auth']],function () {
     //cart
     Route::post('cart/inquiry-to-quote/create', [App\Http\Controllers\Admin\CartController::class,'createInquiryToQuoteCart'])->name('cart.inquiryToQuote.create');
     Route::post('cart/po/create', [App\Http\Controllers\Admin\CartController::class,'createPo'])->name('cart.po.create');
+    Route::post('cart/quote/create', [App\Http\Controllers\Admin\CartController::class,'createQuote'])->name('cart.quote.create');
     Route::post('cart/sale/create', [App\Http\Controllers\Admin\CartController::class,'createSale'])->name('cart.sale.create');
     Route::post('cart/product/add', [App\Http\Controllers\Admin\CartController::class,'addProductToCart'])->name('cart.product.add');
     Route::post('cart/product/new/', [App\Http\Controllers\Admin\CartController::class,'addNewProductToCart'])->name('cart.product.new');

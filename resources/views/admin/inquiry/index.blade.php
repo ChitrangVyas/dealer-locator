@@ -482,6 +482,8 @@
 
     function select2Product(){
         $('.select-product').select2({
+            placeholder: "Select",
+            allowClear: true,
             minimumInputLength: 2,
             width:"100%",
             ajax: {

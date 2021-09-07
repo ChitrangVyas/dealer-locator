@@ -210,6 +210,8 @@ jQuery(document).ready(function(){
         }
     });
     $('.product').select2({
+        placeholder: "Select",
+        allowClear: true,
         minimumInputLength: 2,
         ajax: {
             url: "{{route('get_value')}}",

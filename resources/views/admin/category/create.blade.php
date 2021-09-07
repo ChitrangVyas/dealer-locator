@@ -90,7 +90,10 @@
 @section('js')
 <script>
     jQuery(document).ready(function() {
-      $('#parent_category').select2();
+      $('#parent_category').select2({
+        placeholder: "Select",
+        allowClear: true,
+      });
     });
 </script>
 @endsection

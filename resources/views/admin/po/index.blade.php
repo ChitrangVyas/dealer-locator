@@ -573,7 +573,7 @@
                     return {
                         q: params.term, // search term
                         table:'users',
-                        where: 'users_group_id = 5 AND deleted_at is NULL'
+                        where: 'users_group_id = 5 AND deleted_at is NULL AND created_by={{auth()->user()->id}}'
                     };
                 },
                 processResults: function (data) {

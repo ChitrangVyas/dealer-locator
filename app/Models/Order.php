@@ -20,7 +20,7 @@ class Order extends Model
 
     public function customer(){
         if($this->type == 'po'){            
-            if($this->getUser($this->from_user)->users_group_id == 2){
+            if($this->getUser($this->from_user)->users_group_id == 2 && (!empty($this->for_manufacturer))){
                 return $this->belongsTo(Manufacturer::class,'to_user','id');
             } else {
                 return $this->belongsTo(User::class,'to_user','id');
@@ -39,7 +39,7 @@ class Order extends Model
     }
 
     public function toUser(){
-        if($this->type == 'po' && $this->getUser($this->from_user)->users_group_id == 2){
+        if($this->type == 'po' && $this->getUser($this->from_user)->users_group_id == 2 && (!empty($this->for_manufacturer))){
             $user = Manufacturer::where('id','=',$this->to_user)->first();
             return $user->name;
         } else {

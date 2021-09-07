@@ -88,6 +88,11 @@ class MyCart
         return !empty($json['type'])?$json['type']:'';
     }
 
+    public function getForManufacture($cart_id){        
+        $json = (!empty($this->session->get($cart_id)))?json_decode($this->session->get($cart_id,[]),true):'';
+        return !empty($json['for_manufacturer'])?$json['for_manufacturer']:'';
+    }
+
     public function getAll($cart_id){
         return json_decode($this->session->get($cart_id,[]),true);
     }

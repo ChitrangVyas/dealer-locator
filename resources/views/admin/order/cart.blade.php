@@ -10,6 +10,25 @@
         <input type="hidden" id="type" value="{{(!empty($type)) ? $type : ''}}">
         <input type="hidden" name="is_new_product" id="is_new_product" value="{{(!empty($is_new_product)) ? $is_new_product : ''}}">
         <input type="hidden" name="cart_id" id="modalId" value="{{$id}}" />
+        @if(!empty($to_user))
+            <div class="row invoice-info border-bottom">
+                <div class="col-sm-4 invoice-col">
+                    <h5><strong>TO</strong></h5>
+                    <address>
+                        <strong>{{ucwords($to_user->name)}}</strong><br>
+                        @if(!empty($to_user->city))
+                        {{ucwords($to_user->address)}},<br>
+                        {{ucwords($to_user->city->name)}},<br>
+                        {{ucwords($to_user->state->name)}} - {{$to_user->zipcode}}<br>
+                        @endif
+                        @if(!empty($to_user->mobile))
+                        Phone: {{$to_user->mobile}}<br>
+                        @endif
+                        Email: {{$to_user->email}}
+                    </address>
+                </div>
+            </div>
+        @endif
             <div class="row">
                 @if($is_new_product)
                 <div class="col-sm-12 col-md-4 mt-2">
@@ -20,7 +39,7 @@
                     </div>
                 </div>
                 @else
-                <div class="col-sm-12 col-md-4">
+                <div class="col-sm-12 col-md-4 mt-2">
                     <!-- text input -->
                     <div class="form-group">
                         <label>Product</label>
@@ -29,7 +48,7 @@
                         </select>
                     </div>
                 </div>
-                <div class="col-sm-12 col-md-4 mt-2">
+                <div class="col-sm-12 col-md-4 mt-3">
                     <!-- text input -->
                     <label></label>
                     <div class="form-group">

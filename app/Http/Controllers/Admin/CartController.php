@@ -4,8 +4,10 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\MyCart;
 use App\Models\Inquiry;
+use App\Models\Manufacturer;
 use App\Models\Order;
 use App\Models\Product;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class CartController extends MainController
@@ -171,7 +173,12 @@ class CartController extends MainController
     }
 
     public function getInquiryToQuoteCart($id,$cart,$is_new_product = 0){
-        return view('admin.order.cart',['cart'=>$cart,'id'=>$id,'is_new_product' => $is_new_product,'order_number'=>$this->myCart->getOrderNumber($id),'type'=>$this->myCart->getType($id),'inquiry_id'=>$this->myCart->getInquiryId($id)]);
+        $to_user = [];
+        // dd($this->myCart->getTo($id));
+        if(!empty($this->myCart->getTo($id))){
+            $to_user = (!empty($this->myCart->getForManufacture($id))) ? Manufacturer::findOrFail($this->myCart->getTo($id)) : User::findOrFail($this->myCart->getTo($id));
+        }
+        return view('admin.order.cart',['cart'=>$cart,'id'=>$id,'is_new_product' => $is_new_product,'order_number'=>$this->myCart->getOrderNumber($id),'type'=>$this->myCart->getType($id),'to_user'=>$to_user,'inquiry_id'=>$this->myCart->getInquiryId($id)]);
     }
 
     public function addProductToCart(Request $request){
@@ -210,6 +217,9 @@ class CartController extends MainController
             }
         }
         $this->myCart->setTo($request->input('id'),(!empty(auth()->user()->parent_id))?auth()->user()->parent_id : $product->brand->manufacturer->id);
+        if(empty(auth()->user()->parent_id)){
+            $this->myCart->setForManufacture($request->input('id'),$product->brand->manufacturer->id);
+        }
         $json['cart_content'] = $this->getInquiryToQuoteCart($request->input('id'),$cart)->render();
         return response()->json(['status' => 'successful','code'=>1, 'data'=>$json, 'message'=>'']);
     }
@@ -253,10 +263,13 @@ class CartController extends MainController
                 $cart->add($items);
                 $this->myCart->setOrderNumber($id,$order->order_number);
                 $this->myCart->setOrderReference($id,$order->id);
-                $this->myCart->setTo($id,(!empty(auth()->user()->parent_id))?auth()->user()->parent_id:$manufacturer);
             }
+            $this->myCart->setTo($id,(!empty(auth()->user()->parent_id))?auth()->user()->parent_id:$manufacturer);
+                if(empty(auth()->user()->parent_id)){
+                    $this->myCart->setForManufacture($id,$manufacturer);
+                }
         }else{
-            $id = (!empty($request_data['data']['vendor'])) ? "po_vendor_".auth()->user()->id : "po_user_".auth()->user()->id;
+            $id = (!empty($request_data['data']['vendor'])) ? "po_vendor_".$request_data['data']['vendor'] : "po_user_".auth()->user()->id;
             $cart  = \Cart::session($id);
             if(!empty($request_data['data']['vendor'])){
                 $to_user = (!empty($request_data['data']['vendor']))?$request_data['data']['vendor']:'';
@@ -269,18 +282,17 @@ class CartController extends MainController
                         'attributes' => array(),
                     ));
                     $this->myCart->setOrderNumber($id,random_int(100000, 999999));
-                    $this->myCart->setTo($id,$to_user);
                 }
-                
+                $this->myCart->setTo($id,$to_user);
                 $is_new_product = 1;
             }else{
                 $is_new_product = 0;
                 $to_user = (!empty($request_data['data']['dealer']))?$request_data['data']['dealer']:'';
             }
             if($cart->isEmpty()){
-                $this->myCart->setTo($id,$to_user);
                 $this->myCart->setOrderNumber($id,random_int(100000, 999999));
-            }
+                $this->myCart->setTo($id,$to_user);
+            }           
         }
         $this->myCart->setType($id,'po');
         $this->myCart->setFrom($id,auth()->user()->id);
@@ -292,7 +304,7 @@ class CartController extends MainController
 
     public function addNewProductToCart(Request $request){
         $user = explode('_',$request->input('id'));
-        $id = (!empty($user[1]=='vendor')) ? "po_vendor_".auth()->user()->id : "po_user_".auth()->user()->id;
+        $id = (!empty($user[1]=='vendor')) ? "po_vendor_".$user[2] : "po_user_".auth()->user()->id;
         $cart  = \Cart::session($id);
         if($request->input('is_new_product')){
             $count = $cart->getContent()->count();

@@ -368,13 +368,14 @@ class OrderController extends MainController
         $where = 'orders.type = "po" AND orders.deleted_at is NULL';
         if((!empty($user->userGroup)) && $user->userGroup->id == '2'){
             // $users = implode(',',User::where('parent_id',$user->id)->get()->pluck('id')->toArray());
-            $where .= (!empty($user->id))?" AND (from_user=$user->id OR to_user=$user->id ":'';
+            // $where .= (!empty($user->id))?" AND (from_user=$user->id OR to_user=$user->id ":'';
+            $where .= (!empty($user->id))?" AND (from_user=$user->id":'';
             $where .= (!empty($users)) ? " OR from_user in ($users) )" :")";
         }
         if((!empty($user->userGroup)) && $user->userGroup->id == '3'){
             $where .= (!empty($user->id))?" AND from_user=$user->id":'';
         }else if(empty($user->userGroup) || $user->userGroup->id == '1'){
-            $where .= (!empty($user->id))?" AND (from_user=$user->id OR to_user=$user->id ":'';
+            $where .= (!empty($user->id))?" AND (for_manufacturer is NULL) AND (from_user=$user->id":'';
             $where .= (!empty($users)) ? " OR from_user in ($users) )" :")";
         }
         // $where .= (!empty($dealer_id))?" AND (dealer_id=$dealer_id OR inquiries.created_by=$dealer_id)":'';

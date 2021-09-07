@@ -8,7 +8,7 @@
                 </select>
                 <span class="input-group-append">
                     <!-- <button type="button" id="addCustomer" class="btn btn-primary btn-flat addCustomer">Add</button> -->
-                    <button id="addVendor" class="btn btn-primary btn-flat addVendor" data-toggle='modal' data-target='#modal-lg'>Select & Go</button>
+                    <button id="addVendor" class="btn btn-primary btn-flat addVendor" data-toggle='modal' data-target='#modal-lg'>Add New</button>
                 </span>
             </div>
         </div>

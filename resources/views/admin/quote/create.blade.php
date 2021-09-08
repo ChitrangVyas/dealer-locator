@@ -7,7 +7,7 @@
             @if(auth()->user()->users_group_id==2)
             <label>Customer/Retailer</label>
             @else
-            <label>Retailer/Dealer</label>
+            <label>Customer/Retailer/Dealer</label>
             @endif
             <div class="input-group input-group-sm">
                 <select class="form-control select2 customer" id='customer' name='customer'>

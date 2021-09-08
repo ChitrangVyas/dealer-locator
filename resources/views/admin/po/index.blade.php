@@ -190,8 +190,13 @@
 
         $('body').on('submit','#saveQuote', function(e){
             e.preventDefault();
+            e.stopImmediatePropagation();
             let url = ($('#type').val() == 'sale')?"{{ route('order.sale.store') }}":"{{ route('order.po.store') }}";
-            let data = $('#saveQuote').serialize();
+            let data = $('#saveQuote').serializeArray();
+            var frm = $(this);
+            var btn = $(document.activeElement);
+            data.push({name:'btnSave', value:btn.val()});
+            
             // let inquiry_id = $('#inquiry_id').val();
             saveFormData(url,data,'orderModal').then(function(res){
                 $('#example').DataTable().ajax.reload(null, false);
@@ -199,6 +204,7 @@
         });
         $('body').on('submit','#uploadPo',function(e){
             e.preventDefault();
+            e.stopImmediatePropagation();
             let url = "{{route('order.po.recieved')}}";
             // let formData = new FormData($(this)[0]);
             let formData = new FormData($('#uploadPo')[0]);
@@ -228,7 +234,9 @@
             $('.custom-file-label').html(fileName);
         });
 
-        $('body').on('click','#imageUpload',function(){
+        $('body').on('click','#imageUpload',function(e){
+            e.preventDefault();
+            e.stopImmediatePropagation();
             let formData = new FormData($('#uploadPo')[0]);
             let url = "{{route('order.po.upload.image')}}";
             let file = $('input[type=file]')[0].files[0];
@@ -364,6 +372,9 @@
                 type: 'POST',
                 data: formData,
                 dataType: 'JSON',
+                beforeSend: function(){
+                    $('.btn-save').attr('disabled',true);
+                },
                 success: function (data) {
                     if(data.code == 1){
                         Toast.fire({
@@ -380,14 +391,20 @@
                         })
                     }
                 },
+                completed:function(){
+                    $('.btn-save').attr('disabled',false);
+                },
                 error: function (jqXHR, textStatus, errorThrown) {
+                    $('.btn-save').attr('disabled',false);
                     var err = JSON.parse(jqXHR.responseText).errors;
-                    $.each(err,function(key,val){                
-                        $(`[name=${key}]`).closest('.form-group').after(`<div class="alert alert-danger mt-2">${val}</div>`);                                        
-                    });
                     Toast.fire({
                         type: 'error',
                         title: JSON.parse(jqXHR.responseText).message
+                    });
+                    $.each(err,function(key,val){                
+                        if($(`[name=${key}]`)){
+                            $(`[name=${key}]`).closest('.form-group').after(`<div class="alert alert-danger mt-2">${val}</div>`);                                        
+                        }
                     });
                 }
             });

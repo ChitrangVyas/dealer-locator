@@ -62,9 +62,12 @@ Route::group(['prefix'=>'admin','middleware'=>['auth']],function () {
     Route::post('sale/show', [App\Http\Controllers\Admin\OrderController::class,'showSale'])->name('sale.show');
     Route::post('cart/sale/create', [App\Http\Controllers\Admin\CartController::class,'createSale'])->name('cart.sale.create');
     Route::post('order/sale/', [App\Http\Controllers\Admin\OrderController::class,'storeSale'])->name('order.sale.store');
+    Route::post('invoice/create', [App\Http\Controllers\Admin\OrderController::class,'invoiceCreate'])->name('invoice.create');
+    
     //cart
     Route::post('cart/inquiry-to-quote/create', [App\Http\Controllers\Admin\CartController::class,'createInquiryToQuoteCart'])->name('cart.inquiryToQuote.create');
     Route::post('cart/po/create', [App\Http\Controllers\Admin\CartController::class,'createPo'])->name('cart.po.create');
+    Route::post('cart/invoice/create', [App\Http\Controllers\Admin\CartController::class,'createInvoice'])->name('cart.invoice.create');
     Route::post('cart/quote/create', [App\Http\Controllers\Admin\CartController::class,'createQuote'])->name('cart.quote.create');
     Route::post('cart/sale/create', [App\Http\Controllers\Admin\CartController::class,'createSale'])->name('cart.sale.create');
     Route::post('cart/product/add', [App\Http\Controllers\Admin\CartController::class,'addProductToCart'])->name('cart.product.add');

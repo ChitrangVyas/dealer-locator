@@ -10,6 +10,7 @@
                 <div class="card">
                     <div class="card-header">
                         <h2 class="card-title">{{ucwords($title)}}</h3>
+                        <div class="float-right"><a id="newinvoice" data-create-quote-url="{{route('cart.quote.create')}}" class="btn btn-primary btn-md create-quote-0">Add Invoice</a></div>
                     </div>
                     <!-- /.card-header -->
                     <div class="card-body">
@@ -101,6 +102,24 @@
     <!-- /.modal-dialog -->
 </div>
 <!-- /.modal -->
+<!-- modal -->
+<div class="modal fade" id="invoiceModal" data-keyboard="false" data-backdrop="static">
+    <div class="modal-dialog modal-md">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="modalTitle"></h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+<!-- /.modal -->
 @endsection
 @section('plugins.Datatables', true)
 @section('plugins.Select2', true)
@@ -171,6 +190,15 @@
             });
         });
 
+        $('body').on('click','#newinvoice',function(e){
+            var create_quote_url = $(this).data('create-quote-url');
+            let type = $(this).data('quote');
+            getData("{{route('invoice.create')}}",{'type':'vendor'},'invoiceModal','modalTitle').then(function(res){
+                $('#invoiceModal').modal('show');
+                select2Customer();
+            });
+        });
+
         $('body').on('submit','#saveQuote', function(e){
             e.preventDefault();
             let url = ($('#type').val() == 'sale')?"{{ route('order.sale.store') }}":"{{ route('order.po.store') }}";
@@ -199,6 +227,18 @@
         $('body').on('change','input[type="file"]',function(e){
             var fileName = e.target.files[0].name;
             $('.custom-file-label').html(fileName);
+        });
+
+        $('body').on('change','#customer',function(){
+            //$(this).val()
+            if($(this).val()){
+                //cart.po.create
+                $('#invoiceModal').modal('hide');
+                getOrderData("{{route('cart.invoice.create')}}",{'customer':$(this).val()}).then(function(res){
+                    $('#orderModal').modal('show');
+                    select2Product();
+                });
+            }
         });
 
         $('body').on('click','#imageUpload',function(){
@@ -326,9 +366,6 @@
                 url: url,
                 type: 'POST',
                 data: formData,
-                dataType: 'JSON',
-                contentType: false,
-                processData: false,
                 success: function (data) {
                     if(data.code == 1){
                         Toast.fire({
@@ -473,6 +510,30 @@
         });
     }
 
+    function getData(url,data,modal='',ele_class=''){
+        var token = $("meta[name='csrf-token']").attr("content");
+        return $.ajax({
+            url: url,
+            type: 'POST',
+            data:{data,'_token':token},
+            beforeSend : function(){
+                $('#loader').show();
+            },
+            success: function(res) {
+                if(modal !== ''){
+                    $(`#${modal} .modal-body`).html(res.data.modal_content);
+                }
+                if(ele_class !== ''){
+                    $(`#${ele_class}`).text(res.data.modal_title);
+                }
+                // $('.product-detail input').not('input[type=checkbox]').attr('disabled',true);
+            },
+            complete:function(){
+                $('#loader').hide();
+            }
+        }); 
+    }
+
     function deleteUser(id) {
         if (id) {
             let data = confirm("Are you sure? you wants to delete this inquiry?");
@@ -491,6 +552,47 @@
                 });
             }
         }
+    }
+    function select2Customer(){
+        var option_group = [
+                            @if(auth()->user()->users_group_id==3 || auth()->user()->users_group_id==2 || (empty(auth()->user()->users_group_id) || auth()->user()->users_group_id==1))
+                            {name:'Customer',table:'users',where:'users_group_id = 4 AND deleted_at is NULL AND created_by={{auth()->user()->id}}'},
+                            @endif
+                            @if(auth()->user()->users_group_id==2 || (empty(auth()->user()->users_group_id) || auth()->user()->users_group_id==1))
+                            {name:'Retailer',table:'users',where:'users_group_id = 3 AND deleted_at is NULL' + "{{(empty(auth()->user()->users_group_id) || auth()->user()->users_group_id==1) ? '':  ' AND created_by='.auth()->user()->id}}"},
+                            @endif
+                            @if(empty(auth()->user()->users_group_id) || auth()->user()->users_group_id==1)
+                            {name:'Dealer',table:'users',where:'users_group_id = 2 AND deleted_at is NULL'},
+                            @endif
+
+                        ];
+        $('.customer').select2({
+            placeholder: "Select",
+            allowClear: true,
+            width:"80%",
+            ajax: {
+                url: "{{route('get_value')}}",
+                dataType: 'json',
+                data: function (params) {
+                    return {
+                        q: params.term, // search term
+                        table:'users',
+                        where: 'users_group_id = 4 AND deleted_at is NULL AND created_by={{auth()->user()->id}}',
+                        option_group:option_group
+                    };
+                },
+                processResults: function (data) {
+                    return {
+                        results:  $.map(data, function (item,key) {
+                                    return {
+                                        text: item.text,
+                                        children: item.children,
+                                    }
+                                })
+                    };
+                }
+            }
+        });
     }
 </script>
 @endsection

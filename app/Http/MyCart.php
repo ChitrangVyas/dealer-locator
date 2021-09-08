@@ -94,7 +94,7 @@ class MyCart
     }
 
     public function getAll($cart_id){
-        return json_decode($this->session->get($cart_id,[]),true);
+        return (!empty($this->session->get($cart_id)))?json_decode($this->session->get($cart_id,[]),true):'';
     }
 
     public function clear($cart_id){

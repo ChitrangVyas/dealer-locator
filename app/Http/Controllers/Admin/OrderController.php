@@ -11,6 +11,7 @@ use App\Models\User;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 use View;
 class OrderController extends MainController
 {
@@ -96,7 +97,7 @@ class OrderController extends MainController
         //
     }
 
-    public function quoteIndex(){
+    public function quoteIndex(){        
         View::share ( 'title', 'Quote' );
         View::share ( 'elementActive', 'quote' );
         // id|number|product|qty|amount|created by|customer|created_date
@@ -174,6 +175,19 @@ class OrderController extends MainController
                 $cart->clear();
                 $this->myCart->clear($request_data['cart_id']);
                 if(!empty($order_product)){
+                    if((!empty($request_data['btnSave'])) && $request_data['btnSave']=='savensend')
+                    {
+                        $email_data = [
+                            'from'=>$quote->addedBy->email,
+                            'from_name' => $quote->addedBy->name,
+                            'to'=>$quote->customer->email,
+                            'title' => "PO FOR #$quote->order_number",
+                            'view' => 'emails.send',
+                            'content' => "<p>This is Test for the Qoute</p>",
+
+                        ];
+                        $this->send($email_data);
+                    }
                     return response()->json(['status' => 'successful','code'=>1,'message'=>'Quote Successfully created.']);
                 }else{
                     return response()->json(['status' => 'error','code'=>0,'message'=>'Something goes wrong.']);
@@ -184,6 +198,11 @@ class OrderController extends MainController
         }
     }
     public function storePo(Request $request){
+        \Validator::make($request->all(), [
+            'product.*' => 'required',
+            'qty.*' => 'required|numeric|min:1',
+            'amount.*'=>'required|numeric|min:1'
+        ])->validate();
         $request_data = $request->all();
         $cart = \Cart::Session($request_data['cart_id']);
         $cart_data = $this->myCart->getAll($request_data['cart_id']);
@@ -205,6 +224,18 @@ class OrderController extends MainController
                 $cart->clear();
                 $this->myCart->clear($request_data['cart_id']);
                 if(!empty($order_product)){
+                    if((!empty($request_data['btnSave'])) && $request_data['btnSave']=='savensend')
+                    {
+                        $email_data = [
+                            'from'=>$order->addedBy->email,
+                            'to'=>$order->customer->email,
+                            'title' => "PO FOR #$order->order_number",
+                            'view' => 'emails.send',
+                            'content' => "<p>This is Test for the PO</p>",
+
+                        ];
+                        $this->send($email_data);
+                    }
                     return response()->json(['status' => 'successful', 'data'=>['quote'=>$cart_data['order_reference']],'code'=>1,'message'=>'PO Successfully created.']);
                 }else{
                     return response()->json(['status' => 'error','code'=>0,'message'=>'Something goes wrong.']);
@@ -270,6 +301,12 @@ class OrderController extends MainController
         return view('admin.sale.index');
     }
 
+    public function invoiceCreate(Request $request){
+        $json['modal_title'] = "Create Invoice";
+        $json['modal_content'] = view('admin.invoice.create')->render();
+        return response()->json(['status' => 'successful','code'=>1, 'data'=>$json, 'message'=>'']);
+    }
+
     public function showSale(Request $request){
         $order = Order::findOrFail($request->get('data')['order_id']);
         $json['cart_title'] = "Sale #$order->order_number";
@@ -283,13 +320,14 @@ class OrderController extends MainController
         $cart_data = $this->myCart->getAll($request_data['cart_id']);        
         $cart_data['status'] =  'sent';
         $cart_data['total'] = $cart->getTotal();
+        $cart_data['order_reference'] = (!empty($cart_data['order_reference']))?$cart_data['order_reference']:NULL;
         try{
             $order = Order::create($cart_data);
             if(!empty($order)){
                 $order_product_data = [];
                 foreach($request_data['product'] as $key => $value){
-                    $cart_product = $cart->get($value);
-                    $order_product_data = array('order_id' => $order->id, 'product_id' => $cart_product->id, 'qty' => $cart_product->quantity, 'amount' => $cart_product->price);
+                    $cart_product = $cart->get($key);
+                    $order_product_data = array('order_id' => $order->id, 'product_id' => $cart_product->id, 'product_name' => $cart_product->name, 'qty' => $cart_product->quantity, 'amount' => $cart_product->price);
                     $order_product = '';
                     if(!empty($order_product_data)){
                         $order_product = OrderProduct::create($order_product_data);
@@ -474,6 +512,31 @@ class OrderController extends MainController
         $return_array['data'] = $data;
         return response(json_encode($return_array), 200)
         ->header('Content-Type', 'text/plain');
+    }
+
+    public function send($email_data)
+    {
+        if(!empty($email_data)){
+            try{
+                Mail::send($email_data['view'], ['details'=>['title' => $email_data['title'], 'content' => $email_data['content']]], function ($message) use ($email_data)
+                {
+
+                    $message->from((!empty($email_data['from']))?$email_data['from']:'admin@admin.com', (!empty($email_data['from_name']))?$email_data['from_name']:'Laravel');
+
+                    $message->to($email_data['to']);
+
+                    //Attach file
+                    if(!empty($email_data['attach'])){
+                        $message->attach($email_data['attach']);
+                    }
+
+                    //Add a subject
+                    $message->subject("Mail from Laravel");
+
+                });
+            }catch(\Exception $e){
+            }
+        }
     }
         
 }

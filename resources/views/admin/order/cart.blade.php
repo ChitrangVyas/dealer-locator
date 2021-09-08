@@ -80,7 +80,7 @@
                     <div class="icheck-primary d-inline">
                         <!-- <input type="checkbox" class="mr-3 product" name="product[]" value="{{$product->id}}" checked> -->
                         @if ($is_new_product)
-                        <input type="text" class="form-control product d-inline" value="{{$product->name}}" name="product[{{$product->id}}]" />
+                        <input type="text" class="form-control product d-inline" value="{{$product->name}}" name="product[{{$product->id}}]" required/>
                             @else
                             <input type="hidden" name="product[{{$product->id}}]" value="{{ $product->name }}" />
                             <label>{{$product->name}}</label>
@@ -91,13 +91,13 @@
             <div class="col-sm-12 col-md-1">
                 <div class="form-group">
                     <!-- <label for="qty">Qty</label> -->
-                    <input type="number" class="form-control qty d-inline" id="qty-{{$product->id}}" name="qty[{{$product->id}}]" value="{{$product->quantity}}" min="1" />
+                    <input type="number" class="form-control qty d-inline" id="qty-{{$product->id}}" name="qty[{{$product->id}}]" value="{{$product->quantity}}" min="1" required />
                 </div>
             </div>
             <div class="col-sm-12 col-md-2">
                 <div class="form-group">
                     <!-- <label for="qty">Price</label> -->
-                    <input type="text" class="form-control price d-inline" id="price-{{$product->id}}" value="{{$product->price}}" name="amount[{{$product->id}}]" />
+                    <input type="text" class="form-control price d-inline" id="price-{{$product->id}}" value="{{$product->price}}" name="amount[{{$product->id}}]" min="1" required />
                 </div>
             </div>
             <div class="col-sm-12 col-md-1">
@@ -127,7 +127,8 @@
         </div>
         <div class="row border-top">
             <div class="col-sm-12 mt-2">
-                <button type="submit" class="btn btn-primary">Submit</button>
+                <button type="submit" class="btn btn-primary btn-save" value="save">Save</button>
+                <button type="submit" class="btn btn-primary btn-save" value="savensend">Save & Send</button>
             </div>
         </div>
         @else

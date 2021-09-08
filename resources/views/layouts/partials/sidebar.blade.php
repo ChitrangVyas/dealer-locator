@@ -154,7 +154,7 @@
           </li>
           <li class="nav-item has-treeview {{ ($elementActive == 'quote' || $elementActive == 'po' || $elementActive == 'sales') ? 'menu-open' : ''}}">
           <a href="#" class="nav-link">
-              <i class="nav-icon fas fa-copy"></i>
+              <i class="nav-icon fas fa-chart-pie"></i>
               <p>
                 Sales
                 <i class="right fas fa-angle-left"></i>
@@ -185,7 +185,7 @@
           </li>
           <li class="nav-item has-treeview {{ ($elementActive == 'vendor' || $elementActive == 'po' || $elementActive == 'bill') ? 'menu-open' : ''}}">
           <a href="#" class="nav-link">
-              <i class="nav-icon fas fa-copy"></i>
+              <i class="nav-icon fas fa-shopping-bag"></i>
               <p>
                 Purchase
                 <i class="right fas fa-angle-left"></i>
@@ -194,19 +194,19 @@
             <ul class="nav nav-treeview">
               <li class="nav-item">
                 <a href="{{route('vendor.index')}}" class="nav-link  {{ $elementActive == 'vendor' ? 'active' : '' }}">
-                <i class="nav-icon fas fa-shopping-bag"></i>
+                <i class="nav-icon fas fa-building"></i>
                   <p>Vendor</p>
                 </a>
               </li>
               <li class="nav-item">
                 <a href="{{ route('po.index') }}" class="nav-link  {{ $elementActive == 'po' ? 'active' : '' }}">
-                <i class="nav-icon fas fa-shopping-bag"></i>
+                <i class="nav-icon fas fa-receipt"></i>
                   <p>PO</p>
                 </a>
               </li>
               <li class="nav-item">
                 <a href="#" class="nav-link  {{ $elementActive == 'bill' ? 'active' : '' }}">
-                <i class="nav-icon fas fa-shopping-bag"></i>
+                <i class="nav-icon fas fa-file-invoice"></i>
                   <p>Bill</p>
                 </a>
               </li>

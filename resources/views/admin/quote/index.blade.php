@@ -37,7 +37,7 @@
     </div>
 </section>
 <!-- modal -->
-<div class="modal fade" id="orderModal">
+<div class="modal fade overflow-auto" id="orderModal">
     <div class="modal-dialog modal-xl">
         <div class="modal-content">
             <div class="modal-header">
@@ -197,13 +197,11 @@
         $('body').on('submit','#saveQuote', function(e){
             e.preventDefault();
             e.stopImmediatePropagation();
-
             let url = ($('#type').val() == 'sale')?"{{ route('order.sale.store') }}":"{{ route('order.quote.store') }}";
-            let data = $('#saveQuote').serializeArray();
             var frm = $(this);
             var btn = $(document.activeElement);
-            let formData = new FormData($('#saveQuote')[0]).append('btnSave',btn.val());
-            // let inquiry_id = $('#inquiry_id').val();
+            let formData = new FormData($('#saveQuote')[0]);
+            formData.append('btnSave',btn.val());
             saveFormData(url,formData,'orderModal').then(function(res){
                 if(res.code == 1 && $('#type').val() == 'sale'){
                   $(`.create-sale-${res.data.quote}`).hide();

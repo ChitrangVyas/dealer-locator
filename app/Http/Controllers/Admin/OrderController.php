@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\MyCart;
+use App\Mail\OrderEmailTemplate;
+use App\Mail\OrderShipped;
 use App\Models\Order;
 use App\Models\OrderProduct;
 use App\Models\Inquiry;
@@ -186,7 +188,8 @@ class OrderController extends MainController
                             'content' => "<p>This is Test for the Qoute</p>",
 
                         ];
-                        $this->send($email_data);
+                        Mail::to($quote->customer->email)->send(new OrderEmailTemplate($quote,config('app.name').' - Quote'));
+                        // $this->send($email_data);
                     }
                     return response()->json(['status' => 'successful','code'=>1,'message'=>'Quote Successfully created.']);
                 }else{
@@ -199,8 +202,11 @@ class OrderController extends MainController
     }
     public function storePo(Request $request){
         \Validator::make($request->all(), [
-            'product.*' => 'required',
+            "product" => "required|array|min:1",
+            'product.*' => 'required|string|min:1',
+            'qty' => 'required|array|min:1',
             'qty.*' => 'required|numeric|min:1',
+            'amount'=>'required|array|min:1',
             'amount.*'=>'required|numeric|min:1'
         ])->validate();
         $request_data = $request->all();
@@ -234,7 +240,10 @@ class OrderController extends MainController
                             'content' => "<p>This is Test for the PO</p>",
 
                         ];
-                        $this->send($email_data);
+                        
+                        Mail::to($order->customer->email)->send(new OrderEmailTemplate($order,config('app.name').' - PO'));
+                        // Mail::to($order->customer->email)->send(new OrderShipped($order));
+                        // $this->send($email_data);
                     }
                     return response()->json(['status' => 'successful', 'data'=>['quote'=>$cart_data['order_reference']],'code'=>1,'message'=>'PO Successfully created.']);
                 }else{
@@ -244,6 +253,7 @@ class OrderController extends MainController
                 return response()->json(['status' => 'error','code'=>0,'message'=>'Unable to generate PO.']);
             }
         }catch(Exception $e){
+            dd($e->getMessage());
             return response()->json(['status' => 'error','code' => 0,'message' => $e->getMessage()]);                
         }
     }

@@ -49,7 +49,7 @@
     </div>
 </section>
 <!-- modal -->
-<div class="modal fade" id="orderModal">
+<div class="modal fade overflow-auto" id="orderModal">
     <div class="modal-dialog modal-xl">
         <div class="modal-content">
             <div class="modal-header">
@@ -401,9 +401,10 @@
                         type: 'error',
                         title: JSON.parse(jqXHR.responseText).message
                     });
-                    $.each(err,function(key,val){                
-                        if($(`[name=${key}]`)){
-                            $(`[name=${key}]`).closest('.form-group').after(`<div class="alert alert-danger mt-2">${val}</div>`);                                        
+                    $.each(err,function(key,val){
+                        var input_field = key.split('.');
+                        if($(`[name=${input_field[0]}]`).length > 0){
+                            $(`[name=${input_field[0]}]`).closest('.form-group').after(`<div class="alert alert-danger mt-2">${val}</div>`);                                        
                         }
                     });
                 }

@@ -269,7 +269,10 @@
         $('body').on('submit','#saveQuote', function(e){
             e.preventDefault();
             let url = "{{ route('order.quote.store') }}";
-            let data = $('#saveQuote').serialize();
+            let data = $('#saveQuote').serializeArray();
+            var frm = $(this);
+            var btn = $(document.activeElement);
+            data.push({name:'btnSave', value:btn.val()});
             let inquiry_id = $('#inquiry_id').val();
             saveInquiryLog(url,data,'quoteModal').then(function(res){
                 if(res.code == 1){

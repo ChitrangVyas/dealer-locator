@@ -21,8 +21,9 @@ class CommonController extends Controller
         $table = $request_data['table'];
         $fields = (!empty($request_data['fields']))?$request_data['fields']:'id , name as text';
         $where = (!empty($request_data['where']))?" $request_data[where]":'';
-        $where .= (!empty($request_data['q']))? (empty($request_data['whereOr'])) ? " AND ".$table.".name like '$request_data[q]%'" : $table.".name like '$request_data[q]%'" :'';
-        $where .= (!empty($request_data['whereOr']))?" $request_data[whereOr]":'';
+        $where .= (!empty($request_data['q']))? (empty($request_data['whereOr'])) ? " AND ".$table.".name like '$request_data[q]%'" : "(".$table.".name like '$request_data[q]%'" :'';
+        $where .= (!empty($request_data['whereOr']))?" $request_data[whereOr] )":'';
+        $where .= (!empty($request_data['whereAnd']))?" $request_data[whereAnd] ":'';
         $query = "select $fields from $table";
         if(!empty($where)){
             $query .= " where $where";

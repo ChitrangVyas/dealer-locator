@@ -155,18 +155,20 @@ class CartController extends MainController
         $id = "quote_".$request_data['data']['inquiry_id'];
         $inquiry = Inquiry::findOrFail($request_data['data']['inquiry_id']);
         $cart  = \Cart::session($id);
-            if($cart->isEmpty()){
+        if($cart->isEmpty()){
             $items = []; 
-            foreach($inquiry->product as $product){
-                $items[] = array(
-                    'id' => $product->id,
-                    'name' => $product->name,
-                    'price' => $product->price,
-                    'quantity' => '1',
-                    'attributes' => array(),
-                );
-            }             
-                $cart->add($items);
+            if((!empty($inquiry->product)) && $inquiry->product->count() > 0){
+                foreach($inquiry->product as $product){
+                    $items[] = array(
+                        'id' => $product->id,
+                        'name' => $product->name,
+                        'price' => $product->price,
+                        'quantity' => '1',
+                        'attributes' => array(),
+                    );
+                }
+                $cart->add($items);         
+            }    
                 $this->myCart->setOrderNumber($id,random_int(100000, 999999));
                 $this->myCart->setInquiryId($id,$inquiry->id);
                 $this->myCart->setType($id,'quote');
@@ -216,12 +218,13 @@ class CartController extends MainController
         }else{
             //
             $items = $cart->getContent();
+
             foreach($items as $row) {
                  $cart_product_id = $row->id; 
                  break;
             }
             $cart_product = Product::findOrFail($cart_product_id);
-            if($product->brand->manufacturer->id == $cart_product->brand->manufacturer->id){
+            if($product->brand->manufacturer->id == $cart_product->brand->manufacturer->id || $this->myCart->getType($request->input('id'))== 'sale'){
                 $cart->add(
                     array(
                         'id' => $product->id,
@@ -239,8 +242,10 @@ class CartController extends MainController
         if(empty($this->myCart->getTo($request->input('id'))) || ($this->myCart->getType($request->input('id'))) == 'po' ){
             $this->myCart->setTo($request->input('id'),(!empty(auth()->user()->parent_id))?auth()->user()->parent_id : $product->brand->manufacturer->id);
         }
-        if(empty(auth()->user()->parent_id) || empty($this->myCart->getTo($request->input('id')))){
+        if((empty(auth()->user()->parent_id) || empty($this->myCart->getTo($request->input('id')))) && ($this->myCart->getType($request->input('id'))) == 'po'){
             $this->myCart->setForManufacture($request->input('id'),$product->brand->manufacturer->id);
+        }else{
+            $this->myCart->setForManufacture($request->input('id'),0);
         }
         $json['cart_content'] = $this->getInquiryToQuoteCart($request->input('id'),$cart)->render();
         return response()->json(['status' => 'successful','code'=>1, 'data'=>$json, 'message'=>'']);
@@ -396,9 +401,9 @@ class CartController extends MainController
             $this->myCart->setOrderReference($id,$order->id);
             $this->myCart->setType($id,'sale');
             // from login user
-            $this->myCart->setFrom($id,$order->to_user);
+            $this->myCart->setFrom($id,$order->from_user);
             // to parent user
-            $this->myCart->setTo($id,$order->from_user);
+            $this->myCart->setTo($id,$order->to_user);
         }
         $json['cart_title'] = "Sale".(!empty($this->myCart->getOrderNumber($id)) ? " #".$this->myCart->getOrderNumber($id) : '');
         $json['cart_content'] = $this->getInquiryToQuoteCart($id,$cart)->render();
@@ -409,7 +414,7 @@ class CartController extends MainController
         $request_data = $request->all();        
         $is_new_product = 0;
         if(!empty($request_data['data']['customer'])){
-            $id = "quote_user_".$request_data['data']['customer'];
+            $id = "sale_user_".$request_data['data']['customer'];
             $cart  = \Cart::session($id);
             if($cart->isEmpty()){
                 $this->myCart->clear($id);
@@ -419,7 +424,7 @@ class CartController extends MainController
         }
         $this->myCart->setType($id,'sale');
         $this->myCart->setFrom($id,auth()->user()->id);
-        $json['cart_title'] = "Invoice".(!empty($this->myCart->getOrderNumber($id)) ? " #".$this->myCart->getOrderNumber($id) : '');
+        $json['cart_title'] = "Sale".(!empty($this->myCart->getOrderNumber($id)) ? " #".$this->myCart->getOrderNumber($id) : '');
         $json['cart_content'] = $this->getInquiryToQuoteCart($id,$cart,$is_new_product)->render();
         return response()->json(['status' => 'successful','code'=>1, 'data'=>$json, 'message'=>'']);
     }

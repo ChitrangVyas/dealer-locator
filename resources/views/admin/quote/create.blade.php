@@ -6,7 +6,7 @@
             @endif
             @if(auth()->user()->users_group_id==2)
             <label>Customer/Retailer</label>
-            @else
+            @elseif(empty(auth()->user()->users_group_id) || auth()->user()->users_group_id==1)
             <label>Customer/Retailer/Dealer</label>
             @endif
             <div class="input-group input-group-sm">

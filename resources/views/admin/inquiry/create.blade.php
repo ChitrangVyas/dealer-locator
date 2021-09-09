@@ -198,7 +198,8 @@ jQuery(document).ready(function(){
                     table:'users',
                     fields: "users.id, CONCAT(`users`.`name`, ' - ', `zipcode`,' - ',`cities`.`name`) as text",
                     // where: ` OR zipcode like '%${params.term}%' OR cities.name like '%${params.term}%' AND (users_group_id=4 OR users_group_id=5)`,
-                    whereOr: ` OR zipcode like '%${params.term}%' OR cities.name like '%${params.term}%' AND (users_group_id=4 OR users_group_id=5)`,
+                    whereOr: ` OR (zipcode like '%${params.term}%' OR cities.name like '%${params.term}%')`,
+                    whereAnd: `AND (users_group_id=4 OR users_group_id=5) AND created_by=`+"{{auth()->user()->id}}",
                     joins:[{'join_table':'cities','to_column':'city_id','from_column':'cities.id','type':'left'}]
                 };
             },

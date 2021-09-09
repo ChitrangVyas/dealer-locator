@@ -63,6 +63,8 @@ Route::group(['prefix'=>'admin','middleware'=>['auth']],function () {
     Route::post('cart/sale/create', [App\Http\Controllers\Admin\CartController::class,'createSale'])->name('cart.sale.create');
     Route::post('order/sale/', [App\Http\Controllers\Admin\OrderController::class,'storeSale'])->name('order.sale.store');
     Route::post('invoice/create', [App\Http\Controllers\Admin\OrderController::class,'invoiceCreate'])->name('invoice.create');
+    Route::get('invoice', [App\Http\Controllers\Admin\OrderController::class,'invoiceIndex'])->name('invoice.index');
+    Route::get('invoice/listInvoiceAjaxData', [App\Http\Controllers\Admin\OrderController::class,'listInvoiceAjaxData'])->name('list.invoice');
     
     //cart
     Route::post('cart/inquiry-to-quote/create', [App\Http\Controllers\Admin\CartController::class,'createInquiryToQuoteCart'])->name('cart.inquiryToQuote.create');

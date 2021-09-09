@@ -10,7 +10,7 @@
                 <div class="card">
                     <div class="card-header">
                         <h2 class="card-title">{{ucwords($title)}}</h3>
-                        <div class="float-right"><a id="newinvoice" data-create-quote-url="{{route('cart.quote.create')}}" class="btn btn-primary btn-md create-quote-0">Add Invoice</a></div>
+                        <div class="float-right"><a id="newinvoice" data-create-quote-url="{{route('cart.quote.create')}}" class="btn btn-primary btn-md create-quote-0">Create Sale</a></div>
                     </div>
                     <!-- /.card-header -->
                     <div class="card-body">
@@ -208,6 +208,7 @@
                 if(res.code == 1){
                   $(`.create-po-${res.data.quote}`).hide();  
                 }
+                $('#example').DataTable().ajax.reload(null, false);
             });
         });
         $('body').on('submit','#uploadPo',function(e){
@@ -366,6 +367,9 @@
                 url: url,
                 type: 'POST',
                 data: formData,
+                beforeSend: function(){
+                    $('.btn-save').attr('disabled',true);
+                },
                 success: function (data) {
                     if(data.code == 1){
                         Toast.fire({
@@ -382,7 +386,11 @@
                         })
                     }
                 },
+                completed:function(){
+                    $('.btn-save').attr('disabled',false);
+                },
                 error: function (jqXHR, textStatus, errorThrown) {
+                    $('.btn-save').attr('disabled',false);
                     var err = JSON.parse(jqXHR.responseText).errors;
                     $.each(err,function(key,val){                
                         $(`[name=${key}]`).closest('.form-group').after(`<div class="alert alert-danger mt-2">${val}</div>`);                                        

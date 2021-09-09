@@ -1,12 +1,12 @@
 <div class="row">
     <div class="col-sm-12 col-md-11">
         <div class="form-group">
-            @if(auth()->user()->users_group_id==3)
+            @if(auth()->user()->users_group_id == 3)
             <label>Customer</label>
             @endif
-            @if(auth()->user()->users_group_id==2)
+            @if(auth()->user()->users_group_id == 2)
             <label>Customer/Retailer</label>
-            @else
+            @elseif(empty(auth()->user()->users_group_id) || auth()->user()->users_group_id==1)
             <label>Customer/Retailer/Dealer</label>
             @endif
             <div class="input-group input-group-sm">

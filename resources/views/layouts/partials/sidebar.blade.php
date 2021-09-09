@@ -205,7 +205,7 @@
                 </a>
               </li>
               <li class="nav-item">
-                <a href="#" class="nav-link  {{ $elementActive == 'bill' ? 'active' : '' }}">
+                <a href="{{route('invoice.index')}}" class="nav-link  {{ $elementActive == 'bill' ? 'active' : '' }}">
                 <i class="nav-icon fas fa-file-invoice"></i>
                   <p>Bill</p>
                 </a>

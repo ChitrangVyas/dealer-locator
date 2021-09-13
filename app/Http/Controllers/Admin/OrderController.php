@@ -9,6 +9,7 @@ use App\Models\Order;
 use App\Models\OrderProduct;
 use App\Models\Inquiry;
 use App\Models\OrderImage;
+use App\Models\OrderStatus;
 use App\Models\User;
 use Exception;
 use Illuminate\Http\Request;
@@ -350,6 +351,18 @@ class OrderController extends MainController
                         $order_product = OrderProduct::create($order_product_data);
                     }
                 }
+                $order_status_data[] = array('order_id' => $order->id, 'status_id' => 1,'created_at'=> \Carbon\Carbon::now(), 'updated_at'=> \Carbon\Carbon::now());
+                if(empty($order->from_user->users_group_id)) {
+                    $order_status_data[0]['user_id'] = NULL;
+                    $order_status_data[0]['is_master'] = 1;
+                }else{
+                    $order_status_data[0]['user_id'] = auth()->user()->id;
+                    $order_status_data[0]['is_master'] = 0;
+                }
+                $order_status_data[] = array('order_id' => $order->id, 'status_id' => 1,'user_id'=>$order->to_user,'is_master'=>0,'created_at'=> \Carbon\Carbon::now(),'updated_at'=> \Carbon\Carbon::now());
+                if(!empty($order_status_data)){
+                    $order_status = OrderStatus::insert($order_status_data);
+                }
                 $cart->clear();
                 $this->myCart->clear($request_data['cart_id']);
                 if(!empty($order_product)){
@@ -515,13 +528,18 @@ class OrderController extends MainController
         $total_order = Order::where('type','sale')->where('from_user',$user->id)->where('deleted_at',NULL)->count();
         $data = [];
         foreach($orders as $order){
+            $order_data = Order::find($order->id);
+            $order_status = 'N/A';
+            if(!empty($order_data->getUserOrderStatus()) && (count($order_data->getUserOrderStatus()) > 0 )){
+                $order_status = $order_data->getInvoiceStatus($order_data->getUserOrderStatus()[0]->status_id);
+            }
             $customer = (!empty($order->customer))?$order->customer:'N/A';
             $added_by  = (!empty($order->added_by))?$order->added_by:'N/A';
             $action_html = "<span><a data-url=".route('sale.show',$order->id)." data-order=".$order->id." class='btn btn-primary view-order' data-toggle='modal' data-target='#orderModal'>View</a></span>";
             // $action_html .= "<span class='ml-3 create-po-".$order->id."'><a data-url=".route('cart.po.create')." data-order=".$order->id." class='btn btn-success view-quote' data-toggle='modal' data-target='#orderModal'>Generate PO</a></span>";
             // $action_html = "<span><a href=".route('order.edit',$order->id)." class='btn btn-primary'>Edit</a></span>";
             // $action_html .= "<span class='ml-3'><button type=submit data-user=$order->id class='btn btn-danger' onClick=deleteOrder($order->id)>Delete</button></span>";
-            $data[] = [$order->id,$order->order_number,$order->amount, ucwords($added_by), ucwords($customer),$order->created_date, $action_html];
+            $data[] = [$order->id,$order->order_number,$order->amount, ucwords($added_by), ucwords($customer), $order_status ,$order->created_date, $action_html];
         }
         $return_array = array();
         $return_array['draw'] = $request['draw'];
@@ -565,13 +583,18 @@ class OrderController extends MainController
         $total_order = Order::where('type','sale')->where('to_user',$user->id)->where('deleted_at',NULL)->count();
         $data = [];
         foreach($orders as $order){
+            $order_data = Order::find($order->id);
+            $order_status = 'N/A';
+            if(!empty($order_data->getUserOrderStatus()) && (count($order_data->getUserOrderStatus()) > 0 )){
+                $order_status = $order_data->getInvoiceStatus($order_data->getUserOrderStatus()[0]->status_id);
+            }
             $customer = (!empty($order->customer))?$order->customer:'N/A';
             $added_by  = (!empty($order->added_by))?$order->added_by:'N/A';
             $action_html = "<span><a data-url=".route('sale.show',$order->id)." data-order=".$order->id." class='btn btn-primary view-order' data-toggle='modal' data-target='#orderModal'>View</a></span>";
             // $action_html .= "<span class='ml-3 create-po-".$order->id."'><a data-url=".route('cart.po.create')." data-order=".$order->id." class='btn btn-success view-quote' data-toggle='modal' data-target='#orderModal'>Generate PO</a></span>";
             // $action_html = "<span><a href=".route('order.edit',$order->id)." class='btn btn-primary'>Edit</a></span>";
             // $action_html .= "<span class='ml-3'><button type=submit data-user=$order->id class='btn btn-danger' onClick=deleteOrder($order->id)>Delete</button></span>";
-            $data[] = [$order->id,$order->order_number,$order->amount, ucwords($added_by), ucwords($customer),$order->created_date, $action_html];
+            $data[] = [$order->id,$order->order_number,$order->amount, ucwords($added_by), ucwords($customer),$order_status,$order->created_date, $action_html];
         }
         $return_array = array();
         $return_array['draw'] = $request['draw'];
@@ -603,6 +626,43 @@ class OrderController extends MainController
 
                 });
             }catch(\Exception $e){
+            }
+        }
+    }
+
+    public function updateOrderStatus(Request $request){
+        $request_data = $request->except('_token','method');
+        
+        $orderStatus = OrderStatus::where('order_id',$request_data['order_id'])->where('user_id',(!empty(auth()->user()->users_group_id))?auth()->user()->id:NULL);
+        if((!empty($orderStatus->get())) && count($orderStatus->get())){
+            try{
+                $is_updated = $orderStatus->update(['status_id'=>$request_data['status_id'],'updated_at'=> \Carbon\Carbon::now()]);
+            }catch(Exception $e){
+                return response()->json(['status' => 'error','code' => 0,'message' => $e->getMessage()]);
+            }
+            if(!empty($is_updated)){
+                return response()->json(['status' => 'successful','code'=>1,'message'=>'Order Status Successfully Updated.']);
+            }else{
+                return response()->json(['status' => 'error','code'=>0,'message'=>'Unable to Update Order Status.']);
+            }
+        }else{
+            $order = Order::findOrFail($request_data['order_id']);
+            $order_status_data[] = array('order_id' => $order->id, 'status_id' => $request_data['status_id'],'created_at'=> \Carbon\Carbon::now(), 'updated_at'=> \Carbon\Carbon::now());
+            if(empty($order->from_user->users_group_id)) {
+                $order_status_data[0]['user_id'] = NULL;
+                $order_status_data[0]['is_master'] = 1;
+            }else{
+                $order_status_data[0]['user_id'] = auth()->user()->id;
+                $order_status_data[0]['is_master'] = 0;
+            }
+            $order_status_data[] = array('order_id' => $order->id, 'status_id' => $request_data['status_id'],'user_id'=>$order->to_user,'is_master'=>0,'created_at'=> \Carbon\Carbon::now(),'updated_at'=> \Carbon\Carbon::now());
+            if(!empty($order_status_data)){
+                $order_status = OrderStatus::insert($order_status_data);
+            }
+            if(!empty($order_status)){
+                return response()->json(['status' => 'successful','code'=>1,'message'=>'Order Status Successfully Updated.']);
+            }else{
+                return response()->json(['status' => 'error','code'=>0,'message'=>'Unable to Update Order Status.']);
             }
         }
     }

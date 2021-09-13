@@ -198,6 +198,35 @@ class InquiryController extends MainController
         }
     }
 
+    public function getInquiryStatus(Request $request){
+        $inquiry = Inquiry::findOrFail($request->input('data')['id']);
+
+        $json['modal_title'] = "Inquiry Status";
+        $json['modal_content'] = view('admin.inquiry.status',['inquiry'=>$inquiry])->render();
+        return response()->json(['status' => 'successful','code'=>1, 'data'=>$json, 'message'=>'']);
+    }
+    public function updateInquiryStatus(Request $request){
+        Validator::make($request->all(), [
+            'status' => 'required',
+            'inquiry_id' => 'required',
+        ])->validate();
+        if($request->ajax()){
+            $update_data['status'] = $request->input('status');
+            $inquiry = Inquiry::findOrFail($request->input('inquiry_id'));
+            
+            try{
+                $is_inquiry_updated = $inquiry->where('id',$request->input('inquiry_id'))->update($update_data);
+            }catch(Exception $e){
+                return response()->json(['status' => 'error','code'=>0,'message'=>$e->getMessage()]);
+            }
+            if(!empty($is_inquiry_updated)){
+                return response()->json(['status' => 'successful', 'data'=>[],'code'=>1,'message'=>'Status has been successfully Updated.']);
+            }
+        }else{
+            return response()->json(['status' => 'error','code'=>0,'message'=>'Bad Method Call.']);
+        }
+    }
+
 
     public function listAjaxData(Request $request){
         $user =  auth()->user();
@@ -236,11 +265,12 @@ class InquiryController extends MainController
             $dealer = (!empty($inquiry->dealer))?$inquiry->dealer:'N/A';
             $retailer = (!empty($inquiry->retailer))?$inquiry->retailer:'N/A';
             $action_html = "";
-            $action_html .= "<span class='ml-3'><button type='button' id='addLog' class='btn btn-default' data-inquiry=$inquiry->id data-view-url='".route('inquiry-log.show',$inquiry->id)."' data-add-url='".route('inquiry-log.create')."' data-task-url='".route('createReminder')."' data-toggle='modal' data-target='#modal-lg'>View Log</button></span>";
+            $status_html = "<button type='button' class='btn btn-info change-status' data-inquiry=$inquiry->id data-change-status-url='".route('inqiury.status')."'>".(Inquiry::find($inquiry->id))->getInquirystatusName()."</button>";
+            $action_html .= "<span class='ml-3'><button type='button' id='addLog' class='btn btn-default' data-inquiry=$inquiry->id data-view-url='".route('inquiry-log.show',$inquiry->id)."' data-add-url='".route('inquiry-log.create')."' data-task-url='".route('createReminder')."' data-toggle='modal' data-target='#modal-lg' title='View Log'><i class='fas fa-clipboard-list' title='View Log'></i></button></span>";
             if((!empty($user->userGroup)) && $user->userGroup->id == '2'){
                 $action_html .= "<span class='ml-3'><button type='button' id='assignRetailer' class='btn btn-default' data-inquiry=$inquiry->id data-assign-to-retailer-url='".route('inquiry.assign.retailer')."' data-task-url='".route('createReminder')."' data-toggle='modal' data-target='#assignToRetailer'>Assign to retailer</button></span>";
             }
-            if(empty($inquiry->status)){
+            if(!empty($inquiry->status) && $inquiry->status < 5){
                 // $action_html .= "<span class='ml-3'><button type='button' id='createQuote' class=' ml-3 btn btn-success create-quote-".$inquiry->id."' data-inquiry=$inquiry->id data-create-quote-url='".route('order.quote.create')."' data-toggle='modal' data-target='#quoteModal'>Quote</button></span>";
                 $action_html .= "<span class='ml-3'><button type='button' id='createQuote' class='btn btn-success create-quote-".$inquiry->id."' data-inquiry=$inquiry->id data-create-quote-url='".route('cart.inquiryToQuote.create')."' data-toggle='modal' data-target='#quoteModal'><i class='fas fa-clipboard' title='Create Qute'></i></button></span>";
             }
@@ -249,7 +279,7 @@ class InquiryController extends MainController
                 $action_html .= "<span class='ml-3'><button type=submit data-user=$inquiry->id class='btn btn-danger' onClick=deleteUser($inquiry->id)><i class='fas fa-trash' title='Delete'></i></button></span>";
             }
             // $action_html .= "<span class='ml-3'><a href=# class='btn btn-primary'>View</a></span>";
-            $data[] = [$inquiry->id,ucwords($inquiry->customer),$inquiry->customer_email,$inquiry->customer_mobile,$inquiry->source,$dealer,$retailer,$action_html];
+            $data[] = [$inquiry->id,ucwords($inquiry->customer),$inquiry->customer_email,$inquiry->customer_mobile,$inquiry->source,$dealer,$retailer,$status_html,$action_html];
         }
         $return_array = array();
         $return_array['draw'] = $request['draw'];

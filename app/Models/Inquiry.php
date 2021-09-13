@@ -53,4 +53,11 @@ class Inquiry extends Model
         $logs = InquiryLog::where(DB::raw("(DATE_FORMAT(for_created_at,'%Y-%m-%d'))"),'=',$date)->where('inquiry_id','=',$this->id)->get();        
         return $logs;
     }
+    public function getInquiryStatus(){
+        return [1 => "New", 2 => "In Progress", 3 => "Attempted to Contact", 4 => "Connected", 5 => "Open Quote"];
+    }
+    public function getInquirystatusName(){
+        return $this->getInquiryStatus()[$this->status];
+    }
+
 }

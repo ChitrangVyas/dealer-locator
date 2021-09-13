@@ -62,4 +62,22 @@ class Order extends Model
     // public function products(){
     //     return $this->belongsToMany(Product::class)->withPivot(['qty','amount'])->withTimestamps();
     // }
+
+    public function orderStatus(){
+        return $this->hasMany(OrderStatus::class);
+    }
+
+    public function getOrderStatus(){
+        return [1 => 'Pendding', 2 => 'Paid'];
+    }
+
+    public function getUserOrderStatus()
+    {
+       return OrderStatus::where('order_id',$this->id)->where('user_id', (!empty(auth()->user()->users_group_id))?auth()->user()->id:NULL)->get();
+    }   
+    public function getInvoiceStatus($invoice_status){
+        return (!empty($invoice_status))?$this->getOrderStatus()[$invoice_status]:'N/A';
+    }
+
+    // $order->getInvoiceStatus($order->getUserOrderStatus()[0]->status_id)
 }

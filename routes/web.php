@@ -40,6 +40,8 @@ Route::group(['prefix'=>'admin','middleware'=>['auth']],function () {
     Route::post('inquiry/assign/retailer/update', [App\Http\Controllers\Admin\InquiryController::class,'updateInquiry'])->name('inquiry.update.ajax');
     Route::get('inquiry-log/reminder/add', [App\Http\Controllers\Admin\InquiryLogController::class,'createReminder'])->name('createReminder');
     Route::post('inquiry-log/reminder/add', [App\Http\Controllers\Admin\InquiryLogController::class,'storeReminder'])->name('storeReminder');
+    Route::post('inquiry/status/', [App\Http\Controllers\Admin\InquiryController::class,'getInquiryStatus'])->name('inqiury.status');
+    Route::post('inquiry/status/update', [App\Http\Controllers\Admin\InquiryController::class,'updateInquiryStatus'])->name('inqiury.status.update');
     //qoute
     Route::post('order/quote/create', [App\Http\Controllers\Admin\OrderController::class,'quoteCreate'])->name('order.quote.create');
     Route::post('quote/create', [App\Http\Controllers\Admin\OrderController::class,'createQuote'])->name('quote.create');
@@ -65,6 +67,7 @@ Route::group(['prefix'=>'admin','middleware'=>['auth']],function () {
     Route::post('invoice/create', [App\Http\Controllers\Admin\OrderController::class,'invoiceCreate'])->name('invoice.create');
     Route::get('invoice', [App\Http\Controllers\Admin\OrderController::class,'invoiceIndex'])->name('invoice.index');
     Route::get('invoice/listInvoiceAjaxData', [App\Http\Controllers\Admin\OrderController::class,'listInvoiceAjaxData'])->name('list.invoice');
+    Route::post('invoice/status/update', [App\Http\Controllers\Admin\OrderController::class,'updateOrderStatus'])->name('invoice.status.update');
     
     //cart
     Route::post('cart/inquiry-to-quote/create', [App\Http\Controllers\Admin\CartController::class,'createInquiryToQuoteCart'])->name('cart.inquiryToQuote.create');

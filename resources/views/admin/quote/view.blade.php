@@ -96,7 +96,7 @@
                 <!-- text input -->
                 <div class="form-group">
                     <label for="recieved_date">Recieved Date</label>
-                    <input type="text" class="mr-3 product dateimepicker-input form-control col-md-6" name="recieved_date" id="datetimepicker" data-toggle="datetimepicker" data-target="#datetimepicker" value="" autocomplete="off" required />
+                    <input type="text" class="mr-3 product dateimepicker-input form-control col-md-6" name="recieved_date" id="datetimepicker" data-toggle="datetimepicker" data-target="#datetimepicker" autocomplete="off" required />
                 </div>
             </div>
             <div class="col-sm-12 col-md-12">
@@ -121,6 +121,29 @@
             </div>
             <div class="col-sm-12 mt-2 mb-2">
                 <button type="submit" class="btn btn-primary">Submit</button>
+            </div>
+        </fieldset>
+    </form>
+</div>
+@endif
+@if($order->type == 'sale')
+<div class="row">
+    <form id="invoice" class="col-12" enctype="multipart/form-data">
+        @csrf
+        <input type="hidden" name="user_id" value="{{auth()->user()->id}}">
+        <input type="hidden" name="order_id" value="{{ $order->id }}">
+        <fieldset class="border">
+            <legend class="w-auto m-2">Invoice Status</legend>
+            <div class="col-sm-12 col-md-12">
+                <!-- text input -->
+                <div class="form-group clearfix">
+                    <label for="status">Status: </label>
+                    <select name="status_id" class="form-control select2" id="order_status">
+                        <option value="">Select</option>
+                        <option value="1" {{ (!empty($order->getUserOrderStatus()) && (count($order->getUserOrderStatus()) > 0 ) && $order->getUserOrderStatus()[0]->status_id == 1)? 'selected' :'' }} >Pendding</option>
+                        <option value="2" {{ (!empty($order->getUserOrderStatus()) && (count($order->getUserOrderStatus()) > 0 ) && $order->getUserOrderStatus()[0]->status_id == 2)? 'selected' :'' }}>Paid</option>
+                    </select>
+                </div>
             </div>
         </fieldset>
     </form>

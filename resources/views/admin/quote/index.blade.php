@@ -160,7 +160,10 @@
             getOrderData(view_url,{'order_id':$(this).data('order')}).then(function(res){
                 $('.dateimepicker-input').datetimepicker({
                     format: 'YYYY-MM-DD HH:mm',
-                    date: moment(),
+                    // date: moment(),
+                    icons: {
+                        time: "far fa-clock",
+                    }
                 });
                 select2Product();
                 if($('input[name=order_id]').val()){

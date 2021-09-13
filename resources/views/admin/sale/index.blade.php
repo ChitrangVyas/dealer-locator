@@ -25,6 +25,7 @@
                                     <th>Total</th>
                                     <th>From</th>
                                     <th>To</th>
+                                    <th>Status</th>
                                     <th>Created Date</th>
                                     <th>Action</th>
                                 </tr>
@@ -146,6 +147,9 @@
                     "name": "c.name"
                 },
                 {
+                    "name": "status"
+                },
+                {
                     "name": "orders.created_at"
                 },
                 {
@@ -154,7 +158,11 @@
             ],
             "columnDefs": [
                 {
-                    "targets": [6],
+                    "targets": [5],
+                    "orderable": false
+                },
+                {
+                    "targets": [7],
                     "orderable": false
                 },
                 {
@@ -186,7 +194,15 @@
             var view_url = $(this).data('url');
             $(`#orderModal .modal-body`).html("");
             getOrderData(view_url,{'order_id':$(this).data('order')}).then(function(res){
-                select2Product();
+                $('#order_status').select2({
+                    width:"20%",
+                });
+            });
+        });
+
+        $('body').on('change','#order_status',function(){
+            saveFormData("{{route('invoice.status.update')}}",$('#invoice').serializeArray(),'').then(function(res){
+                $('#example').DataTable().ajax.reload(null, false);
             });
         });
 

@@ -27,7 +27,8 @@
                                     <th>Source</th>
                                     <th>Dealer</th>
                                     <th>Retailer</th>
-                                    <th>Action</th>
+                                    <th>Status</th>
+                                    <th width="25%">Action</th>
                                 </tr>
                             </thead>
                         </table>
@@ -120,6 +121,23 @@
     <!-- /.modal-dialog -->
 </div>
 <!-- /.modal -->
+<div class="modal fade" id="modal" data-keyboard="false" data-backdrop="static">
+    <div class="modal-dialog modal-md">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title"></h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+<!-- /.modal -->
 @endsection
 @section('plugins.Datatables', true)
 @section('plugins.Select2', true)
@@ -152,6 +170,9 @@
                     "name": "r.name"
                 },
                 {
+                    "name": "status"
+                },
+                {
                     "name": "action"
                 },
             ],
@@ -160,7 +181,11 @@
                     "orderable": false
                 },
                 {
-                    "targets": [5],
+                    "targets": [7],
+                    "orderable": false
+                },
+                {
+                    "targets": [8],
                     "orderable": false
                 },
                 {
@@ -298,7 +323,24 @@
             addProductToCart().then(function(){
                 select2Product();
             });
-        });        
+        });
+        
+        $("body").on("click",".change-status",function(){
+            getInquiryStatus($(this).data('change-status-url'),{'id':$(this).data('inquiry')}).then(function(res){
+                $("#modal").modal('show');
+                $('#status').select2({
+                    placeholder:'Select',
+                    allowClear:true,
+                    width:'100%'
+                });
+            });
+        });
+
+        $('body').on("change","#status",function(){
+                saveInquiryLog("{{route('inqiury.status.update')}}",$('#inquiryStatusfrm').serializeArray(),'modal').then(function(res){
+                    $('#example').DataTable().ajax.reload(null, false);     
+                });
+        });
         
         $("body").on("change",".qty, .price", function(){
             /* price = $(this).closest('.product-detail').find('.price').val();
@@ -364,6 +406,9 @@
             success: function(res) {
                 $(`#nav-tab-${loadTo}`).html(res);
                 $('.datetimepicker-input').datetimepicker({
+                    icons: {
+                        time: "far fa-clock",
+                    },
                     format: 'YYYY-MM-DD HH:mm',
                     date: moment()
                 });
@@ -426,6 +471,21 @@
             success: function(res) {
                 $(`#quoteModal .modal-body`).html(res.data.cart_content);
                 $('#cartTitle').text(res.data.cart_title + " #"+ $('#order_number').val());
+                // $('.product-detail input').not('input[type=checkbox]').attr('disabled',true);
+            }
+        });
+    }
+
+    function getInquiryStatus(url,data){
+        var token = $("meta[name='csrf-token']").attr("content");
+        return $.ajax({
+            url: url,
+            type: 'POST',
+            data:{data,'_token':token},
+            success: function(res) {
+                $(`#modal .modal-body`).html(res.data.modal_content);
+                $('#modal .modal-title').text(res.data.modal_title);
+                $('#modal').modal('show');
                 // $('.product-detail input').not('input[type=checkbox]').attr('disabled',true);
             }
         });

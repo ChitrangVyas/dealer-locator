@@ -23,6 +23,7 @@
                                     <th>Total</th>
                                     <th>From</th>
                                     <th>To</th>
+                                    <th>Status</th>
                                     <th>Created Date</th>
                                     <th>Action</th>
                                 </tr>
@@ -96,6 +97,9 @@
                     "name": "c.name"
                 },
                 {
+                    "name": "status"
+                },
+                {
                     "name": "orders.created_at"
                 },
                 {
@@ -104,7 +108,11 @@
             ],
             "columnDefs": [
                 {
-                    "targets": [6],
+                    "targets": [5],
+                    "orderable": false
+                },
+                {
+                    "targets": [7],
                     "orderable": false
                 },
                 {
@@ -135,28 +143,84 @@
             var view_url = $(this).data('url');
             $(`#orderModal .modal-body`).html("");
             getOrderData(view_url,{'order_id':$(this).data('order')}).then(function(res){
-                // select2Product();
+                $('#order_status').select2({
+                    width:"20%",
+                });
             });
         });
-        function getOrderData(url,data){
-        var token = $("meta[name='csrf-token']").attr("content");
-        return $.ajax({
-            url: url,
-            type: 'POST',
-            data:{data,'_token':token},
-            beforeSend : function(){
-                $('#loader').show();
-            },
-            success: function(res) {
-                $(`#orderModal .modal-body`).html(res.data.cart_content);
-                $('#cartTitle').text(res.data.cart_title);
-                // $('.product-detail input').not('input[type=checkbox]').attr('disabled',true);
-            },
-            complete:function(){
-                $('#loader').hide();
-            }
+        
+        $('body').on('change','#order_status',function(){
+            saveFormData("{{route('invoice.status.update')}}",$('#invoice').serializeArray(),'').then(function(res){
+                $('#example').DataTable().ajax.reload(null, false);
+            });
         });
-    }
+
+        function getOrderData(url,data){
+            var token = $("meta[name='csrf-token']").attr("content");
+            return $.ajax({
+                url: url,
+                type: 'POST',
+                data:{data,'_token':token},
+                beforeSend : function(){
+                    $('#loader').show();
+                },
+                success: function(res) {
+                    $(`#orderModal .modal-body`).html(res.data.cart_content);
+                    $('#cartTitle').text(res.data.cart_title);
+                    // $('.product-detail input').not('input[type=checkbox]').attr('disabled',true);
+                },
+                complete:function(){
+                    $('#loader').hide();
+                }
+            });
+        }
+
+        function saveFormData(url,formData,modal=''){
+            const Toast = Swal.mixin({
+                        toast: true,
+                        position: 'top-end',
+                        showConfirmButton: false,
+                        timer: 5000
+                        });
+            return $.ajax({
+                url: url,
+                type: 'POST',
+                data: formData,
+                beforeSend: function(){
+                    $('.btn-save').attr('disabled',true);
+                },
+                success: function (data) {
+                    if(data.code == 1){
+                        Toast.fire({
+                            type: 'success',
+                            title: data.message
+                        });
+                        if(modal !== ''){
+                            $(`#${modal}`).modal('hide');
+                        }
+                    }else{
+                        Toast.fire({
+                            type: 'error',
+                            title: data.message
+                        })
+                    }
+                },
+                completed:function(){
+                    $('.btn-save').attr('disabled',false);
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    $('.btn-save').attr('disabled',false);
+                    var err = JSON.parse(jqXHR.responseText).errors;
+                    $.each(err,function(key,val){                
+                        $(`[name=${key}]`).closest('.form-group').after(`<div class="alert alert-danger mt-2">${val}</div>`);                                        
+                    });
+                    Toast.fire({
+                        type: 'error',
+                        title: JSON.parse(jqXHR.responseText).message
+                    });
+                }
+            });
+        }
     });
 
     

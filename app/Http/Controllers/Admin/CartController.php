@@ -400,10 +400,14 @@ class CartController extends MainController
             $this->myCart->setOrderNumber($id,$order->order_number);
             $this->myCart->setOrderReference($id,$order->id);
             $this->myCart->setType($id,'sale');
-            // from login user
-            $this->myCart->setFrom($id,$order->from_user);
-            // to parent user
-            $this->myCart->setTo($id,$order->to_user);
+            if((!empty($order)) && (!empty($order->for_manufacturer))){
+                $this->myCart->setForManufacturePoTOSale($id,1);
+                $this->myCart->setFrom($id,$order->to_user);
+                $this->myCart->setTo($id,$order->from_user);
+            }else{
+                $this->myCart->setFrom($id,$order->from_user);
+                $this->myCart->setTo($id,$order->to_user);
+            }
         }
         $json['cart_title'] = "Sale".(!empty($this->myCart->getOrderNumber($id)) ? " #".$this->myCart->getOrderNumber($id) : '');
         $json['cart_content'] = $this->getInquiryToQuoteCart($id,$cart)->render();

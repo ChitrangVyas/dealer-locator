@@ -335,7 +335,8 @@ class OrderController extends MainController
     public function storeSale(Request $request){
         $request_data = $request->all();
         $cart = \Cart::Session($request_data['cart_id']);
-        $cart_data = $this->myCart->getAll($request_data['cart_id']);        
+        $cart_data = $this->myCart->getAll($request_data['cart_id']);
+        unset($cart_data['for_manufacture_po_to_sale']);
         $cart_data['status'] =  'sent';
         $cart_data['total'] = $cart->getTotal();
         $cart_data['order_reference'] = (!empty($cart_data['order_reference']))?$cart_data['order_reference']:NULL;
@@ -352,7 +353,7 @@ class OrderController extends MainController
                     }
                 }
                 $order_status_data[] = array('order_id' => $order->id, 'status_id' => 1,'created_at'=> \Carbon\Carbon::now(), 'updated_at'=> \Carbon\Carbon::now());
-                if(empty($order->from_user->users_group_id)) {
+                if(empty($order->addedBy->users_group_id)) {
                     $order_status_data[0]['user_id'] = NULL;
                     $order_status_data[0]['is_master'] = 1;
                 }else{
@@ -366,7 +367,9 @@ class OrderController extends MainController
                 $cart->clear();
                 $this->myCart->clear($request_data['cart_id']);
                 if(!empty($order_product)){
-                    Mail::to($order->customer->email)->send(new OrderEmailTemplate($order,config('app.name').' - Sales'));
+                    if((!empty($request_data['btnSave'])) && $request_data['btnSave']=='savensend'){
+                        Mail::to($order->customer->email)->send(new OrderEmailTemplate($order,config('app.name').' - Sales'));
+                    }
                     return response()->json(['status' => 'successful', 'data'=>['quote'=>$cart_data['order_reference']],'code'=>1,'message'=>'Sales Successfully created.']);
                 }else{
                     return response()->json(['status' => 'error','code'=>0,'message'=>'Something goes wrong.']);
@@ -448,19 +451,19 @@ class OrderController extends MainController
         if((!empty($user->userGroup)) && $user->userGroup->id == '2'){
             // $users = implode(',',User::where('parent_id',$user->id)->get()->pluck('id')->toArray());
             // $where .= (!empty($user->id))?" AND (from_user=$user->id OR to_user=$user->id ":'';
-            $where .= (!empty($user->id))?" AND (from_user=$user->id":'';
+            $where .= (!empty($user->id))?" AND (from_user=$user->id OR to_user=$user->id":'';
             $where .= (!empty($users)) ? " OR from_user in ($users) )" :")";
         }
         if((!empty($user->userGroup)) && $user->userGroup->id == '3'){
             $where .= (!empty($user->id))?" AND from_user=$user->id":'';
         }else if(empty($user->userGroup) || $user->userGroup->id == '1'){
-            $where .= (!empty($user->id))?" AND (for_manufacturer = '0' OR for_manufacturer is NULL) AND (from_user=$user->id":'';
+            $where .= (!empty($user->id))?" AND (for_manufacturer = '1') OR (from_user=$user->id":'';
             $where .= (!empty($users)) ? " OR from_user in ($users) )" :")";
         }
         // $where .= (!empty($dealer_id))?" AND (dealer_id=$dealer_id OR inquiries.created_by=$dealer_id)":'';
         $where .= (!empty($search)) ? " AND (orders.order_number like '$search%' OR orders.total like '$search%' OR orders.created_at like '$search%' OR (c.name is NOT NULL AND c.name like '$search%') OR (d.name is NOT NULL AND d.name like '$search%'))":'';
         $orders = DB::table('orders')
-        ->select(DB::raw('orders.id,order_number,orders.to_user,c.name as customer,d.name as added_by, orders.total as amount, orders.created_at as created_date'))
+        ->select(DB::raw('orders.id, orders.for_manufacturer, order_number,orders.to_user,c.name as customer,d.name as added_by, orders.total as amount, orders.created_at as created_date'))
         ->join('order_product AS op','orders.id','=','op.order_id','left')
         ->join('users AS c','orders.to_user','=','c.id','left')
         ->join('users AS d','orders.from_user','=','d.id','left')
@@ -470,16 +473,26 @@ class OrderController extends MainController
         ->orderBy($request['columns'][$request['order'][0]['column']]['name'],$request['order'][0]['dir'])
         ->groupby('orders.id')
         ->get();
-        $total_order = Order::where('type','po')->where('from_user',$user->id)->where('deleted_at',NULL)->count();
+        if(empty($user->userGroup) || $user->userGroup->id == '1'){
+            $total_order = Order::where('type','po')->where('from_user',$user->id,function($query){
+                return $query->orWhere('for_manufacturer', 1);
+            })->where('deleted_at',NULL)->count();
+        }else{
+            $total_order = Order::where('type','po')->where('from_user',$user->id)->where('deleted_at',NULL)->count();
+        }
         $data = [];
         foreach($orders as $order){
             $orderDetail = Order::where('id','=',$order->id)->first();
+            $is_sale_generated = Order::where('type','sale')->where('order_reference',$order->id)->where('deleted_at',NULL)->count();
             $customer = (!empty($order->customer))?$order->customer:'N/A';
             $added_by  = (!empty($order->added_by))?$order->added_by:'N/A';
             $action_html = "<span><a data-url=".route('po.show',$order->id)." data-order=".$order->id." class='btn btn-primary view-order' data-toggle='modal' data-target='#orderModal'>View</a></span>";
-            if((auth()->user()->id == $order->to_user)||((empty($user->userGroup) && $user->id == 1)||$user->userGroup == '1')){
+            if((auth()->user()->id == $order->to_user && empty($is_sale_generated)) || ((empty($user->users_group_id) || ($user->users_group_id == '1')) && (!empty($order->for_manufacturer) && empty($is_sale_generated)))){
                 $action_html .= "<span class='ml-3 create-sale-".$order->id."'><a data-url=".route('cart.sale.create')." data-order=".$order->id." class='btn btn-default view-order' data-toggle='modal' data-target='#orderModal'>Generate Sale</a></span>";
             }
+            /* if((auth()->user()->id == $order->to_user)||((empty($user->userGroup) && $user->id == 1)||$user->userGroup == '1')){
+                $action_html .= "<span class='ml-3 create-sale-".$order->id."'><a data-url=".route('cart.sale.create')." data-order=".$order->id." class='btn btn-default view-order' data-toggle='modal' data-target='#orderModal'>Generate Sale</a></span>";
+            } */
             // $action_html .= "<span class='ml-3 create-po-".$order->id."'><a data-url=".route('cart.po.create')." data-order=".$order->id." class='btn btn-success view-quote' data-toggle='modal' data-target='#orderModal'>Generate PO</a></span>";
             // $action_html = "<span><a href=".route('order.edit',$order->id)." class='btn btn-primary'>Edit</a></span>";
             // $action_html .= "<span class='ml-3'><button type=submit data-user=$order->id class='btn btn-danger' onClick=deleteOrder($order->id)>Delete</button></span>";

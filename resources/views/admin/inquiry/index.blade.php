@@ -148,6 +148,7 @@
 <script>
     jQuery(document).ready(function() {
         var table =  $('#example').DataTable({
+            "bAutoWidth": false,
             "columns": [{
                     "name": "inquiries.id"
                 },
@@ -170,7 +171,7 @@
                     "name": "r.name"
                 },
                 {
-                    "name": "status"
+                    "name": "status",sWidth: '10%'
                 },
                 {
                     "name": "action"

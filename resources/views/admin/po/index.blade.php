@@ -38,7 +38,7 @@
                                     <th>From</th>
                                     <th>To</th>
                                     <th>Created Date</th>
-                                    <th>Action</th>
+                                    <th width="20%">Action</th>
                                 </tr>
                             </thead>
                         </table>
@@ -112,6 +112,7 @@
 <script>
     jQuery(document).ready(function() {
         $('#example').DataTable({
+            bAutoWidth:false,
             "columns": [{
                     "name": "orders.id"
                 },

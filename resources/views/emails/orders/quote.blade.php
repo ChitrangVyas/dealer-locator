@@ -376,6 +376,12 @@ text-align: center;
             <tr>
               <td class="wrapper">
                 <table role="presentation" border="0" cellpadding="0" cellspacing="0">
+                  <tr>
+                    <td class="col-sm-4 invoice-col" colspan="2">
+                      <p><strong>Date:</strong>{{date('d/m/Y',strtotime($order->created_at))}}</p>
+                      <p><strong>Order Number:</strong>{{$order->order_number}}</p>
+                    </td>
+                  </tr>
                     <tr>
                         <td>
                             <p class="col-sm-4 invoice-col">
@@ -390,9 +396,22 @@ text-align: center;
                                 </address>
                             </p>
                         </td>
-                        <td class="col-sm-4 invoice-col">
-                            <p><strong>Date:</strong>{{date('d/m/Y',strtotime($order->created_at))}}</p>
-                            <p><strong>Order Number:</strong>{{$order->order_number}}</p>
+                        <td>
+                        <p class="col-sm-4 invoice-col">
+                          <strong>From</strong>
+                          <address>
+                              <strong>{{ucwords($order->addedBy->name)}}</strong><br>
+                              @if(!empty($order->addedBy->city))
+                              {{ucwords($order->addedBy->address)}},<br>
+                              {{ucwords($order->addedBy->city->name)}},<br>
+                              {{ucwords($order->addedBy->state->name)}} - {{$order->addedBy->zipcode}}<br>
+                              @endif
+                              @if(!empty($order->addedBy->mobile))
+                              Phone: {{$order->addedBy->mobile}}<br>
+                              @endif
+                              Email: {{$order->addedBy->email}}
+                          </address>
+                        </p>
                         </td>
                     </tr>
                   <tr>
@@ -421,8 +440,7 @@ text-align: center;
                             </td>
                         </tr>
                       </table>
-                      <p>&nbsp;</p>
-                      <p><strong>Please feel free to revert in case of any query.</strong></p>                      
+                      <p>&nbsp;</p>                     
                     </td>
                   </tr>
                 </table>

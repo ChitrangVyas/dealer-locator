@@ -57,6 +57,12 @@ class MyCart
         $this->session->put($cart_id,json_encode($json));        
     }
 
+    public function setForManufacturePoTOSale($cart_id,$for_manufacturer){
+        $json = json_decode($this->session->get($cart_id,'{}'),true);
+        $json['for_manufacture_po_to_sale'] = (!empty($for_manufacturer))?$for_manufacturer:0;
+        $this->session->put($cart_id,json_encode($json));
+    }
+
     public function getFrom($cart_id){        
         $json = json_decode($this->session->get($cart_id,[]),true);
         return $json['from_user'];
@@ -94,7 +100,12 @@ class MyCart
     }
 
     public function getAll($cart_id){
-        return (!empty($this->session->get($cart_id)))?json_decode($this->session->get($cart_id,[]),true):'';
+        return (!empty($this->session->get($cart_id)))?json_decode(($this->session->get($cart_id,[])),true):'';
+    }
+
+    public function getForManufacturePoTOSale($cart_id){
+        $json = (!empty($this->session->get($cart_id)))?json_decode($this->session->get($cart_id,[]),true):'';
+        return !empty($json['for_manufacture_po_to_sale'])?$json['for_manufacture_po_to_sale']:'';
     }
 
     public function clear($cart_id){

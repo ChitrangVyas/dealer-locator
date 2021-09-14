@@ -9,7 +9,7 @@
             <!-- text input -->
             <div class="form-group">
                 <label>Retailer</label>
-                <select class="form-control select2 retailer" id='retailer' name='retailer' required>
+                <select class="form-control select2 retailer" id='retailer' name='retailer'>
                     <option value="">Select</option>
                     @foreach ($retailers as $retailer)
                     <option value="{{$retailer->id}}">{{$retailer->name .' - ' .$retailer->zipcode.' - '. $retailer->city->name}}</option>

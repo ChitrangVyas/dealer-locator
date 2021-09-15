@@ -94,7 +94,7 @@
             </ul>
             @enddealer
           </li>
-          @admin
+          @notCustomer()
           <li class="nav-item has-treeview">
           <a href="#" class="nav-link">
               <i class="nav-icon fas fa-copy"></i>
@@ -104,6 +104,7 @@
               </p>
             </a>
             <ul class="nav nav-treeview">
+            @admin()
               <li class="nav-item">
                 <a href="/admin/manufacturer" class="nav-link  {{ $elementActive == 'manufacturer' ? 'active' : '' }}">
                   <i class="nav-icon fas fa-industry"></i>
@@ -117,34 +118,23 @@
                 <i class="nav-icon fas fa-cube"></i>
                   <p>Brand</p>
                 </a>
-              </li> 
-          </li> 
-              </li> 
-          </li> 
-              </li> 
+              </li>  
               <li class="nav-item">
                 <a href="{{ route('category.index') }}" class="nav-link  {{ $elementActive == 'category' ? 'active' : '' }}">
                 <i class="nav-icon fas fa-list-alt"></i>
                   <p>Category</p>
                 </a>
               </li> 
-          </li> 
-              </li> 
-          </li> 
-              </li> 
+              @endadmin
               <li class="nav-item">
                 <a href="{{ route('product.index') }}" class="nav-link  {{ $elementActive == 'product' ? 'active' : '' }}">
                 <i class="nav-icon fas fa-cubes"></i>
                   <p>Product</p>
                 </a>
               </li> 
-          </li> 
-              </li> 
-          </li> 
-              </li> 
             </ul>
           </li>
-          @endadmin
+          @endnotCustomer
           @notCustomer
           <li class="nav-item">
             <a href="{{ route('inquiry.index') }}" class="nav-link  {{ $elementActive == 'inquiry' ? 'active' : '' }}">

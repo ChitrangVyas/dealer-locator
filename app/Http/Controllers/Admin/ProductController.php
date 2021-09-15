@@ -7,7 +7,9 @@ use App\Http\Requests\Admin\ProductCreateRequest;
 use App\Http\Requests\Admin\ProductUpdateRequest;
 use App\Models\Brand;
 use App\Models\Category;
+use App\Models\Inventory;
 use App\Models\Product;
+use Illuminate\Support\Facades\Validator;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -170,7 +172,6 @@ class ProductController extends Controller
         ->header('Content-Type', 'text/plain');
         }
     }
-    
     /**
      * listAjaxData
      *
@@ -183,21 +184,41 @@ class ProductController extends Controller
         $search = $request['search']['value'];
         $where = 'products.deleted_at is NULL';
         $where .= (!empty($search)) ? " AND (products.name like '$search%' OR brands.name like '$search%')":'';
-        $products = DB::table('products')
-        ->leftJoin('brands','products.brand_id','=','brands.id')
-        ->selectRaw('products.id,products.name,brands.name as brand_name,products.image,inventory')
-        ->whereRaw($where)
+        $query = DB::table('products');
+        if((empty(auth()->user()->users_group_id)) || (auth()->user()->users_group_id == 1)){
+            $query->leftJoin('brands','products.brand_id','=','brands.id')
+            ->selectRaw('products.id,products.name,brands.name as brand_name,products.image,inventory');
+        }else{
+            // $where .= " AND user_id=".auth()->user()->id;
+            $query->leftJoin('brands','products.brand_id','=','brands.id')
+            ->leftJoin('inventory',function($query){
+                $query->on('products.id','=','inventory.product_id');
+                $query->where('user_id',auth()->user()->id);
+            })
+            ->selectRaw('products.id,products.name,brands.name as brand_name,products.image,inventory.qty AS inventory');
+        }
+        $query->whereRaw($where)
         ->offset($start)
         ->limit($length)
-        ->orderBy($request['columns'][$request['order'][0]['column']]['name'],$request['order'][0]['dir'])
-        ->get();
+        ->orderBy($request['columns'][$request['order'][0]['column']]['name'],$request['order'][0]['dir']);
+        $products = $query->get();
+
         $total_product = Product::where('deleted_at','=',Null)->count();
         $data = [];
         foreach($products as $product){            
             $product_image_html = (!empty($product->image))?"<img class='img logo' src=".url($product->image)." width=50 />":'Image not found';
-            $action_html = "<span><a href=".route('product.edit',$product->id)." class='btn btn-primary'>Edit</a></span>";
-            $action_html .= "<span class='ml-3'><button type=submit data-user=$product->id class='btn btn-danger' onClick=deleteUser($product->id)>Delete</button></span>";
-            $data[] = [$product->id,$product->name,$product->brand_name,$product_image_html,$product->inventory,$action_html];
+            $action_html = '';
+            $inventory_html = '';
+            $inventory = (empty($product->inventory))?'0':$product->inventory;
+            if((empty(auth()->user()->users_group_id)) || (auth()->user()->users_group_id == 1)){
+                $action_html = "<span><a href=".route('product.edit',$product->id)." class='btn btn-primary'>Edit</a></span>";
+                $action_html .= "<span class='ml-3'><button type=submit data-user=$product->id class='btn btn-danger' onClick=deleteUser($product->id)>Delete</button></span>";
+                $inventory_html = "<span>$inventory</span>";
+            }else{
+                $inventory_html = "<span class='ml-3'><button data-product=$product->id class='btn btn-link add-stock'>$inventory</button></span>";
+                // $inventory_html = "<button class=btn btn-default add-stock data-product=".$product->id.">".(empty($product->inventory))?'II':$product->inventory."</button>";
+            }
+            $data[] = [$product->id,$product->name,$product->brand_name,$product_image_html,$inventory_html,$action_html];
         }
         $return_array = array();
         $return_array['draw'] = $request['draw'];
@@ -206,5 +227,45 @@ class ProductController extends Controller
         $return_array['data'] = $data;
         return response(json_encode($return_array), 200)
         ->header('Content-Type', 'text/plain');
+    }
+
+    public function getProductInventory(Request $request){
+        Validator::make($request->all()['data'], [
+            'product_id' => 'required',
+        ])->validate();
+        if($request->ajax()){
+            $product = Product::findOrFail($request->input('data')['product_id']);
+            $json['modal_title'] = "Product";
+            $json['modal_content'] = view('admin.product.stock',['product'=>$product])->render();
+            return response()->json(['status' => 'successful','code'=>1, 'data'=>$json, 'message'=>'']);
+        }else{
+            return response()->json(['status' => 'error','code'=>0,'message'=>'Bad Method Call.']);
+        }
+    }
+
+    public function updateProductInventory(Request $request){
+        Validator::make($request->all(), [
+            'product_id' => 'required',
+            "inventory" => 'required|numeric'
+        ])->validate(); 
+
+        if($request->ajax()){
+            $update_data['qty'] = $request->input('inventory');
+            try{
+                $inventory = Inventory::where('product_id',$request->input('product_id'))->where('user_id',auth()->user()->id);
+                if(!empty($inventory->get()->toArray())){
+                    $is_inventory_updated = $inventory->update($update_data);
+                }else{
+                    $is_inventory_updated = Inventory::create(['product_id'=>$request->input('product_id'),'user_id'=>auth()->user()->id,'qty'=>$request->input('inventory')]);
+                }
+            }catch(Exception $e){
+                return response()->json(['status' => 'error','code'=>0,'message'=>$e->getMessage()]);
+            }
+            if(!empty($is_inventory_updated)){
+                return response()->json(['status' => 'successful', 'data'=>[],'code'=>1,'message'=>'Inventory has been successfully Updated.']);
+            }
+        }else{
+            return response()->json(['status' => 'error','code'=>0,'message'=>'Bad Method Call.']);
+        }
     }
 }

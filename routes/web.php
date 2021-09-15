@@ -29,6 +29,8 @@ Route::group(['prefix'=>'admin','middleware'=>['auth']],function () {
     Route::get('brand/listajaxdata', [App\Http\Controllers\Admin\BrandController::class,'listAjaxData'])->name('brandlistajax');
     Route::get('category/listajaxdata', [App\Http\Controllers\Admin\CategoryController::class,'listAjaxData'])->name('categorylistajax');
     Route::get('product/listajaxdata', [App\Http\Controllers\Admin\ProductController::class,'listAjaxData'])->name('productlistajax');
+    Route::post('product/inventory', [App\Http\Controllers\Admin\ProductController::class,'getProductInventory'])->name('product.inventory');
+    Route::post('product/inventory/update', [App\Http\Controllers\Admin\ProductController::class,'updateProductInventory'])->name('product.inventory.update');
     Route::get('inquiries_source/listajaxdata', [App\Http\Controllers\Admin\InquiriesSourceController::class,'listAjaxData'])->name('inquiries_sourcelistajax');
     Route::get('customer/listajaxdata', [App\Http\Controllers\Admin\CustomerUserController::class,'listAjaxData'])->name('customerlistajax');
     Route::get('customer/createAjax', [App\Http\Controllers\Admin\CustomerUserController::class,'createAjax'])->name('customerCreateAjax');

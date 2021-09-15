@@ -21,6 +21,7 @@ Route::get('/', function () {
 Auth::routes(['register' => false]);
 Route::group(['prefix'=>'admin','middleware'=>['auth']],function () {
     Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+    Route::post('home/inquiry', [App\Http\Controllers\Admin\InquiryController::class,'getInquiries'])->name('home.inqiuries');
     Route::get('/get-value', [App\Http\Controllers\CommonController::class, 'index'])->name('get_value');
     Route::get('staff/listajaxdata', [App\Http\Controllers\Admin\AdminUserController::class,'listAjaxData'])->name('stafflistajax');
     Route::get('dealer/listajaxdata', [App\Http\Controllers\Admin\DealerUserController::class,'listAjaxData'])->name('dealerlistajax');

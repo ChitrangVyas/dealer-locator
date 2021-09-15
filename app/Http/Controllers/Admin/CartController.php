@@ -293,7 +293,7 @@ class CartController extends MainController
             }
             $this->myCart->setTo($id,(!empty(auth()->user()->parent_id))?auth()->user()->parent_id:$manufacturer);
                 if(empty(auth()->user()->parent_id)){
-                    $this->myCart->setForManufacture($id,$manufacturer);
+                    $this->myCart->setForManufacture($id,1);
                 }
         }else{
             $id = (!empty($request_data['data']['vendor'])) ? "po_vendor_".$request_data['data']['vendor'] : "po_user_".auth()->user()->id;

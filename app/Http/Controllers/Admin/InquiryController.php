@@ -12,6 +12,7 @@ use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
+use phpDocumentor\Reflection\Types\Null_;
 use View;
 
 class InquiryController extends MainController
@@ -205,6 +206,23 @@ class InquiryController extends MainController
         $json['modal_content'] = view('admin.inquiry.status',['inquiry'=>$inquiry])->render();
         return response()->json(['status' => 'successful','code'=>1, 'data'=>$json, 'message'=>'']);
     }
+
+    public function getInquiries(Request $request){
+        $user = auth()->user();
+        DB::enableQueryLog();
+        $inquiries = [];
+        if((empty($user->users_group_id)) || $user->users_group_id == '1'){
+            $inquiries = Inquiry::where('dealer_id',NULL)->where('retailer_id',NULL)->latest()->take(5)->get();
+        }else if((!empty($user->users_group_id)) && $user->users_group_id == '2'){
+            $inquiries = Inquiry::where('dealer_id',$user->id)->latest()->take(5)->get();
+        }else if((!empty($user->users_group_id)) && $user->users_group_id == '3'){
+            $inquiries = Inquiry::where('retailer_id',$user->id)->latest()->take(5)->get();
+        }
+        $json['modal_title'] = "Inquiries";
+        $json['modal_content'] = view('layouts.inquiry',['inquiries'=>$inquiries])->render();
+        return response()->json(['status' => 'successful','code'=>1, 'data'=>$json, 'message'=>'']);
+    }
+
     public function updateInquiryStatus(Request $request){
         Validator::make($request->all(), [
             'status' => 'required',

@@ -82,6 +82,27 @@
                   Sales
                 </h3>
                 <div class="card-tools">
+                  <!-- Basic dropdown -->
+                  <button class="btn btn-primary dropdown-toggle mr-4" type="button" data-toggle="dropdown"
+                          aria-haspopup="true" aria-expanded="false">Select Year </button>
+
+                  <div class="dropdown-menu">
+                    <a class="dropdown-item">
+                      <!-- Default unchecked -->
+                      <div class="custom-control custom-checkbox">
+                        <input type="checkbox" name="saleDateRange" class="custom-control-input" checked>
+                        <label class="custom-control-label">Current Year</label>
+                      </div>
+                    </a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" href="#">
+                      <div class="custom-control custom-checkbox">
+                        <input type="checkbox" name="saleDateRange" class="custom-control-input">
+                        <label class="custom-control-label" for="checkbox4">Past Year</label>
+                      </div>
+                    </a>
+                  </div>
+                  <!-- Basic dropdown -->
                 </div>
               </div><!-- /.card-header -->
               <div class="card-body">
@@ -137,9 +158,9 @@
   // Sales chart
   var salesChartCanvas = document.getElementById('revenue-chart-canvas').getContext('2d')
   // $('#revenue-chart').get(0).getContext('2d');
-
+  // ajax based chart data
   var salesChartData = {
-    labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July','Augest','September','Octomber','November','December'],
+    labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July','Augest','September','October','November','December'],
     datasets: [
       {
         label: 'Digital Goods',
@@ -150,7 +171,7 @@
         pointStrokeColor: 'rgba(60,141,188,1)',
         pointHighlightFill: '#fff',
         pointHighlightStroke: 'rgba(60,141,188,1)',
-        data: [28, 48, 40, 19, 50, 27, 40,45,0,30,0,0]
+        data:JSON.parse("{{ json_encode($orderArr['0']) }}")
       },
       {
         label: 'Electronics',
@@ -161,7 +182,7 @@
         pointStrokeColor: '#c1c7d1',
         pointHighlightFill: '#fff',
         pointHighlightStroke: 'rgba(220,220,220,1)',
-        data: [65, 59, 80, 81, 56, 55, 40,0,0,0,40,0]
+        data:[]
       }
     ]
   }

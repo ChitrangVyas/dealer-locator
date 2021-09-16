@@ -62,17 +62,11 @@ class CategoryController extends MainController
             $category = Category::create([
                 'name' => $request_data['name'],
                 'parent_category' => $request_data['parent_category'],                
-                'image' => $file_path
+                'image' => $file_path,
+                'description'=> $request_data['description']
             ]);
         }catch(Exception $e){
-            print_r([
-                'name' => $request_data['name'],
-                'parent_category' => $request_data['parent_category'],
-                'image' => $file_path
-            ]);
-
-            echo $e; exit;
-            return redirect(route('category.create'));
+            return redirect(route('category.create'))->with('exception', $e->getMessage());
         }
         return redirect(route('category.index'));
     }
@@ -116,7 +110,8 @@ class CategoryController extends MainController
         $file_path = '';
         $upload_data = [
             'name' => $request_data['name'],
-            'parent_category' => $request_data['parent_category']                   
+            'parent_category' => $request_data['parent_category'],
+            'description'=> $request_data['description'],                
         ];
         
         if($request->file()) {

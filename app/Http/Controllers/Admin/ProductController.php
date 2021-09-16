@@ -78,8 +78,10 @@ class ProductController extends Controller
                 // 'category' => $request_data['category'],
                 'image' => $file_path
             ]);
-            $categories = Category::find($request_data['categories']);
-            $product->categories()->sync($categories);
+            if((!empty($product)) && (!empty($request_data['categories']))){
+                $categories = Category::find($request_data['categories']);
+                $product->categories()->sync($categories);
+            }
         }catch(Exception $e){
             return redirect(route('product.create'))->with('exception', $e->getMessage());
         }

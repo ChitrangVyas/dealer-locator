@@ -9,16 +9,6 @@
     </div>
     <!-- /.card-header -->
     <div class="card-body">
-    @if ($errors->any())
-    <div class="alert alert-danger">
-        <ul>
-            @foreach ($errors->all() as $error)
-                <li>{{ $error }}</li>
-            @endforeach
-        </ul>
-    </div>
-@endif
-
         @if(!empty($product))
         <form method="POST" action="{{ route('product.update',$product->id) }}" enctype="multipart/form-data">
             @method('PUT')
@@ -28,12 +18,6 @@
                 @csrf
                 <input type="hidden" name="id" value="{{ (!empty($product))?$product->id:'' }}">
                 <div class="row">
-<!-- - name
-- brand_id
-- description
-- image
-- inventory(manage by master)
- -->
                     <div class="col-sm-12 col-md-6">
                         <!-- text input -->
                         <div class="form-group">
@@ -98,11 +82,11 @@
                             @enderror
                         </div>
                     </div>
-                    <div class="col-sm-12 col-md-6">
+                    <div class="col-sm-12 col-md-12">
                         <!-- text input -->
                         <div class="form-group">
                             <label>Description</label>                            
-                            <textarea name="description" class="form-control" >{{ old('description',(!empty($product))?$product->description:'') }}</textarea>
+                            <textarea name="description" class="form-control summernote" >{{ old('description',(!empty($product))?$product->description:'') }}</textarea>
                             @error('description')
                             <div class="alert alert-danger mt-2">{{ $message }}</div>
                             @enderror
@@ -142,6 +126,7 @@
 </div>
 @endsection
 @section('plugins.Select2', true)
+@section('plugins.summernote', true)
 @section('js')
 <script>
 jQuery(document).ready(function(){
@@ -151,6 +136,9 @@ jQuery(document).ready(function(){
     });
     jQuery(document).ready(function() {
       $("#brand_id").select2();
+    });
+    $('.summernote').summernote({
+            height: 200
     });
 });
 </script>

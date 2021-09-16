@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Order;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class HomeController extends Controller
@@ -40,6 +41,30 @@ class HomeController extends Controller
         }else{
             $total_po = Order::where('type','po')->where('from_user',$user->id)->where('deleted_at',NULL)->count();
         }
-        return view('home',compact('elementActive','title','total_order','total_po','total_dealer','total_retailer'));
+        $orders = Order::selectRaw('year(created_at) year, month(created_at) month, count(*) data')
+                ->groupBy('year', 'month')
+                ->orderBy('year', 'desc')
+                ->get()
+                ->groupBy('year');
+        $ordercount = [];
+        $orderArr = [];
+        foreach ($orders as $key => $value) {
+            foreach($value as $k => $val){
+                $ordercount[(int)$key][(int)$val['month']] = $val['data'];
+            }
+        }
+        $count = 0;
+        foreach($ordercount as $key=>$ordermcount){
+            for($i = 1; $i <= 12; $i++){
+                if(!empty($ordermcount[$i])){
+                    $orderArr[$count][] = $ordermcount[$i];    
+                }else{
+                    $orderArr[$count][] = 0;    
+                }
+            }
+            $count++;
+        }
+        // dd($orderArr);
+        return view('home',compact('elementActive','title','total_order','total_po','total_dealer','total_retailer','orderArr'));
     }
 }

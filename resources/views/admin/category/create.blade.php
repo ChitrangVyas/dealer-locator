@@ -9,16 +9,6 @@
     </div>
     <!-- /.card-header -->
     <div class="card-body">
-    @if ($errors->any())
-    <div class="alert alert-danger">
-        <ul>
-            @foreach ($errors->all() as $error)
-                <li>{{ $error }}</li>
-            @endforeach
-        </ul>
-    </div>
-    @endif
-
         @if(!empty($category))
         <form method="POST" action="{{ route('category.update',$category->id) }}" enctype="multipart/form-data">
             @method('PUT')
@@ -70,11 +60,21 @@
                                 <img class='img logo mt-3 mb-4' src="{{ url($category->image) }}" width=100 />
                             </div>
                             @endif
-                            @error('logo')
+                            @error('image')
                             <div class="alert alert-danger mt-2">{{ $message }}</div>
                             @enderror
                         </div>
                     </div> 
+                    <div class="col-sm-12 col-md-12">
+                        <!-- text input -->
+                        <div class="form-group">
+                            <label>Description</label>                            
+                            <textarea name="description" class="form-control summernote" >{{ old('description',(!empty($category))?$category->description:'') }}</textarea>
+                            @error('description')
+                            <div class="alert alert-danger mt-2">{{ $message }}</div>
+                            @enderror
+                        </div>
+                    </div>
                 </div>
                 <div class="row">
                     <div class="col-sm-12">
@@ -87,6 +87,7 @@
 </div>
 @endsection
 @section('plugins.Select2', true)
+@section('plugins.summernote', true)
 @section('js')
 <script>
     jQuery(document).ready(function() {
@@ -94,6 +95,9 @@
         placeholder: "Select",
         allowClear: true,
       });
+      $('.summernote').summernote({
+            height: 200
+    });
     });
 </script>
 @endsection

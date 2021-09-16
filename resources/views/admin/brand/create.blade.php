@@ -9,16 +9,6 @@
     </div>
     <!-- /.card-header -->
     <div class="card-body">
-    @if ($errors->any())
-    <div class="alert alert-danger">
-        <ul>
-            @foreach ($errors->all() as $error)
-                <li>{{ $error }}</li>
-            @endforeach
-        </ul>
-    </div>
-@endif
-
         @if(!empty($brand))
         <form method="POST" action="{{ route('brand.update',$brand->id) }}" enctype="multipart/form-data">
             @method('PUT')
@@ -38,7 +28,7 @@
                                     <option {{ (!empty($brand) && $brand->manufacturer_id==$manufacturer->id)?"selected='selected'":'' }} value="{{$manufacturer->id}}">{{$manufacturer->name}}</option>
                                 @endforeach
                             </select>
-                            @error('email')
+                            @error('manufacturer_id')
                             <div class="alert alert-danger mt-2">{{ $message }}</div>
                             @enderror
                         </div>

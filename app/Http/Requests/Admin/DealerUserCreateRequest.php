@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Admin;
 
+use Illuminate\Validation\Rule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class DealerUserCreateRequest extends FormRequest
@@ -24,7 +25,13 @@ class DealerUserCreateRequest extends FormRequest
     public function rules()
     {
         return [
-            'email' => 'required|email|unique:users',
+            'email' => [
+                'required',
+                'email',
+                Rule::unique('users')->where(function ($query) {
+                    return $query->whereNull('deleted_at');
+                })->ignore($this->id)
+            ],
             'name' => 'required|string|max:100',
             'password' => 'required|min:6|max:16',
             'mobile' => 'required',

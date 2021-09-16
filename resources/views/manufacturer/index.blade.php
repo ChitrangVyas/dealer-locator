@@ -55,6 +55,7 @@
                 "visible": false
             },
         ],
+            order: [[0, 'desc']],
             "processing": true,
             "serverSide": true,
             "ajax": "{{ route('manufacturerlistajax') }}",

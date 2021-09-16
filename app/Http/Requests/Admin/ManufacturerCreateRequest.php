@@ -4,6 +4,7 @@ namespace App\Http\Requests\Admin;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rule;
 
 class ManufacturerCreateRequest extends FormRequest
 {
@@ -25,13 +26,19 @@ class ManufacturerCreateRequest extends FormRequest
     public function rules()
     {        
         return [
-            'email' => 'required|email|unique:users',
+            'email' => [
+                'required',
+                'email',
+                Rule::unique('manufacturers')->where(function ($query) {
+                    return $query->whereNull('deleted_at');
+                })->ignore($this->id)
+            ],
             'name' => 'required|string|max:100',
             'mobile' => 'required',
-            'address' => 'required',
-            'state_id' => 'required|after_or_equal:1',
-            'city_id' => 'required|after_or_equal:1',
-            'zipcode' => 'required|min:5|max:7',
+            // 'address' => 'required',
+            // 'state_id' => 'required|after_or_equal:1',
+            // 'city_id' => 'required|after_or_equal:1',
+            // 'zipcode' => 'required|min:5|max:7',
             'logo' => 'required|mimes:png,jpeg,jpg,svg,webp|max:2048'
         ];
     }
@@ -48,8 +55,8 @@ class ManufacturerCreateRequest extends FormRequest
             'email.unique' => 'Email is already exist.',
             'email.email' => 'Invalid Email.',
             'name.required' => 'Name is required!',   
-            'state_id.required'=> 'Please select state.',
-            'city_id.required'=> 'Please select city.',         
+            // 'state_id.required'=> 'Please select state.',
+            // 'city_id.required'=> 'Please select city.',         
         ];
     }
 }

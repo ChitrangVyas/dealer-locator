@@ -13,7 +13,7 @@ use View;
 class AdminUserController extends MainController
 {
     public function __construct() {
-        View::share ( 'title', 'Staff User' );
+        View::share ( 'title', 'Staff' );
         View::share ( 'elementActive', 'staff' );
     }
     /**

@@ -31,4 +31,11 @@ class BrandCreateRequest extends FormRequest
         ];
     }
 
+    public function messages()
+    {
+        return [
+            'manufacturer_id.required' => "Please Select Manufacturer"
+        ];
+    }
+
 }

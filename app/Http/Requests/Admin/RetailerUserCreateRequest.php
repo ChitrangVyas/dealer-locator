@@ -26,6 +26,7 @@ class RetailerUserCreateRequest extends FormRequest
         return [
             'dealer' =>'required',
             'email' => 'required|email|unique:users',
+            'password' => 'required',
             'name' => 'required|string|max:100',            
             'mobile' => 'required',
             'address' => 'required',

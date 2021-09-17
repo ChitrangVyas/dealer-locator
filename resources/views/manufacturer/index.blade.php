@@ -58,7 +58,7 @@
             order: [[0, 'desc']],
             "processing": true,
             "serverSide": true,
-            "ajax": "{{ route('manufacturerlistajax') }}",
+            "ajax": dataTableRequest("{{ route('manufacturerlistajax') }}"),
         });        
     });
     function deleteUser(id){

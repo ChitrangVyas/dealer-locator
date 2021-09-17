@@ -173,7 +173,7 @@
             order: [[0, 'desc']],
             "processing": true,
             "serverSide": true,
-            "ajax": "{{ route('list.sale') }}",
+            "ajax": dataTableRequest("{{ route('list.sale') }}"),
         });
         $('.datetimepicker-input').datetimepicker({
             format: 'YYYY-MM-DD HH:mm',

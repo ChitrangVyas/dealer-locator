@@ -53,6 +53,17 @@
 </div>
 <!-- ./wrapper -->
 <script src="{{asset('js/app.js') }}"></script>
+<script>
+    function dataTableRequest(url){
+      return {
+                "url": url,
+                "type": "POST",
+                "data": function ( d ) {
+                    d._token = $("meta[name='csrf-token']").attr("content");
+                }
+            }
+    }
+  </script>
 <!-- AdminLTE for demo purposes -->
 @if(!config('adminlte.enabled_laravel_mix'))
     <!-- <script src="{{ asset('vendor/jquery/jquery.min.js') }}"></script>
@@ -68,7 +79,12 @@
 
 @yield('js')
 <script>
-  $("document").ready(function(){    
+  $("document").ready(function(){
+    $.ajaxSetup({
+      headers: {
+        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+      },
+    });
     $(".nav-link.active").parent().parent().parent().addClass("menu-is-opening menu-open");
   });
 </script>

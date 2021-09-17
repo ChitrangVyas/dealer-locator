@@ -56,7 +56,7 @@
         ],
             "processing": true,
             "serverSide": true,
-            "ajax": "{{ route('brandlistajax') }}",
+            "ajax": dataTableRequest("{{ route('brandlistajax') }}"),
         });        
     });
     function deleteUser(id){

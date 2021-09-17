@@ -148,7 +148,7 @@
             order: [[0, 'desc']],
             "processing": true,
             "serverSide": true,
-            "ajax": "{{ route('list.po') }}",
+            "ajax": dataTableRequest("{{ route('list.po') }}"),
         });
         $('.datetimepicker-input').datetimepicker({
             format: 'YYYY-MM-DD HH:mm',

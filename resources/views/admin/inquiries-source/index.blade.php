@@ -52,7 +52,7 @@
         ],
             "processing": true,
             "serverSide": true,
-            "ajax": "{{ route('inquiries_sourcelistajax') }}",
+            "ajax": dataTableRequest("{{ route('inquiries_sourcelistajax') }}"),
         });        
     });
     function deleteUser(id){

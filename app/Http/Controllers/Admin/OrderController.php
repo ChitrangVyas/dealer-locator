@@ -254,7 +254,6 @@ class OrderController extends MainController
                 return response()->json(['status' => 'error','code'=>0,'message'=>'Unable to generate PO.']);
             }
         }catch(Exception $e){
-            dd($e->getMessage());
             return response()->json(['status' => 'error','code' => 0,'message' => $e->getMessage()]);                
         }
     }
@@ -457,7 +456,7 @@ class OrderController extends MainController
         if((!empty($user->userGroup)) && $user->userGroup->id == '3'){
             $where .= (!empty($user->id))?" AND from_user=$user->id":'';
         }else if(empty($user->userGroup) || $user->userGroup->id == '1'){
-            $where .= (!empty($user->id))?" AND (for_manufacturer = '1') OR (from_user=$user->id":'';
+            $where .= (!empty($user->id))?" AND (for_manufacturer = '1' OR from_user=$user->id":'';
             $where .= (!empty($users)) ? " OR from_user in ($users) )" :")";
         }
         // $where .= (!empty($dealer_id))?" AND (dealer_id=$dealer_id OR inquiries.created_by=$dealer_id)":'';
@@ -474,8 +473,8 @@ class OrderController extends MainController
         ->groupby('orders.id')
         ->get();
         if(empty($user->userGroup) || $user->userGroup->id == '1'){
-            $total_order = Order::where('type','po')->where('from_user',$user->id,function($query){
-                return $query->orWhere('for_manufacturer', 1);
+            $total_order = Order::where('type','po')->where(function($query) use($user){
+                return $query->where('from_user',$user->id)->orWhere('for_manufacturer', 1);
             })->where('deleted_at',NULL)->count();
         }else{
             $total_order = Order::where('type','po')->where('from_user',$user->id)->where('deleted_at',NULL)->count();

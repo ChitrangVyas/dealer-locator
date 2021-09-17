@@ -9,16 +9,6 @@
     </div>
     <!-- /.card-header -->
     <div class="card-body">
-    @if ($errors->any())
-    <div class="alert alert-danger">
-        <ul>
-            @foreach ($errors->all() as $error)
-                <li>{{ $error }}</li>
-            @endforeach
-        </ul>
-    </div>
-    @endif
-
         @if(!empty($inquiries_source))
         <form method="POST" action="{{ route('inquiries-source.update',$inquiries_source->id) }}" enctype="multipart/form-data">
             @method('PUT')
@@ -34,7 +24,7 @@
                             <label>Source</label>
                             <input type="text" class="form-control" name="source"
                                 value="{{ (!empty($inquiries_source))?$inquiries_source->source:'' }}" placeholder="source">
-                            @error('name')
+                            @error('source')
                             <div class="alert alert-danger mt-2">{{ $message }}</div>
                             @enderror
                         </div>
@@ -44,7 +34,7 @@
                         <div class="form-group">
                             <label class="col-12">Status</label>
                             <input type="checkbox" name="status" id="status" class="form-control status" data-bootstrap-switch  data-on-text="Enable" data-off-text="Disable" data-off-color="danger" data-on-color="success" {{((!isset($inquiries_source)) || (!empty($inquiries_source->status)))? "checked" :"" }}>
-                            @error('name')
+                            @error('status')
                             <div class="alert alert-danger mt-2">{{ $message }}</div>
                             @enderror
                         </div>

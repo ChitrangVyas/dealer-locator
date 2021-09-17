@@ -135,7 +135,7 @@
             order: [[0, 'desc']],
             "processing": true,
             "serverSide": true,
-            "ajax": "{{ route('list.quote') }}",
+            "ajax": dataTableRequest("{{ route('list.quote') }}"),
         });
         $('.datetimepicker-input').datetimepicker({
             format: 'YYYY-MM-DD HH:mm',

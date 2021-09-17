@@ -197,7 +197,7 @@
             order: [[0, 'desc']],
             "processing": true,
             "serverSide": true,
-            "ajax": "{{ route('inquirylistajax') }}",
+            "ajax": dataTableRequest("{{ route('inquirylistajax') }}"),
             "fnDrawCallback":function() {
                 let is_admin = "{{((empty(auth()->user()->users_group_id)) || auth()->user()->users_group_id == 1 ||auth()->user()->users_group_id == 2 )? true : false }}";
                 let is_dealer = "{{auth()->user()->users_group_id == 2}}";

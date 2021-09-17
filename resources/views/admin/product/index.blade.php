@@ -85,7 +85,7 @@
             order: [[0, 'desc']],
             "processing": true,
             "serverSide": true,
-            "ajax": "{{ route('productlistajax') }}",
+            "ajax": dataTableRequest("{{ route('productlistajax') }}"),                                                              
             "fnDrawCallback":function() {
                 let is_admin = "{{((empty(auth()->user()->users_group_id)) || auth()->user()->users_group_id == 1)? true : false }}";
                 if(is_admin){
@@ -98,7 +98,6 @@
     });
 
     $('body').on('click','.add-stock',function(e){
-        console.log("PRODUCT::",$(this).data('product'));
         getData("{{route('product.inventory')}}",{'product_id':$(this).data('product')},'productModal','productModal .modal-title').then(function(res){
             $('#productModal').modal('show');
         });
@@ -153,7 +152,6 @@
                     $('.btn-save').attr('disabled',true);
                 },
                 success: function (data) {
-                    console.log("Response::",data);
                     if(data.code == 1){
                         Toast.fire({
                             type: 'success',

@@ -123,7 +123,7 @@
             order: [[0, 'desc']],
             "processing": true,
             "serverSide": true,
-            "ajax": "{{ route('list.invoice') }}",
+            "ajax": dataTableRequest("{{route('list.invoice')}}"),
         });
         $('.datetimepicker-input').datetimepicker({
             format: 'YYYY-MM-DD HH:mm',

@@ -76,6 +76,7 @@
     </div>
 </div>
 @if($order->type == 'quote')
+{{$order->type}}
 <div class="row">
     <form id="uploadPo" class="col-12" enctype="multipart/form-data">
         @csrf
@@ -87,7 +88,7 @@
                 <!-- text input -->
                 <div class="form-group clearfix">
                     <div class="icheck-primary d-inline">
-                        <input type="checkbox" class="mr-3 product" name="is_po_recieved" checked>
+                        <input type="checkbox" class="mr-3 product" name="is_po_recieved" {{((!(empty($order)) && (!empty($order->is_po_recieved)))) ? 'checked' : ''}}>
                         <label>Recieved</label>
                     </div>
                 </div>
@@ -96,7 +97,7 @@
                 <!-- text input -->
                 <div class="form-group">
                     <label for="recieved_date">Recieved Date</label>
-                    <input type="text" class="mr-3 product dateimepicker-input form-control col-md-6" name="recieved_date" id="datetimepicker" data-toggle="datetimepicker" data-target="#datetimepicker" autocomplete="off" required />
+                    <input type="text" class="mr-3 product dateimepicker-input form-control col-md-6" name="recieved_date" id="datetimepicker" data-toggle="datetimepicker" data-target="#datetimepicker" value="{{((!(empty($order)) && (!empty($order->recieved_date)))) ? $order->recieved_date : ''}}" autocomplete="off" required />
                 </div>
             </div>
             <div class="col-sm-12 col-md-12">

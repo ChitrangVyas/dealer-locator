@@ -61,7 +61,7 @@
             order: [[0, 'desc']],
             "processing": true,
             "serverSide": true,
-            "ajax": "{{ route('categorylistajax') }}",
+            "ajax": dataTableRequest("{{ route('categorylistajax') }}"),
         });        
     });
     function deleteUser(id){

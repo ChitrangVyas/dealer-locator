@@ -243,6 +243,7 @@
             });
             $('#modal-lg').attr("data-inquiry",inquiry_id);
         });
+
         $('body').on('click','#createQuote',function(){
             var inquiry_id = $(this).data('inquiry');
             var create_quote_url = $(this).data('create-quote-url');
@@ -269,6 +270,12 @@
                 $("#frmAssignToRetailer #inquiry_id").val(inquiry_id);
             });
         });
+
+        $('body').on('click','.view-inquiry', function(){
+            console.log("Inquiry::",$(this).data('view-url'));
+            getData($(this).data('view-url'),{id:$(this).data('inquiry')});
+        });
+
         $('body').on('submit','#frmAssignToRetailer',function(e){
             e.preventDefault();
             e.stopImmediatePropagation();
@@ -400,6 +407,31 @@
     function activeTab(ele){
         let selectedTab = $(ele).data('tab');
     }
+
+    function getData(url,data,modal='',ele_class=''){
+        var token = $("meta[name='csrf-token']").attr("content");
+        return $.ajax({
+            url: url,
+            type: 'POST',
+            data:{data,'_token':token},
+            beforeSend : function(){
+                $('#loader').show();
+            },
+            success: function(res) {
+                if(modal !== ''){
+                    $(`#${modal} .modal-body`).html(res.data.modal_content);
+                }
+                if(ele_class !== ''){
+                    $(`#${ele_class}`).text(res.data.modal_title);
+                }
+                // $('.product-detail input').not('input[type=checkbox]').attr('disabled',true);
+            },
+            complete:function(){
+                $('#loader').hide();
+            }
+        }); 
+    }
+
     function getTabData(url,loadTo){
          return $.ajax({
             url: url,

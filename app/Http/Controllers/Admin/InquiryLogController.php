@@ -82,7 +82,7 @@ class InquiryLogController extends Controller
         
         $inquiry_logs = InquiryLog::where('inquiry_id','=',$id)->orderBy('for_created_at','desc')->get()->groupBy(function($date){ return Carbon::parse($date->for_created_at)->format('Y-m-d');});              
         $inquiry = Inquiry::find($id);
-        return view('admin.inquiry.view',['inquiry_logs'=>$inquiry_logs,'inquiry'=>$inquiry]);
+        return view('admin.inquiry.viewlog',['inquiry_logs'=>$inquiry_logs,'inquiry'=>$inquiry]);
     }
 
     /**

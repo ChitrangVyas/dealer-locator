@@ -52,7 +52,6 @@ class InquiryController extends MainController
      */
     public function store(InquiriesCreateRequest $request)
     {   
-        //
         $request_data = $request->all();
         $dealer_id = NULL;
         if(auth()->user()->users_group_id == '2'){
@@ -101,9 +100,12 @@ class InquiryController extends MainController
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Request $request)
     {
-        //
+        $inquiry = Inquiry::findOrFail($request->input('data')['id']);
+        $json['modal_title'] = "Inquiry View";
+        $json['modal_content'] = view('admin.inquiry.view',['inquiry'=>$inquiry])->render();
+        return response()->json(['status' => 'successful','code'=>1, 'data'=>$json, 'message'=>'']);   
     }
 
     /**
@@ -285,6 +287,7 @@ class InquiryController extends MainController
             $action_html = "";
             $status_html = "<button type='button' class='btn btn-info change-status btn-sm' data-inquiry=$inquiry->id data-change-status-url='".route('inqiury.status')."'>".(Inquiry::find($inquiry->id))->getInquirystatusName()."</button>";
             $action_html .= "<span><button type='button' id='addLog' class='btn btn-default' data-inquiry=$inquiry->id data-view-url='".route('inquiry-log.show',$inquiry->id)."' data-add-url='".route('inquiry-log.create')."' data-task-url='".route('createReminder')."' data-toggle='modal' data-target='#modal-lg' title='View Log'><i class='fas fa-clipboard-list' title='View Log'></i></button></span>";
+            $action_html .= "<span class='ml-2'><button type='button' class='btn btn-primary view-inquiry' data-inquiry=$inquiry->id data-view-url='".route('inquiry.view',$inquiry->id)."' title='View Inquiry'><i class='far fa-eye' title='View Inquiry'></i></button></span>";
             if((!empty($user->userGroup)) && $user->userGroup->id == '2'){
                 $action_html .= "<span class='ml-2'><button type='button' id='assignRetailer' class='btn btn-default' data-inquiry=$inquiry->id data-assign-to-retailer-url='".route('inquiry.assign.retailer')."' data-task-url='".route('createReminder')."' data-toggle='modal' data-target='#assignToRetailer' title='Assign to retailer'><i class='fas fa-user' title='Assign to retailer'></i></button></span>";
             }

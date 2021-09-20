@@ -13,4 +13,8 @@ class InquiriesSource extends Model
     protected $fillable = [
         'source'        
     ];
+
+    function inquiry(){
+        return $this->belongsToMany(Inquiry::class);
+    }
 }

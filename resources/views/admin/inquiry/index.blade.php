@@ -273,9 +273,20 @@
 
         $('body').on('click','.view-inquiry', function(){
             console.log("Inquiry::",$(this).data('view-url'));
-            getData($(this).data('view-url'),{id:$(this).data('inquiry')});
+            getData($(this).data('view-url'),{id:$(this).data('inquiry')},'modal','modal .modal-title').then(function(res){
+                if($('#modal .modal-dialog').hasClass('modal-md')){
+                    $('#modal .modal-dialog').removeClass('modal-md').addClass('modal-lg');
+                }
+                $('#modal').modal('show');
+            });
         });
 
+        $('body').on('hidden.bs.modal','#modal', function () {
+            if($('#modal .modal-dialog').hasClass('modal-lg')){
+                $('#modal .modal-dialog').removeClass('modal-lg').addClass('modal-md');
+            }
+        });
+        
         $('body').on('submit','#frmAssignToRetailer',function(e){
             e.preventDefault();
             e.stopImmediatePropagation();

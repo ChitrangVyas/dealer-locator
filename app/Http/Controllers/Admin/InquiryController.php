@@ -103,8 +103,9 @@ class InquiryController extends MainController
     public function show(Request $request)
     {
         $inquiry = Inquiry::findOrFail($request->input('data')['id']);
+        $inquiry_products =  (!empty($inquiry->product->count()))? implode(', ',$inquiry->product->pluck('name')->toArray()):'N/A';
         $json['modal_title'] = "Inquiry View";
-        $json['modal_content'] = view('admin.inquiry.view',['inquiry'=>$inquiry])->render();
+        $json['modal_content'] = view('admin.inquiry.view',['inquiry'=>$inquiry,'inquiry_products'=>$inquiry_products])->render();
         return response()->json(['status' => 'successful','code'=>1, 'data'=>$json, 'message'=>'']);   
     }
 

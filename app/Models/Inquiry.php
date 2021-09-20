@@ -22,19 +22,23 @@ class Inquiry extends Model
     protected $guarded = [];
     
     public function customer(){
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class,'customer_id');
     }
 
     public function dealer(){
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class,'dealer_id');
+    }
+
+    public function createdBy(){
+        return $this->belongsTo(User::class,'created_by');
     }
 
     public function retailer(){
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class,'retailer_id');
     }
 
-    public function source(){
-        return $this->belongsTo(InquiriesSource::class);
+    public function inquirySource(){
+        return $this->belongsTo(InquiriesSource::class,'inquiries_source_id');
     }
 
     public function product(){

@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\DB;
 
 class User extends Authenticatable
 {
@@ -55,6 +56,10 @@ class User extends Authenticatable
     {
         return $this->belongsTo(UserGroup::class,'users_group_id');
     }
+    public function user()
+    {
+        return $this->belongsTo(User::class,'parent_id');
+    }
     public function city(){
         return $this->belongsTo(City::class);
     }
@@ -76,5 +81,8 @@ class User extends Authenticatable
     public function scopeWithAndWhereHas($query, $relation, $constraint){
         return $query->whereHas($relation, $constraint)
                      ->with([$relation => $constraint]);
+    }
+    public function getSelect2Data($table,$id){
+        return DB::table($table)->where('id', $id)->first();
     }
 }

@@ -24,11 +24,17 @@
         <div class="col-sm-12 col-md-4">
                 <!-- text input -->
                 <div class="form-group">
-                    <label>Dealer</label>
+                    <label>Dealer <span class="required_field">*</span></label>
                     <select class="form-control select2 dealer" id='dealer' name='dealer'>
                         <option value="">Select Dealer</option>
                         @if(!empty($user) && !empty($user->parent_id))
-                            <option value="{{$user->parent_id}}" selected>{{$user->name}}</option>
+                            <option value="{{$user->parent_id}}" selected>{{$user->user->name}}</option>
+                        @endif
+                        @if(old('dealer'))     
+                            @php 
+                                $data = $select2Old->getSelect2Data('users',old('dealer'))
+                            @endphp                   
+                            <option value="{{$data->id}}" selected>{{$data->name}}</option>
                         @endif
                     </select>
                     @error('dealer')
@@ -99,6 +105,12 @@
                         @if(!empty($user) && $user->state_id)
                             <option value="{{$user->state_id}}" selected>{{$user->state->name}}</option>
                         @endif
+                        @if(old('state'))     
+                            @php 
+                                $data = $select2Old->getSelect2Data('states',old('state'))
+                            @endphp                   
+                            <option value="{{$data->id}}" selected>{{$data->name}}</option>
+                        @endif
                     </select>
                     <input type="hidden" id="state_id" value="{{old('state')}}">
                     @error('state')
@@ -114,6 +126,12 @@
                         <option value="">Select</option>
                         @if(!empty($user) && !empty($user->city_id))
                             <option value="{{$user->city_id}}" selected>{{$user->city->name}}</option>
+                        @endif
+                        @if(old('city'))     
+                            @php 
+                                $data = $select2Old->getSelect2Data('cities',old('city'))
+                            @endphp                   
+                            <option value="{{$data->id}}" selected>{{$data->name}}</option>
                         @endif
                     </select>
                     <input type="hidden" id="city_id" value="{{old('city')}}">

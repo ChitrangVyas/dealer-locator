@@ -12,7 +12,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use View;
-class CustomerUserController extends Controller
+class CustomerUserController extends MainController
 {
     public function __construct() {
         parent::__construct();

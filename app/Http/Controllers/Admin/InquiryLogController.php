@@ -11,7 +11,7 @@ use Exception;
 use Illuminate\Http\Request;
 use View;
 use App\Models\Inquiry;
-class InquiryLogController extends Controller
+class InquiryLogController extends MainController
 {
     public function __construct() {
         parent::__construct();

@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Admin\MainController;
 use App\Models\City;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
-class CommonController extends Controller
+class CommonController extends MainController
 {
     //
     public function index(Request $request){

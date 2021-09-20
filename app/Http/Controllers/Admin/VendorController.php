@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use View;
 
-class VendorController extends Controller
+class VendorController extends MainController
 {
     public function __construct() {
         parent::__construct();

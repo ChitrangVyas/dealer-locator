@@ -17,7 +17,7 @@ use Illuminate\Support\Facades\Storage;
 use JeroenNoten\LaravelAdminLte\AdminLte;
 use View;
 
-class ProductController extends Controller
+class ProductController extends MainController
 {
     private $product;
     public function __construct(Product $product,AdminLte $adminLte)

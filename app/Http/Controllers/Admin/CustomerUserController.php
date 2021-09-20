@@ -137,14 +137,16 @@ class CustomerUserController extends MainController
 
     public function listAjaxData(Request $request){
         // DB::enableQueryLog(); 
+        $user = auth()->user();
         $start =  $request['start'];
         $length=  $request['length'];
         $search = $request['search']['value'];
-        $where = 'users_group_id IN (4) AND created_by='.auth()->user()->id;
+        $where = 'users_group_id IN (4) AND (users.created_by='.$user->id." OR dealer_id=$user->id OR retailer_id=$user->id)";
         $where .= (!empty($search)) ? " AND (users.name like '$search%' OR email like '$search%' OR mobile like '$search%' OR cities.name like '$search%' OR states.name like '$search%' OR users_group.name like '$search%')":'';
         $users = DB::table('users')
-        ->selectRaw('users_group.name as contact_type,users.id,users.name,email,mobile,cities.name as city, states.name as state')
+        ->selectRaw('DISTINCT(users.id),users_group.name as contact_type,users.name,email,mobile,cities.name as city, states.name as state,users.created_by')
         ->join('users_group','users.users_group_id','=','users_group.id','left')
+        ->join('inquiries','inquiries.customer_id','=','users.id','left')
         ->join('cities','users.city_id','=','cities.id','left')
         ->join('states','users.state_id','=','states.id','left')
         ->whereRaw($where)
@@ -153,14 +155,20 @@ class CustomerUserController extends MainController
         ->limit($length)
         ->orderBy($request['columns'][$request['order'][0]['column']]['name'],$request['order'][0]['dir'])
         ->get(); 
-        $total_users = User::whereIN('users_group_id',['4'])->where('created_by',auth()->user()->id)->count();
+        // $total_users = User::whereIN('users_group_id',['4'])->where('created_by',auth()->user()->id)->count();
+        $total_users = User::whereIN('users_group_id',['4'])->where(function($query) use($user) {
+            return $query->orWhere('users.created_by',$user->id)->orWhere('dealer_id',$user->id)->orWhere('retailer_id',$user->id);
+        })->join('inquiries','inquiries.customer_id','=','users.id','left')->distinct()->count('users.id');
         // dd(DB::getQueryLog());
         $data = [];
         foreach($users as $user){
             $city = (!empty($user->city))?$user->city:'N/A';
             $state = (!empty($user->state))?$user->state:'N/A';
-            $action_html = "<span><a href=".route('customer.edit',$user->id)." class='btn btn-primary'>Edit</a></span>";
-            $action_html .= "<span class='ml-3'><button type=submit data-user=$user->id class='btn btn-danger' onClick=deleteUser($user->id)>Delete</button></span>";
+            $action_html = "";
+            if($user->created_by == auth()->user()->id || empty(auth()->user()->users_group_id)){
+                $action_html = "<span><a href=".route('customer.edit',$user->id)." class='btn btn-primary'>Edit</a></span>";
+                $action_html .= "<span class='ml-3'><button type=submit data-user=$user->id class='btn btn-danger' onClick=deleteUser($user->id)>Delete</button></span>";
+            }
             $data[] = [$user->id,$user->contact_type,$user->name,$user->email,$user->mobile,$city,$state,$action_html];
         }
         $return_array = array();

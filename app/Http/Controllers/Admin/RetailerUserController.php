@@ -18,6 +18,7 @@ class RetailerUserController extends MainController
     public function __construct() {
         View::share ( 'title', 'Retailer' );
         View::share ( 'elementActive', 'retailer' );
+        View::share ( 'select2Old', new User());
     }
     /**
      * Display a listing of the resource.

@@ -15,6 +15,7 @@ class AdminUserController extends MainController
     public function __construct() {
         View::share ( 'title', 'Staff' );
         View::share ( 'elementActive', 'staff' );
+        View::share ( 'select2Old', new User());
     }
     /**
      * Display a listing of the resource.

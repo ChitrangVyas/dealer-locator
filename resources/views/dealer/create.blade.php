@@ -23,7 +23,7 @@
             <div class="col-sm-12 col-md-4">
                 <!-- text input -->
                 <div class="form-group">
-                    <label>Name</label>
+                    <label>Name <span class="required_field">*</span></label>
                     <input type="text" class="form-control" name="name" value="{{ old('name',(!empty($user))?$user->name:'') }}" placeholder="Full Name">
                     @error('name')
                         <div class="alert alert-danger mt-2">{{ $message }}</div>
@@ -79,6 +79,12 @@
                         @if(!empty($user) && $user->state_id)
                             <option value="{{$user->state_id}}" selected>{{$user->state->name}}</option>
                         @endif
+                        @if(old('state'))     
+                            @php 
+                                $data = $select2Old->getSelect2Data('states',old('state'))
+                            @endphp                   
+                            <option value="{{$data->id}}" selected>{{$data->name}}</option>
+                        @endif
                     </select>
                     <input type="hidden" id="state_id" value="{{old('state')}}">
                     @error('state')
@@ -94,6 +100,12 @@
                         <option value="">Select</option>
                         @if(!empty($user) && !empty($user->city_id))
                             <option value="{{$user->city_id}}" selected>{{$user->city->name}}</option>
+                        @endif
+                        @if(old('city'))     
+                            @php 
+                                $data = $select2Old->getSelect2Data('cities',old('city'))
+                            @endphp                   
+                            <option value="{{$data->id}}" selected>{{$data->name}}</option>
                         @endif
                     </select>
                     <input type="hidden" id="city_id" value="{{old('city')}}">

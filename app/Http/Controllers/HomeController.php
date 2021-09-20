@@ -65,6 +65,9 @@ class HomeController extends Controller
             $count++;
         }
         // dd($orderArr);
+        if(!isset($orderArr[0])){
+            $orderArr[0]= array();
+        }
         return view('home',compact('elementActive','title','total_order','total_po','total_dealer','total_retailer','orderArr'));
     }
 }

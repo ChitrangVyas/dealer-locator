@@ -23,7 +23,7 @@
             <div class="col-sm-12 col-md-4">
                 <!-- text input -->
                 <div class="form-group">
-                    <label>Name</label>
+                    <label>Name <span class="required_field">*</span></label>
                     <input type="text" class="form-control" name="name" value="{{ old('name',(!empty($user))?$user->name:'')}}" placeholder="Full Name">
                     @error('name')
                         <div class="alert alert-danger mt-2">{{ $message }}</div>
@@ -33,7 +33,7 @@
             <div class="col-sm-12 col-md-4">
                 <!-- text input -->
                 <div class="form-group">
-                    <label>Email</label>
+                    <label>Email <span class="required_field">*</span></label>
                     <input type="email" class="form-control" name="email" value="{{ old('email',(!empty($user))?$user->email:'') }}" placeholder="Email" autocomplete="false">
                     @error('email')
                         <div class="alert alert-danger mt-2">{{ $message }}</div>
@@ -43,7 +43,7 @@
             <div class="col-sm-12 col-md-4">
                 <!-- text input -->
                 <div class="form-group">
-                    <label>Password</label>
+                    <label>Password <span class="required_field">*</span></label>
                     <input type="password" name="password" value="{{ old('password') }}" class="form-control" placeholder="Password">
                     @error('password')
                         <div class="alert alert-danger mt-2">{{ $message }}</div>
@@ -53,7 +53,7 @@
             <div class="col-sm-12 col-md-4">
                 <!-- text input -->
                 <div class="form-group">
-                    <label>Mobile</label>
+                    <label>Mobile <span class="required_field">*</span></label>
                     <input type="text" name="mobile" value="{{ old('mobile',(!empty($user))?$user->mobile:'') }}" class="form-control" placeholder="Mobile">
                     @error('mobile')
                         <div class="alert alert-danger mt-2">{{ $message }}</div>
@@ -63,7 +63,7 @@
             <div class="col-sm-12 col-md-4">
                 <!-- text input -->
                 <div class="form-group">
-                    <label>Address</label>
+                    <label>Address <span class="required_field">*</span></label>
                     <textarea class="form-control" name="address" rows="1" placeholder="Address">{{ old('address',(!empty($user))?$user->address:'') }}</textarea>
                     @error('address')
                         <div class="alert alert-danger mt-2">{{ $message }}</div>
@@ -73,11 +73,17 @@
             <div class="col-sm-12 col-md-4">
                 <!-- text input -->
                 <div class="form-group">
-                    <label>State</label>
+                    <label>State <span class="required_field">*</span></label>
                     <select class="form-control select2 state" id='state' name='state'>
                         <option value="">Select</option>
                         @if(!empty($user) && $user->state_id)
                             <option value="{{$user->state_id}}" selected>{{$user->state->name}}</option>
+                        @endif
+                        @if(old('state'))     
+                            @php 
+                                $data = $select2Old->getSelect2Data('states',old('state'))
+                            @endphp                   
+                            <option value="{{$data->id}}" selected>{{$data->name}}</option>
                         @endif
                     </select>
                     <input type="hidden" id="state_id" value="{{old('state')}}">
@@ -89,11 +95,17 @@
             <div class="col-sm-12 col-md-4">
                 <!-- text input -->
                 <div class="form-group">
-                    <label>City</label>
+                    <label>City <span class="required_field">*</span></label>
                     <select class="form-control select2 city" id='city' name='city'>
                         <option value="">Select</option>
                         @if(!empty($user) && !empty($user->city_id))
                             <option value="{{$user->city_id}}" selected>{{$user->city->name}}</option>
+                        @endif
+                        @if(old('city'))     
+                            @php 
+                                $data = $select2Old->getSelect2Data('cities',old('city'))
+                            @endphp                   
+                            <option value="{{$data->id}}" selected>{{$data->name}}</option>
                         @endif
                     </select>
                     <input type="hidden" id="city_id" value="{{old('city')}}">
@@ -105,7 +117,7 @@
             <div class="col-sm-12 col-md-4">
                 <!-- text input -->
                 <div class="form-group">
-                    <label>Zipcode</label>
+                    <label>Zipcode <span class="required_field">*</span></label>
                     <input type="text" name="zipcode" value="{{ old('zipcode',(!empty($user))?$user->zipcode:'') }}" class="form-control" placeholder="Enter zipcode">
                     @error('zipcode')
                         <div class="alert alert-danger mt-2">{{ $message }}</div>

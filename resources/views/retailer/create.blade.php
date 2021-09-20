@@ -21,11 +21,11 @@
         <input type="hidden" name="created_by" value="{{auth()->user()->id}}">
         <div class="row">
         @admin()
-        <div class="col-sm-12 col-md-4">
+            <div class="col-sm-12 col-md-4">
                 <!-- text input -->
                 <div class="form-group">
                     <label>Dealer <span class="required_field">*</span></label>
-                    <select class="form-control select2 dealer" id='dealer' name='dealer'>
+                    <select class="form-control select2 dealer" id='dealer' name='dealer' tabindex="1">
                         <option value="">Select Dealer</option>
                         @if(!empty($user) && !empty($user->parent_id))
                             <option value="{{$user->parent_id}}" selected>{{$user->user->name}}</option>
@@ -48,9 +48,9 @@
         @endif
             <div class="col-sm-12 col-md-4">
                 <!-- text input -->
-                <div class="form-group">
-                    <label>Name</label>
-                    <input type="text" class="form-control" name="name" value="{{ old('name',(!empty($user))?$user->name:'') }}" placeholder="Full Name">
+                <div class="form-group required">
+                    <label>Name <span class="required_field">*</span></label>
+                    <input type="text" class="form-control" name="name" value="{{ old('name',(!empty($user))?$user->name:'') }}" placeholder="Full Name" tabindex="2">
                     @error('name')
                         <div class="alert alert-danger mt-2">{{ $message }}</div>
                     @enderror
@@ -60,7 +60,7 @@
                 <!-- text input -->
                 <div class="form-group">
                     <label>Email</label>
-                    <input type="email" class="form-control" name="email" value="{{old('email', (!empty($user))?$user->email:'') }}" placeholder="Email" autocomplete="false">
+                    <input type="email" class="form-control" name="email" value="{{old('email', (!empty($user))?$user->email:'') }}" placeholder="Email" autocomplete="false" tabindex="3">
                     @error('email')
                         <div class="alert alert-danger mt-2">{{ $message }}</div>
                     @enderror
@@ -70,7 +70,7 @@
                 <!-- text input -->
                 <div class="form-group">
                     <label>Password</label>
-                    <input type="password" name="password" value="{{old('password')}}" class="form-control" placeholder="Password">
+                    <input type="password" name="password" value="{{old('password')}}" class="form-control" placeholder="Password" tabindex="4">
                     @error('password')
                         <div class="alert alert-danger mt-2">{{ $message }}</div>
                     @enderror
@@ -80,7 +80,7 @@
                 <!-- text input -->
                 <div class="form-group">
                     <label>Mobile</label>
-                    <input type="text" name="mobile" value="{{ old('mobile',(!empty($user))?$user->mobile:'') }}" class="form-control" placeholder="Mobile">
+                    <input type="text" name="mobile" value="{{ old('mobile',(!empty($user))?$user->mobile:'') }}" class="form-control" placeholder="Mobile" tabindex="5">
                     @error('mobile')
                         <div class="alert alert-danger mt-2">{{ $message }}</div>
                     @enderror
@@ -90,7 +90,7 @@
                 <!-- text input -->
                 <div class="form-group">
                     <label>Address</label>
-                    <textarea class="form-control" name="address" rows="1" placeholder="Address">{{ old('address',(!empty($user))?$user->address:'') }}</textarea>
+                    <textarea class="form-control" name="address" rows="1" placeholder="Address" tabindex="6">{{ old('address',(!empty($user))?$user->address:'') }}</textarea>
                     @error('address')
                         <div class="alert alert-danger mt-2">{{ $message }}</div>
                     @enderror
@@ -100,7 +100,7 @@
                 <!-- text input -->
                 <div class="form-group">
                     <label>State</label>
-                    <select class="form-control select2 state" id='state' name='state'>
+                    <select class="form-control select2 state" id='state' name='state' tabindex="7">
                         <option value="">Select</option>
                         @if(!empty($user) && $user->state_id)
                             <option value="{{$user->state_id}}" selected>{{$user->state->name}}</option>
@@ -122,7 +122,7 @@
                 <!-- text input -->
                 <div class="form-group">
                     <label>City</label>
-                    <select class="form-control select2 city" id='city' name='city'>
+                    <select class="form-control select2 city" id='city' name='city' tabindex="8">
                         <option value="">Select</option>
                         @if(!empty($user) && !empty($user->city_id))
                             <option value="{{$user->city_id}}" selected>{{$user->city->name}}</option>
@@ -144,7 +144,7 @@
                 <!-- text input -->
                 <div class="form-group">
                     <label>Zipcode</label>
-                    <input type="text" name="zipcode" value="{{ old('zipcode',(!empty($user))?$user->zipcode:'') }}" class="form-control" placeholder="Enter zipcode">
+                    <input type="text" name="zipcode" value="{{ old('zipcode',(!empty($user))?$user->zipcode:'') }}" class="form-control" placeholder="Enter zipcode" tabindex="9">
                     @error('zipcode')
                         <div class="alert alert-danger mt-2">{{ $message }}</div>
                     @enderror
@@ -153,7 +153,7 @@
         </div>
         <div class="row">
             <div class="col-sm-12">
-                <button type="submit" class="btn btn-primary">Submit</button>
+                <button type="submit" class="btn btn-primary" tabindex="10">Submit</button>
             </div>
         </div>
     </form>

@@ -24,7 +24,7 @@
                 <!-- text input -->
                 <div class="form-group">
                     <label>Name <span class="required_field">*</span></label>
-                    <input type="text" class="form-control" name="name" value="{{ old('name',(!empty($user))?$user->name:'')}}" placeholder="Full Name">
+                    <input type="text" class="form-control" name="name" value="{{ old('name',(!empty($user))?$user->name:'')}}" placeholder="Full Name" tabindex="1">
                     @error('name')
                         <div class="alert alert-danger mt-2">{{ $message }}</div>
                     @enderror
@@ -34,7 +34,7 @@
                 <!-- text input -->
                 <div class="form-group">
                     <label>Email <span class="required_field">*</span></label>
-                    <input type="email" class="form-control" name="email" value="{{ old('email',(!empty($user))?$user->email:'') }}" placeholder="Email" autocomplete="false">
+                    <input type="email" class="form-control" name="email" value="{{ old('email',(!empty($user))?$user->email:'') }}" placeholder="Email" autocomplete="false" tabindex="2"> 
                     @error('email')
                         <div class="alert alert-danger mt-2">{{ $message }}</div>
                     @enderror
@@ -44,7 +44,7 @@
                 <!-- text input -->
                 <div class="form-group">
                     <label>Password <span class="required_field">*</span></label>
-                    <input type="password" name="password" value="{{ old('password') }}" class="form-control" placeholder="Password">
+                    <input type="password" name="password" value="{{ old('password') }}" class="form-control" placeholder="Password" tabindex="3">
                     @error('password')
                         <div class="alert alert-danger mt-2">{{ $message }}</div>
                     @enderror
@@ -54,7 +54,7 @@
                 <!-- text input -->
                 <div class="form-group">
                     <label>Mobile <span class="required_field">*</span></label>
-                    <input type="text" name="mobile" value="{{ old('mobile',(!empty($user))?$user->mobile:'') }}" class="form-control" placeholder="Mobile">
+                    <input type="text" name="mobile" value="{{ old('mobile',(!empty($user))?$user->mobile:'') }}" class="form-control" placeholder="Mobile" tabindex="4">
                     @error('mobile')
                         <div class="alert alert-danger mt-2">{{ $message }}</div>
                     @enderror
@@ -64,7 +64,7 @@
                 <!-- text input -->
                 <div class="form-group">
                     <label>Address <span class="required_field">*</span></label>
-                    <textarea class="form-control" name="address" rows="1" placeholder="Address">{{ old('address',(!empty($user))?$user->address:'') }}</textarea>
+                    <textarea class="form-control" name="address" rows="1" placeholder="Address" tabindex="5">{{ old('address',(!empty($user))?$user->address:'') }}</textarea>
                     @error('address')
                         <div class="alert alert-danger mt-2">{{ $message }}</div>
                     @enderror
@@ -74,7 +74,7 @@
                 <!-- text input -->
                 <div class="form-group">
                     <label>State <span class="required_field">*</span></label>
-                    <select class="form-control select2 state" id='state' name='state'>
+                    <select class="form-control select2 state" id='state' name='state' tabindex="5">
                         <option value="">Select</option>
                         @if(!empty($user) && $user->state_id)
                             <option value="{{$user->state_id}}" selected>{{$user->state->name}}</option>
@@ -96,7 +96,7 @@
                 <!-- text input -->
                 <div class="form-group">
                     <label>City <span class="required_field">*</span></label>
-                    <select class="form-control select2 city" id='city' name='city'>
+                    <select class="form-control select2 city" id='city' name='city' tabindex="6">
                         <option value="">Select</option>
                         @if(!empty($user) && !empty($user->city_id))
                             <option value="{{$user->city_id}}" selected>{{$user->city->name}}</option>
@@ -107,8 +107,7 @@
                             @endphp                   
                             <option value="{{$data->id}}" selected>{{$data->name}}</option>
                         @endif
-                    </select>
-                    <input type="hidden" id="city_id" value="{{old('city')}}">
+                    </select>                    
                     @error('city')
                         <div class="alert alert-danger mt-2">{{ $message }}</div>
                     @enderror
@@ -118,7 +117,7 @@
                 <!-- text input -->
                 <div class="form-group">
                     <label>Zipcode <span class="required_field">*</span></label>
-                    <input type="text" name="zipcode" value="{{ old('zipcode',(!empty($user))?$user->zipcode:'') }}" class="form-control" placeholder="Enter zipcode">
+                    <input type="text" name="zipcode" value="{{ old('zipcode',(!empty($user))?$user->zipcode:'') }}" class="form-control" placeholder="Enter zipcode" tabindex="7">
                     @error('zipcode')
                         <div class="alert alert-danger mt-2">{{ $message }}</div>
                     @enderror
@@ -188,11 +187,7 @@ jQuery(document).ready(function(){
         }else{
             $('.city').select2({});
         }
-    });
-    if ($('#state_id').val() || $('#city_id').val()) {
-        getStateCity('states',` id=${$('#state_id').val()}`,'state');
-        getStateCity('cities', ` id=${$('#city_id').val()}`,'city');
-    }
+    });    
 
     function getStateCity(table,where,eleClass) {
         if($('#state_id').val() || $('#city_id').val()){

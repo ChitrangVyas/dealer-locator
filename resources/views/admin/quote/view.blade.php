@@ -76,7 +76,6 @@
     </div>
 </div>
 @if($order->type == 'quote')
-{{$order->type}}
 <div class="row">
     <form id="uploadPo" class="col-12" enctype="multipart/form-data">
         @csrf

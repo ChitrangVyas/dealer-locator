@@ -8,8 +8,10 @@ use App\Mail\OrderShipped;
 use App\Models\Order;
 use App\Models\OrderProduct;
 use App\Models\Inquiry;
+use App\Models\Inventory;
 use App\Models\OrderImage;
 use App\Models\OrderStatus;
+use App\Models\Product;
 use App\Models\User;
 use Exception;
 use Illuminate\Http\Request;
@@ -350,13 +352,26 @@ class OrderController extends MainController
                     $order_product = '';
                     if(!empty($order_product_data)){
                         $order_product = OrderProduct::create($order_product_data);
+                        if(empty(auth()->user()->users_group_id)) {
+                            $product = Product::find($cart_product->id);
+                            $invenory = $product->inventory;
+                            $product->update(['inventory' => ($invenory - $cart_product->quantity)]);
+                        }else{
+                            $invenory = Inventory::where('user_id',$cart_data['from_user'])->where('product_id',1);
+                            $invenory_qty = $invenory->get('qty');
+                            if(!empty($invenory_qty)){
+                                $invenory->update(['qty' => ($invenory_qty[0]->qty - $cart_product->quantity)]);
+                            }
+                        }
                     }
                 }
                 $order_status_data[] = array('order_id' => $order->id, 'status_id' => 1,'created_at'=> \Carbon\Carbon::now(), 'updated_at'=> \Carbon\Carbon::now());
                 if(empty($order->addedBy->users_group_id)) {
                     $order_status_data[0]['user_id'] = NULL;
                     $order_status_data[0]['is_master'] = 1;
+                    //admin
                 }else{
+                    //dealer and retailer
                     $order_status_data[0]['user_id'] = auth()->user()->id;
                     $order_status_data[0]['is_master'] = 0;
                 }

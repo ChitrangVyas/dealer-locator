@@ -67,7 +67,7 @@
                 <a href="{{route('staff.index')}}" class="nav-link  {{ $elementActive == 'staff' ? 'active' : '' }}">
                 <i class="nav-icon fas fa-users"></i>
                   <p>
-                    Staff User
+                    Staff
                   </p>
                 </a>
               </li>

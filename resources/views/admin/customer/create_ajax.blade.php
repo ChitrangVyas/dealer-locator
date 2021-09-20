@@ -84,6 +84,14 @@
                         @if(!empty($user) && !empty($user->city_id))
                             <option value="{{$user->city_id}}" selected>{{$user->city->name}}</option>
                         @endif
+                        @if(old('city_id'))     
+                            @php 
+                                $data = $select2Old->getSelect2Data('cities',old('city_id'),' state_id='. old('state_id'))
+                            @endphp          
+                            @if (!empty($data))
+                                <option value="{{$data->id}}" selected>{{$data->name}}</option>
+                            @endif         
+                        @endif
                     </select>
                 </div>
             </div>

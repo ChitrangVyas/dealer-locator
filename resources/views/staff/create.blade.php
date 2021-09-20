@@ -199,14 +199,7 @@ jQuery(document).ready(function(){
                     }
                 }
             });
-<<<<<<< HEAD
     }
-=======
-        }else{
-            $('.city').select2({});
-        }
-    });    
->>>>>>> 674cc8eec9ae583c97472a96637018fac40c212f
 
     function getStateCity(table,where,eleClass) {
         if($('#state_id').val() || $('#city_id').val()){

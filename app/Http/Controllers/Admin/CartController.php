@@ -15,6 +15,7 @@ class CartController extends MainController
     protected $myCart;
     public function __construct(MyCart $myCart)
     {
+        parent::__construct();
         $this->myCart = $myCart;
     }
     /**

@@ -22,6 +22,7 @@ class OrderController extends MainController
     private $myCart;
     public function __construct(MyCart $myCart)
     {
+        parent::__construct();
         $this->myCart = $myCart;
     }
     /**

@@ -13,9 +13,9 @@ use View;
 class AdminUserController extends MainController
 {
     public function __construct() {
+        parent::__construct();
         View::share ( 'title', 'Staff' );
-        View::share ( 'elementActive', 'staff' );
-        View::share ( 'select2Old', new User());
+        View::share ( 'elementActive', 'staff' );        
     }
     /**
      * Display a listing of the resource.

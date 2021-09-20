@@ -18,6 +18,7 @@ use View;
 class InquiryController extends MainController
 {
     public function __construct() {
+        parent::__construct();
         View::share ( 'title', 'Inquiry' );
         View::share ( 'elementActive', 'inquiry' );
     }

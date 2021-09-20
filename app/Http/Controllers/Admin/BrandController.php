@@ -18,6 +18,7 @@ class BrandController extends MainController
 {
     public $manufacturer = [];
     public function __construct() {
+        parent::__construct();
         View::share ( 'title', 'Brand' );
         View::share ( 'elementActive', 'brand' );
     }

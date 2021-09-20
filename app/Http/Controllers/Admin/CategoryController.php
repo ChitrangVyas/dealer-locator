@@ -16,6 +16,7 @@ use View;
 class CategoryController extends MainController
 {
     public function __construct() {
+        parent::__construct();
         View::share ( 'title', 'Category' );
         View::share ( 'elementActive', 'category' );
     }

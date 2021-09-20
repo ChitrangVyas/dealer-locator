@@ -17,6 +17,7 @@ use View;
 class ManufacturerController extends MainController
 {
     public function __construct() {
+        parent::__construct();
         View::share ( 'title', 'Manufacturer' );
         View::share ( 'elementActive', 'manufacturer' );
     }

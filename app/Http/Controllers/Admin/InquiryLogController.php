@@ -14,6 +14,7 @@ use App\Models\Inquiry;
 class InquiryLogController extends Controller
 {
     public function __construct() {
+        parent::__construct();
         View::share ( 'title', 'Inquiry Log' );
         View::share ( 'elementActive', 'inquiry_log' );
     }

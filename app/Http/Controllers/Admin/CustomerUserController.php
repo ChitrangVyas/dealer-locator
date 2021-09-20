@@ -15,6 +15,7 @@ use View;
 class CustomerUserController extends Controller
 {
     public function __construct() {
+        parent::__construct();
         View::share ( 'title', 'Contact' );
         View::share ( 'elementActive', 'customer' );
     }

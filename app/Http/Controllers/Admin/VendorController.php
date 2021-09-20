@@ -15,6 +15,7 @@ use View;
 class VendorController extends Controller
 {
     public function __construct() {
+        parent::__construct();
         View::share ( 'title', 'Vendor' );
         View::share ( 'elementActive', 'vendor' );
     }

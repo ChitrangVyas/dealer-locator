@@ -22,6 +22,7 @@ class ProductController extends Controller
     private $product;
     public function __construct(Product $product,AdminLte $adminLte)
     {
+        parent::__construct();
         $this->product = $product;
         View::share('title', 'Product');
         View::share('elementActive', 'product');

@@ -72,8 +72,14 @@
                                 @if(!empty($user) && $user->state_id)
                                 <option value="{{$user->state_id}}" selected>{{$user->state->name}}</option>
                                 @endif
+                                @if(old('state_id'))     
+                                    @php 
+                                        $data = $select2Old->getSelect2Data('states',old('state_id'))
+                                    @endphp                   
+                                    <option value="{{$data->id}}" selected>{{$data->name}}</option>
+                                @endif
                             </select>
-                            <input type="hidden" id="state_id" value="{{old('state_id')}}">
+                            <!-- <input type="hidden" id="state_id" value="{{old('state_id')}}"> -->
                             @error('state_id')
                             <div class="alert alert-danger mt-2">{{ $message }}</div>
                             @enderror
@@ -88,8 +94,15 @@
                                 @if(!empty($user) && !empty($user->city_id))
                                 <option value="{{$user->city_id}}" selected>{{$user->city->name}}</option>
                                 @endif
+                                @if(old('city_id'))     
+                                    @php 
+                                        $data = $select2Old->getSelect2Data('cities',old('city_id'),' state_id='. old('state_id'))
+                                    @endphp          
+                                    @if (!empty($data))
+                                        <option value="{{$data->id}}" selected>{{$data->name}}</option>
+                                    @endif         
+                                @endif
                             </select>
-                            <input type="hidden" id="city_id" value="{{old('city_id')}}">
                             @error('city_id')
                             <div class="alert alert-danger mt-2">{{ $message }}</div>
                             @enderror
@@ -168,7 +181,21 @@ jQuery(document).ready(function() {
     });
     $('.state').on('change', function() {
         if ($('.state').val()) {
+            select2city();
+            $(`.city`).val('').trigger('change');
+        }else {
             $('.city').select2({
+                placeholder: "Select",
+                allowClear: true,
+            });
+        }
+    });
+    if ($('#state').val() || $('#city').val()) {
+        select2city();
+    }
+
+    function select2city(){
+        $('.city').select2({
                 placeholder: "Select",
                 allowClear: true,
                 minimumInputLength: 2,
@@ -190,16 +217,6 @@ jQuery(document).ready(function() {
                     }
                 }
             });
-        }else {
-            $('.city').select2({
-                placeholder: "Select",
-                allowClear: true,
-            });
-        }
-    });
-    if ($('#state_id').val() || $('#city_id').val()) {
-        getStateCity('states',` id=${$('#state_id').val()}`,'state');
-        getStateCity('cities', ` id=${$('#city_id').val()}`,'city');
     }
 
     function getStateCity(table,where,eleClass) {

@@ -17,6 +17,7 @@ class CustomerUserController extends Controller
     public function __construct() {
         View::share ( 'title', 'Contact' );
         View::share ( 'elementActive', 'customer' );
+        View::share ( 'select2Old', new User());
     }
     /**
      * Display a listing of the resource.

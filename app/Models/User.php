@@ -82,7 +82,11 @@ class User extends Authenticatable
         return $query->whereHas($relation, $constraint)
                      ->with([$relation => $constraint]);
     }
-    public function getSelect2Data($table,$id){
-        return DB::table($table)->where('id', $id)->first();
+    public function getSelect2Data($table,$id,$where=""){
+        return DB::table($table)->where('id', $id)->where(function($query) use($where){
+            if(!empty($where)){
+                return $query->whereRaw($where);
+            }
+        })->first();
     }
 }

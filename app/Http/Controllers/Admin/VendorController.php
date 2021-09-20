@@ -17,6 +17,7 @@ class VendorController extends Controller
     public function __construct() {
         View::share ( 'title', 'Vendor' );
         View::share ( 'elementActive', 'vendor' );
+        View::share ( 'select2Old', new User());
     }
     /**
      * Display a listing of the resource.

@@ -86,7 +86,6 @@
                             <option value="{{$data->id}}" selected>{{$data->name}}</option>
                         @endif
                     </select>
-                    <input type="hidden" id="state_id" value="{{old('state')}}">
                     @error('state')
                         <div class="alert alert-danger mt-2">{{ $message }}</div>
                     @enderror
@@ -103,12 +102,13 @@
                         @endif
                         @if(old('city'))     
                             @php 
-                                $data = $select2Old->getSelect2Data('cities',old('city'))
-                            @endphp                   
-                            <option value="{{$data->id}}" selected>{{$data->name}}</option>
+                                $data = $select2Old->getSelect2Data('cities',old('city'),' state_id='. old('state'))
+                            @endphp          
+                            @if (!empty($data))
+                                <option value="{{$data->id}}" selected>{{$data->name}}</option>
+                            @endif         
                         @endif
                     </select>
-                    <input type="hidden" id="city_id" value="{{old('city')}}">
                     @error('city')
                         <div class="alert alert-danger mt-2">{{ $message }}</div>
                     @enderror
@@ -161,37 +161,44 @@ jQuery(document).ready(function(){
         }
     });
     $('.city').select2();
-    $('.state').on('change', function(){
-        if($('.state').val()){
+    $('.state').on('change', function() {
+        if ($('.state').val()) {
+            select2city();
+            $(`.city`).val('').trigger('change');
+        }else {
             $('.city').select2({
+                placeholder: "Select",
+                allowClear: true,
+            });
+        }
+    });
+    if ($('#state').val() || $('#city').val()) {
+        select2city();
+    }
+
+    function select2city(){
+        $('.city').select2({
                 placeholder: "Select",
                 allowClear: true,
                 minimumInputLength: 2,
                 ajax: {
                     url: "{{route('get_value')}}",
                     dataType: 'json',
-                    data: function (params) {
+                    data: function(params) {
                         return {
                             q: params.term, // search term
-                            table:'cities',
+                            table: 'cities',
                             page: params.page,
                             where: `state_id=${$('#state').val()}`
                         };
                     },
-                    processResults: function (data) {
+                    processResults: function(data) {
                         return {
                             results: data
                         };
                     }
                 }
             });
-        }else{
-            $('.city').select2({});
-        }
-    });
-    if ($('#state_id').val() || $('#city_id').val()) {
-        getStateCity('states',` id=${$('#state_id').val()}`,'state');
-        getStateCity('cities', ` id=${$('#city_id').val()}`,'city');
     }
 
     function getStateCity(table,where,eleClass) {

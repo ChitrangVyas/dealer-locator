@@ -151,38 +151,45 @@ jQuery(document).ready(function(){
         }
     });
     $('.city').select2({width:"100%"});
-    $('.state').on('change', function(){
-        if($('.state').val()){
-            $('.city').select2({
-                placeholder: "Select",
-                allowClear: true,
-                minimumInputLength: 2,
-                width:"100%",
-                ajax: {
-                    url: "{{route('get_value')}}",
-                    dataType: 'json',
-                    data: function (params) {
-                        return {
-                            q: params.term, // search term
-                            table:'cities',
-                            page: params.page,
-                            where: `state_id=${$('#state').val()}`
-                        };
-                    },
-                    processResults: function (data) {
-                        return {
-                            results: data
-                        };
-                    }
-                }
-            });
-        }else{
+    $('.state').on('change', function() {
+        if ($('.state').val()) {
+            select2city();
+            $(`.city`).val('').trigger('change');
+        }else {
             $('.city').select2({
                 placeholder: "Select",
                 allowClear: true,
             });
         }
     });
+    if ($('#state').val() || $('#city').val()) {
+        select2city();
+    }
+
+    function select2city(){
+        $('.city').select2({
+                placeholder: "Select",
+                allowClear: true,
+                minimumInputLength: 2,
+                ajax: {
+                    url: "{{route('get_value')}}",
+                    dataType: 'json',
+                    data: function(params) {
+                        return {
+                            q: params.term, // search term
+                            table: 'cities',
+                            page: params.page,
+                            where: `state_id=${$('#state').val()}`
+                        };
+                    },
+                    processResults: function(data) {
+                        return {
+                            results: data
+                        };
+                    }
+                }
+            });
+    }
     $('body').on('submit','#customerForm',function(e){
         e.preventDefault();
         e.stopImmediatePropagation();

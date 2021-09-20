@@ -21,8 +21,8 @@
             <div class="col-sm-12 col-md-4">
                 <!-- text input -->
                 <div class="form-group">
-                    <label>Name</label>
-                    <input type="text" class="form-control" name="name" value="{{ old('name',(!empty($manufacturer))?$manufacturer->name:'') }}" placeholder="Full Name">
+                    <label>Name <span class="required_field">*</span></label>
+                    <input type="text" class="form-control" name="name" value="{{ old('name',(!empty($manufacturer))?$manufacturer->name:'') }}" placeholder="Full Name" tabindex="1">
                     @error('name')
                         <div class="alert alert-danger mt-2">{{ $message }}</div>
                     @enderror
@@ -31,8 +31,8 @@
             <div class="col-sm-12 col-md-4">
                 <!-- text input -->
                 <div class="form-group">
-                    <label>Email</label>
-                    <input type="email" class="form-control" name="email" value="{{old('email',(!empty($manufacturer))?$manufacturer->email:'') }}" placeholder="Email" autocomplete="false">
+                    <label>Email <span class="required_field">*</span></label>
+                    <input type="email" class="form-control" name="email" value="{{old('email',(!empty($manufacturer))?$manufacturer->email:'') }}" placeholder="Email" autocomplete="false" tabindex="2">
                     @error('email')
                         <div class="alert alert-danger mt-2">{{ $message }}</div>
                     @enderror
@@ -41,8 +41,8 @@
             <div class="col-sm-12 col-md-4">
                 <!-- text input -->
                 <div class="form-group">
-                    <label>Mobile</label>
-                    <input type="text" name="mobile" value="{{old('mobile', (!empty($manufacturer))?$manufacturer->mobile:'') }}" class="form-control" placeholder="Mobile">
+                    <label>Mobile <span class="required_field">*</span></label>
+                    <input type="text" name="mobile" value="{{old('mobile', (!empty($manufacturer))?$manufacturer->mobile:'') }}" class="form-control" placeholder="Mobile" tabindex="3">
                     @error('mobile')
                         <div class="alert alert-danger mt-2">{{ $message }}</div>
                     @enderror
@@ -51,10 +51,10 @@
             <div class="col-sm-12 col-md-4">
                 <!-- file input -->
                 <div class="form-group">
-                    <label>Logo</label>
+                    <label>Logo <span class="required_field">*</span></label>
                     <div class="input-group">
                       <div class="custom-file">
-                        <input type="file" class="custom-file-input" id="logo" name="logo">
+                        <input type="file" class="custom-file-input" id="logo" name="logo" tabindex="4">
                         <label class="custom-file-label" for="logo">Choose file</label>
                       </div>
                     </div>
@@ -72,7 +72,7 @@
                 <!-- text input -->
                 <div class="form-group">
                     <label>Address</label>
-                    <textarea class="form-control" name="address" rows="1" placeholder="Address">{{ old('address',(!empty($manufacturer))?$manufacturer->address:'') }}</textarea>
+                    <textarea class="form-control" name="address" rows="1" placeholder="Address" tabindex="5">{{ old('address',(!empty($manufacturer))?$manufacturer->address:'') }}</textarea>
                     @error('address')
                         <div class="alert alert-danger mt-2">{{ $message }}</div>
                     @enderror
@@ -82,7 +82,7 @@
                 <!-- text input -->
                 <div class="form-group">
                     <label>State</label>
-                    <select class="form-control select2 state" id='state' name='state_id'>
+                    <select class="form-control select2 state" id='state' name='state_id' tabindex="6">
                         <option value="">Select</option>
                         @if(!empty($manufacturer) && $manufacturer->state_id)
                             <option value="{{$manufacturer->state_id}}" selected>{{$manufacturer->state->name}}</option>
@@ -98,7 +98,7 @@
                 <!-- text input -->
                 <div class="form-group">
                     <label>City</label>
-                    <select class="form-control select2 city" id='city' name='city_id'>
+                    <select class="form-control select2 city" id='city' name='city_id' tabindex="7">
                         <option value="">Select</option>
                         @if(!empty($manufacturer) && !empty($manufacturer->city_id))
                             <option value="{{$manufacturer->city_id}}" selected>{{$manufacturer->city->name}}</option>
@@ -114,7 +114,7 @@
                 <!-- text input -->
                 <div class="form-group">
                     <label>Zipcode</label>
-                    <input type="text" name="zipcode" value="{{ old('zipcode',(!empty($manufacturer))?$manufacturer->zipcode:'')}}" class="form-control" placeholder="Enter zipcode">
+                    <input type="text" name="zipcode" value="{{ old('zipcode',(!empty($manufacturer))?$manufacturer->zipcode:'')}}" class="form-control" placeholder="Enter zipcode" tabindex="8">
                     @error('zipcode')
                         <div class="alert alert-danger mt-2">{{ $message }}</div>
                     @enderror
@@ -123,7 +123,7 @@
         </div>
         <div class="row">
             <div class="col-sm-12">
-                <button type="submit" class="btn btn-primary">Submit</button>
+                <button type="submit" class="btn btn-primary" tabindex="9">Submit</button>
             </div>
         </div>
     </form>

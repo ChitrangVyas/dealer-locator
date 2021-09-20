@@ -38,36 +38,36 @@
             <div class="col-sm-12 col-md-4">
                 <!-- text input -->
                 <div class="form-group">
-                    <label>Name</label>
-                    <input type="text" class="form-control" name="name" value="{{ (!empty($user))?$user->name:'' }}" placeholder="Full Name">
+                    <label>Name <span class="required_field">*</span></label>
+                    <input type="text" class="form-control" name="name" value="{{ (!empty($user))?$user->name:'' }}" placeholder="Full Name" tabindex="1">
                 </div>
             </div>
             <div class="col-sm-12 col-md-4">
                 <!-- text input -->
                 <div class="form-group">
-                    <label>Email</label>
-                    <input type="email" class="form-control" name="email" value="{{ (!empty($user))?$user->email:'' }}" placeholder="Email" autocomplete="false">
+                    <label>Email <span class="required_field">*</span></label>
+                    <input type="email" class="form-control" name="email" value="{{ (!empty($user))?$user->email:'' }}" placeholder="Email" autocomplete="false" tabindex="2">
                 </div>
             </div>
             <div class="col-sm-12 col-md-4">
                 <!-- text input -->
                 <div class="form-group">
-                    <label>Mobile</label>
-                    <input type="text" name="mobile" value="{{ (!empty($user))?$user->mobile:'' }}" class="form-control" placeholder="Mobile">
+                    <label>Mobile <span class="required_field">*</span></label>
+                    <input type="text" name="mobile" value="{{ (!empty($user))?$user->mobile:'' }}" class="form-control" placeholder="Mobile" tabindex="3">
                 </div>
             </div>
             <div class="col-sm-12 col-md-4">
                 <!-- text input -->
                 <div class="form-group">
-                    <label>Address</label>
+                    <label>Address <span class="required_field">*</span></label>
                     <textarea class="form-control" name="address" rows="1" placeholder="Address">{{ (!empty($user))?$user->address:'' }}</textarea>
                 </div>
             </div>
             <div class="col-sm-12 col-md-4">
                 <!-- text input -->
                 <div class="form-group">
-                    <label>State</label>
-                    <select class="form-control select2 state" id='state' name='state_id'>
+                    <label>State <span class="required_field">*</span></label>
+                    <select class="form-control select2 state" id='state' name='state_id' tabindex="4">
                         <option value="">Select</option>
                         @if(!empty($user) && $user->state_id)
                             <option value="{{$user->state_id}}" selected>{{$user->state->name}}</option>
@@ -78,8 +78,8 @@
             <div class="col-sm-12 col-md-4">
                 <!-- text input -->
                 <div class="form-group">
-                    <label>City</label>
-                    <select class="form-control select2 city" id='city' name='city_id'>
+                    <label>City <span class="required_field">*</span></label>
+                    <select class="form-control select2 city" id='city' name='city_id' tabindex="5">
                         <option value="">Select</option>
                         @if(!empty($user) && !empty($user->city_id))
                             <option value="{{$user->city_id}}" selected>{{$user->city->name}}</option>
@@ -98,14 +98,14 @@
             <div class="col-sm-12 col-md-4">
                 <!-- text input -->
                 <div class="form-group">
-                    <label>Zipcode</label>
-                    <input type="text" name="zipcode" value="{{ (!empty($user))?$user->zipcode:'' }}" class="form-control" placeholder="Enter zipcode">
+                    <label>Zipcode <span class="required_field">*</span></label>
+                    <input type="text" name="zipcode" value="{{ (!empty($user))?$user->zipcode:'' }}" class="form-control" placeholder="Enter zipcode" tabindex="6">
                 </div>
             </div>
         </div>
         <div class="row">
             <div class="col-sm-12">
-                <button type="submit" class="btn btn-primary">Submit</button>
+                <button type="submit" class="btn btn-primary" tabindex="7">Submit</button>
             </div>
         </div>
     </form>
@@ -115,6 +115,7 @@
 
 <script>
 jQuery(document).ready(function(){
+    $('.required_field').addClass('text-danger');
     $('.dealer').select2({
         placeholder: "Select",
         allowClear: true,
@@ -203,9 +204,9 @@ jQuery(document).ready(function(){
         e.stopImmediatePropagation();
         $("#customerForm .alert").remove();
         let contact = ($("input[name=users_group_id]").val() == 5) ? 'vendor' : 'customer';
-        $("#modal-lg").modal("hide");
+        // $("#modal-lg").modal("hide");
         createCustomer((contact=='customer')?"{{ route('customer.store') }}":"{{ route('vendor.store') }}").then(function(data){
-            $("#modal-lg").modal("hide");                
+            $("#modal-lg").modal("hide");
             if(contact == 'customer'){
                 var newOption = new Option(data.name+" - " + data.zipcode + " - " + data.city.name, data.id, true, true);
             }else{

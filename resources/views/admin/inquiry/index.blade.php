@@ -300,14 +300,14 @@
         $('body').on('submit','#saveInquiryLog', function(e){
             e.preventDefault();
             let url = "{{ route('inquiry-log.store') }}";
-            saveInquiryLog(url,$('#saveInquiryLog').serialize());
+            saveInquiryLog(url,$('#saveInquiryLog').serialize(),'','saveInquiryLog');
         });
 
         $('body').on('submit','#saveReminder', function(e){
             e.preventDefault();
             let url = "{{ route('storeReminder') }}";
 
-            saveInquiryLog(url, $('#saveReminder').serialize());
+            saveInquiryLog(url, $('#saveReminder').serialize(),'','saveReminder');
         });
 
         $('body').on('submit','#saveQuote', function(e){
@@ -467,7 +467,7 @@
         });
     }
 
-    function saveInquiryLog(url,formData,modal="modal-lg"){
+    function saveInquiryLog(url,formData,modal="modal-lg",form=""){
         const Toast = Swal.mixin({
                         toast: true,
                         position: 'top-end',
@@ -496,7 +496,11 @@
                 error: function (jqXHR, textStatus, errorThrown) {
                     var err = JSON.parse(jqXHR.responseText).errors;
                     $.each(err,function(key,val){                
-                        $(`[name=${key}]`).closest('.form-group').after(`<div class="alert alert-danger mt-2">${val}</div>`);                                        
+                        if(form !==""){
+                            $(`#${form} [name=${key}]`).closest('.form-group').after(`<div class="alert alert-danger mt-2">${val}</div>`);
+                        }else{
+                            $(`[name=${key}]`).closest('.form-group').after(`<div class="alert alert-danger mt-2">${val}</div>`);
+                        }
                     });
                     Toast.fire({
                         type: 'error',

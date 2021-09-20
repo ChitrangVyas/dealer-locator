@@ -80,6 +80,7 @@
 @yield('js')
 <script>
   $("document").ready(function(){
+    $('.required_field').addClass('text-danger');
     $.ajaxSetup({
       headers: {
         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')

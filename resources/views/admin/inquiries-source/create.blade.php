@@ -21,9 +21,9 @@
                     <div class="col-sm-12 col-md-6">
                         <!-- text input -->
                         <div class="form-group">
-                            <label>Source</label>
+                            <label>Source <span class="required_field">*</span></label>
                             <input type="text" class="form-control" name="source"
-                                value="{{ (!empty($inquiries_source))?$inquiries_source->source:'' }}" placeholder="source">
+                                value="{{ (!empty($inquiries_source))?$inquiries_source->source:'' }}" placeholder="source" tabindex="1">
                             @error('source')
                             <div class="alert alert-danger mt-2">{{ $message }}</div>
                             @enderror
@@ -33,7 +33,7 @@
                         <!-- text input -->
                         <div class="form-group">
                             <label class="col-12">Status</label>
-                            <input type="checkbox" name="status" id="status" class="form-control status" data-bootstrap-switch  data-on-text="Enable" data-off-text="Disable" data-off-color="danger" data-on-color="success" {{((!isset($inquiries_source)) || (!empty($inquiries_source->status)))? "checked" :"" }}>
+                            <input type="checkbox" name="status" id="status" class="form-control status" data-bootstrap-switch  data-on-text="Enable" data-off-text="Disable" data-off-color="danger" data-on-color="success" {{((!isset($inquiries_source)) || (!empty($inquiries_source->status)))? "checked" :"" }} tabindex="2">
                             @error('status')
                             <div class="alert alert-danger mt-2">{{ $message }}</div>
                             @enderror
@@ -42,7 +42,7 @@
                 </div>
                 <div class="row">
                     <div class="col-sm-12">
-                        <button type="submit" class="btn btn-primary">Submit</button>
+                        <button type="submit" class="btn btn-primary" tabindex="3">Submit</button>
                     </div>
                 </div>
             </form>
@@ -56,8 +56,8 @@
 <script>
     $(document).ready(function(){
         $("input[data-bootstrap-switch]").each(function(){
-            $(this).bootstrapSwitch('state', $(this).prop('checked'));
-            // $(this).bootstrapSwitch();
+            // $(this).bootstrapSwitch('state', $(this).prop('checked'));
+            $(this).bootstrapSwitch();
         });
     });
 </script>

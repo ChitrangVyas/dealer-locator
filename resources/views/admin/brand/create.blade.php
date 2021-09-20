@@ -21,8 +21,8 @@
                     <div class="col-sm-12 col-md-6">
                         <!-- text input -->
                         <div class="form-group">
-                            <label>Manufacturer</label>                            
-                            <select class="form-control" id="manufacturer_id" name="manufacturer_id">
+                            <label>Manufacturer <span class="required_field">*</span></label>                            
+                            <select class="form-control" id="manufacturer_id" name="manufacturer_id" tabindex="1">
                                 <option value="">Please select</option>
                                 @foreach($manufacturers as $manufacturer)
                                     <option {{ (!empty($brand) && $brand->manufacturer_id==$manufacturer->id)?"selected='selected'":'' }} value="{{$manufacturer->id}}">{{$manufacturer->name}}</option>
@@ -36,9 +36,9 @@
                     <div class="col-sm-12 col-md-6">
                         <!-- text input -->
                         <div class="form-group">
-                            <label>Name</label>
+                            <label>Name <span class="required_field">*</span></label>
                             <input type="text" class="form-control" name="name"
-                                value="{{ old('name',(!empty($brand))?$brand->name:'') }}" placeholder="Full Name">
+                                value="{{ old('name',(!empty($brand))?$brand->name:'') }}" placeholder="Full Name" tabindex="2">
                             @error('name')
                             <div class="alert alert-danger mt-2">{{ $message }}</div>
                             @enderror
@@ -51,7 +51,7 @@
                             <label>Logo</label>
                             <div class="input-group">
                                 <div class="custom-file">
-                                    <input type="file" class="custom-file-input" id="logo" name="logo">
+                                    <input type="file" class="custom-file-input" id="logo" name="logo" tabindex="3">
                                     <label class="custom-file-label" for="logo">Choose file</label>
                                 </div>
                             </div>
@@ -68,8 +68,8 @@
                     <div class="col-sm-12 col-md-6">
                         <!-- text input -->
                         <div class="form-group">
-                            <label>Description</label>                            
-                            <textarea name="description" class="form-control" >{{ old('description',(!empty($brand))?$brand->description:'') }}</textarea>
+                            <label>Description <span class="required_field">*</span></label>                            
+                            <textarea name="description" class="form-control" tabindex="4">{{ old('description',(!empty($brand))?$brand->description:'') }}</textarea>
                             @error('description')
                             <div class="alert alert-danger mt-2">{{ $message }}</div>
                             @enderror
@@ -78,8 +78,8 @@
                     <div class="col-sm-12 col-md-6">
                         <!-- text input -->
                         <div class="form-group">
-                            <label>Short Description</label>                            
-                            <textarea name="short_description" class="form-control" >{{ old('short_description',(!empty($brand))?$brand->short_description:'') }}</textarea>
+                            <label>Short Description <span class="required_field">*</span></label>                            
+                            <textarea name="short_description" class="form-control" tabindex="5">{{ old('short_description',(!empty($brand))?$brand->short_description:'') }}</textarea>
                             @error('short_description')
                             <div class="alert alert-danger mt-2">{{ $message }}</div>
                             @enderror
@@ -88,7 +88,7 @@
                 </div>
                 <div class="row">
                     <div class="col-sm-12">
-                        <button type="submit" class="btn btn-primary">Submit</button>
+                        <button type="submit" class="btn btn-primary" tabindex="6">Submit</button>
                     </div>
                 </div>
             </form>

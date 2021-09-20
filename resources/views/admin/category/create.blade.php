@@ -21,9 +21,9 @@
                     <div class="col-sm-12 col-md-6">
                         <!-- text input -->
                         <div class="form-group">
-                            <label>Name</label>
+                            <label>Name <span class="required_field">*</span></label>
                             <input type="text" class="form-control" name="name"
-                                value="{{ old('name',(!empty($category))?$category->name:'') }}" placeholder="Full Name">
+                                value="{{ old('name',(!empty($category))?$category->name:'') }}" placeholder="Full Name" tabindex="1">
                             @error('name')
                             <div class="alert alert-danger mt-2">{{ $message }}</div>
                             @enderror
@@ -33,7 +33,7 @@
                         <!-- text input -->
                         <div class="form-group">
                             <label>Parent category</label>
-                            <select class="form-control select2" id='parent_category' name='parent_category'>
+                            <select class="form-control select2" id='parent_category' name='parent_category' tabindex="2">
                                 <option value="0">Select</option>
                                 @foreach($parent_category as $tc)
                                 <option value="{{$tc->id}}" {{ (!empty($category) && $category->parent_category == $tc->id ) ? 'selected' :''}} >{{$tc->name}}</option>
@@ -48,10 +48,10 @@
                     <div class="col-sm-12 col-md-6">
                         <!-- file input -->
                         <div class="form-group">
-                            <label>Image</label>
+                            <label>Image <span class="required_field">*</span></label>
                             <div class="input-group">
                                 <div class="custom-file">
-                                    <input type="file" class="custom-file-input" id="image" name="image">
+                                    <input type="file" class="custom-file-input" id="image" name="image" tabindex="3">
                                     <label class="custom-file-label" for="image">Choose file</label>
                                 </div>
                             </div>
@@ -69,7 +69,7 @@
                         <!-- text input -->
                         <div class="form-group">
                             <label>Description</label>                            
-                            <textarea name="description" class="form-control summernote" >{{ old('description',(!empty($category))?$category->description:'') }}</textarea>
+                            <textarea name="description" class="form-control summernote" tabindex="4">{{ old('description',(!empty($category))?$category->description:'') }}</textarea>
                             @error('description')
                             <div class="alert alert-danger mt-2">{{ $message }}</div>
                             @enderror
@@ -78,7 +78,7 @@
                 </div>
                 <div class="row">
                     <div class="col-sm-12">
-                        <button type="submit" class="btn btn-primary">Submit</button>
+                        <button type="submit" class="btn btn-primary" tabindex="5">Submit</button>
                     </div>
                 </div>
             </form>

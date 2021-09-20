@@ -59,7 +59,7 @@
             <div class="col-sm-12 col-md-4">
                 <!-- text input -->
                 <div class="form-group">
-                    <label>Email</label>
+                    <label>Email <span class="required_field">*</span></label>
                     <input type="email" class="form-control" name="email" value="{{old('email', (!empty($user))?$user->email:'') }}" placeholder="Email" autocomplete="false" tabindex="3">
                     @error('email')
                         <div class="alert alert-danger mt-2">{{ $message }}</div>
@@ -69,7 +69,7 @@
             <div class="col-sm-12 col-md-4">
                 <!-- text input -->
                 <div class="form-group">
-                    <label>Password</label>
+                    <label>Password <span class="required_field">*</span></label>
                     <input type="password" name="password" value="{{old('password')}}" class="form-control" placeholder="Password" tabindex="4">
                     @error('password')
                         <div class="alert alert-danger mt-2">{{ $message }}</div>
@@ -79,7 +79,7 @@
             <div class="col-sm-12 col-md-4">
                 <!-- text input -->
                 <div class="form-group">
-                    <label>Mobile</label>
+                    <label>Mobile <span class="required_field">*</span></label>
                     <input type="text" name="mobile" value="{{ old('mobile',(!empty($user))?$user->mobile:'') }}" class="form-control" placeholder="Mobile" tabindex="5">
                     @error('mobile')
                         <div class="alert alert-danger mt-2">{{ $message }}</div>
@@ -89,7 +89,7 @@
             <div class="col-sm-12 col-md-4">
                 <!-- text input -->
                 <div class="form-group">
-                    <label>Address</label>
+                    <label>Address <span class="required_field">*</span></label>
                     <textarea class="form-control" name="address" rows="1" placeholder="Address" tabindex="6">{{ old('address',(!empty($user))?$user->address:'') }}</textarea>
                     @error('address')
                         <div class="alert alert-danger mt-2">{{ $message }}</div>
@@ -99,7 +99,7 @@
             <div class="col-sm-12 col-md-4">
                 <!-- text input -->
                 <div class="form-group">
-                    <label>State</label>
+                    <label>State <span class="required_field">*</span></label>
                     <select class="form-control select2 state" id='state' name='state' tabindex="7">
                         <option value="">Select</option>
                         @if(!empty($user) && $user->state_id)
@@ -121,7 +121,7 @@
             <div class="col-sm-12 col-md-4">
                 <!-- text input -->
                 <div class="form-group">
-                    <label>City</label>
+                    <label>City <span class="required_field">*</span></label>
                     <select class="form-control select2 city" id='city' name='city' tabindex="8">
                         <option value="">Select</option>
                         @if(!empty($user) && !empty($user->city_id))
@@ -145,7 +145,7 @@
             <div class="col-sm-12 col-md-4">
                 <!-- text input -->
                 <div class="form-group">
-                    <label>Zipcode</label>
+                    <label>Zipcode <span class="required_field">*</span></label>
                     <input type="text" name="zipcode" value="{{ old('zipcode',(!empty($user))?$user->zipcode:'') }}" class="form-control" placeholder="Enter zipcode" tabindex="9">
                     @error('zipcode')
                         <div class="alert alert-danger mt-2">{{ $message }}</div>

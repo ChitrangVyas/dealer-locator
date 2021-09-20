@@ -25,8 +25,8 @@
         <div class="col-sm-12 col-md-4">
                 <!-- text input -->
                 <div class="form-group">
-                    <label>Inquiry Source</label>
-                    <select class="form-control select2 inquiry_source" id='inquiry_source' name='inquiry_source'>
+                    <label>Inquiry Source <span class="required_field">*</span></label>
+                    <select class="form-control select2 inquiry_source" id='inquiry_source' name='inquiry_source' tabindex="1">
                         <option value="">Select</option>
                         @foreach ($inquiries_source as $inquiry_source)
                             <option value="{{$inquiry_source->id}}" {{ (!empty($inquiry) && $inquiry->inquiries_source_id == $inquiry_source->id) ? 'selected' : ''}}> {{$inquiry_source->source}} </option>
@@ -40,9 +40,9 @@
             <div class="col-sm-12 col-md-4">
                 <!-- text input -->
                 <div class="form-group">
-                        <label>Customer</label>
+                        <label>Customer <span class="required_field">*</span></label>
                         <div class="input-group input-group-sm">
-                        <select class="form-control select2 customer" id='customer' name='customer'>
+                        <select class="form-control select2 customer" id='customer' name='customer' tabindex="2">
                             <option value="">Select</option>
                             @if(!empty($inquiry) && !empty($inquiry->customer_id))
                                 <option value="{{$inquiry->customer_id}}" selected>{{$inquiry->customer->name.' - ' .$inquiry->customer->zipcode.' - '. $inquiry->customer->city->name  }}</option>
@@ -62,7 +62,7 @@
                 <!-- text input -->
                 <div class="form-group">
                     <label>Product</label>
-                    <select class="form-control select2 product" multiple="multiple" id='product' name='product[]'>
+                    <select class="form-control select2 product" multiple="multiple" id='product' name='product[]' tabindex="3">
                         <option value="">Select</option>
                         @if(!empty($inquiry) && $inquiry->product)
                             @foreach ($inquiry->product as $product)
@@ -80,7 +80,7 @@
                 <!-- text input -->
                 <div class="form-group">
                     <label>Dealer</label>
-                    <select class="form-control select2 dealer" id='dealer' name='dealer'>
+                    <select class="form-control select2 dealer" id='dealer' name='dealer' tabindex="4">
                         <option value="">Select</option>
                         @if(!empty($inquiry) && !empty($inquiry->dealer_id))
                             <option value="{{$inquiry->dealer_id}}" selected>{{$inquiry->dealer->name.' - ' .$inquiry->dealer->zipcode.' - '. $inquiry->dealer->city->name}}</option>
@@ -100,7 +100,7 @@
                 <!-- text input -->
                 <div class="form-group">
                     <label>Retailer</label>
-                    <select class="form-control select2 retailer" id='retailer' name='retailer'>
+                    <select class="form-control select2 retailer" id='retailer' name='retailer' tabindex="5">
                         <option value="">Select</option>
                         @if(!empty($inquiry) && !empty($inquiry->retailer_id))
                             <option value="{{$inquiry->retailer_id}}" selected>{{ $inquiry->retailer->name.' - ' .$inquiry->retailer->zipcode.' - '. $inquiry->retailer->city->name }}</option>
@@ -120,7 +120,7 @@
         </div>
         <div class="row">
             <div class="col-sm-12">
-                <button type="submit" class="btn btn-primary">Submit</button>
+                <button type="submit" class="btn btn-primary" tabindex="6">Submit</button>
             </div>
         </div>
     </form>

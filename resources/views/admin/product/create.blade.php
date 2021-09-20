@@ -21,9 +21,9 @@
                     <div class="col-sm-12 col-md-6">
                         <!-- text input -->
                         <div class="form-group">
-                            <label>Name</label>
+                            <label>Name <span class="required_field">*</span></label>
                             <input type="text" class="form-control" name="name"
-                                value="{{ old('name',(!empty($product))?$product->name:'') }}" placeholder="Full Name">
+                                value="{{ old('name',(!empty($product))?$product->name:'') }}" placeholder="Full Name" tabindex="1">
                             @error('name')
                             <div class="alert alert-danger mt-2">{{ $message }}</div>
                             @enderror
@@ -33,8 +33,8 @@
                     <div class="col-sm-12 col-md-6">
                         <!-- text input -->
                         <div class="form-group">
-                            <label>Brand</label>                            
-                            <select class="form-control" id="brand_id" name="brand_id">
+                            <label>Brand <span class="required_field">*</span></label>                            
+                            <select class="form-control" id="brand_id" name="brand_id" tabindex="2">
                                 <option value="">Please select</option>
                                 @foreach($brands as $brand)
                                     <option {{ old('brand_id', (!empty($product) && $product->brand_id == $brand->id))== $brand->id ? "selected='selected'" : '' }} value="{{$brand->id}}">{{$brand->name}}</option>
@@ -50,7 +50,7 @@
                         <!-- text input -->
                         <div class="form-group">
                             <label>Category</label>                            
-                            <select class="form-control categories" multiple="multiple" name="categories[]">
+                            <select class="form-control categories" multiple="multiple" name="categories[]" tabindex="3">
                                 <option value="">Please select</option>
                                 @foreach($categories as $category)
                                     <option value="{{$category->id}}" {{old('categories[]', (!empty($product_category) && in_array($category->id,$product_category)))?'selected':''}}>{{$category->name}}</option>
@@ -68,7 +68,7 @@
                             <label>Image</label>
                             <div class="input-group">
                                 <div class="custom-file">
-                                    <input type="file" class="custom-file-input" id="image" value='' name="image">
+                                    <input type="file" class="custom-file-input" id="image" value='' name="image" tabindex="4">
                                     <label class="custom-file-label" for="image">Choose file</label>
                                 </div>
                             </div>
@@ -85,8 +85,8 @@
                     <div class="col-sm-12 col-md-12">
                         <!-- text input -->
                         <div class="form-group">
-                            <label>Description</label>                            
-                            <textarea name="description" class="form-control summernote" >{{ old('description',(!empty($product))?$product->description:'') }}</textarea>
+                            <label>Description <span class="required_field">*</span></label>                            
+                            <textarea name="description" class="form-control summernote" tabindex="5">{{ old('description',(!empty($product))?$product->description:'') }}</textarea>
                             @error('description')
                             <div class="alert alert-danger mt-2">{{ $message }}</div>
                             @enderror
@@ -95,9 +95,9 @@
                     <div class="col-sm-12 col-md-6">
                         <!-- text input -->
                         <div class="form-group">
-                            <label>Inventory</label>
+                            <label>Inventory <span class="required_field">*</span></label>
                             <input type="number" class="form-control" name="inventory"
-                                value="{{ old('inventory',(!empty($product))?$product->inventory:'') }}" placeholder="inventory">
+                                value="{{ old('inventory',(!empty($product))?$product->inventory:'') }}" placeholder="inventory" tabindex="6">
                             @error('inventory')
                             <div class="alert alert-danger mt-2">{{ $message }}</div>
                             @enderror
@@ -106,9 +106,9 @@
                     <div class="col-sm-12 col-md-6">
                         <!-- text input -->
                         <div class="form-group">
-                            <label>Price</label>
+                            <label>Price <span class="required_field">*</span></label>
                             <input type="number" class="form-control" name="price"
-                                value="{{ old('price',(!empty($product))?$product->price:'') }}" placeholder="Price" min=1 required>
+                                value="{{ old('price',(!empty($product))?$product->price:'') }}" placeholder="Price" tabindex="7" min=1 required>
                             @error('price')
                             <div class="alert alert-danger mt-2">{{ $message }}</div>
                             @enderror
@@ -117,7 +117,7 @@
                 </div>
                 <div class="row">
                     <div class="col-sm-12 col-md-12">
-                        <button type="submit" class="btn btn-primary">Submit</button>
+                        <button type="submit" class="btn btn-primary" tabindex="8">Submit</button>
                     </div>
                 </div>
             </form>

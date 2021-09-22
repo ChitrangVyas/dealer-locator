@@ -422,7 +422,7 @@ class OrderController extends MainController
         }
         $where .= (!empty($search)) ? " AND (orders.order_number like '$search%' OR orders.total like '$search%' OR orders.created_at like '$search%' OR (c.name is NOT NULL AND c.name like '$search%') OR (d.name is NOT NULL AND d.name like '$search%'))":'';
         $orders = DB::table('orders')
-        ->select(DB::raw('orders.id,order_number, c.id AS to_user, d.id AS from_user, c.name as customer,d.name as added_by, orders.total as amount, orders.created_at as created_date'))
+        ->select(DB::raw('orders.id,order_number, orders.is_po_recieved, orders.recieved_date, c.id AS to_user, d.id AS from_user, c.name as customer,d.name as added_by, orders.total as amount, orders.created_at as created_date'))
         ->join('order_product AS op','orders.id','=','op.order_id','left')
         ->join('users AS c','orders.to_user','=','c.id','left')
         ->join('users AS d','orders.from_user','=','d.id','left')
@@ -442,11 +442,11 @@ class OrderController extends MainController
             $action_html = "<span><a data-url=".route('quote.show',$order->id)." data-order=".$order->id." class='btn btn-primary view-order' data-toggle='modal' data-target='#orderModal'>View</a></span>";
             // $action_html .= "<span class='ml-3 create-po-".$order->id."'><a data-url=".route('cart.po.create')." data-order=".$order->id." class='btn btn-success view-order'>Generate PO</a></span>";
             if(empty($is_sale_generated) && (auth()->user()->id == $order->from_user) ){
-                $action_html .= "<span class='ml-3 create-sale-".$order->id."'><a data-url=".route('cart.sale.create')." data-order=".$order->id." class='btn btn-default view-order' data-toggle='modal' data-target='#orderModal'>Generate Sale</a></span>";
+                $action_html .= "<span class='ml-2 create-sale-".$order->id."'><a data-url=".route('cart.sale.create')." data-order=".$order->id." class='btn btn-default view-order' data-toggle='modal' data-target='#orderModal'>Generate Sale</a></span>";
             }
             // $action_html = "<span><a href=".route('order.edit',$order->id)." class='btn btn-primary'>Edit</a></span>";
             // $action_html .= "<span class='ml-3'><button type=submit data-user=$order->id class='btn btn-danger' onClick=deleteOrder($order->id)>Delete</button></span>";
-            $data[] = [$order->id,$order->order_number,$order->amount, ucwords($added_by), ucwords($customer),$order->created_date, $action_html];
+            $data[] = [$order->id,$order->order_number,$order->amount, ucwords($added_by), ucwords($customer),(!empty($order->is_po_recieved))?'Y':'N',(!empty($order->recieved_date))?$order->recieved_date:'N/A',$order->created_date, $action_html];
         }
         $return_array = array();
         $return_array['draw'] = $request['draw'];

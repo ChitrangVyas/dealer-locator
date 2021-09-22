@@ -25,6 +25,8 @@
                                     <th>Amount</th>
                                     <th>Added By</th>
                                     <th>Customer</th>
+                                    <th>PO Recieved</th>
+                                    <th>PO Recieved Date</th>
                                     <th>Created Date</th>
                                     <th>Action</th>
                                 </tr>
@@ -116,6 +118,12 @@
                     "name": "c.name"
                 },
                 {
+                    "name": "orders.is_po_recieved"
+                },
+                {
+                    "name": "orders.recieved_date"
+                },
+                {
                     "name": "orders.created_at"
                 },
                 {
@@ -124,7 +132,7 @@
             ],
             "columnDefs": [
                 {
-                    "targets": [6],
+                    "targets": [8],
                     "orderable": false
                 },
                 {

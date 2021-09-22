@@ -98,6 +98,7 @@ Route::group(['prefix'=>'admin','middleware'=>['auth']],function () {
     Route::resource('inquiry-log', App\Http\Controllers\Admin\InquiryLogController::class);
     Route::resource('order', App\Http\Controllers\Admin\OrderController::class);
     Route::resource('vendor', App\Http\Controllers\Admin\VendorController::class);
+    Route::resource('settings', App\Http\Controllers\SettingsController::class);
 });
 
 

@@ -22,4 +22,21 @@ class MainController extends Controller
         View::share ( 'select2Old', new User());
     }
 
+
+    public function timezone_list() {
+        $zones_array = array();
+        $timestamp = time();
+        $dummy_datetime_object = new \DateTime();
+        foreach(timezone_identifiers_list() as $key => $zone) {
+        date_default_timezone_set($zone);
+        $zones_array[$key]['zone'] = $zone;
+        $zones_array[$key]['diff_from_GMT'] = 'UTC/GMT ' . date('P', $timestamp);
+    
+        $tz = new \DateTimeZone($zone);
+        $zones_array[$key]['offset'] = $tz->getOffset($dummy_datetime_object);
+        }
+  
+        return $zones_array;
+    }
+
 }

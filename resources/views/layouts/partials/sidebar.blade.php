@@ -203,6 +203,14 @@
             </ul>
           </li>
           @endnotCustomer 
+          @admin()
+          <li class="nav-item">
+            <a href="{{ route('settings.index') }}" class="nav-link  {{ $elementActive == 'settings' ? 'active' : '' }}">
+            <i class="nav-icon fas fa-cog"></i>
+              <p>Settings</p>
+            </a>
+          </li>
+          @endadmin
         </ul>
       </nav>
       <!-- /.sidebar-menu -->

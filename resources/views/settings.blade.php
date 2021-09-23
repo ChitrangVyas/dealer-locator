@@ -84,7 +84,7 @@
                 <!-- text input -->
                 <div class="form-group">
                     <label>Email </label>
-                    <input type="email" class="form-control" name="email" value="{{ old('email',(!empty($settings) && !empty($settings->json_data['email']))?$settings->json_data['email']:'') }}" placeholder="Email" autocomplete="false" tabindex="2"> 
+                    <input type="text" class="form-control" name="email" value="{{ old('email',(!empty($settings) && !empty($settings->json_data['email']))?$settings->json_data['email']:'') }}" placeholder="Email" autocomplete="false" tabindex="2"> 
                     @error('email')
                         <div class="alert alert-danger mt-2">{{ $message }}</div>
                     @enderror
@@ -106,6 +106,30 @@
                     <label>Address</label>
                     <textarea class="form-control" name="address" rows="1" placeholder="Address" tabindex="5">{{ old('address',(!empty($settings) && !empty($settings->json_data['address']))?$settings->json_data['address']:'') }}</textarea>
                     @error('address')
+                        <div class="alert alert-danger mt-2">{{ $message }}</div>
+                    @enderror
+                </div>
+            </div>
+            <div class="col-sm-12 col-md-4">
+                <!-- text input -->
+                <div class="form-group">
+                    <label>Country</label>
+                    <select class="form-control select2 country" id='country' name='country' tabindex="5">
+                        <option value="">Select</option>
+                        @if(!empty($settings) && (!empty($settings->json_data['country'])))
+                            @php 
+                                $country = $select2Old->getSelect2Data('countries',$settings->json_data['country'])
+                            @endphp
+                            <option value="{{$settings->json_data['country']}}" selected>{{$country->name}}</option>
+                        @endif
+                        @if(old('country'))     
+                            @php 
+                                $data = $select2Old->getSelect2Data('countries',old('country'))
+                            @endphp                   
+                            <option value="{{$data->id}}" selected>{{$data->name}}</option>
+                        @endif
+                    </select>
+                    @error('country')
                         <div class="alert alert-danger mt-2">{{ $message }}</div>
                     @enderror
                 </div>
@@ -141,8 +165,8 @@
                     <select class="form-control select2 city" id='city' name='city' tabindex="6">
                         <option value="">Select</option>
                         @if(!empty($settings) && (!empty($settings->json_data['city'])))
-                        @php 
-                                $city = $select2Old->getSelect2Data('states',$settings->json_data['city'])
+                            @php 
+                                $city = $select2Old->getSelect2Data('cities',$settings->json_data['city'])
                             @endphp
                             <option value="{{$settings->json_data['city']}}" selected>{{$city->name}}</option>
                         @endif
@@ -180,9 +204,12 @@
             <div class="col-sm-12 col-md-4">
                 <!-- text input -->
                 <div class="form-group">
-                    <label>Name</label>
-                    <input type="text" class="form-control" name="mail_name" value="{{ old('mail_name',(!empty($settings->json_data['mail_name']))?$settings->json_data['mail_name']:'')}}" placeholder="Name" tabindex="2">
-                    @error('mail_name')
+                    <label>Mailer</label>
+                    <select name="mail_mailer" id="mail_mailer" class="form-control">
+                        <option value="smtp" {{ (old('mail_mailer') == 'smtp'||(!empty($settings->json_data['mail_mailer']) && $settings->json_data['mail_mailer'] == 'smtp')) ?'selected':''}}>SMTP</option>
+                        <option value="pop" {{ (old('mail_mailer') == 'pop' ||(!empty($settings->json_data['mail_mailer']) && $settings->json_data['mail_mailer']== 'pop')) ?'selected':''}}>POP</option>
+                    </select>
+                    @error('mail_mailer')
                         <div class="alert alert-danger mt-2">{{ $message }}</div>
                     @enderror
                 </div>
@@ -191,7 +218,7 @@
                 <!-- text input -->
                 <div class="form-group">
                     <label>User Name</label>
-                    <input type="email" class="form-control" name="mail_username" value="{{ old('mail_username',(!empty($settings->json_data['mail_username']))?$settings->json_data['mail_username']:'')}}" placeholder="User Name" tabindex="2">
+                    <input type="text" class="form-control" name="mail_username" value="{{ old('mail_username',(!empty($settings->json_data['mail_username']))?$settings->json_data['mail_username']:'')}}" placeholder="User Name" tabindex="2">
                     @error('mail_username')
                         <div class="alert alert-danger mt-2">{{ $message }}</div>
                     @enderror
@@ -231,7 +258,11 @@
                 <!-- text input -->
                 <div class="form-group">
                     <label>Mail Encryption</label>
-                    <input type="text" class="form-control" name="mail_encryption" value="{{ old('mail_encryption',(!empty($settings->json_data['mail_encryption']))?$settings->json_data['mail_encryption']:'')}}" placeholder="Mail Encryption" tabindex="2">
+                    <!-- <input type="text" class="form-control" name="mail_encryption" value="{{ old('mail_encryption',(!empty($settings->json_data['mail_encryption']))?$settings->json_data['mail_encryption']:'')}}" placeholder="Mail Encryption" tabindex="2"> -->
+                    <select name="mail_encryption" id="mail_encryption" class="form-control">
+                        <option value="ssl" {{ (old('mail_encryption') == 'ssl'||(!empty($settings->json_data['mail_encryption']) && $settings->json_data['mail_encryption'] == 'ssl')) ?'selected':''}}>SSL</option>
+                        <option value="tls" {{ (old('mail_encryption') == 'tls' ||(!empty($settings->json_data['mail_encryption']) && $settings->json_data['mail_encryption'] == 'tls')) ?'selected':''}}>TLS</option>
+                    </select>
                     @error('mail_encryption')
                         <div class="alert alert-danger mt-2">{{ $message }}</div>
                     @enderror
@@ -277,6 +308,27 @@ jQuery(document).ready(function(){
         placeholder: "Select Timezone",
         allowClear: true,
     });
+    $('.country').select2({
+        placeholder: "Select Country",
+        allowClear: true,
+        minimumInputLength: 2,
+        ajax: {
+            url: "{{route('get_value')}}",
+            dataType: 'json',
+            data: function (params) {
+                return {
+                    q: params.term, // search term
+                    table:'countries',
+                    where: ''
+                };
+            },
+            processResults: function (data) {
+                return {
+                    results: data
+                };
+            }
+        }
+    });
     $('.state').select2({
         placeholder: "Select",
         allowClear: true,
@@ -298,6 +350,7 @@ jQuery(document).ready(function(){
             }
         }
     });
+
     $('.city').select2();
     $('.state').on('change', function() {
         if ($('.state').val()) {

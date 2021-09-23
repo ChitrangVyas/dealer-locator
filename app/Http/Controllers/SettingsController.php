@@ -6,7 +6,9 @@ use App\Http\Controllers\Admin\MainController;
 use App\Models\City;
 use App\Models\Settings;
 use App\Models\State;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Artisan;
 use View;
 
 class SettingsController extends MainController
@@ -25,10 +27,10 @@ class SettingsController extends MainController
      */
     public function index()
     {
-        $settings = Settings::all();
+        $settings = Settings::find(1);
         if(!empty($settings)){
-            $settings[0]['json_data'] = json_decode($settings[0]['json_data'],true);
-            $settings = $settings[0];
+            $settings['json_data'] = json_decode($settings['json_data'],true);
+            $settings = $settings;
             // $settings['json_data']['state_name'] = '';
             // $settings['json_data']['city_name'] ='';
             // if(!empty($settings['json_data']['state'])){
@@ -38,7 +40,7 @@ class SettingsController extends MainController
             // if(!empty($settings['json_data']['city'])){
             //     $settings['json_data']['city_name'] = $this->getCity($settings['json_data']['city'])->name;
             // }
-        }
+        }        
         return view('settings',['timezone_list'=>$this->timezone_list(),'settings'=>$settings]);
     }
 
@@ -72,10 +74,17 @@ class SettingsController extends MainController
         if(empty($request->input('id'))){
             $settings = Settings::create(['json_data'=>json_encode($request_data)]);
         }else{
-            Settings::where('id',$request->input('id'))->update(['json_data'=>json_encode($request_data)]);
-            $settings = Settings::findOrFail($request->input('id'));
+            $settings = Settings::where('id',$request->input('id'))->update(['json_data'=>json_encode($request_data)]);
         }
-        return view('settings',['timezone_list'=>$this->timezone_list(),'settings'=>$settings]);
+        if(!empty($settings)){
+            config(['app.name' => $request_data['site_name']]);
+            config(['app.timezone' => $request_data['timezone']]);
+            date_default_timezone_set(config('app.timezone'));
+            //'timezone' => 'Europe/Brussels' OR UTC
+            Artisan::call('cache:clear');
+            Artisan::call('config:clear');            
+        }
+        return redirect(route('settings.index'));
     }
     public function storeImage($request){
         if($request->file()) {

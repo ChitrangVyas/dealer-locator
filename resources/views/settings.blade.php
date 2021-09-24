@@ -118,9 +118,9 @@
                         <option value="">Select</option>
                         @if(!empty($settings) && (!empty($settings->json_data['country'])))
                             @php 
-                                $country = $select2Old->getSelect2Data('countries',$settings->json_data['country'])
+                                $selectedCountry = $select2Old->getSelect2Data('countries',$settings->json_data['country'])
                             @endphp
-                            <option value="{{$settings->json_data['country']}}" selected>{{$country->name}}</option>
+                            <option value="{{$settings->json_data['country']}}" selected>{{$selectedCountry->name}}</option>
                         @endif
                         @if(old('country'))     
                             @php 
@@ -329,29 +329,13 @@ jQuery(document).ready(function(){
             }
         }
     });
-    $('.state').select2({
-        placeholder: "Select",
-        allowClear: true,
-        minimumInputLength: 2,
-        ajax: {
-            url: "{{route('get_value')}}",
-            dataType: 'json',
-            data: function (params) {
-                return {
-                    q: params.term, // search term
-                    table:'states',
-                    where: "country_id={{$country}}"
-                };
-            },
-            processResults: function (data) {
-                return {
-                    results: data
-                };
-            }
-        }
+    select2state();
+    $('.city').select2();
+
+    $('.country').on('change',function(){
+        select2state();
     });
 
-    $('.city').select2();
     $('.state').on('change', function() {
         if ($('.state').val()) {
             select2city();
@@ -365,6 +349,36 @@ jQuery(document).ready(function(){
     });
     if ($('#state').val() || $('#city').val()) {
         select2city();
+    }
+    function select2state(){
+        let country =   "{{$country}}";
+        if($('#country').val() != "{{$country}}"){
+            country = $('#country').val();
+            $('.state').val('').trigger('change');
+            $('.city').val('').trigger('change');
+        }
+
+        $('.state').select2({
+            placeholder: "Select",
+            allowClear: true,
+            minimumInputLength: 2,
+            ajax: {
+                url: "{{route('get_value')}}",
+                dataType: 'json',
+                data: function (params) {
+                    return {
+                        q: params.term, // search term
+                        table:'states',
+                        where: "country_id = " + country
+                    };
+                },
+                processResults: function (data) {
+                    return {
+                        results: data
+                    };
+                }
+            }
+        });
     }
 
     function select2city(){

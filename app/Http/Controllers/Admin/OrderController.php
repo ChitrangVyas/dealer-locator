@@ -192,7 +192,8 @@ class OrderController extends MainController
                             'content' => "<p>This is Test for the Qoute</p>",
 
                         ];
-                        Mail::to($quote->customer->email)->send(new OrderEmailTemplate($quote,config('app.name').' - Quote'));
+                        $from = (!empty($quote->addedBy))?$quote->addedBy->email:$this->settingJson['email'];
+                        Mail::to($quote->customer->email)->send(new OrderEmailTemplate($quote,config('app.name').' - Quote',$from));
                         // $this->send($email_data);
                     }
                     return response()->json(['status' => 'successful','code'=>1,'message'=>'Quote Successfully created.']);
@@ -236,16 +237,17 @@ class OrderController extends MainController
                 if(!empty($order_product)){
                     if((!empty($request_data['btnSave'])) && $request_data['btnSave']=='savensend')
                     {
-                        $email_data = [
+                        /* $email_data = [
                             'from'=>$order->addedBy->email,
                             'to'=>$order->customer->email,
                             'title' => "PO FOR #$order->order_number",
                             'view' => 'emails.send',
                             'content' => "<p>This is Test for the PO</p>",
 
-                        ];
-                        
-                        Mail::to($order->customer->email)->send(new OrderEmailTemplate($order,config('app.name').' - PO'));
+                        ]; */
+                        $from = (!empty($order->addedBy))?$order->addedBy->email:$this->settingJson['email'];
+                        $customer = (!empty($order->customer))?$order->customer->email:$this->settingJson['email'];
+                        Mail::to($customer)->send(new OrderEmailTemplate($order,config('app.name').' - PO',$from));
                         // Mail::to($order->customer->email)->send(new OrderShipped($order));
                         // $this->send($email_data);
                     }
@@ -383,7 +385,8 @@ class OrderController extends MainController
                 $this->myCart->clear($request_data['cart_id']);
                 if(!empty($order_product)){
                     if((!empty($request_data['btnSave'])) && $request_data['btnSave']=='savensend'){
-                        Mail::to($order->customer->email)->send(new OrderEmailTemplate($order,config('app.name').' - Sales'));
+                        $from = (!empty($order->addedBy))?$order->addedBy->email:$this->settingJson['email'];
+                        Mail::to($order->customer->email)->send(new OrderEmailTemplate($order,config('app.name').' - Sales',$from));
                     }
                     return response()->json(['status' => 'successful', 'data'=>['quote'=>$cart_data['order_reference']],'code'=>1,'message'=>'Sales Successfully created.']);
                 }else{

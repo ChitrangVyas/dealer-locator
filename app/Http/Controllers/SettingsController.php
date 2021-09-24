@@ -40,7 +40,7 @@ class SettingsController extends MainController
             // if(!empty($settings['json_data']['city'])){
             //     $settings['json_data']['city_name'] = $this->getCity($settings['json_data']['city'])->name;
             // }
-        }        
+        }
         return view('settings',['timezone_list'=>$this->timezone_list(),'settings'=>$settings]);
     }
 
@@ -74,7 +74,12 @@ class SettingsController extends MainController
         if(empty($request->input('id'))){
             $settings = Settings::create(['json_data'=>json_encode($request_data)]);
         }else{
-            $settings = Settings::where('id',$request->input('id'))->update(['json_data'=>json_encode($request_data)]);
+            $setting = Settings::where('id',$request->input('id'));
+            $settings_data = (!empty($setting->first()->json_data))?json_decode($setting->first()->json_data):'';
+            if(!empty($settings_data) && !empty($settings_data->logo)){
+                $request_data['logo'] = $settings_data->logo;
+            }
+            $settings = $setting->update(['json_data'=>json_encode($request_data)]);
         }
         if(!empty($settings)){
             config(['app.name' => $request_data['site_name']]);

@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\City;
 use App\Models\Settings;
+use App\Models\State;
 use Illuminate\Http\Request;
 use App\Models\User;
 use View;
@@ -12,6 +14,7 @@ use Illuminate\Support\Facades\DB;
 class MainController extends Controller
 {
     public $country = 101;
+    public $settingJson = [];
     public function __construct() {                
         list(, $action) = explode('@', Route::getCurrentRoute()->getActionName());        
         if($action=="create" || $action=="store"){
@@ -23,25 +26,31 @@ class MainController extends Controller
         $settings = Settings::find(1);
         
         if(!empty($settings)){
-            $setting = json_decode($settings->json_data);
-            $this->country = (!empty($setting->country)) ? $setting->country : 101;
-            config(['app.timezone' => $setting->timezone]);
-            config(['app.name' => $setting->site_name]);
-
-            $mailConfig = [
-                'transport' => $setting->mail_mailer,
-                'host' => $setting->mail_host,
-                'port' => $setting->mail_port,
-                'encryption' => $setting->mail_encryption,
-                'username' => $setting->mail_username,
-                'password' => $setting->mail_password,
-                'timeout' => null
-            ];
-            config(['mail.mailers.smtp' => $mailConfig]);            
-            config(['mail.from.address' => $setting->mail_from_email]);
-            config(['mail.from.name' => $setting->mail_from_name]);
+            $this->settingJson = json_decode($settings->json_data,true);
+            $this->country = (!empty($this->settingJson['country'])) ? $this->settingJson['country'] : 101;
+            if(!empty($this->settingJson)){
+                config(['app.timezone' => $this->settingJson['timezone']]);
+                config(['app.name' => $this->settingJson['site_name']]);
+                $state = State::find($this->settingJson['state']);
+                $city = City::find($this->settingJson['city']);
+                $this->settingJson['state_name']=$state->name;
+                $this->settingJson['city_name']=$city->name;
+                $mailConfig = [
+                    'transport' => $this->settingJson['mail_mailer'],
+                    'host' => $this->settingJson['mail_host'],
+                    'port' => $this->settingJson['mail_port'],
+                    'encryption' => $this->settingJson['mail_encryption'],
+                    'username' => $this->settingJson['mail_username'],
+                    'password' => $this->settingJson['mail_password'],
+                    'timeout' => null
+                ];
+                config(['mail.mailers.smtp' => $mailConfig]);            
+                config(['mail.from.address' => $this->settingJson['mail_from_email']]);
+                config(['mail.from.name' => $this->settingJson['mail_from_name']]);
+            }
         }
         View::share('country',$this->country);        
+        View::share('setting',$this->settingJson);        
         
     }
 

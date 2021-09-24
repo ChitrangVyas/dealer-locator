@@ -87,6 +87,10 @@
       },
     });
     $(".nav-link.active").parent().parent().parent().addClass("menu-is-opening menu-open");
+    $('body').on('change','input[type="file"]',function(e){
+            var fileName = e.target.files[0].name;
+            $('.custom-file-label').html(fileName);
+        });
   });
 </script>
 <!-- jQuery -->

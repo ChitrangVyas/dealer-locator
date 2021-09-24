@@ -241,10 +241,11 @@ class CartController extends MainController
         }
         
         if(empty($this->myCart->getTo($request->input('id'))) || ($this->myCart->getType($request->input('id'))) == 'po' ){
-            $this->myCart->setTo($request->input('id'),(!empty(auth()->user()->parent_id))?auth()->user()->parent_id : $product->brand->manufacturer->id);
+            // $this->myCart->setTo($request->input('id'),(!empty(auth()->user()->parent_id))?auth()->user()->parent_id : $product->brand->manufacturer->id);
+            $this->myCart->setTo($request->input('id'),(!empty(auth()->user()->parent_id))?auth()->user()->parent_id : NULL);
         }
         if((empty(auth()->user()->parent_id) || empty($this->myCart->getTo($request->input('id')))) && ($this->myCart->getType($request->input('id'))) == 'po'){
-            $this->myCart->setForManufacture($request->input('id'),$product->brand->manufacturer->id);
+            $this->myCart->setForManufacture($request->input('id'),1);
         }else{
             $this->myCart->setForManufacture($request->input('id'),0);
         }
@@ -281,17 +282,19 @@ class CartController extends MainController
                         'attributes' => array(),
                     );
                     if($is_dealer){
-                        $manufacturer = (empty($manufacturer))?$orderProduct->product->brand->manufacturer->id:$manufacturer;
-                        if($manufacturer != $orderProduct->product->brand->manufacturer->id){
-                            $json['cart_title'] = "PO".(!empty($this->myCart->getOrderNumber($id)) ? " #".$this->myCart->getOrderNumber($id) : '');
-                            return response()->json(['status' => 'error','code'=>0, 'data'=>$json, 'message'=>'Please Select the Same Manufacturer Product']);    
-                        }
+                        // $manufacturer = (empty($manufacturer))?$orderProduct->product->brand->manufacturer->id:$manufacturer;
+                        $manufacturer = NULL;
+                        // if($manufacturer != $orderProduct->product->brand->manufacturer->id){
+                        //     $json['cart_title'] = "PO".(!empty($this->myCart->getOrderNumber($id)) ? " #".$this->myCart->getOrderNumber($id) : '');
+                        //     return response()->json(['status' => 'error','code'=>0, 'data'=>$json, 'message'=>'Please Select the Same Manufacturer Product']);    
+                        // }
                     }
                 }
                 $cart->add($items);
                 $this->myCart->setOrderNumber($id,$order->order_number);
                 $this->myCart->setOrderReference($id,$order->id);
             }
+            // $this->myCart->setTo($id,(!empty(auth()->user()->parent_id))?auth()->user()->parent_id:$manufacturer);
             $this->myCart->setTo($id,(!empty(auth()->user()->parent_id))?auth()->user()->parent_id:$manufacturer);
                 if(empty(auth()->user()->parent_id)){
                     $this->myCart->setForManufacture($id,1);
@@ -316,7 +319,7 @@ class CartController extends MainController
             }else{$id = (!empty($request_data['data']['vendor'])) ? "po_vendor_".$request_data['data']['vendor'] : "po_user_".auth()->user()->id;
             $cart  = \Cart::session($id);
             if(!empty($request_data['data']['vendor'])){
-                $to_user = (!empty($request_data['data']['vendor']))?$request_data['data']['vendor']:'';
+                $to_user = (!empty($request_data['data']['vendor']))?$request_data['data']['vendor']:NULL;
                 if($cart->isEmpty()){
                     $cart->add(array(
                         'id' => 1,

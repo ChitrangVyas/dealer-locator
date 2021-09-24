@@ -10,25 +10,20 @@
         <input type="hidden" id="type" value="{{(!empty($type)) ? $type : ''}}">
         <input type="hidden" name="is_new_product" id="is_new_product" value="{{(!empty($is_new_product)) ? $is_new_product : ''}}">
         <input type="hidden" name="cart_id" id="modalId" value="{{$id}}" />
-        @if(!empty($to_user))
             <div class="row invoice-info border-bottom">
                 <div class="col-sm-4 invoice-col">
                     <h5><strong>TO</strong></h5>
                     <address>
-                        <strong>{{ucwords($to_user->name)}}</strong><br>
-                        @if(!empty($to_user->city))
-                        {{ucwords($to_user->address)}},<br>
-                        {{ucwords($to_user->city->name)}},<br>
-                        {{ucwords($to_user->state->name)}} - {{$to_user->zipcode}}<br>
-                        @endif
-                        @if(!empty($to_user->mobile))
-                        Phone: {{$to_user->mobile}}<br>
-                        @endif
-                        Email: {{$to_user->email}}
+                        <strong>{{ucwords(!empty($to_user->name)?$to_user->name:$setting['name'])}}</strong><br>
+                        {{ucwords((!empty($to_user->address))?$to_user->addres:$setting['address'])}},<br>
+                        {{ucwords((!empty($to_user->city))?$to_user->city->name:$setting['city_name'])}},<br>
+                        {{ucwords((!empty($to_user->state))?$to_user->state->name:$setting['state_name'])}} - {{(!empty($to_user->zipcode))?$to_user->zipcode:$setting['zipcode']}}<br>
+                        Phone: {{(!empty($to_user->mobile))?$to_user->mobile:$setting['mobile']}}<br>
+                        Email: {{ (!empty($to_user->email))?$to_user->email:$setting['email']}}
                     </address>
                 </div>
             </div>
-        @endif
+        
             <div class="row">
                 @if($is_new_product)
                 <div class="col-sm-12 col-md-4 mt-2">

@@ -150,7 +150,7 @@ jQuery(document).ready(function(){
                 return {
                     q: params.term, // search term
                     table:'states',
-                    where: 'country_id=101'
+                    where: "country_id={{$country}}"
                 };
             },
             processResults: function (data) {

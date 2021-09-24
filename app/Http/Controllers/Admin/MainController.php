@@ -11,7 +11,7 @@ use Route;
 use Illuminate\Support\Facades\DB;
 class MainController extends Controller
 {
-    
+    public $country = 101;
     public function __construct() {                
         list(, $action) = explode('@', Route::getCurrentRoute()->getActionName());        
         if($action=="create" || $action=="store"){
@@ -21,8 +21,10 @@ class MainController extends Controller
         }
         View::share ( 'select2Old', new User());
         $settings = Settings::find(1);
+        
         if(!empty($settings)){
             $setting = json_decode($settings->json_data);
+            $this->country = (!empty($setting->country)) ? $setting->country : 101;
             config(['app.timezone' => $setting->timezone]);
             config(['app.name' => $setting->site_name]);
 
@@ -38,7 +40,8 @@ class MainController extends Controller
             config(['mail.mailers.smtp' => $mailConfig]);            
             config(['mail.from.address' => $setting->mail_from_email]);
             config(['mail.from.name' => $setting->mail_from_name]);
-        }        
+        }
+        View::share('country',$this->country);        
         
     }
 

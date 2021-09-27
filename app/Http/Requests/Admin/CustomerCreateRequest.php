@@ -26,11 +26,15 @@ class CustomerCreateRequest extends FormRequest
     {
         $request_data = $this->request->all();
         return [
-            // 'email' => 'required|email|unique:users',  
+            // 'email' => 'required|email',
             'email' => [
                 'required',
-                'email',
-            ],
+                'email' => 'email:rfc',function($attribute, $value, $fail) {
+                    if (!filter_var($value, FILTER_VALIDATE_EMAIL)) {
+                       $fail('Please enter valid email.');
+                    }
+                }
+            ],  
             'name' => 'required|string|max:100',            
             'mobile' => 'required',
             'address' => 'required',
@@ -44,7 +48,9 @@ class CustomerCreateRequest extends FormRequest
     public function messages()
     {
         return [
-            'users_group_id.required'=>'Contact type is required.'
+            'users_group_id.required'=>'Contact type is required.',
+            'email.required'=>'Email is required.',
+            'email.email' =>'Please enter valid email.',
         ];
     }
 }

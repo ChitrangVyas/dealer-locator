@@ -18,13 +18,13 @@ class OrderEmailTemplate extends Mailable
      */
     public $order;
     public $subject;
-    public $from;
-    public function __construct($order,$subject,$from)
+    public $from_user;
+    public function __construct($order,$subject,$from_user)
     {
         //
         $this->order = $order;
         $this->subject = $subject;
-        $this->from = $from;
+        $this->from_user = $from_user;
     }
 
     /**
@@ -34,6 +34,6 @@ class OrderEmailTemplate extends Mailable
      */
     public function build()
     {
-        return $this->from($this->from)->subject($this->subject)->view('emails.orders.quote')->with(['order'=>$this->order]);
+        return $this->from($this->from_user)->subject($this->subject)->view('emails.orders.quote',['order'=>$this->order]);
     }
 }

@@ -500,10 +500,10 @@ class OrderController extends MainController
         }
         $data = [];
         foreach($orders as $order){
-            $orderDetail = Order::where('id','=',$order->id)->first();
+            // $orderDetail = Order::where('id','=',$order->id)->first();
             $is_sale_generated = Order::where('type','sale')->where('order_reference',$order->id)->where('deleted_at',NULL)->count();
-            $customer = (!empty($order->customer))?$order->customer:'N/A';
-            $added_by  = (!empty($order->added_by))?$order->added_by:'N/A';
+            $customer = (!empty($order->customer))?$order->customer:$this->settingJson['name'];
+            $added_by  = (!empty($order->added_by))?$order->added_by:$this->settingJson['name'];
             $action_html = "<span><a data-url=".route('po.show',$order->id)." data-order=".$order->id." class='btn btn-primary view-order' data-toggle='modal' data-target='#orderModal'>View</a></span>";
             if((auth()->user()->id == $order->to_user && empty($is_sale_generated)) || ((empty($user->users_group_id) || ($user->users_group_id == '1')) && (!empty($order->for_manufacturer) && empty($is_sale_generated)))){
                 $action_html .= "<span class='ml-3 create-sale-".$order->id."'><a data-url=".route('cart.sale.create')." data-order=".$order->id." class='btn btn-default view-order' data-toggle='modal' data-target='#orderModal'>Generate Sale</a></span>";
@@ -514,7 +514,7 @@ class OrderController extends MainController
             // $action_html .= "<span class='ml-3 create-po-".$order->id."'><a data-url=".route('cart.po.create')." data-order=".$order->id." class='btn btn-success view-quote' data-toggle='modal' data-target='#orderModal'>Generate PO</a></span>";
             // $action_html = "<span><a href=".route('order.edit',$order->id)." class='btn btn-primary'>Edit</a></span>";
             // $action_html .= "<span class='ml-3'><button type=submit data-user=$order->id class='btn btn-danger' onClick=deleteOrder($order->id)>Delete</button></span>";
-            $data[] = [$order->id,$order->order_number,$order->amount, ucwords($added_by), ucwords($orderDetail->toUser()),$order->created_date, $action_html];
+            $data[] = [$order->id,$order->order_number,$order->amount, ucwords($added_by), ucwords($customer),$order->created_date, $action_html];
         }
         $return_array = array();
         $return_array['draw'] = $request['draw'];

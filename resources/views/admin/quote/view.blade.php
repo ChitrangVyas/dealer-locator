@@ -12,28 +12,46 @@
     <div class="col-sm-4 invoice-col">
         From
         <address>
-            <strong>{{ucwords($order->addedBy->name)}}</strong><br>
-            @if(!empty($order->addedBy->city))
-            {{ucwords($order->addedBy->address)}},<br>
-            {{ucwords($order->addedBy->city->name)}},<br>
-            {{ucwords($order->addedBy->state->name)}} - {{$order->addedBy->zipcode}}<br>
+            @if(!empty($order->addedBy))
+                <strong>{{ucwords($order->addedBy->name)}}</strong><br>
+                @if(!empty($order->addedBy->city))
+                {{ucwords($order->addedBy->address)}},<br>
+                {{ucwords($order->addedBy->city->name)}},<br>
+                {{ucwords($order->addedBy->state->name)}} - {{$order->addedBy->zipcode}}<br>
+                @endif
+                @if(!empty($order->addedBy->mobile))
+                Phone: {{$order->addedBy->mobile}}<br>
+                @endif
+                Email: {{$order->addedBy->email}}
+            @else
+                <strong>{{ucwords($setting['name'])}}</strong><br>
+                {{ucwords($setting['address'])}},<br>
+                {{ucwords($setting['city_name'])}},<br>
+                {{ucwords($setting['state_name'])}} - {{$setting['zipcode']}}<br>
+                Phone: {{$setting['mobile']}}<br>
+                Email: {{$setting['email']}}
             @endif
-            @if(!empty($order->addedBy->mobile))
-            Phone: {{$order->addedBy->mobile}}<br>
-            @endif
-            Email: {{$order->addedBy->email}}
         </address>
     </div>
     <!-- /.col -->
     <div class="col-sm-4 invoice-col">
         To
         <address>
+        @if(!empty($order->customer))
             <strong>{{ucwords($order->customer->name)}}</strong><br>
             {{ucwords($order->customer->address)}},<br>
             {{ucwords($order->customer->city->name)}},<br>
             {{ucwords($order->customer->state->name)}} - {{$order->customer->zipcode}}<br>
             Phone: {{$order->customer->mobile}}<br>
             Email: {{$order->customer->email}}
+        @else
+            <strong>{{ucwords($setting['name'])}}</strong><br>
+            {{ucwords($setting['address'])}},<br>
+            {{ucwords($setting['city_name'])}},<br>
+            {{ucwords($setting['state_name'])}} - {{$setting['zipcode']}}<br>
+            Phone: {{$setting['mobile']}}<br>
+            Email: {{$setting['email']}}
+        @endif
         </address>
     </div>
     @if ($order->type == 'sale')

@@ -194,12 +194,14 @@
                   <p>PO</p>
                 </a>
               </li>
+              @notadmin()
               <li class="nav-item">
                 <a href="{{route('invoice.index')}}" class="nav-link  {{ $elementActive == 'bill' ? 'active' : '' }}">
                 <i class="nav-icon fas fa-file-invoice"></i>
                   <p>Bill</p>
                 </a>
               </li>
+              @endnotadmin
             </ul>
           </li>
           @endnotCustomer 

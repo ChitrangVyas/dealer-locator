@@ -387,12 +387,21 @@ text-align: center;
                             <p class="col-sm-4 invoice-col">
                                 <strong>To</strong>
                                 <address>
+                                  @if (!empty($order->customer))
                                     <strong>{{ucwords($order->customer->name)}}</strong><br>
                                     {{ucwords($order->customer->address)}},<br>
                                     {{ucwords($order->customer->city->name)}},<br>
                                     {{ucwords($order->customer->state->name)}} - {{$order->customer->zipcode}}<br>
                                     Phone: {{$order->customer->mobile}}<br>
                                     Email: {{$order->customer->email}}
+                                  @else
+                                  <strong>{{ucwords($setting['name'])}}</strong><br>
+                                    {{ucwords($setting['address'])}},<br>
+                                    {{ucwords($setting['city_name'])}},<br>
+                                    {{ucwords($setting['state_name'])}} - {{$setting['zipcode']}}<br>
+                                    Phone: {{$setting['mobile']}}<br>
+                                    Email: {{$setting['email']}}
+                                  @endif
                                 </address>
                             </p>
                         </td>
@@ -400,6 +409,7 @@ text-align: center;
                         <p class="col-sm-4 invoice-col">
                           <strong>From</strong>
                           <address>
+                          @if (!empty($order->addedBy))
                               <strong>{{ucwords($order->addedBy->name)}}</strong><br>
                               @if(!empty($order->addedBy->city))
                               {{ucwords($order->addedBy->address)}},<br>
@@ -410,6 +420,14 @@ text-align: center;
                               Phone: {{$order->addedBy->mobile}}<br>
                               @endif
                               Email: {{$order->addedBy->email}}
+                          @else
+                              <strong>{{ucwords($setting['name'])}}</strong><br>
+                                {{ucwords($setting['address'])}},<br>
+                                {{ucwords($setting['city_name'])}},<br>
+                                {{ucwords($setting['state_name'])}} - {{$setting['zipcode']}}<br>
+                                Phone: {{$setting['mobile']}}<br>
+                                Email: {{$setting['email']}}
+                          @endif
                           </address>
                         </p>
                         </td>
@@ -426,9 +444,9 @@ text-align: center;
                         @foreach ($order->orderProduct as $orderProduct)
                             <tr>
                                 <td style="text-align: left;">{{$orderProduct->product_name}}</td>
-                                <td>{{$orderProduct->amount}}</td>
+                                <td>{{Str::currency($orderProduct->amount)}}</td>
                                 <td>{{$orderProduct->qty}}</td>
-                                <td>{{$orderProduct->getSubTotal()}}</td>
+                                <td>{{Str::currency($orderProduct->getSubTotal())}}</td>
                             </tr>
                         @endforeach
                         <tr>
@@ -436,7 +454,7 @@ text-align: center;
                                 <strong>Total:</strong>
                             </td>
                             <td>
-                                <strong>{{$order->total}}</strong>
+                                <strong>{{Str::currency($order->total)}}</strong>
                             </td>
                         </tr>
                       </table>

@@ -15,7 +15,7 @@
                     <h5><strong>TO</strong></h5>
                     <address>
                         <strong>{{ucwords(!empty($to_user->name)?$to_user->name:$setting['name'])}}</strong><br>
-                        {{ucwords((!empty($to_user->address))?$to_user->addres:$setting['address'])}},<br>
+                        {{ucwords((!empty($to_user->address))?$to_user->address:$setting['address'])}},<br>
                         {{ucwords((!empty($to_user->city))?$to_user->city->name:$setting['city_name'])}},<br>
                         {{ucwords((!empty($to_user->state))?$to_user->state->name:$setting['state_name'])}} - {{(!empty($to_user->zipcode))?$to_user->zipcode:$setting['zipcode']}}<br>
                         Phone: {{(!empty($to_user->mobile))?$to_user->mobile:$setting['mobile']}}<br>

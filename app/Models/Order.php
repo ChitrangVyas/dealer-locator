@@ -34,11 +34,11 @@ class Order extends Model
     }
 
     public function addedBy(){
-        if($this->type == 'po'){
+        // if($this->type == 'po'){
+        //     return $this->belongsTo(User::class,'from_user','id');
+        // }else{
             return $this->belongsTo(User::class,'from_user','id');
-        }else{
-            return $this->belongsTo(User::class,'from_user','id');
-        }
+        // }
     }
 
     public function toUser(){
@@ -54,6 +54,14 @@ class Order extends Model
     }
     public function getUser($user_id){
         return User::findOrfail($user_id);
+    }
+
+    public function getFromUser(){
+        if(!empty($this->customer)){
+            return User::where('id','=',$this->to_user)->first();
+        }else{
+            dd($this->settingJson);
+        }
     }
 
 

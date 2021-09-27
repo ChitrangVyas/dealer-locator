@@ -56,7 +56,9 @@ class CustomerCreateRequest extends FormRequest
             'address.required'=>'Address is required.',
             'state_id.required'=>'State is required.',
             'city_id.required'=>'City is required.',
-            'zipcode.required'=>'Zip code is required.',
+            'zipcode.required' => 'Zip code is required.',
+            'zipcode.min' => 'Zip code must be at least :min characters.',
+            'zipcode.max' => 'Zip code must not be greater than :max characters.'
         ];
     }
 }

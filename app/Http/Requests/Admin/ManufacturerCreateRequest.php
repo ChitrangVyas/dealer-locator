@@ -39,6 +39,7 @@ class ManufacturerCreateRequest extends FormRequest
             ],
             'name' => 'required|string|max:100',
             'mobile' => 'required',
+            'zipcode' => 'present|nullable|min:5|max:7',
             // 'address' => 'required',
             // 'state_id' => 'required|after_or_equal:1',
             // 'city_id' => 'required|after_or_equal:1',
@@ -55,10 +56,13 @@ class ManufacturerCreateRequest extends FormRequest
     public function messages()
     {
         return [
-            'email.required' => 'Email is required!',
+            'email.required' => 'Email is required.',
             'email.unique' => 'Email is already exist.',
             'email.email' => 'Invalid Email.',
-            'name.required' => 'Name is required!',   
+            'name.required' => 'Name is required.',
+            'zipcode.required' => 'Zip code is required.',
+            'zipcode.min' => 'Zip code must be at least :min characters.',
+            'zipcode.max' => 'Zip code must not be greater than :max characters.'  
             // 'state_id.required'=> 'Please select state.',
             // 'city_id.required'=> 'Please select city.',         
         ];

@@ -28,7 +28,11 @@ class AdminUserCreateRequest extends FormRequest
         return [            
             'email' => [
                 'required',
-                'email',
+                'email' => 'email:rfc',function($attribute, $value, $fail) {
+                    if (!filter_var($value, FILTER_VALIDATE_EMAIL)) {
+                       $fail('Please enter valid email.');
+                    }
+                },
                 Rule::unique('users')->where(function ($query) {
                     return $query->whereNull('deleted_at')->where('users_group_id','=', $this->input('user_group'));
                 })->ignore($this->id)
@@ -38,7 +42,7 @@ class AdminUserCreateRequest extends FormRequest
             'mobile' => 'required',
             'state' => 'after_or_equal:1',
             'city' => 'after_or_equal:1',
-            'zipcode' => 'min:5|max:7',
+            'zipcode' => 'peresent|nullable|min:5|max:7',
         ];
     }
 
@@ -56,6 +60,9 @@ class AdminUserCreateRequest extends FormRequest
             'name.required' => 'Name is required!',
             'password.required' => 'Password is required!',
             'mobile.required'=> 'Mobile is required!',
+            'zipcode.required' => 'Zip code is required.',
+            'zipcode.min' => 'Zip code must be at least :min characters.',
+            'zipcode.max' => 'Zip code must not be greater than :max characters.'
         ];
     }
 }

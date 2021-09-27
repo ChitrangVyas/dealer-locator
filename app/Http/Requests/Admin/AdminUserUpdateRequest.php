@@ -29,14 +29,18 @@ class AdminUserUpdateRequest extends FormRequest
         return [          
             'email' => [
                 'required',
-                'email',
+                'email' => 'email:rfc',function($attribute, $value, $fail) {
+                    if (!filter_var($value, FILTER_VALIDATE_EMAIL)) {
+                       $fail('Please enter valid email.');
+                    }
+                },
                 Rule::unique('users')->where(function ($query) {
                     return $query->whereNull('deleted_at')->where('users_group_id','=', $this->input('user_group'));
                 })->ignore($this->id)
             ],            
             'name' => 'required|string|max:100',            
             'mobile' => 'required',
-            'zipcode' => 'min:5|max:7',
+            'zipcode' => 'present|nullable|min:5|max:7',
         ];
     }
 
@@ -53,6 +57,9 @@ class AdminUserUpdateRequest extends FormRequest
             'email.email' => 'Invalid Email.',
             'name.required' => 'Name is required!',
             'mobile.required'=> 'Mobile is required!',
+            'zipcode.required' => 'Zip code is required.',
+            'zipcode.min' => 'Zip code must be at least :min characters.',
+            'zipcode.max' => 'Zip code must not be greater than :max characters.'
         ];
     }
 }

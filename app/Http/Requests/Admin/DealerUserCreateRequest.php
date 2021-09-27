@@ -27,7 +27,11 @@ class DealerUserCreateRequest extends FormRequest
         return [
             'email' => [
                 'required',
-                'email',
+                'email' => 'email:rfc',function($attribute, $value, $fail) {
+                    if (!filter_var($value, FILTER_VALIDATE_EMAIL)) {
+                       $fail('Please enter valid email.');
+                    }
+                },
                 Rule::unique('users')->where(function ($query) {
                     return $query->whereNull('deleted_at')->where('users_group_id','=', $this->input('user_group'));
                 })->ignore($this->id)                
@@ -50,16 +54,18 @@ class DealerUserCreateRequest extends FormRequest
     public function messages()
     {
         return [
-            'email.required' => 'Email is required!',
+            'email.required' => 'Email is required.',
             'email.unique' => 'Email is already exist.',
             'email.email' => 'Invalid Email.',
-            'name.required' => 'Name is required!',
-            'password.required' => 'Password is required!',
-            'mobile.required'=> 'Mobile is required!',
-            'address.required'=> 'Address is required!',
-            'state.required'=> 'State is required!',
-            'city.required'=> 'City is required!',
-            'zipcode.required' => 'Zipcode is required!'
+            'name.required' => 'Name is required.',
+            'password.required' => 'Password is required.',
+            'mobile.required'=> 'Mobile is required.',
+            'address.required'=> 'Address is required.',
+            'state.required'=> 'State is required.',
+            'city.required'=> 'City is required.',
+            'zipcode.required' => 'Zip code is required.',
+            'zipcode.min' => 'Zip code must be at least :min characters.',
+            'zipcode.max' => 'Zip code must not be greater than :max characters.'
         ];
     }
 }

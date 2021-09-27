@@ -139,11 +139,11 @@ class ManufacturerController extends MainController
         $start =  $request['start'];
         $length=  $request['length'];
         $search = $request['search']['value'];
-        $where = '';
+        $where = 'deleted_at IS NULL';
         $where .= (!empty($search)) ? " AND (name like '$search%' OR email like '$search%')":'';
         $manufacturers = DB::table('manufacturers')
         ->selectRaw('id,name,email,mobile,logo')
-        ->where('deleted_at', NULL)
+        ->whereRaw($where)
         ->offset($start)
         ->limit($length)
         ->orderBy($request['columns'][$request['order'][0]['column']]['name'],$request['order'][0]['dir'])

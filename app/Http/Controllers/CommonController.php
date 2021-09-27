@@ -32,6 +32,7 @@ class CommonController extends MainController
         }
         DB::enableQueryLog(); 
         if(!empty($request_data['option_group'])){
+            $options_group=array();
             foreach($request_data['option_group'] as $key=>$optionGroup){
                 $option_group_fields = (!empty($optionGroup['fields']))?$optionGroup['fields']:'id , name as text';
                 $option_group_where = (!empty($optionGroup['where']))?" $optionGroup[where]":'';
@@ -47,12 +48,15 @@ class CommonController extends MainController
                         $obj->join($join['join_table'], $join['to_column'], '=', $join['from_column'],$type);
                     }
                 }
+                $resultset = $obj->get();
+                if(count($resultset)){
                 $options_group[] = 
                     [
                         'id'=> '',
                         'text'=> ucwords($optionGroup['name']),
-                        'children' => $obj->get()
+                        'children' => $resultset
                     ];
+                }
             }
             $data = $options_group;
         }else{

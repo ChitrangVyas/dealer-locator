@@ -48,9 +48,15 @@ class CustomerCreateRequest extends FormRequest
     public function messages()
     {
         return [
+            'name.required'=>'Name is required.',
             'users_group_id.required'=>'Contact type is required.',
             'email.required'=>'Email is required.',
             'email.email' =>'Please enter valid email.',
+            'mobile.required'=>'Mobile is required.',
+            'address.required'=>'Address is required.',
+            'state_id.required'=>'State is required.',
+            'city_id.required'=>'City is required.',
+            'zipcode.required'=>'Zip code is required.',
         ];
     }
 }

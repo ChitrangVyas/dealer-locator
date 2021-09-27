@@ -29,7 +29,11 @@ class CustomerUpdateRequest extends FormRequest
             // 'email' => 'required|email',
             'email' => [
                 'required',
-                'email',
+                'email' => 'email:rfc',function($attribute, $value, $fail) {
+                    if (!filter_var($value, FILTER_VALIDATE_EMAIL)) {
+                       $fail('Please enter valid email.');
+                    }
+                }
             ],
             'name' => 'required|string|max:100',            
             'mobile' => 'required',
@@ -44,7 +48,15 @@ class CustomerUpdateRequest extends FormRequest
     public function messages()
     {
         return [
-            'users_group_id.required' => 'Contact type is required.'
+            'name.required'=>'Name is required.',
+            'users_group_id.required'=>'Contact type is required.',
+            'email.required'=>'Email is required.',
+            'email.email' =>'Please enter valid email.',
+            'mobile.required'=>'Mobile is required.',
+            'address.required'=>'Address is required.',
+            'state_id.required'=>'State is required.',
+            'city_id.required'=>'City is required.',
+            'zipcode.required'=>'Zip code is required.',
         ];
     }
 }

@@ -27,7 +27,11 @@ class ManufacturerUpdateRequest extends FormRequest
         return [
             'email' => [
                 'required',
-                'email',
+                'email' => 'email:rfc',function($attribute, $value, $fail) {
+                    if (!filter_var($value, FILTER_VALIDATE_EMAIL)) {
+                       $fail('Please enter valid email.');
+                    }
+                },
                 Rule::unique('manufacturers')->where(function ($query) {
                     return $query->whereNull('deleted_at');
                 })->ignore($this->id)

@@ -103,6 +103,7 @@
                                     @endif         
                                 @endif
                             </select>
+                            <label><span class="text-red"><strong>Note:</strong> Please select the state before select the city.</span></label>
                             @error('city_id')
                             <div class="alert alert-danger mt-2">{{ $message }}</div>
                             @enderror
@@ -174,28 +175,23 @@ jQuery(document).ready(function() {
                 };
             }
         }
+    }).on('select2:clear',function(){
+        select2city();
     });
     $('.city').select2({
         placeholder: "Select",
         allowClear: true,
     });
     $('.state').on('change', function() {
-        if ($('.state').val()) {
-            select2city();
-            $(`.city`).val('').trigger('change');
-        }else {
-            $('.city').select2({
-                placeholder: "Select",
-                allowClear: true,
-            });
-        }
+        select2city();
     });
     if ($('#state').val() || $('#city').val()) {
         select2city();
     }
 
     function select2city(){
-        $('.city').select2({
+        if ($('.state').val()) {
+            $('.city').select2({
                 placeholder: "Select",
                 allowClear: true,
                 minimumInputLength: 2,
@@ -217,6 +213,13 @@ jQuery(document).ready(function() {
                     }
                 }
             });
+        }else {
+            $(`.city`).empty().append(new Option()).trigger('change');
+            $('.city').select2({
+                placeholder: "Select",
+                allowClear: true,
+            });
+        }
     }
 
     function getStateCity(table,where,eleClass) {

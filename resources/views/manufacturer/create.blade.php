@@ -104,6 +104,7 @@
                             <option value="{{$manufacturer->city_id}}" selected>{{$manufacturer->city->name}}</option>
                         @endif
                     </select>
+                    <label><span class="text-red"><strong>Note:</strong> Please select the state before select the city.</span></label>
                     <input type="hidden" id="city_id" value="{{old('city_id')}}">
                     @error('city_id')
                         <div class="alert alert-danger mt-2">{{ $message }}</div>
@@ -155,9 +156,23 @@ jQuery(document).ready(function(){
                 };
             }
         }
+    }).on('select2:clear',function(){
+        checkState();
     });
-    $('.city').select2();
+    $('.city').select2({
+        placeholder: "Select",
+        allowClear: true,
+    });
     $('.state').on('change', function(){
+        checkState();
+        $(`.city`).val(null).trigger('change');
+    });
+
+    /* if ($('#state').val() || $('#city').val()) {
+        getStateCity('states',` id=${$('#state').val()}`,'state');
+        getStateCity('cities', ` id=${$('#city').val()}`,'city');
+    } */
+    function checkState(){
         if($('.state').val()){
             $('.city').select2({
                 placeholder: "Select",
@@ -182,17 +197,16 @@ jQuery(document).ready(function(){
                 }
             });
         }else{
-            $('.city').select2({});
+            $(`.city`).empty().append(new Option()).trigger('change');
+            $('.city').select2({
+                placeholder: "Select",
+                allowClear: true,
+            });
         }
-    });
-
-    if ($('#state_id').val() || $('#city_id').val()) {
-        getStateCity('states',` id=${$('#state_id').val()}`,'state');
-        getStateCity('cities', ` id=${$('#city_id').val()}`,'city');
     }
 
     function getStateCity(table,where,eleClass) {
-        if($('#state_id').val() || $('#city_id').val()){
+        if($('#state').val() || $('#city').val()){
             $.ajax({
                 url: "{{route('get_value')}}",
                 type: 'GET',

@@ -16,3 +16,11 @@ $fa-font-path : "../webfonts";
     width: auto;
     margin-left: 15px;
   }
+  .eye-icon {
+    float: right;
+    margin-right: 10px;
+    margin-top: -25px;
+    position: relative;
+    z-index: 2;
+    color: gray;
+}

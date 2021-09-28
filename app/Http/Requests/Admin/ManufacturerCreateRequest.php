@@ -60,6 +60,8 @@ class ManufacturerCreateRequest extends FormRequest
             'email.unique' => 'Email is already exist.',
             'email.email' => 'Invalid Email.',
             'name.required' => 'Name is required.',
+            'mobile.required'=> 'Mobile is required.',
+            'logo.required'=> 'Logo is required.',
             'zipcode.required' => 'Zip code is required.',
             'zipcode.min' => 'Zip code must be at least :min characters.',
             'zipcode.max' => 'Zip code must not be greater than :max characters.'  

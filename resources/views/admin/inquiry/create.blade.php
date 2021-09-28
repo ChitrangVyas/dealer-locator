@@ -173,8 +173,8 @@ jQuery(document).ready(function(){
                     q: params.term, // search term
                     table:'users',
                     fields: "users.id, CONCAT(`users`.`name`, ' - ', `zipcode`,' - ',`cities`.`name`) as text",
-                    where:`(users_group_id = 2) AND (`,
-                    whereOr: ` OR zipcode like '%${params.term}%' OR cities.name like '%${params.term}%' OR states.name like '%${params.term}%')`,
+                    where:`(users_group_id = 2) `,
+                    whereOr: ` OR zipcode like '%${params.term}%' OR cities.name like '%${params.term}%' OR states.name like '%${params.term}%'`,
                     joins:[{'join_table':'cities','to_column':'city_id','from_column':'cities.id','type':'left'},{'join_table':'states','to_column':'users.state_id','from_column':'states.id','type':'left'}]
                 };
             },
@@ -299,8 +299,9 @@ jQuery(document).ready(function(){
                 $.each(data,function(key,val){
                     selected = (selected_option == val.id)? true : false ;
                     newOption = new Option(val.text, val.id, selected, selected);
-                    $('#retailer').append(newOption).trigger('change');
+                    $('#retailer').append(newOption);
                  });
+                 $('#retailer').select2().trigger('change');
             },
             error: function (jqXHR, textStatus, errorThrown) {
                 var err = JSON.parse(jqXHR.responseText).errors;

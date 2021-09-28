@@ -228,7 +228,8 @@
                 <!-- text input -->
                 <div class="form-group">
                     <label>Password</label>
-                    <input type="password" class="form-control" name="mail_password" value="{{ old('mail_password',(!empty($settings->json_data['mail_password']))?$settings->json_data['mail_password']:'')}}" placeholder="Password" tabindex="2">
+                    <input type="password" class="form-control" id="mail_password" name="mail_password" value="{{ old('mail_password',(!empty($settings->json_data['mail_password']))?$settings->json_data['mail_password']:'')}}" placeholder="Password" tabindex="2">
+                    <span toggle="#mail_password" class="fa fa-fw fa-eye eye-icon toggle-password"></span>
                     @error('mail_password')
                         <div class="alert alert-danger mt-2">{{ $message }}</div>
                     @enderror
@@ -349,6 +350,17 @@ jQuery(document).ready(function(){
     });
     if ($('#state').val() || $('#city').val()) {
         select2city();
+    }
+    if($('.toggle-password').length > 0){
+        $(".toggle-password").click(function() {
+            $(this).toggleClass("fa-eye fa-eye-slash");
+            var input = $($(this).attr("toggle"));
+            if (input.attr("type") == "password") {
+                input.attr("type", "text");
+            } else {
+                input.attr("type", "password");
+            }
+        });
     }
     function select2state(){
         let country =   "{{$country}}";

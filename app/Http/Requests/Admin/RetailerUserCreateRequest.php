@@ -29,14 +29,14 @@ class RetailerUserCreateRequest extends FormRequest
                 'required',
                 'email' => 'email:rfc',function($attribute, $value, $fail) {
                     if (!filter_var($value, FILTER_VALIDATE_EMAIL)) {
-                       $fail('Please enter valid email.');
+                       $fail('Enter a valid email address.');
                     }
                 },
                 Rule::unique('users')->where(function ($query) {
                     return $query->whereNull('deleted_at')->where('users_group_id','=', $this->input('user_group'));
                 })->ignore($this->id)
             ],   
-            'password' => 'required',
+            'password' => 'required|min:6|max:16',
             'name' => 'required|string|max:100',            
             'mobile' => 'required',
             'address' => 'required',
@@ -60,6 +60,8 @@ class RetailerUserCreateRequest extends FormRequest
             'email.email' => 'Invalid Email.',
             'name.required' => 'Name is required.',
             'password.required' => 'Password is required.',
+            'password.min' => 'Password must be at least :min characters.',
+            'password.max' => 'Password must not be greater than :max characters.',
             'mobile.required'=> 'Mobile is required.',
             'address.required'=> 'Address is required.',
             'state.required'=> 'State is required.',

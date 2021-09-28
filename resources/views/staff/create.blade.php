@@ -10,10 +10,10 @@
     <!-- /.card-header -->
     <div class="card-body">     
         @if(!empty($user))
-            <form method="POST" action="{{ route('staff.update',$user->id) }}">
+            <form method="POST" action="{{ route('staff.update',$user->id) }}" autocomplete="off">
             @method('PUT')
         @else
-            <form method="POST" action="{{ route('staff.index') }}">
+            <form method="POST" action="{{ route('staff.index') }}" autocomplete="off">
         @endif
         @csrf
         <input type="hidden" name="id" value="{{ (!empty($user))?$user->id:'' }}">
@@ -34,7 +34,7 @@
                 <!-- text input -->
                 <div class="form-group">
                     <label>Email <span class="required_field">*</span></label>
-                    <input type="email" class="form-control" name="email" value="{{ old('email',(!empty($user))?$user->email:'') }}" placeholder="Email" autocomplete="false" tabindex="2"> 
+                    <input type="email" class="form-control" name="email" value="{{ old('email',(!empty($user))?$user->email:'') }}" placeholder="Email" autocomplete="off" tabindex="2"> 
                     @error('email')
                         <div class="alert alert-danger mt-2">{{ $message }}</div>
                     @enderror
@@ -44,7 +44,7 @@
                 <!-- text input -->
                 <div class="form-group">
                     <label>Password <span class="required_field">*</span></label>
-                    <input type="password" name="password" value="{{ old('password') }}" class="form-control" placeholder="Password" tabindex="3">
+                    <input type="password" name="password" value="{{ old('password') }}" class="form-control" placeholder="Password" tabindex="3" autocomplete="off">
                     @error('password')
                         <div class="alert alert-danger mt-2">{{ $message }}</div>
                     @enderror

@@ -30,7 +30,7 @@ class ManufacturerCreateRequest extends FormRequest
                 'required',
                 'email' => 'email:rfc',function($attribute, $value, $fail) {
                     if (!filter_var($value, FILTER_VALIDATE_EMAIL)) {
-                       $fail('Please enter valid email.');
+                       $fail('Enter a valid email address.');
                     }
                 },
                 Rule::unique('manufacturers')->where(function ($query) {

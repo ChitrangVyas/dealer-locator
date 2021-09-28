@@ -30,7 +30,7 @@ class AdminUserCreateRequest extends FormRequest
                 'required',
                 'email' => 'email:rfc',function($attribute, $value, $fail) {
                     if (!filter_var($value, FILTER_VALIDATE_EMAIL)) {
-                       $fail('Please enter valid email.');
+                       $fail('Enter a valid email address.');
                     }
                 },
                 Rule::unique('users')->where(function ($query) {
@@ -39,10 +39,11 @@ class AdminUserCreateRequest extends FormRequest
             ],
             'name' => 'required|string|max:100',
             'password' => 'required|min:6|max:16',
+            'address'=>'required',
             'mobile' => 'required',
-            'state' => 'after_or_equal:1',
-            'city' => 'after_or_equal:1',
-            'zipcode' => 'peresent|nullable|min:5|max:7',
+            'state' => 'required|after_or_equal:1',
+            'city' => 'required|after_or_equal:1',
+            'zipcode' => 'required|min:5|max:7',
         ];
     }
 
@@ -54,12 +55,17 @@ class AdminUserCreateRequest extends FormRequest
     public function messages()
     {
         return [
-            'email.required' => 'Email is required!',
+            'email.required' => 'Email is required.',
             'email.unique' => 'Email is already exist.',
             'email.email' => 'Invalid Email.',
-            'name.required' => 'Name is required!',
-            'password.required' => 'Password is required!',
-            'mobile.required'=> 'Mobile is required!',
+            'name.required' => 'Name is required.',
+            'password.required' => 'Password is required.',
+            'password.min' => 'Password must be at least :min characters.',
+            'password.max' => 'Password must not be greater than :max characters.',
+            'address.required' => 'Address is required.',
+            'mobile.required'=> 'Mobile is required.',
+            'state.required' => 'State is required.',
+            'city.required' => 'City is required.',
             'zipcode.required' => 'Zip code is required.',
             'zipcode.min' => 'Zip code must be at least :min characters.',
             'zipcode.max' => 'Zip code must not be greater than :max characters.'

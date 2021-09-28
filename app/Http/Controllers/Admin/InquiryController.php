@@ -71,6 +71,9 @@ class InquiryController extends MainController
             'dealer_id' => $dealer_id,
             // 'product_id'=>$request_data['product'],
         ];
+        if(empty($inquiry_data['status'])){
+            $inquiry_data['status'] = 1;
+        }
         if(!empty($retailer_id)){
             $inquiry_data['retailer_id'] = $retailer_id;
         }
@@ -287,7 +290,9 @@ class InquiryController extends MainController
             $dealer = (!empty($inquiry->dealer))?$inquiry->dealer:'N/A';
             $retailer = (!empty($inquiry->retailer))?$inquiry->retailer:'N/A';
             $action_html = "";
-            $status_html = "<button type='button' class='btn btn-info change-status btn-sm' data-inquiry=$inquiry->id data-change-status-url='".route('inqiury.status')."'>".(Inquiry::find($inquiry->id))->getInquirystatusName()."</button>";
+            $inquiryObj = Inquiry::find($inquiry->id);
+            $inquiry_status = (!empty($inquiryObj->status) && $inquiryObj->status !=0 )?$inquiryObj->getInquirystatusName():'N/A';
+            $status_html = "<button type='button' class='btn btn-info change-status btn-sm' data-inquiry=$inquiry->id data-change-status-url='".route('inqiury.status')."'>".$inquiry_status."</button>";
             $action_html .= "<span><button type='button' id='addLog' class='btn btn-default' data-inquiry=$inquiry->id data-view-url='".route('inquiry-log.show',$inquiry->id)."' data-add-url='".route('inquiry-log.create')."' data-task-url='".route('createReminder')."' data-toggle='modal' data-target='#modal-lg' title='View Log'><i class='fas fa-clipboard-list' title='View Log'></i></button></span>";
             $action_html .= "<span class='ml-2'><button type='button' class='btn btn-primary view-inquiry' data-inquiry=$inquiry->id data-view-url='".route('inquiry.view',$inquiry->id)."' title='View Inquiry'><i class='far fa-eye' title='View Inquiry'></i></button></span>";
             if((!empty($user->userGroup)) && $user->userGroup->id == '2'){

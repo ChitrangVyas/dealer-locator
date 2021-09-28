@@ -187,7 +187,7 @@
             <div class="col-sm-12 col-md-4">
                 <!-- text input -->
                 <div class="form-group">
-                    <label>Zipcode</label>
+                    <label>Zip code</label>
                     <input type="text" name="zipcode" value="{{ old('zipcode',(!empty($settings) && !empty($settings->json_data['zipcode']))?$settings->json_data['zipcode']:'') }}" class="form-control" placeholder="Enter zipcode" tabindex="7">
                     @error('zipcode')
                         <div class="alert alert-danger mt-2">{{ $message }}</div>

@@ -113,7 +113,7 @@
             <div class="col-sm-12 col-md-4">
                 <!-- text input -->
                 <div class="form-group">
-                    <label>Zipcode</label>
+                    <label>Zip code</label>
                     <input type="text" name="zipcode" value="{{ old('zipcode',(!empty($manufacturer))?$manufacturer->zipcode:'')}}" class="form-control" placeholder="Enter zipcode" tabindex="8">
                     @error('zipcode')
                         <div class="alert alert-danger mt-2">{{ $message }}</div>

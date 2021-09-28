@@ -98,7 +98,7 @@
             <div class="col-sm-12 col-md-4">
                 <!-- text input -->
                 <div class="form-group">
-                    <label>Zipcode <span class="required_field">*</span></label>
+                    <label>Zip code <span class="required_field">*</span></label>
                     <input type="text" name="zipcode" value="{{ (!empty($user))?$user->zipcode:'' }}" class="form-control" placeholder="Enter zipcode" tabindex="6">
                 </div>
             </div>

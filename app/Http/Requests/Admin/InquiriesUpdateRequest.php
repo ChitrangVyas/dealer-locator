@@ -28,4 +28,12 @@ class InquiriesUpdateRequest extends FormRequest
             'customer' => 'required',
         ];
     }
+
+    public function messages()
+    {
+        return [
+            'inquiry_source.required' => 'Inquiry source is required.',
+            'customer.required' => 'Customer is required.',
+        ];
+    }
 }

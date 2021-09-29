@@ -193,7 +193,8 @@ class OrderController extends MainController
 
                         ];
                         $from = (!empty($quote->addedBy))?$quote->addedBy->email:$this->settingJson['email'];
-                        Mail::to($quote->customer->email)->send(new OrderEmailTemplate($quote,config('app.name').' - Quote',$from));
+                        $customer = (!empty($quote->customer))?$quote->customer->email:$this->settingJson['email'];
+                        Mail::to($customer)->send(new OrderEmailTemplate($quote,config('app.name').' - Quote',$from));
                         // $this->send($email_data);
                     }
                     return response()->json(['status' => 'successful','code'=>1,'message'=>'Quote Successfully created.']);
@@ -386,7 +387,8 @@ class OrderController extends MainController
                 if(!empty($order_product)){
                     if((!empty($request_data['btnSave'])) && $request_data['btnSave']=='savensend'){
                         $from = (!empty($order->addedBy))?$order->addedBy->email:$this->settingJson['email'];
-                        Mail::to($order->customer->email)->send(new OrderEmailTemplate($order,config('app.name').' - Sales',$from));
+                        $customer = (!empty($order->customer))?$order->customer->email:$this->settingJson['email'];
+                        Mail::to($customer)->send(new OrderEmailTemplate($order,config('app.name').' - Sales',$from));
                     }
                     return response()->json(['status' => 'successful', 'data'=>['quote'=>$cart_data['order_reference']],'code'=>1,'message'=>'Sales Successfully created.']);
                 }else{
@@ -420,7 +422,7 @@ class OrderController extends MainController
         if((!empty($user->userGroup)) && $user->userGroup->id == '3'){
             $where .= (!empty($user->id))?" AND from_user=$user->id":'';
         }else if(empty($user->userGroup) || $user->userGroup->id == '1'){
-            $where .= (!empty($user->id))?" AND (for_manufacturer = '0' OR for_manufacturer is NULL) AND (from_user=$user->id":'';
+            $where .= (!empty($user->id))?" AND (for_manufacturer = '0' OR for_manufacturer is NULL) AND (from_user=$user->id OR from_user IS NULL":'';
             $where .= (!empty($users)) ? " OR from_user in ($users) )" :")";
         }
         $where .= (!empty($search)) ? " AND (orders.order_number like '$search%' OR orders.total like '$search%' OR orders.created_at like '$search%' OR (c.name is NOT NULL AND c.name like '$search%') OR (d.name is NOT NULL AND d.name like '$search%'))":'';
@@ -440,8 +442,8 @@ class OrderController extends MainController
         $data = [];
         foreach($orders as $order){
             $is_sale_generated = Order::where('type','sale')->where('order_reference',$order->id)->where('deleted_at',NULL)->count();
-            $customer = (!empty($order->customer))?$order->customer:'N/A';
-            $added_by  = (!empty($order->added_by))?$order->added_by:'N/A';
+            $customer = (!empty($order->customer))?$order->customer:$this->settingJson['name'];
+            $added_by  = (!empty($order->added_by))?$order->added_by:$this->settingJson['name'];
             $action_html = "<span><a data-url=".route('quote.show',$order->id)." data-order=".$order->id." class='btn btn-primary view-order' data-toggle='modal' data-target='#orderModal'>View</a></span>";
             // $action_html .= "<span class='ml-3 create-po-".$order->id."'><a data-url=".route('cart.po.create')." data-order=".$order->id." class='btn btn-success view-order'>Generate PO</a></span>";
             if(empty($is_sale_generated) && (auth()->user()->id == $order->from_user) ){
@@ -475,7 +477,7 @@ class OrderController extends MainController
         if((!empty($user->userGroup)) && $user->userGroup->id == '3'){
             $where .= (!empty($user->id))?" AND from_user=$user->id":'';
         }else if(empty($user->userGroup) || $user->userGroup->id == '1'){
-            $where .= (!empty($user->id))?" AND (for_manufacturer = '1' OR from_user=$user->id":'';
+            $where .= (!empty($user->id))?" AND (for_manufacturer = '1' OR from_user=$user->id OR from_user IS NULL":'';
             $where .= (!empty($users)) ? " OR from_user in ($users) )" :")";
         }
         // $where .= (!empty($dealer_id))?" AND (dealer_id=$dealer_id OR inquiries.created_by=$dealer_id)":'';
@@ -540,7 +542,7 @@ class OrderController extends MainController
         if((!empty($user->userGroup)) && $user->userGroup->id == '3'){
             $where .= (!empty($user->id))?" AND from_user=$user->id":'';
         }else{
-            $where .= (!empty($user->id))?" AND from_user=$user->id":'';
+            $where .= (!empty($user->id))?" AND (from_user=$user->id OR from_user is NULL)":'';
         }
         // $where .= (!empty($dealer_id))?" AND (dealer_id=$dealer_id OR inquiries.created_by=$dealer_id)":'';
         $where .= (!empty($search)) ? " AND (orders.order_number like '$search%' OR orders.total like '$search%' OR orders.created_at like '$search%' OR (c.name is NOT NULL AND c.name like '$search%') OR (d.name is NOT NULL AND d.name like '$search%'))":'';
@@ -564,8 +566,8 @@ class OrderController extends MainController
             if(!empty($order_data->getUserOrderStatus()) && (count($order_data->getUserOrderStatus()) > 0 )){
                 $order_status = $order_data->getInvoiceStatus($order_data->getUserOrderStatus()[0]->status_id);
             }
-            $customer = (!empty($order->customer))?$order->customer:'N/A';
-            $added_by  = (!empty($order->added_by))?$order->added_by:'N/A';
+            $customer = (!empty($order->customer))?$order->customer:$this->settingJson['name'];
+            $added_by  = (!empty($order->added_by))?$order->added_by:$this->settingJson['name'];
             $action_html = "<span><a data-url=".route('sale.show',$order->id)." data-order=".$order->id." class='btn btn-primary view-order' data-toggle='modal' data-target='#orderModal'>View</a></span>";
             // $action_html .= "<span class='ml-3 create-po-".$order->id."'><a data-url=".route('cart.po.create')." data-order=".$order->id." class='btn btn-success view-quote' data-toggle='modal' data-target='#orderModal'>Generate PO</a></span>";
             // $action_html = "<span><a href=".route('order.edit',$order->id)." class='btn btn-primary'>Edit</a></span>";

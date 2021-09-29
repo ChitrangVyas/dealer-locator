@@ -39,6 +39,14 @@ class DealerUserController extends MainController
         return view('dealer.create');
     }
 
+    public function login(){
+        return view('auth.login',['user_group'=>'2']);
+    }
+
+    public function forgotPassword(){
+        return view('auth.passwords.email',['user_group'=>'2']);
+    }
+
     /**
      * Store a newly created resource in storage.
      *

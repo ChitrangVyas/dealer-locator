@@ -31,6 +31,15 @@ class RetailerUserController extends MainController
         return view('retailer.index');
     }
 
+    public function login(){
+        return view('auth.login',['user_group'=>'3']);
+    }
+    
+    public function forgotPassword(){
+        return view('auth.passwords.email',['user_group'=>'3']);
+    }
+    
+
     /**
      * Show the form for creating a new resource.
      *

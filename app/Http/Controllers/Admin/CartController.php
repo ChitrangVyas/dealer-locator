@@ -143,7 +143,9 @@ class CartController extends MainController
             $this->myCart->setTo($id,$request_data['data']['customer']);
         }
         $this->myCart->setType($id,'quote');
-        $this->myCart->setFrom($id,auth()->user()->id);
+        if((!empty(auth()->user()->users_group_id)) || (auth()->user()->users_group_id > 1)){
+            $this->myCart->setFrom($id,auth()->user()->id);
+        }
         $json['cart_title'] = "Quote".(!empty($this->myCart->getOrderNumber($id)) ? " #".$this->myCart->getOrderNumber($id) : '');
         $json['cart_content'] = $this->getInquiryToQuoteCart($id,$cart,$is_new_product)->render();
         return response()->json(['status' => 'successful','code'=>1, 'data'=>$json, 'message'=>'']);
@@ -173,7 +175,9 @@ class CartController extends MainController
                 $this->myCart->setOrderNumber($id,random_int(100000, 999999));
                 $this->myCart->setInquiryId($id,$inquiry->id);
                 $this->myCart->setType($id,'quote');
-                $this->myCart->setFrom($id,auth()->user()->id);
+                if((!empty(auth()->user()->users_group_id)) || (auth()->user()->users_group_id > 1)){
+                    $this->myCart->setFrom($id,auth()->user()->id);
+                }
                 $this->myCart->setTo($id,$inquiry->customer_id);
             }
         }else{
@@ -197,7 +201,7 @@ class CartController extends MainController
     public function getInquiryToQuoteCart($id,$cart,$is_new_product = 0){
         $to_user = [];
         if(!empty($this->myCart->getTo($id))){
-            $to_user = (!empty($this->myCart->getForManufacture($id)) && ($this->myCart->getType($id) == 'po')) ? Manufacturer::findOrFail($this->myCart->getTo($id)) : User::findOrFail($this->myCart->getTo($id));
+            $to_user = (!empty($this->myCart->getForManufacture($id)) && ($this->myCart->getType($id) == 'po')) ? NULL : User::findOrFail($this->myCart->getTo($id));
         }
         
         return view('admin.order.cart',['cart'=>$cart,'id'=>$id,'is_new_product' => $is_new_product,'order_number'=>$this->myCart->getOrderNumber($id),'type'=>$this->myCart->getType($id),'to_user'=>$to_user,'inquiry_id'=>$this->myCart->getInquiryId($id)]);
@@ -271,7 +275,7 @@ class CartController extends MainController
             $cart  = \Cart::session($id);
             if($cart->isEmpty()){
                 $items = [];
-                $manufacturer='';
+                $manufacturer = NULL;
                 $is_dealer = ($order->addedBy->users_group_id == 2) ? 1 : 0;
                 foreach($order->orderProduct as $orderProduct){
                     $items[] = array(
@@ -283,7 +287,7 @@ class CartController extends MainController
                     );
                     if($is_dealer){
                         // $manufacturer = (empty($manufacturer))?$orderProduct->product->brand->manufacturer->id:$manufacturer;
-                        $manufacturer = NULL;
+                        // $manufacturer = NULL;
                         // if($manufacturer != $orderProduct->product->brand->manufacturer->id){
                         //     $json['cart_title'] = "PO".(!empty($this->myCart->getOrderNumber($id)) ? " #".$this->myCart->getOrderNumber($id) : '');
                         //     return response()->json(['status' => 'error','code'=>0, 'data'=>$json, 'message'=>'Please Select the Same Manufacturer Product']);    
@@ -349,7 +353,9 @@ class CartController extends MainController
             }           
         }
         $this->myCart->setType($id,'po');
-        $this->myCart->setFrom($id,auth()->user()->id);
+        if((!empty(auth()->user()->users_group_id)) || (auth()->user()->users_group_id > 1)){
+            $this->myCart->setFrom($id,auth()->user()->id);
+        }
         // dd($cart->getContent());
         $json['cart_title'] = "PO".(!empty($this->myCart->getOrderNumber($id)) ? " #".$this->myCart->getOrderNumber($id) : '');
         $json['cart_content'] = $this->getInquiryToQuoteCart($id,$cart,$is_new_product)->render();
@@ -406,10 +412,14 @@ class CartController extends MainController
             $this->myCart->setType($id,'sale');
             if((!empty($order)) && (!empty($order->for_manufacturer))){
                 $this->myCart->setForManufacturePoTOSale($id,1);
-                $this->myCart->setFrom($id,$order->to_user);
+                if((!empty(auth()->user()->users_group_id)) || (auth()->user()->users_group_id > 1)){
+                    $this->myCart->setFrom($id,auth()->user()->id);
+                }
                 $this->myCart->setTo($id,$order->from_user);
             }else{
-                $this->myCart->setFrom($id,$order->from_user);
+                if((!empty(auth()->user()->users_group_id)) || (auth()->user()->users_group_id > 1)){
+                    $this->myCart->setFrom($id,auth()->user()->id);
+                }
                 $this->myCart->setTo($id,$order->to_user);
             }
         }
@@ -431,7 +441,9 @@ class CartController extends MainController
             $this->myCart->setTo($id,$request_data['data']['customer']);
         }
         $this->myCart->setType($id,'sale');
-        $this->myCart->setFrom($id,auth()->user()->id);
+        if((!empty(auth()->user()->users_group_id)) || (auth()->user()->users_group_id > 1)){
+            $this->myCart->setFrom($id,auth()->user()->id);
+        }
         $json['cart_title'] = "Sale".(!empty($this->myCart->getOrderNumber($id)) ? " #".$this->myCart->getOrderNumber($id) : '');
         $json['cart_content'] = $this->getInquiryToQuoteCart($id,$cart,$is_new_product)->render();
         return response()->json(['status' => 'successful','code'=>1, 'data'=>$json, 'message'=>'']);

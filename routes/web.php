@@ -108,6 +108,11 @@ Route::get('/logout', function(){
     return redirect('/');
 })->name('Logout');
 
+Route::get('/dealer/login',[App\Http\Controllers\Admin\DealerUserController::class,'login'])->name('dealer.login');
+Route::get('/dealer/password/reset',[App\Http\Controllers\Admin\DealerUserController::class,'forgotPassword'])->name('dealer.forgot.password');
+Route::get('/retailer/login',[App\Http\Controllers\Admin\RetailerUserController::class,'login'])->name('retailer.login');
+Route::get('/retailer/password/reset',[App\Http\Controllers\Admin\RetailerUserController::class,'forgotPassword'])->name('retailer.forgot.password');
+
 /* Route::get('/{lang}', function ($lang,$title='login') {
     Illuminate\Support\Facades\App::setlocale($lang);
     return view('home',['title' => '','elementActive'=>'']);

@@ -92,6 +92,25 @@
         </p>
     @endif
 
+    
+        <p class="my-0 pull-left">
+            @if(isset($user_group))
+            <a href="{{route('login')}}">
+                {{ __('Sign in as Staff') }}
+            </a>&nbsp;
+            @endif
+            @if(!isset($user_group) || $user_group!=2)
+            <a href="{{route('dealer.login')}}">
+                {{ __('Sign in as Dealer') }}
+            </a>&nbsp;
+            @endif
+            @if(!isset($user_group) ||$user_group!=3)
+            <a href="{{route('retailer.login')}}">
+                {{ __('Sign in as Retailer') }}
+            </a>
+            @endif
+        </p>            
+
     {{-- Register link --}}
     @if(!$register_url)
         <p class="my-0">

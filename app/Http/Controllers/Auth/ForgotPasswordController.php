@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\User;
 use Illuminate\Foundation\Auth\SendsPasswordResetEmails;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Password;
 
@@ -37,7 +39,21 @@ class ForgotPasswordController extends Controller
     {
         $this->validateEmail($request);
 
-        $user = $this->credentials($request);
+        $data = $this->credentials($request);
+
+        $user = User::where($data)->first();
+        $message = '';
+        if(!empty($user)){
+            /* return $request->wantsJson()
+                    ? new JsonResponse(['message' => trans($message)], 200)
+                    : back()->with('status', trans($message)); */
+        }else{
+            $message = 'Email is not registered.';
+            return $request->wantsJson()
+                    ? new JsonResponse(['message' => trans($message)], 200)
+                    : back()->with('status', trans($message));
+        }
+
 
     }
 }

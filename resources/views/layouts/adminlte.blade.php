@@ -81,6 +81,20 @@
 <script>
   $("document").ready(function(){
     $('.required_field').addClass('text-danger');
+    $("input,select,textarea").focusout(function(e){      
+      if($(this).val()!=""){        
+        $(this).parent().find(".alert").hide();        
+      }else{
+        $(this).parent().find(".alert").show();
+      }
+    });
+    $("select").change(function(e){      
+      if($(this).val()!=""){        
+        $(this).parent().find(".alert").hide();        
+      }else{
+        $(this).parent().find(".alert").show();
+      }
+    });
     $.ajaxSetup({
       headers: {
         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')

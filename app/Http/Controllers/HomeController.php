@@ -72,4 +72,11 @@ class HomeController extends MainController
         }
         return view('home',compact('elementActive','title','total_order','total_po','total_dealer','total_retailer','orderArr'));
     }
+
+    public function changepassword(){
+        $elementActive = '';
+        $title = '';
+        $user = auth()->user();        
+        return view('changepassword',compact('elementActive','user','title'));
+    }
 }

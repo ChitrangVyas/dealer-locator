@@ -21,6 +21,7 @@ Route::get('/', function () {
 Auth::routes(['register' => false]);
 Route::group(['prefix'=>'admin','middleware'=>['auth']],function () {
     Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+    Route::get('/home/changepassword', [App\Http\Controllers\HomeController::class, 'changepassword'])->name('changepassword');
     Route::post('home/inquiry', [App\Http\Controllers\Admin\InquiryController::class,'getInquiries'])->name('home.inqiuries');
     Route::get('/get-value', [App\Http\Controllers\CommonController::class, 'index'])->name('get_value');
     Route::any('staff/listajaxdata', [App\Http\Controllers\Admin\AdminUserController::class,'listAjaxData'])->name('stafflistajax');
@@ -99,6 +100,7 @@ Route::group(['prefix'=>'admin','middleware'=>['auth']],function () {
     Route::resource('order', App\Http\Controllers\Admin\OrderController::class);
     Route::resource('vendor', App\Http\Controllers\Admin\VendorController::class);
     Route::resource('settings', App\Http\Controllers\SettingsController::class);
+    
 });
 
 

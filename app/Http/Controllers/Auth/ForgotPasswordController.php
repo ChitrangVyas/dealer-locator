@@ -4,9 +4,15 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Notifications\SendResetPassword;
+use Carbon\Carbon;
+use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Foundation\Auth\SendsPasswordResetEmails;
+use Illuminate\Support\Str;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Password;
 
 class ForgotPasswordController extends Controller
@@ -44,14 +50,24 @@ class ForgotPasswordController extends Controller
         $user = User::where($data)->first();
         $message = '';
         if(!empty($user)){
-            /* return $request->wantsJson()
-                    ? new JsonResponse(['message' => trans($message)], 200)
-                    : back()->with('status', trans($message)); */
-        }else{
-            $message = 'Email is not registered.';
+            $token = Str::random(60);
+            DB::table('password_resets')->insert([
+                'email' => $user->email,
+                'user_id'=> $user->id,
+                'token' => $token,
+                'created_at' => Carbon::now()
+            ]);
+            $user->sendPasswordResetNotification($token);
+            $message = 'Reset password link has been successfull sent.';
             return $request->wantsJson()
                     ? new JsonResponse(['message' => trans($message)], 200)
                     : back()->with('status', trans($message));
+            // Mail::to($user->email)->;
+        } else {
+            $message = 'Email is not registered.';
+            return $request->wantsJson()
+                    ? new JsonResponse(['message' => trans($message)], 404)
+                    : back()->withErrors(['email' => trans($message)]);
         }
 
 

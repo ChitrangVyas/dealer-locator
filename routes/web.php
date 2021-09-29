@@ -18,6 +18,10 @@ Route::get('/', function () {
     return redirect('admin/home');
 });
 
+Route::get('/home', function () {
+    return redirect('admin/home');
+});
+
 Auth::routes(['register' => false]);
 Route::group(['prefix'=>'admin','middleware'=>['auth']],function () {
     Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');

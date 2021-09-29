@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Notifications\SendResetPassword;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -88,5 +89,9 @@ class User extends Authenticatable
                 return $query->whereRaw($where);
             }
         })->first();
+    }
+    public function sendPasswordResetNotification($token)
+    {
+        $this->notify(new SendResetPassword($token));
     }
 }

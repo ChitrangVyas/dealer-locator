@@ -167,6 +167,7 @@ jQuery(document).ready(function(){
         allowClear: true,
         ajax: {
             url: "{{route('get_value')}}",
+            type: 'POST',
             dataType: 'json',
             data: function (params) {
                 return {
@@ -191,6 +192,7 @@ jQuery(document).ready(function(){
         allowClear: true,
         ajax: {
             url: "{{route('get_value')}}",
+            type: 'POST',
             dataType: 'json',
             data: function (params) {
                 return {
@@ -216,6 +218,7 @@ jQuery(document).ready(function(){
         minimumInputLength: 2,
         ajax: {
             url: "{{route('get_value')}}",
+            type: 'POST',
             dataType: 'json',
             data: function (params) {
                 return {
@@ -273,15 +276,14 @@ jQuery(document).ready(function(){
        return $.ajax({
             headers: { 'X-CSRF-Token' : $('meta[name=_token]').attr('content') },
             url: "{{ route('get_value') }}",
-            type: 'GET',            
+            type: 'POST',          
             data: {
                     // q: param, // search term
                     table:'users',
                     fields: "users.id, CONCAT(`users`.`name`, ' - ', `zipcode`,' - ',`cities`.`name`) as text",
                     where:` (users_group_id = 3) AND (parent_id = ${param}) `,
                     joins:[{'join_table':'cities','to_column':'city_id','from_column':'cities.id','type':'left'}]
-            },
-            contentType:'json',
+            },            
             success: function (data) { 
                 data = JSON.parse(data);
                 var newOption = new Option();

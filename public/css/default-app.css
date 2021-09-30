@@ -10,7 +10,7 @@
  * Copyright 2011-2021 Twitter, Inc.
  * Licensed under MIT (https://github.com/twbs/bootstrap/blob/main/LICENSE)
  */
-:root {
+ :root {
   --blue: #007bff;
   --indigo: #6610f2;
   --purple: #6f42c1;
@@ -68003,4 +68003,13 @@ readers do not read off random characters that represent icons */
 .sidebar nav .menu-open .nav-treeview .nav-link {
   width: auto;
   margin-left: 15px;
+}
+
+.eye-icon {
+  float: right;
+  margin-right: 10px;
+  margin-top: -25px;
+  position: relative;
+  z-index: 2;
+  color: gray;
 }

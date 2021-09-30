@@ -64,7 +64,7 @@
                 </div>
                 @if(!empty($settings->json_data['icon_logo']))
                 <div class="col-sm-12 col-md-6">
-                    <img class='img logo mt-3 mb-4' src="{{ url($settings->json_data['icon_logo']) }}" width=100 />
+                    <img class='img logo mt-3 mb-4 border' src="{{ url($settings->json_data['icon_logo']) }}" width=100 />
                 </div>
                 @endif
             </div>

@@ -174,6 +174,7 @@ jQuery(document).ready(function(){
         minimumInputLength: 2,
         ajax: {
             url: "{{route('get_value')}}",
+            type: 'POST',
             dataType: 'json',
             data: function (params) {
                 return {
@@ -195,6 +196,7 @@ jQuery(document).ready(function(){
         minimumInputLength: 2,
         ajax: {
             url: "{{route('get_value')}}",
+            type: 'POST',
             dataType: 'json',
             data: function (params) {
                 return {
@@ -228,6 +230,7 @@ jQuery(document).ready(function(){
                 minimumInputLength: 2,
                 ajax: {
                     url: "{{route('get_value')}}",
+                    type: 'POST',
                     dataType: 'json',
                     data: function(params) {
                         return {
@@ -257,7 +260,7 @@ jQuery(document).ready(function(){
         if($('#state_id').val() || $('#city_id').val()){
             $.ajax({
                 url: "{{route('get_value')}}",
-                type: 'GET',
+                type: 'POST',
                 data: {
                     table: table,
                     where: where,

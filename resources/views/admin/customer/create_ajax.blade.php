@@ -123,6 +123,7 @@ jQuery(document).ready(function(){
         minimumInputLength: 2,
         ajax: {
             url: "{{route('get_value')}}",
+            type: 'POST',
             dataType: 'json',
             data: function (params) {
                 return {
@@ -145,6 +146,7 @@ jQuery(document).ready(function(){
         width:"100%",
         ajax: {
             url: "{{route('get_value')}}",
+            type: 'POST',
             dataType: 'json',
             data: function (params) {
                 return {
@@ -178,6 +180,7 @@ jQuery(document).ready(function(){
                 minimumInputLength: 2,
                 ajax: {
                     url: "{{route('get_value')}}",
+                    type: 'POST',
                     dataType: 'json',
                     data: function(params) {
                         return {

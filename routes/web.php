@@ -28,7 +28,7 @@ Route::group(['prefix'=>'admin','middleware'=>['auth']],function () {
     Route::get('/home/changepassword', [App\Http\Controllers\HomeController::class, 'changepassword'])->name('changepassword');
     Route::post('/home/updatepassword', [App\Http\Controllers\HomeController::class, 'updatepassword'])->name('updatepassword');
     Route::post('home/inquiry', [App\Http\Controllers\Admin\InquiryController::class,'getInquiries'])->name('home.inqiuries');
-    Route::get('/get-value', [App\Http\Controllers\CommonController::class, 'index'])->name('get_value');
+    Route::any('/get-value', [App\Http\Controllers\CommonController::class, 'index'])->name('get_value');
     Route::any('staff/listajaxdata', [App\Http\Controllers\Admin\AdminUserController::class,'listAjaxData'])->name('stafflistajax');
     Route::any('dealer/listajaxdata', [App\Http\Controllers\Admin\DealerUserController::class,'listAjaxData'])->name('dealerlistajax');
     Route::any('retailer/listajaxdata', [App\Http\Controllers\Admin\RetailerUserController::class,'listAjaxData'])->name('retailerlistajax');

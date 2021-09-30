@@ -167,6 +167,7 @@ jQuery(document).ready(function(){
         allowClear: true,
         ajax: {
             url: "{{route('get_value')}}",
+            type: 'POST',
             dataType: 'json',
             data: function (params) {
                 return {
@@ -191,6 +192,7 @@ jQuery(document).ready(function(){
         allowClear: true,
         ajax: {
             url: "{{route('get_value')}}",
+            type: 'POST',
             dataType: 'json',
             data: function (params) {
                 return {
@@ -216,6 +218,7 @@ jQuery(document).ready(function(){
         minimumInputLength: 2,
         ajax: {
             url: "{{route('get_value')}}",
+            type: 'POST',
             dataType: 'json',
             data: function (params) {
                 return {
@@ -273,7 +276,7 @@ jQuery(document).ready(function(){
        return $.ajax({
             headers: { 'X-CSRF-Token' : $('meta[name=_token]').attr('content') },
             url: "{{ route('get_value') }}",
-            type: 'GET',            
+            type: 'POST',          
             data: {
                     // q: param, // search term
                     table:'users',

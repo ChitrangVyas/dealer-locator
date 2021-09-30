@@ -546,6 +546,7 @@
             width:"100%",
             ajax: {
                 url: "{{route('get_value')}}",
+                type: 'POST',
                 dataType: 'json',
                 data: function (params) {
                     return {
@@ -640,6 +641,7 @@
             width:"80%",
             ajax: {
                 url: "{{route('get_value')}}",
+                type: 'POST',
                 dataType: 'json',
                 data: function (params) {
                     return {

@@ -20,11 +20,11 @@
         </a>
         <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">          
         <a class="dropdown-item" href="{{ route('changepassword') }}" role="button">
-            <i class="fas fa-lock">@if (trans()->has('lang.change_password')) {{ __('lang.change_password') }} @else {{__('Change Password')}} @endif   </i>
+            <i class="fas fa-lock"></i> @if (trans()->has('lang.change_password')) {{ __('lang.change_password') }} @else {{__('Change Password')}} @endif   
           </a> 
           <div class="dropdown-divider"></div>                       
           <a class="dropdown-item" href="{{ route('logout') }}" >
-            <i class="fas fa-sign-out-alt">@if (trans()->has('lang.sign_out')) {{ __('lang.sign_out') }} @else {{__('Sign Out')}} @endif   </i>
+            <i class="fas fa-sign-out-alt"></i> @if (trans()->has('lang.sign_out')) {{ __('lang.sign_out') }} @else {{__('Sign Out')}} @endif 
           </a> 
         </div>
       </li>

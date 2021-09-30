@@ -102,8 +102,11 @@
     });
     $(".nav-link.active").parent().parent().parent().addClass("menu-is-opening menu-open");
     $('body').on('change','input[type="file"]',function(e){
+            e.stopImmediatePropagation();
+            $(this).parent('.form-group').find(".alert").hide();
             var fileName = e.target.files[0].name;
-            $('.custom-file-label').html(fileName);
+            $(this).parent().find("label").html(fileName);
+            //$('.custom-file-label').closest('label').html(fileName);
         });
   });
 </script>

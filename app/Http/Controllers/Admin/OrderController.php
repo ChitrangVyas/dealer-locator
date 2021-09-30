@@ -183,7 +183,7 @@ class OrderController extends MainController
                 if(!empty($order_product)){
                     if((!empty($request_data['btnSave'])) && $request_data['btnSave']=='savensend')
                     {
-                        $email_data = [
+                        /* $email_data = [
                             'from'=>$quote->addedBy->email,
                             'from_name' => $quote->addedBy->name,
                             'to'=>$quote->customer->email,
@@ -191,10 +191,11 @@ class OrderController extends MainController
                             'view' => 'emails.send',
                             'content' => "<p>This is Test for the Qoute</p>",
 
-                        ];
-                        $from = (!empty($quote->addedBy))?$quote->addedBy->email:$this->settingJson['email'];
-                        $customer = (!empty($quote->customer))?$quote->customer->email:$this->settingJson['email'];
-                        Mail::to($customer)->send(new OrderEmailTemplate($quote,config('app.name').' - Quote',$from));
+                        ]; */
+                        $from = (!empty($quote->addedBy))?$quote->addedBy->email:$this->settingJson['mail_from_email'];
+                        $from_name = (!empty($quote->addedBy))?$quote->addedBy->name:$this->settingJson['mail_from_name'];
+                        $customer = (!empty($quote->customer))?$quote->customer->email:$this->settingJson['mail_from_email'];
+                        Mail::to($customer)->send(new OrderEmailTemplate($quote,config('app.name').' - Quote',$from,$from_name));
                         // $this->send($email_data);
                     }
                     return response()->json(['status' => 'successful','code'=>1,'message'=>'Quote Successfully created.']);
@@ -246,9 +247,10 @@ class OrderController extends MainController
                             'content' => "<p>This is Test for the PO</p>",
 
                         ]; */
-                        $from = (!empty($order->addedBy))?$order->addedBy->email:$this->settingJson['email'];
-                        $customer = (!empty($order->customer))?$order->customer->email:$this->settingJson['email'];
-                        Mail::to($customer)->send(new OrderEmailTemplate($order,config('app.name').' - PO',$from));
+                        $from = (!empty($order->addedBy))?$order->addedBy->email:$this->settingJson['mail_from_email'];
+                        $from_name = (!empty($order->addedBy))?$order->addedBy->name:$this->settingJson['mail_from_name'];
+                        $customer = (!empty($order->customer))?$order->customer->email:$this->settingJson['mail_from_email'];
+                        Mail::to($customer)->send(new OrderEmailTemplate($order,config('app.name').' - PO',$from,$from_name));
                         // Mail::to($order->customer->email)->send(new OrderShipped($order));
                         // $this->send($email_data);
                     }
@@ -386,9 +388,10 @@ class OrderController extends MainController
                 $this->myCart->clear($request_data['cart_id']);
                 if(!empty($order_product)){
                     if((!empty($request_data['btnSave'])) && $request_data['btnSave']=='savensend'){
-                        $from = (!empty($order->addedBy))?$order->addedBy->email:$this->settingJson['email'];
-                        $customer = (!empty($order->customer))?$order->customer->email:$this->settingJson['email'];
-                        Mail::to($customer)->send(new OrderEmailTemplate($order,config('app.name').' - Sales',$from));
+                        $from = (!empty($order->addedBy))?$order->addedBy->email:$this->settingJson['mail_from_email'];
+                        $from_name = (!empty($order->addedBy))?$order->addedBy->name:$this->settingJson['mail_from_name'];
+                        $customer = (!empty($order->customer))?$order->customer->email:$this->settingJson['mail_from_email'];
+                        Mail::to($customer)->send(new OrderEmailTemplate($order,config('app.name').' - Sales',$from,$from_name));
                     }
                     return response()->json(['status' => 'successful', 'data'=>['quote'=>$cart_data['order_reference']],'code'=>1,'message'=>'Sales Successfully created.']);
                 }else{

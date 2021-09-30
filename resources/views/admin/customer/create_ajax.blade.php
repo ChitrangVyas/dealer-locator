@@ -39,35 +39,35 @@
                 <!-- text input -->
                 <div class="form-group">
                     <label>Name <span class="required_field">*</span></label>
-                    <input type="text" class="form-control" name="name" value="{{ (!empty($user))?$user->name:'' }}" placeholder="Full Name" tabindex="1">
+                    <input type="text" class="form-control" name="name" value="{{ (!empty($user))?$user->name:'' }}" placeholder="Full Name" tabindex="21">
                 </div>
             </div>
             <div class="col-sm-12 col-md-4">
                 <!-- text input -->
                 <div class="form-group">
                     <label>Email <span class="required_field">*</span></label>
-                    <input type="email" class="form-control" name="email" value="{{ (!empty($user))?$user->email:'' }}" placeholder="Email" autocomplete="false" tabindex="2">
+                    <input type="email" class="form-control" name="email" value="{{ (!empty($user))?$user->email:'' }}" placeholder="Email" autocomplete="false" tabindex="22">
                 </div>
             </div>
             <div class="col-sm-12 col-md-4">
                 <!-- text input -->
                 <div class="form-group">
                     <label>Mobile <span class="required_field">*</span></label>
-                    <input type="text" name="mobile" value="{{ (!empty($user))?$user->mobile:'' }}" class="form-control" placeholder="Mobile" tabindex="3">
+                    <input type="text" name="mobile" value="{{ (!empty($user))?$user->mobile:'' }}" class="form-control" placeholder="Mobile" tabindex="23">
                 </div>
             </div>
             <div class="col-sm-12 col-md-4">
                 <!-- text input -->
                 <div class="form-group">
                     <label>Address <span class="required_field">*</span></label>
-                    <textarea class="form-control" name="address" rows="1" placeholder="Address">{{ (!empty($user))?$user->address:'' }}</textarea>
+                    <textarea class="form-control" name="address" rows="1" placeholder="Address" tabindex="24">{{ (!empty($user))?$user->address:'' }}</textarea>
                 </div>
             </div>
             <div class="col-sm-12 col-md-4">
                 <!-- text input -->
                 <div class="form-group">
                     <label>State <span class="required_field">*</span></label>
-                    <select class="form-control select2 state" id='state' name='state_id' tabindex="4">
+                    <select class="form-control select2 state" id='state' name='state_id' tabindex="25">
                         <option value="">Select</option>
                         @if(!empty($user) && $user->state_id)
                             <option value="{{$user->state_id}}" selected>{{$user->state->name}}</option>
@@ -79,7 +79,7 @@
                 <!-- text input -->
                 <div class="form-group">
                     <label>City <span class="required_field">*</span></label>
-                    <select class="form-control select2 city" id='city' name='city_id' tabindex="5">
+                    <select class="form-control select2 city" id='city' name='city_id' tabindex="26">
                         <option value="">Select</option>
                         @if(!empty($user) && !empty($user->city_id))
                             <option value="{{$user->city_id}}" selected>{{$user->city->name}}</option>
@@ -100,13 +100,13 @@
                 <!-- text input -->
                 <div class="form-group">
                     <label>Zip code <span class="required_field">*</span></label>
-                    <input type="text" name="zipcode" value="{{ (!empty($user))?$user->zipcode:'' }}" class="form-control" placeholder="Enter zipcode" tabindex="6">
+                    <input type="text" name="zipcode" value="{{ (!empty($user))?$user->zipcode:'' }}" class="form-control" placeholder="Enter zipcode" tabindex="27">
                 </div>
             </div>
         </div>
         <div class="row">
             <div class="col-sm-12">
-                <button type="submit" class="btn btn-primary" tabindex="7">Submit</button>
+                <button type="submit" class="btn btn-primary" tabindex="28">Submit</button>
             </div>
         </div>
     </form>

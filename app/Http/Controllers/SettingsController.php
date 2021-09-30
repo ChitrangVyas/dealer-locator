@@ -68,16 +68,31 @@ class SettingsController extends MainController
         $request_data = $request->except(['_token','id']);
         $filepath = '';
         if($request->file()){
-            $filepath = $this->storeImage($request);
-            $request_data['logo'] = $filepath;
+            $this->validate($request,[
+                'logo' => 'mimes:jpg,gif,svg,jpeg,png,bmp,tiff |max:4096',
+                'icon_logo' => 'mimes:jpg,gif,svg,jpeg,png,bmp,tiff |max:4096',
+            ]);
+            if(!empty($request->file('logo'))){
+                $fileName = time().'_'.$request->logo->getClientOriginalName();
+                $filepath = $this->storeImage($request,$fileName,'logo');
+                $request_data['logo'] = $filepath;
+            }
+            if(!empty($request->file('icon_logo'))){
+                $fileName = time().'_'.$request->icon_logo->getClientOriginalName();
+                $filepath = $this->storeImage($request,$fileName,'icon_logo');
+                $request_data['icon_logo'] = $filepath;
+            }
         }
         if(empty($request->input('id'))){
             $settings = Settings::create(['json_data'=>json_encode($request_data)]);
         }else{
             $setting = Settings::where('id',$request->input('id'));
             $settings_data = (!empty($setting->first()->json_data))?json_decode($setting->first()->json_data):'';
-            if(!empty($settings_data) && !empty($settings_data->logo)){
+            if(!empty($settings_data) && (!empty($settings_data->logo) && empty($request_data['logo']))){
                 $request_data['logo'] = $settings_data->logo;
+            }
+            if(!empty($settings_data) && (!empty($settings_data->icon_logo &&  empty($request_data['icon_logo'])))){
+                $request_data['icon_logo'] = $settings_data->icon_logo;
             }
             $settings = $setting->update(['json_data'=>json_encode($request_data)]);
         }
@@ -91,13 +106,9 @@ class SettingsController extends MainController
         }
         return redirect(route('settings.index'));
     }
-    public function storeImage($request){
-        if($request->file()) {
-            $this->validate($request,[
-                'logo' => 'mimes:jpg,gif,svg,jpeg,png,bmp,tiff |max:4096',
-            ]);
-            $fileName = time().'_'.$request->logo->getClientOriginalName();
-            $filePath = $request->file('logo')->storeAs('uploads/logo', $fileName, 'public');
+    public function storeImage($request,$fileName,$input){
+        if((!empty($fileName)) && (!empty($input))) {
+            $filePath = $request->file($input)->storeAs('uploads/logo', $fileName, 'public');
             return '/storage/' . $filePath;
         }
         return '';

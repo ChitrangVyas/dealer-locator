@@ -261,6 +261,7 @@
                     <label>Mail Encryption</label>
                     <!-- <input type="text" class="form-control" name="mail_encryption" value="{{ old('mail_encryption',(!empty($settings->json_data['mail_encryption']))?$settings->json_data['mail_encryption']:'')}}" placeholder="Mail Encryption" tabindex="2"> -->
                     <select name="mail_encryption" id="mail_encryption" class="form-control">
+                        <option value="null" {{ (old('mail_encryption') == 'null'||(!empty($settings->json_data['mail_encryption']) && $settings->json_data['mail_encryption'] == 'null')) ?'selected':''}}>Default</option>
                         <option value="ssl" {{ (old('mail_encryption') == 'ssl'||(!empty($settings->json_data['mail_encryption']) && $settings->json_data['mail_encryption'] == 'ssl')) ?'selected':''}}>SSL</option>
                         <option value="tls" {{ (old('mail_encryption') == 'tls' ||(!empty($settings->json_data['mail_encryption']) && $settings->json_data['mail_encryption'] == 'tls')) ?'selected':''}}>TLS</option>
                     </select>

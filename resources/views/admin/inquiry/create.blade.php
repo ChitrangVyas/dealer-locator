@@ -283,8 +283,7 @@ jQuery(document).ready(function(){
                     fields: "users.id, CONCAT(`users`.`name`, ' - ', `zipcode`,' - ',`cities`.`name`) as text",
                     where:` (users_group_id = 3) AND (parent_id = ${param}) `,
                     joins:[{'join_table':'cities','to_column':'city_id','from_column':'cities.id','type':'left'}]
-            },
-            contentType:'json',
+            },            
             success: function (data) { 
                 data = JSON.parse(data);
                 var newOption = new Option();

@@ -40,7 +40,7 @@ class MainController extends Controller
                     'transport' => $this->settingJson['mail_mailer'],
                     'host' => $this->settingJson['mail_host'],
                     'port' => $this->settingJson['mail_port'],
-                    'encryption' => $this->settingJson['mail_encryption'],
+                    'encryption' => ($this->settingJson['mail_encryption']=='null') ? null :$this->settingJson['mail_encryption'],
                     'username' => $this->settingJson['mail_username'],
                     'password' => $this->settingJson['mail_password'],
                     'timeout' => null

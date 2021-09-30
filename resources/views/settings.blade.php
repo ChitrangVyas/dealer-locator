@@ -206,6 +206,7 @@
                 <div class="form-group">
                     <label>Mailer</label>
                     <select name="mail_mailer" id="mail_mailer" class="form-control">
+                        <option value="sendmail" {{ (old('mail_mailer') == 'sendmail'||(!empty($settings->json_data['mail_mailer']) && $settings->json_data['mail_mailer'] == 'mail')) ?'selected':''}}>Default</option>
                         <option value="smtp" {{ (old('mail_mailer') == 'smtp'||(!empty($settings->json_data['mail_mailer']) && $settings->json_data['mail_mailer'] == 'smtp')) ?'selected':''}}>SMTP</option>
                         <option value="pop" {{ (old('mail_mailer') == 'pop' ||(!empty($settings->json_data['mail_mailer']) && $settings->json_data['mail_mailer']== 'pop')) ?'selected':''}}>POP</option>
                     </select>

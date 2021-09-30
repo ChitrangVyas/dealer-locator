@@ -22,8 +22,7 @@
                         <!-- text input -->
                         <div class="form-group">
                             <label>Name <span class="required_field">*</span></label>
-                            <input type="text" class="form-control" name="name"
-                                value="{{ old('name',(!empty($product))?$product->name:'') }}" placeholder="Full Name" tabindex="1">
+                            <input type="text" class="form-control" name="name" value="{{ old('name',(!empty($product))?$product->name:'') }}" placeholder="Full Name" tabindex="1">
                             @error('name')
                             <div class="alert alert-danger mt-2">{{ $message }}</div>
                             @enderror
@@ -33,11 +32,11 @@
                     <div class="col-sm-12 col-md-6">
                         <!-- text input -->
                         <div class="form-group">
-                            <label>Brand <span class="required_field">*</span></label>                            
+                            <label>Brand <span class="required_field">*</span></label>
                             <select class="form-control" id="brand_id" name="brand_id" tabindex="2">
                                 <option value="">Please select</option>
                                 @foreach($brands as $brand)
-                                    <option {{ old('brand_id', (!empty($product) && $product->brand_id == $brand->id))== $brand->id ? "selected='selected'" : '' }} value="{{$brand->id}}">{{$brand->name}}</option>
+                                <option {{ old('brand_id', (!empty($product) && $product->brand_id == $brand->id))== $brand->id ? "selected='selected'" : '' }} value="{{$brand->id}}">{{$brand->name}}</option>
                                 @endforeach
                             </select>
                             @error('brand_id')
@@ -49,11 +48,11 @@
                     <div class="col-sm-12 col-md-6">
                         <!-- text input -->
                         <div class="form-group">
-                            <label>Category</label>                            
+                            <label>Category</label>
                             <select class="form-control categories" multiple="multiple" name="categories[]" tabindex="3">
                                 <option value="">Please select</option>
                                 @foreach($categories as $category)
-                                    <option value="{{$category->id}}" {{old('categories[]', (!empty($product_category) && in_array($category->id,$product_category)))?'selected':''}}>{{$category->name}}</option>
+                                <option value="{{$category->id}}" {{old('categories[]', (!empty($product_category) && in_array($category->id,$product_category)))?'selected':''}}>{{$category->name}}</option>
                                 @endforeach
                             </select>
                             @error('category')
@@ -61,7 +60,7 @@
                             @enderror
                         </div>
                     </div>
-                    
+
                     <div class="col-sm-12 col-md-6">
                         <!-- file input -->
                         <div class="form-group">
@@ -84,8 +83,8 @@
                     </div>
                     <div class="col-sm-12 col-md-12">
                         <!-- text input -->
-                        <div class="form-group">
-                            <label>Description <span class="required_field">*</span></label>                            
+                        <div class="form-group summernote-container">
+                            <label>Description <span class="required_field">*</span></label>
                             <textarea name="description" class="form-control summernote" tabindex="5">{{ old('description',(!empty($product))?$product->description:'') }}</textarea>
                             @error('description')
                             <div class="alert alert-danger mt-2">{{ $message }}</div>
@@ -96,8 +95,7 @@
                         <!-- text input -->
                         <div class="form-group">
                             <label>Inventory <span class="required_field">*</span></label>
-                            <input type="number" class="form-control" name="inventory"
-                                value="{{ old('inventory',(!empty($product))?$product->inventory:'') }}" placeholder="inventory" tabindex="6">
+                            <input type="number" class="form-control" name="inventory" value="{{ old('inventory',(!empty($product))?$product->inventory:'') }}" placeholder="inventory" tabindex="6">
                             @error('inventory')
                             <div class="alert alert-danger mt-2">{{ $message }}</div>
                             @enderror
@@ -107,8 +105,7 @@
                         <!-- text input -->
                         <div class="form-group">
                             <label>Price <span class="required_field">*</span></label>
-                            <input type="number" class="form-control" name="price"
-                                value="{{ old('price',(!empty($product))?$product->price:'') }}" placeholder="Price" tabindex="7" min=1 required>
+                            <input type="number" class="form-control" name="price" value="{{ old('price',(!empty($product))?$product->price:'') }}" placeholder="Price" tabindex="7" min=1 required>
                             @error('price')
                             <div class="alert alert-danger mt-2">{{ $message }}</div>
                             @enderror
@@ -129,17 +126,28 @@
 @section('plugins.summernote', true)
 @section('js')
 <script>
-jQuery(document).ready(function(){
-    jQuery(".categories").select2({
-        tags: true,
-        tokenSeparators: [","],
-    });
     jQuery(document).ready(function() {
-      $("#brand_id").select2();
+        jQuery(".categories").select2({
+            tags: true,
+            tokenSeparators: [","],
+        });
+        jQuery(document).ready(function() {
+            $("#brand_id").select2();
+        });
+        $('.summernote').summernote({
+            height: 200,
+            toolbar: [
+                ["history", ["undo", "redo"]],
+                ["style", ["style"]],
+                ["font", ["bold", "italic", "underline", "fontname", "strikethrough", "superscript", "subscript", "clear"]],
+                ["color", ["forecolor", "backcolor", "color"]],
+                ["paragraph", ["ul", "ol", "paragraph", "height"]],
+                ["table", ["table"]],
+                ["insert", ["link", "picture", "video"]],
+                ["view", ["codeview"]],
+            ],
+
+        });
     });
-    $('.summernote').summernote({
-            height: 200
-    });
-});
 </script>
 @endsection

@@ -140,8 +140,8 @@ class ProductController extends MainController
         try{
             if($request->file()) {
                 $filename = str_replace('/storage/uploads/products/', '', $product->image);
-                if(file_exists(storage_path('app/public/uploads/products/'.$filename))){
-                    @unlink(storage_path('app/public/uploads/products/'.$filename));
+                if(!empty($product->image) && file_exists(storage_path('app/public/uploads/products/'.$filename))){
+                    unlink(storage_path('app/public/uploads/products/'.$filename));
                 }
                 $fileName = time().'_'.$request->image->getClientOriginalName();
                 $filePath = $request->file('image')->storeAs('uploads/products', $fileName, 'public');

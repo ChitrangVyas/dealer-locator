@@ -88,8 +88,11 @@ class SettingsController extends MainController
         }else{
             $setting = Settings::where('id',$request->input('id'));
             $settings_data = (!empty($setting->first()->json_data))?json_decode($setting->first()->json_data):'';
-            if(!empty($settings_data) && !empty($settings_data->logo)){
+            if(!empty($settings_data) && (!empty($settings_data->logo) || empty($request_data['logo']))){
                 $request_data['logo'] = $settings_data->logo;
+            }
+            if(!empty($settings_data) && (!empty($settings_data->icon_logo || empty($request_data['icon_logo'])))){
+                $request_data['icon_logo'] = $settings_data->icon_logo;
             }
             $settings = $setting->update(['json_data'=>json_encode($request_data)]);
         }

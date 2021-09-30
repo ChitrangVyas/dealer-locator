@@ -11,3 +11,16 @@ $fa-font-path : "../webfonts";
 @import '~@fortawesome/fontawesome-free/scss/solid.scss';
 @import '~@fortawesome/fontawesome-free/scss/brands.scss';
 @import '~@fortawesome/fontawesome-free/scss/regular.scss';
+
+.sidebar nav .menu-open .nav-treeview .nav-link {
+    width: auto;
+    margin-left: 15px;
+  }
+  .eye-icon {
+    float: right;
+    margin-right: 10px;
+    margin-top: -25px;
+    position: relative;
+    z-index: 2;
+    color: gray;
+}

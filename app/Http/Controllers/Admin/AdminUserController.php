@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Requests\AdminUserCreateRequest;
-use App\Http\Requests\AdminUserUpdateRequest;
+use App\Http\Requests\Admin\AdminUserCreateRequest;
+use App\Http\Requests\Admin\AdminUserUpdateRequest;
 use App\Models\User;
 use Exception;
 use Illuminate\Http\Request;
@@ -13,8 +13,9 @@ use View;
 class AdminUserController extends MainController
 {
     public function __construct() {
-        View::share ( 'title', 'Staff User' );
-        View::share ( 'elementActive', 'staf' );
+        parent::__construct();
+        View::share ( 'title', 'Staff' );
+        View::share ( 'elementActive', 'staff' );        
     }
     /**
      * Display a listing of the resource.
@@ -62,8 +63,8 @@ class AdminUserController extends MainController
                     'state_id' => $request_data['state'],
                     'zipcode' => $request_data['zipcode'],
                 ]);
-            }catch(Exception $e){
-                return redirect(route('staff.create'));
+            }catch(Exception $e){               
+                return redirect(route('staff.create'))->with('exception', $e->getMessage());
             }
         }
         return redirect(route('staff.index'));
@@ -121,7 +122,12 @@ class AdminUserController extends MainController
         }
 
         if($request_data['user_group'] == '1'){
-            $user = User::where('id',$id)->update($data);
+            try{
+                $user = User::where('id',$id)->update($data);
+            } catch(Exception $e){
+                return redirect(route('staff.edit'));
+            }
+
         }
         return redirect(route('staff.index'));
     }

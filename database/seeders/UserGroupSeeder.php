@@ -21,6 +21,7 @@ class UserGroupSeeder extends Seeder
             array('id'=>2,'name'=>'dealer','created_at' => date('Y-m-d H:i:s'),'updated_at' => date('Y-m-d H:i:s')),
             array('id'=>3,'name'=>'retailer','created_at' => date('Y-m-d H:i:s'),'updated_at' => date('Y-m-d H:i:s')),
             array('id'=>4,'name'=>'customer','created_at' => date('Y-m-d H:i:s'),'updated_at' => date('Y-m-d H:i:s')),
+            array('id'=>5,'name'=>'vendor','created_at' => date('Y-m-d H:i:s'),'updated_at' => date('Y-m-d H:i:s')),
         );
         DB::table('users_group')->insert($user_group);
     }

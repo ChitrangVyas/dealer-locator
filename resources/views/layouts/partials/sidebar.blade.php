@@ -2,7 +2,7 @@
     <!-- Brand Logo -->
     <a href="/" class="brand-link">
       <img src="{{ asset('assets/img/AdminLTELogo.png') }}" alt="Logo" class="brand-image img-circle elevation-3" style="opacity: .8">
-      <span class="brand-text font-weight-light">TechCelerity</span>
+      <span class="brand-text font-weight-light">{{ucwords(config('app.name'))}}</span>
     </a>
 
     <!-- Sidebar -->
@@ -18,7 +18,7 @@
       </div>
 
       <!-- SidebarSearch Form -->
-      <div class="form-inline">
+      <!-- <div class="form-inline">
         <div class="input-group" data-widget="sidebar-search">
           <input class="form-control form-control-sidebar" type="search" placeholder="Search" aria-label="Search">
           <div class="input-group-append">
@@ -27,7 +27,7 @@
             </button>
           </div>
         </div><div class="sidebar-search-results"><div class="list-group"><a href="#" class="list-group-item"><div class="search-title"><strong class="text-light"></strong>N<strong class="text-light"></strong>o<strong class="text-light"></strong> <strong class="text-light"></strong>e<strong class="text-light"></strong>l<strong class="text-light"></strong>e<strong class="text-light"></strong>m<strong class="text-light"></strong>e<strong class="text-light"></strong>n<strong class="text-light"></strong>t<strong class="text-light"></strong> <strong class="text-light"></strong>f<strong class="text-light"></strong>o<strong class="text-light"></strong>u<strong class="text-light"></strong>n<strong class="text-light"></strong>d<strong class="text-light"></strong>!<strong class="text-light"></strong></div><div class="search-path"></div></a></div></div>
-      </div>
+      </div> -->
 
       <!-- Sidebar Menu -->
       <nav class="mt-2">
@@ -43,30 +43,176 @@
               </p>
             </a>
           </li>
-          <li class="nav-item">
+          <!-- <li class="nav-item">
             <a href="/contact" class="nav-link  {{ $elementActive == 'contact' ? 'active' : '' }}">
             <i class="nav-icon fas fa-id-card-alt"></i>
               <p>
                 Contact us
               </p>
             </a>
-          </li>
-          <li class="nav-item">
-            <a href="/admin/staff" class="nav-link  {{ $elementActive == 'users' ? 'active' : '' }}">
-            <i class="nav-icon fas fa-users"></i>
+          </li> -->
+         @dealer
+          <li class="nav-item has-treeview">
+            <a href="#" class="nav-link">
+              <i class="nav-icon fas fa-users"></i>
               <p>
-                Staff User
+                Users
+                <i class="right fas fa-angle-left"></i>
               </p>
             </a>
+            <ul class="nav nav-treeview">
+              @enddealer
+              @admin  
+              <li class="nav-item">
+                <a href="{{route('staff.index')}}" class="nav-link  {{ $elementActive == 'staff' ? 'active' : '' }}">
+                <i class="nav-icon fas fa-users"></i>
+                  <p>
+                    Staff
+                  </p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="{{route('dealer.index')}}" class="nav-link  {{ $elementActive == 'dealer' ? 'active' : '' }}">
+                <i class="nav-icon fas fa-users"></i>
+                  <p>
+                    Dealer
+                  </p>
+                </a>
+              </li>
+              @endadmin
+              @dealer
+              <li class="nav-item">
+                <a href="{{route('retailer.index')}}" class="nav-link  {{ $elementActive == 'retailer' ? 'active' : '' }}">
+                <i class="nav-icon fas fa-users"></i>
+                  <p>
+                    Retailer
+                  </p>
+                </a>
+              </li>
+              @enddealer
+              @dealer  
+            </ul>
+            @enddealer
           </li>
-          <li class="nav-item">
-            <a href="/admin/dealer" class="nav-link  {{ $elementActive == 'users' ? 'active' : '' }}">
-            <i class="nav-icon fas fa-users"></i>
+          @notCustomer()
+          <li class="nav-item has-treeview">
+          <a href="#" class="nav-link">
+              <i class="nav-icon fas fa-copy"></i>
               <p>
-                Dealer
+                Catalog
+                <i class="right fas fa-angle-left"></i>
               </p>
             </a>
-          </li>  
+            <ul class="nav nav-treeview">
+            @admin()
+              <li class="nav-item">
+                <a href="/admin/manufacturer" class="nav-link  {{ $elementActive == 'manufacturer' ? 'active' : '' }}">
+                  <i class="nav-icon fas fa-industry"></i>
+                  <p>
+                  Manufacturer
+                  </p>
+                </a>
+              </li>  
+              <li class="nav-item">
+                <a href="{{ route('brand.index') }}" class="nav-link  {{ $elementActive == 'brand' ? 'active' : '' }}">
+                <i class="nav-icon fas fa-cube"></i>
+                  <p>Brand</p>
+                </a>
+              </li>  
+              <li class="nav-item">
+                <a href="{{ route('category.index') }}" class="nav-link  {{ $elementActive == 'category' ? 'active' : '' }}">
+                <i class="nav-icon fas fa-list-alt"></i>
+                  <p>Category</p>
+                </a>
+              </li> 
+              @endadmin
+              <li class="nav-item">
+                <a href="{{ route('product.index') }}" class="nav-link  {{ $elementActive == 'product' ? 'active' : '' }}">
+                <i class="nav-icon fas fa-cubes"></i>
+                  <p>Product</p>
+                </a>
+              </li> 
+            </ul>
+          </li>
+          @endnotCustomer
+          @notCustomer
+          <li class="nav-item">
+            <a href="{{ route('inquiry.index') }}" class="nav-link  {{ $elementActive == 'inquiry' ? 'active' : '' }}">
+            <i class="nav-icon fas fa-phone-square"></i>
+              <p>Inquiry</p>
+            </a>
+          </li>
+          <li class="nav-item has-treeview {{ ($elementActive == 'quote' || $elementActive == 'po' || $elementActive == 'sales') ? 'menu-open' : ''}}">
+          <a href="#" class="nav-link">
+              <i class="nav-icon fas fa-chart-pie"></i>
+              <p>
+                Sales
+                <i class="right fas fa-angle-left"></i>
+              </p>
+            </a>
+            <ul class="nav nav-treeview">
+            <li class="nav-item">
+                <a href="{{route('customer.index')}}" class="nav-link  {{ $elementActive == 'customer' ? 'active' : '' }}">
+                <i class="nav-icon fas fa-users"></i>
+                  <p>
+                    Customer
+                  </p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="{{ route('quote.index') }}" class="nav-link  {{ $elementActive == 'quote' ? 'active' : '' }}">
+                <i class="nav-icon fas fa-clipboard"></i>
+                  <p>Quote</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="{{ route('sale.index') }}" class="nav-link  {{ $elementActive == 'sales' ? 'active' : '' }}">
+                <i class="nav-icon fas fa-shopping-cart"></i>
+                  <p>Sales</p>
+                </a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-item has-treeview {{ ($elementActive == 'vendor' || $elementActive == 'po' || $elementActive == 'bill') ? 'menu-open' : ''}}">
+          <a href="#" class="nav-link">
+              <i class="nav-icon fas fa-shopping-bag"></i>
+              <p>
+                Purchase
+                <i class="right fas fa-angle-left"></i>
+              </p>
+            </a>
+            <ul class="nav nav-treeview">
+              <li class="nav-item">
+                <a href="{{route('vendor.index')}}" class="nav-link  {{ $elementActive == 'vendor' ? 'active' : '' }}">
+                <i class="nav-icon fas fa-building"></i>
+                  <p>Vendor</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="{{ route('po.index') }}" class="nav-link  {{ $elementActive == 'po' ? 'active' : '' }}">
+                <i class="nav-icon fas fa-receipt"></i>
+                  <p>PO</p>
+                </a>
+              </li>
+              @notadmin()
+              <li class="nav-item">
+                <a href="{{route('invoice.index')}}" class="nav-link  {{ $elementActive == 'bill' ? 'active' : '' }}">
+                <i class="nav-icon fas fa-file-invoice"></i>
+                  <p>Bill</p>
+                </a>
+              </li>
+              @endnotadmin
+            </ul>
+          </li>
+          @endnotCustomer 
+          @admin()
+          <li class="nav-item">
+            <a href="{{ route('settings.index') }}" class="nav-link  {{ $elementActive == 'settings' ? 'active' : '' }}">
+            <i class="nav-icon fas fa-cog"></i>
+              <p>Settings</p>
+            </a>
+          </li>
+          @endadmin
         </ul>
       </nav>
       <!-- /.sidebar-menu -->

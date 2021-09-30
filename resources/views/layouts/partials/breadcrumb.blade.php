@@ -18,3 +18,8 @@
         </div>
       </div><!-- /.container-fluid -->
     </section>
+    @if (session('exception'))
+    <div class="alert alert-danger" role="alert">
+      {{ session('exception') }}
+    </div>
+    @endif  

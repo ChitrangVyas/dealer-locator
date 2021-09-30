@@ -14,7 +14,7 @@ class AlterTableUsers extends Migration
     public function up()
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->String('mobile',15)->nullable();
+            $table->string('mobile',15)->nullable();
             $table->foreignId('users_group_id')->nullable()->index();
             $table->bigInteger('parent_id')->unsigned()->nullable()->index();
             $table->bigInteger('created_by')->unsigned()->nullable()->index();

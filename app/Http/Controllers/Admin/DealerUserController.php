@@ -2,9 +2,8 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Requests\AdminUserCreateRequest;
-use App\Http\Requests\AdminUserUpdateRequest;
-use App\Http\Requests\DealerUserUpdateRequest;
+use App\Http\Requests\Admin\DealerUserCreateRequest;
+use App\Http\Requests\Admin\DealerUserUpdateRequest;
 use App\Models\User;
 use Exception;
 use Illuminate\Http\Request;
@@ -14,8 +13,9 @@ use View;
 class DealerUserController extends MainController
 {
     public function __construct() {
+        parent::__construct();
         View::share ( 'title', 'Dealer' );
-        View::share ( 'elementActive', 'delaer' );
+        View::share ( 'elementActive', 'dealer' );        
     }
     /**
      * Display a listing of the resource.
@@ -39,13 +39,21 @@ class DealerUserController extends MainController
         return view('dealer.create');
     }
 
+    public function login(){
+        return view('auth.login',['user_group'=>'2']);
+    }
+
+    public function forgotPassword(){
+        return view('auth.passwords.email',['user_group'=>'2']);
+    }
+
     /**
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(AdminUserCreateRequest $request)
+    public function store(DealerUserCreateRequest $request)
     {   
         //
         $request_data = $request->all();
@@ -63,7 +71,7 @@ class DealerUserController extends MainController
                 'zipcode' => $request_data['zipcode'],
             ]);
         }catch(Exception $e){
-            return redirect(route('dealer.create'));
+            return redirect(route('dealer.create'))->with('exception', $e->getMessage());
         }
         return redirect(route('dealer.index'));
     }

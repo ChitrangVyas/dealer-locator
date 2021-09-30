@@ -58,9 +58,10 @@
                 "visible": false
             },
         ],
+            order: [[0, 'desc']],
             "processing": true,
             "serverSide": true,
-            "ajax": "{{ route('dealerlistajax') }}",
+            "ajax": dataTableRequest("{{ route('dealerlistajax') }}"),
         });        
     });
     function deleteUser(id){

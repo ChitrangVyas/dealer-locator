@@ -32,6 +32,7 @@ class MainController extends Controller
                 config(['app.timezone' => $this->settingJson['timezone']]);
                 config(['app.name' => $this->settingJson['site_name']]);
                 config(['logo' => $this->settingJson['logo']]);
+                config(['icon.logo' => $this->settingJson['icon_logo']]);
                 $state = State::find($this->settingJson['state']);
                 $city = City::find($this->settingJson['city']);
                 $this->settingJson['state_name']=$state->name;

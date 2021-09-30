@@ -28,9 +28,9 @@
                     @enderror
                 </div>
             </div>
-            <div class="col-sm-12 col-md-12">
+            <div class="col-sm-12 col-md-6">
                 <!-- file input -->
-                <div class="form-group col-sm-12 col-md-6">
+                <div class="form-group col-sm-12 col-md-10">
                 <label>Logo</label>
                 <div class="input-group">
                     <div class="custom-file">
@@ -45,6 +45,26 @@
                 @if(!empty($settings->json_data['logo']))
                 <div class="col-sm-12 col-md-6">
                     <img class='img logo mt-3 mb-4' src="{{ url($settings->json_data['logo']) }}" width=100 />
+                </div>
+                @endif
+            </div>
+            <div class="col-sm-12 col-md-6">
+                <!-- file input -->
+                <div class="form-group col-sm-12 col-md-10">
+                <label>Icon Logo</label>
+                <div class="input-group">
+                    <div class="custom-file">
+                        <input type="file" class="custom-file-input" id="icon_logo" name="icon_logo" tabindex="2">
+                        <label class="custom-file-label" for="icon_logo">Choose file</label>
+                    </div>
+                </div>
+                @error('icon_logo')
+                <div class="alert alert-danger mt-2">{{ $message }}</div>
+                @enderror
+                </div>
+                @if(!empty($settings->json_data['icon_logo']))
+                <div class="col-sm-12 col-md-6">
+                    <img class='img logo mt-3 mb-4' src="{{ url($settings->json_data['icon_logo']) }}" width=100 />
                 </div>
                 @endif
             </div>

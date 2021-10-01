@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Http\Controllers\Admin\MainController;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Notifications\SendResetPassword;
@@ -15,7 +16,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Password;
 
-class ForgotPasswordController extends Controller
+class ForgotPasswordController extends MainController
 {
     /*
     |--------------------------------------------------------------------------
@@ -29,6 +30,11 @@ class ForgotPasswordController extends Controller
     */
 
     use SendsPasswordResetEmails;
+
+    public function __construct()
+    {
+        parent::__construct();
+    }
 
     protected function credentials(Request $request)
     {

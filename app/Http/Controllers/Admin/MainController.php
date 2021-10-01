@@ -16,12 +16,12 @@ class MainController extends Controller
     public $country = 101;
     public $settingJson = [];
     public function __construct() {                
-        list(, $action) = explode('@', Route::getCurrentRoute()->getActionName());        
+        /* list(, $action) = explode('@', Route::getCurrentRoute()->getActionName());        
         if($action=="create" || $action=="store"){
             View::share ( 'action_title', 'Add' );
         }else if($action=="edit" || $action=="update"){
             View::share ( 'action_title', 'Edit' );
-        }
+        } */
         View::share ( 'select2Old', new User());
         $settings = Settings::find(1);
         

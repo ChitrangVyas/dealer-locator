@@ -7,6 +7,8 @@ use App\Http\Controllers\Controller;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Foundation\Auth\ResetsPasswords;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\Password;
 
 class ResetPasswordController extends MainController
 {
@@ -33,11 +35,36 @@ class ResetPasswordController extends MainController
     {
         parent::__construct();
     }
-    
+
     protected $redirectTo = RouteServiceProvider::HOME;
 
-    public function resetPassword(Request $request){
-        $request->validate($this->rules(), $this->validationErrorMessages());
-        
+    /**
+     * Display the password reset view for the given token.
+     *
+     * If no token is present, display the link request form.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+    public function showResetForm(Request $request)
+    {
+        $token = $request->route()->parameter('token');
+        $id = Crypt::decryptString($request->id);
+        return view('auth.passwords.reset')->with(
+            ['token' => $token, 'email' => $request->email,'id'=> $id]
+        );
+    }
+
+    /**
+     * Get the password reset credentials from the request.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return array
+     */
+    protected function credentials(Request $request)
+    {
+        return $request->only(
+            'id','email', 'password', 'password_confirmation', 'token'
+        );
     }
 }

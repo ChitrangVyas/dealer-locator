@@ -56,14 +56,14 @@ class ForgotPasswordController extends MainController
         $user = User::where($data)->first();
         $message = '';
         if(!empty($user)){
-            $token = Str::random(60);
+            $token = Str::random(64);
             DB::table('password_resets')->insert([
                 'email' => $user->email,
                 'user_id'=> $user->id,
-                'token' => $token,
+                'token' => bcrypt($token),
                 'created_at' => Carbon::now()
             ]);
-            $user->sendPasswordResetNotification($token);
+            $user->sendPasswordResetNotification($token,$user);
             $message = 'Reset password link has been successfull sent.';
             return $request->wantsJson()
                     ? new JsonResponse(['message' => trans($message)], 200)

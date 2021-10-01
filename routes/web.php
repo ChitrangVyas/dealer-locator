@@ -21,6 +21,9 @@ Route::get('/', function () {
 Route::get('/home', function () {
     return redirect('admin/home');
 });
+Route::get('/admin', function () {
+    return redirect('admin/home');
+});
 
 Auth::routes(['register' => false]);
 Route::group(['prefix'=>'admin','middleware'=>['auth']],function () {

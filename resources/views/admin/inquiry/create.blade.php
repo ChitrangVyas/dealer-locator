@@ -174,7 +174,7 @@ jQuery(document).ready(function(){
                     q: params.term, // search term
                     table:'users',
                     fields: "users.id, CONCAT(`users`.`name`, ' - ', `zipcode`,' - ',`cities`.`name`) as text",
-                    where:`(users_group_id = 2) `,
+                    where:`(users_group_id = 2) AND deleted_at IS NULL `,
                     whereOr: ` OR zipcode like '%${params.term}%' OR cities.name like '%${params.term}%' OR states.name like '%${params.term}%'`,
                     joins:[{'join_table':'cities','to_column':'city_id','from_column':'cities.id','type':'left'},{'join_table':'states','to_column':'users.state_id','from_column':'states.id','type':'left'}]
                 };
@@ -201,7 +201,7 @@ jQuery(document).ready(function(){
                     fields: "users.id, CONCAT(`users`.`name`, ' - ', `zipcode`,' - ',`cities`.`name`) as text",
                     // where: ` OR zipcode like '%${params.term}%' OR cities.name like '%${params.term}%' AND (users_group_id=4 OR users_group_id=5)`,
                     whereOr: ` OR (zipcode like '%${params.term}%' OR cities.name like '%${params.term}%')`,
-                    whereAnd: `AND (users_group_id=4 OR users_group_id=5) AND created_by=`+"{{auth()->user()->id}}",
+                    whereAnd: `AND (users_group_id=4 OR users_group_id=5) AND created_by=`+"{{auth()->user()->id}} AND deleted_at IS NULL",
                     joins:[{'join_table':'cities','to_column':'city_id','from_column':'cities.id','type':'left'}]
                 };
             },
@@ -281,7 +281,7 @@ jQuery(document).ready(function(){
                     // q: param, // search term
                     table:'users',
                     fields: "users.id, CONCAT(`users`.`name`, ' - ', `zipcode`,' - ',`cities`.`name`) as text",
-                    where:` (users_group_id = 3) AND (parent_id = ${param}) `,
+                    where:` (users_group_id = 3) AND (parent_id = ${param}) AND deleted_at IS NULL`,
                     joins:[{'join_table':'cities','to_column':'city_id','from_column':'cities.id','type':'left'}]
             },            
             success: function (data) { 

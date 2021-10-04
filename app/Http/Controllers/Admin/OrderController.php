@@ -363,9 +363,9 @@ class OrderController extends MainController
                             $product->update(['inventory' => ($invenory - $cart_product->quantity)]);
                         }else{
                             $invenory = Inventory::where('user_id',$cart_data['from_user'])->where('product_id',1);
-                            $invenory_qty = $invenory->get('qty');
-                            if(!empty($invenory_qty)){
-                                $invenory->update(['qty' => ($invenory_qty[0]->qty - $cart_product->quantity)]);
+                            $invenory_qty = $invenory->first('qty');
+                            if(!empty($invenory_qty)){  
+                                $invenory->update(['qty' => ($invenory_qty->qty - $cart_product->quantity)]);
                             }
                         }
                     }
@@ -449,7 +449,7 @@ class OrderController extends MainController
             $added_by  = (!empty($order->added_by))?$order->added_by:$this->settingJson['name'];
             $action_html = "<span><a data-url=".route('quote.show',$order->id)." data-order=".$order->id." class='btn btn-primary view-order' data-toggle='modal' data-target='#orderModal'>View</a></span>";
             // $action_html .= "<span class='ml-3 create-po-".$order->id."'><a data-url=".route('cart.po.create')." data-order=".$order->id." class='btn btn-success view-order'>Generate PO</a></span>";
-            if(empty($is_sale_generated) && (auth()->user()->id == $order->from_user) ){
+            if(empty($is_sale_generated) && (auth()->user()->id == $order->from_user || (empty($user->users_group_id) && empty($order->from_user))) ){
                 $action_html .= "<span class='ml-2 create-sale-".$order->id."'><a data-url=".route('cart.sale.create')." data-order=".$order->id." class='btn btn-default view-order' data-toggle='modal' data-target='#orderModal'>Generate Sale</a></span>";
             }
             // $action_html = "<span><a href=".route('order.edit',$order->id)." class='btn btn-primary'>Edit</a></span>";
@@ -510,7 +510,7 @@ class OrderController extends MainController
             $customer = (!empty($order->customer))?$order->customer:$this->settingJson['name'];
             $added_by  = (!empty($order->added_by))?$order->added_by:$this->settingJson['name'];
             $action_html = "<span><a data-url=".route('po.show',$order->id)." data-order=".$order->id." class='btn btn-primary view-order' data-toggle='modal' data-target='#orderModal'>View</a></span>";
-            if((auth()->user()->id == $order->to_user && empty($is_sale_generated)) || ((empty($user->users_group_id) || ($user->users_group_id == '1')) && (!empty($order->for_manufacturer) && empty($is_sale_generated)))){
+            if(((auth()->user()->id == $order->to_user) && empty($is_sale_generated)) || ((empty($user->users_group_id) || ($user->users_group_id == '1')) && (!empty($order->for_manufacturer) && empty($is_sale_generated)))){
                 $action_html .= "<span class='ml-3 create-sale-".$order->id."'><a data-url=".route('cart.sale.create')." data-order=".$order->id." class='btn btn-default view-order' data-toggle='modal' data-target='#orderModal'>Generate Sale</a></span>";
             }
             /* if((auth()->user()->id == $order->to_user)||((empty($user->userGroup) && $user->id == 1)||$user->userGroup == '1')){

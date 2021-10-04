@@ -32,6 +32,7 @@ class MainController extends Controller
                 config(['app.timezone' => $this->settingJson['timezone']]);
                 config(['app.name' => $this->settingJson['site_name']]);
                 config(['logo' => $this->settingJson['logo']]);
+                config(['adminlte.title'=>$this->settingJson['site_name']]);
                 if(!empty($this->settingJson['icon_logo'])){
                     config(['icon.logo' => $this->settingJson['icon_logo']]);
                 }

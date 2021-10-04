@@ -363,9 +363,9 @@ class OrderController extends MainController
                             $product->update(['inventory' => ($invenory - $cart_product->quantity)]);
                         }else{
                             $invenory = Inventory::where('user_id',$cart_data['from_user'])->where('product_id',1);
-                            $invenory_qty = $invenory->get('qty');
-                            if(!empty($invenory_qty)){
-                                $invenory->update(['qty' => ($invenory_qty[0]->qty - $cart_product->quantity)]);
+                            $invenory_qty = $invenory->first('qty');
+                            if(!empty($invenory_qty)){  
+                                $invenory->update(['qty' => ($invenory_qty->qty - $cart_product->quantity)]);
                             }
                         }
                     }

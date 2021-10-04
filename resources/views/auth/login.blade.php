@@ -1,5 +1,5 @@
 @section('title')
-TechCelerity CRM
+{{config('app.name')}}
 @endsection
 @extends('auth.auth-page', ['auth_type' => 'login'])
 

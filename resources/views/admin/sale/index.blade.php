@@ -218,7 +218,10 @@
         $('body').on('submit','#saveQuote', function(e){
             e.preventDefault();
             let url = ($('#type').val() == 'sale')?"{{ route('order.sale.store') }}":"{{ route('order.po.store') }}";
-            let data = $('#saveQuote').serialize();
+            let data = $('#saveQuote').serializeArray();
+            var frm = $(this);
+            var btn = $(document.activeElement);
+            data.push({name:'btnSave', value:btn.val()});
             // let inquiry_id = $('#inquiry_id').val();
             saveFormData(url,data,'orderModal').then(function(res){
                 if(res.code == 1){

@@ -28,7 +28,7 @@
                                     <th>PO Recieved</th>
                                     <th>PO Recieved Date</th>
                                     <th>Created Date</th>
-                                    <th>Action</th>
+                                    <th width="15%">Action</th>
                                 </tr>
                             </thead>
                         </table>

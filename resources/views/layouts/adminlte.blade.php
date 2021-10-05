@@ -54,6 +54,11 @@
 <!-- ./wrapper -->
 <script src="{{asset('js/app.js') }}"></script>
 <script>
+  $.ajaxSetup({
+      headers: {
+        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+      },
+    });
     function dataTableRequest(url){
       return {
                 "url": url,
@@ -95,10 +100,10 @@
         $(this).parent().find(".alert").show();
       }
     });
-    $.ajaxSetup({
-      headers: {
-        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-      },
+    $(".modal").on("show", function () {
+      $("body").addClass("modal-open");
+    }).on("hidden", function () {
+      $("body").removeClass("modal-open")
     });
     $(".nav-link.active").parent().parent().parent().addClass("menu-is-opening menu-open");
     $('body').on('change','input[type="file"]',function(e){

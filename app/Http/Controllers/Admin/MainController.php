@@ -29,17 +29,22 @@ class MainController extends Controller
             $this->settingJson = json_decode($settings->json_data,true);
             $this->country = (!empty($this->settingJson['country'])) ? $this->settingJson['country'] : 101;
             if(!empty($this->settingJson)){
-                config(['app.timezone' => $this->settingJson['timezone']]);
+                if(!empty($this->settingJson['timezone'])){
+                    config(['app.timezone' => $this->settingJson['timezone']]);
+                }
                 config(['app.name' => $this->settingJson['site_name']]);
+                if(!empty($this->settingJson['logo'])){
                 config(['logo' => $this->settingJson['logo']]);
+                }
                 config(['adminlte.title'=>$this->settingJson['site_name']]);
                 if(!empty($this->settingJson['icon_logo'])){
                     config(['icon.logo' => $this->settingJson['icon_logo']]);
                 }
                 $state = State::find($this->settingJson['state']);
                 $city = City::find($this->settingJson['city']);
-                $this->settingJson['state_name']=$state->name;
-                $this->settingJson['city_name']=$city->name;
+                
+                $this->settingJson['state_name']=(!empty($state))?$state->name:'';
+                $this->settingJson['city_name']=(!empty($city))?$city->name:'';
                 $mailConfig = [
                     'transport' => $this->settingJson['mail_mailer'],
                     'host' => $this->settingJson['mail_host'],

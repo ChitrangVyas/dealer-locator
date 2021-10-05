@@ -296,7 +296,7 @@
                 <div class="form-group">
                     <label>Mail From Email</label>
                     <input type="text" class="form-control" name="mail_from_email" value="{{ old('mail_from_email',(!empty($settings->json_data['mail_from_email']))?$settings->json_data['mail_from_email']:'')}}" placeholder="Mail From Name" tabindex="18">
-                    @error('mail_encryption')
+                    @error('mail_from_email')
                         <div class="alert alert-danger mt-2">{{ $message }}</div>
                     @enderror
                 </div>

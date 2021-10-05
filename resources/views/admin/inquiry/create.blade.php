@@ -117,6 +117,15 @@
                 </div>
             </div>
             @enddealer
+            @admin()
+                <div class="col-sm-12 col-md-12">
+                    <!-- text input -->
+                    <div class="form-group">
+                    <input type="checkbox" class="mb-4 send_mail_customer" name="send_mail_to_customer" id="send_mail_customer" />
+                    <label>Send dealer/retailer details to customer?</label>
+                    </div>
+                </div>
+            @endadmin
         </div>
         <div class="row">
             <div class="col-sm-12">

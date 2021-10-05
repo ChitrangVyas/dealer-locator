@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Requests\Admin\InquiriesCreateRequest;
 use App\Http\Requests\Admin\InquiriesUpdateRequest;
+use App\Mail\SendInquiryToCustomer;
 use App\Models\InquiriesSource;
 use App\Models\Inquiry;
 use App\Models\Product;
@@ -11,6 +12,7 @@ use App\Models\User;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 use phpDocumentor\Reflection\Types\Null_;
 use View;
@@ -78,18 +80,12 @@ class InquiryController extends MainController
             $inquiry_data['retailer_id'] = $retailer_id;
         }
         try{
+            $inquiry = Inquiry::create($inquiry_data);
+            if(!empty($request_data['send_mail_to_customer']) && (!empty($request_data['dealer']))){
+                Mail::to($inquiry->customer->email)->send(new SendInquiryToCustomer(config('app.name').' - Inquiry',$inquiry));
+            }
             if(!empty($request_data['product'])){
                 $products = Product::find($request_data['product']);
-                $manufacturer = '';
-                foreach($products as $product){
-                    $manufacturer = (empty($manufacturer))?$product->brand->manufacturer->id:$manufacturer;
-                    if($manufacturer != $product->brand->manufacturer->id){
-                        return redirect(route('inquiry.create'))->with('exception', 'Please Select the Same Manufacturer Product');
-                    }
-                }
-            }
-            $inquiry = Inquiry::create($inquiry_data);
-            if(!empty($request_data['product'])){
                 $inquiry->product()->sync($products);
             }
         }catch(Exception $e){

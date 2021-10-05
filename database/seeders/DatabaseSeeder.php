@@ -14,12 +14,13 @@ class DatabaseSeeder extends Seeder
     public function run()
     {
         // \App\Models\User::factory(10)->create();
-        $this->call([
-            AdminUserSeeder::class,            
+        $this->call([          
             CountriesTableSeeder::class,            
             StatesTableSeeder::class,
             CitiesTableSeeder::class, 
-            UserGroupSeeder::class           
+            UserGroupSeeder::class,
+            SettingsSeeder::class,
+            AdminUserSeeder::class,
         ]);
     }
 }

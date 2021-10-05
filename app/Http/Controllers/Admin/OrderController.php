@@ -195,7 +195,11 @@ class OrderController extends MainController
                         $from = (!empty($quote->addedBy))?$quote->addedBy->email:$this->settingJson['mail_from_email'];
                         $from_name = (!empty($quote->addedBy))?$quote->addedBy->name:$this->settingJson['mail_from_name'];
                         $customer = (!empty($quote->customer))?$quote->customer->email:$this->settingJson['mail_from_email'];
-                        Mail::to($customer)->send(new OrderEmailTemplate($quote,config('app.name').' - Quote',$from,$from_name));
+                        try{
+                            Mail::to($customer)->send(new OrderEmailTemplate($quote,config('app.name').' - Quote',$from,$from_name));
+                        }catch(Exception $e){
+                            return response()->json(['status' => 'error','code' => 0,'message' => 'Unable to sent Mail.']);
+                        }
                         // $this->send($email_data);
                     }
                     return response()->json(['status' => 'successful','code'=>1,'message'=>'Quote Successfully created.']);
@@ -250,7 +254,11 @@ class OrderController extends MainController
                         $from = (!empty($order->addedBy))?$order->addedBy->email:$this->settingJson['mail_from_email'];
                         $from_name = (!empty($order->addedBy))?$order->addedBy->name:$this->settingJson['mail_from_name'];
                         $customer = (!empty($order->customer))?$order->customer->email:$this->settingJson['mail_from_email'];
-                        Mail::to($customer)->send(new OrderEmailTemplate($order,config('app.name').' - PO',$from,$from_name));
+                        try{
+                            Mail::to($customer)->send(new OrderEmailTemplate($order,config('app.name').' - PO',$from,$from_name));
+                        }catch(Exception $e){
+                            return response()->json(['status' => 'error','code' => 0,'message' => 'Unable to sent Mail.']);
+                        }
                         // Mail::to($order->customer->email)->send(new OrderShipped($order));
                         // $this->send($email_data);
                     }
@@ -391,7 +399,11 @@ class OrderController extends MainController
                         $from = (!empty($order->addedBy))?$order->addedBy->email:$this->settingJson['mail_from_email'];
                         $from_name = (!empty($order->addedBy))?$order->addedBy->name:$this->settingJson['mail_from_name'];
                         $customer = (!empty($order->customer))?$order->customer->email:$this->settingJson['mail_from_email'];
-                        Mail::to($customer)->send(new OrderEmailTemplate($order,config('app.name').' - Sales',$from,$from_name));
+                        try{
+                            Mail::to($customer)->send(new OrderEmailTemplate($order,config('app.name').' - Sales',$from,$from_name));
+                        }catch(Exception $e){
+                            return response()->json(['status' => 'error','code' => 0,'message' => 'Unable to sent Mail.']);
+                        }
                     }
                     return response()->json(['status' => 'successful', 'data'=>['quote'=>$cart_data['order_reference']],'code'=>1,'message'=>'Sales Successfully created.']);
                 }else{

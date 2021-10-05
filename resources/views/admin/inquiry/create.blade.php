@@ -117,7 +117,7 @@
                 </div>
             </div>
             @enddealer
-            @admin()
+            @notCustomer()
                 <div class="col-sm-12 col-md-12">
                     <!-- text input -->
                     <div class="form-group">
@@ -125,7 +125,7 @@
                     <label>Send dealer/retailer details to customer?</label>
                     </div>
                 </div>
-            @endadmin
+            @endnotCustomer
         </div>
         <div class="row">
             <div class="col-sm-12">

@@ -2,7 +2,7 @@
     <!-- Brand Logo -->
     <a href="/" class="brand-link">
       <img src="{{ asset(config('icon.logo')) }}" alt="Logo" class="brand-image img-circle elevation-3">
-      <span class="brand-text font-weight-light">{{ucwords(config('app.name'))}}</span>
+      <span class="brand-text font-weight-light">{{ ucwords(!empty(config('app.name'))?config('app.name'):'Techcelerity')}}</span>
     </a>
 
     <!-- Sidebar -->

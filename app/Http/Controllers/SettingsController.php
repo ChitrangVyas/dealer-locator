@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Admin\MainController;
+use App\Http\Requests\Admin\SettingsRequest;
 use App\Models\City;
 use App\Models\Settings;
 use App\Models\State;
@@ -63,7 +64,7 @@ class SettingsController extends MainController
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(SettingsRequest $request)
     {
         $request_data = $request->except(['_token','id']);
         $filepath = '';
@@ -97,9 +98,13 @@ class SettingsController extends MainController
             $settings = $setting->update(['json_data'=>json_encode($request_data)]);
         }
         if(!empty($settings)){
-            config(['app.name' => $request_data['site_name']]);
-            config(['app.timezone' => $request_data['timezone']]);
-            date_default_timezone_set(config('app.timezone'));
+            if(!empty($request_data['site_name'])){
+                config(['app.name' => $request_data['site_name']]);
+            }
+            if(!empty($request_data['timezone'])){
+                config(['app.timezone' => $request_data['timezone']]);
+                date_default_timezone_set(config('app.timezone'));
+            }
             //'timezone' => 'Europe/Brussels' OR UTC
             Artisan::call('cache:clear');
             Artisan::call('config:clear');            

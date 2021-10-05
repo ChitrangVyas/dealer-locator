@@ -59,6 +59,7 @@ class InquiryController extends MainController
         $dealer_id = NULL;
         if(auth()->user()->users_group_id == '2'){
             $dealer_id = auth()->user()->id;
+            $retailer_id = (!empty($request_data['retailer']))?$request_data['retailer']:'';
         }elseif (auth()->user()->users_group_id == '3') {
             $dealer_id = auth()->user()->parent_id;
             $retailer_id = (!empty($request_data['retailer']))?$request_data['retailer']:auth()->user()->id;
@@ -81,8 +82,12 @@ class InquiryController extends MainController
         }
         try{
             $inquiry = Inquiry::create($inquiry_data);
-            if(!empty($request_data['send_mail_to_customer']) && (!empty($request_data['dealer']))){
-                Mail::to($inquiry->customer->email)->send(new SendInquiryToCustomer(config('app.name').' - Inquiry',$inquiry));
+            if(!empty($request_data['send_mail_to_customer']) && (!empty($dealer_id))){
+                try{
+                    Mail::to($inquiry->customer->email)->send(new SendInquiryToCustomer(config('app.name').' - Inquiry',$inquiry));
+                }catch(Exception $e){
+                    return redirect(route('inquiry.index'))->with('exception', 'Unable to sent Mail.');    
+                }
             }
             if(!empty($request_data['product'])){
                 $products = Product::find($request_data['product']);

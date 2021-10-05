@@ -95,6 +95,11 @@
         $(this).parent().find(".alert").show();
       }
     });
+    $(".modal").on("show", function () {
+      $("body").addClass("modal-open");
+    }).on("hidden", function () {
+      $("body").removeClass("modal-open")
+    });
     $.ajaxSetup({
       headers: {
         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')

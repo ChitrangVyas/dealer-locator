@@ -12,7 +12,15 @@
     <!-- Right navbar links -->
     <ul class="navbar-nav ml-auto">
       <!-- Navbar Search -->
-      
+      <!-- Notifications Dropdown Menu -->
+      <li class="nav-item dropdown notifications">
+      <a class="nav-link" data-toggle="dropdown" href="#">
+        <i class="far fa-bell bell-icon"></i>
+        <span class="badge badge-danger navbar-badge notify-counter"></span>
+      </a>
+      <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right notification-menu">
+      </div>
+      </li>
       <li class="nav-item dropdown">
         <a class="nav-link" data-toggle="dropdown" href="#">
           <i class="fas fa-user"></i>

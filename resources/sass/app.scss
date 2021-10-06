@@ -24,3 +24,54 @@ $fa-font-path : "../webfonts";
     z-index: 2;
     color: gray;
 }
+.blink {
+  animation: blinker 1.5s linear infinite;
+}
+
+.bell {
+  transform: translate3d(0, 0, 0);
+  backface-visibility: hidden;
+  animation-name: bellshake;
+  animation-duration: 1s;
+  animation-iteration-count: infinite;
+  animation-timing-function: linear;
+}
+
+@keyframes blinker {
+  50% {
+    opacity: 0;
+  }
+}
+@keyframes bellshake {
+  0% { transform: rotate(0); }
+  15% { transform: rotate(10deg); }
+  30% { transform: rotate(-10deg); }
+  45% { transform: rotate(8deg); }
+  60% { transform: rotate(-8deg); }
+  75% { transform: rotate(4deg); }
+  85% { transform: rotate(-4deg); }
+  92% { transform: rotate(2deg); }
+  100% { transform: rotate(0); }
+}
+
+@keyframes shakeMe {
+  2%, 18% {
+      transform: translate3d(-5px, 0, 0);
+  }
+
+  4%, 16% {
+      transform: translate3d(5px, 0, 0);
+  }
+
+  6%, 10%, 14% {
+      transform: translate3d(-5px, 0, 0);
+  }
+
+  8%, 12% {
+      transform: translate3d(5px, 0, 0);
+  }
+  
+  18.1% {
+      transform: translate3d(0px, 0, 0);
+  }
+}

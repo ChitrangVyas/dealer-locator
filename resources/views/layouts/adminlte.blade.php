@@ -54,6 +54,9 @@
 <!-- ./wrapper -->
 <script src="{{asset('js/app.js') }}"></script>
 <script>
+  jQuery(document).ready(function() {
+      getNotification();
+  });
   $.ajaxSetup({
       headers: {
         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -67,6 +70,31 @@
                     d._token = $("meta[name='csrf-token']").attr("content");
                 }
             }
+    }
+    function getNotification(){
+      var token = $("meta[name='csrf-token']").attr("content");
+      return $.ajax({
+              url: "{{route('notification.all')}}",
+              type: 'POST',
+              data:{'_token':token},
+              success: function(res) {
+                  $(`.notify-counter`).text(res.total_notifications);
+                  $(`.notification-menu`).html(res.content);
+              }
+          });
+    }
+    function markAsRead(id,is_read){
+      var token = $("meta[name='csrf-token']").attr("content");
+      return $.ajax({
+              url: "{{route('notification.markasread')}}",
+              type: 'POST',
+              data:{'id':id,'is_read':is_read,'_token':token},
+              success: function(res) {
+                  if(res.code == 1){
+                    getNotification();
+                  }
+              }
+          });
     }
   </script>
 <!-- AdminLTE for demo purposes -->
@@ -113,6 +141,30 @@
             $(this).parent().find("label").html(fileName);
             //$('.custom-file-label').closest('label').html(fileName);
         });
+    $('body').on('click','.notifications',function(){
+      if($('.notify-counter').hasClass('blink')){
+        $(".notify-counter").removeClass("blink");
+        $(".bell-icon").removeClass("bell");
+      }
+    });
+    $('body').on('click','.dropdown-item',function(){
+      var notification = $(this).data('notification');
+      if(notification != ''){
+          markAsRead(notification,1);
+      }
+    });
+    setInterval(function(){
+      var total_notification = "0";
+      if($('.navbar-badge').hasClass('notify-counter')){
+        total_notification = $('.notify-counter').text();
+      }
+      getNotification().then(function(res){
+        if(total_notification != $('.notify-counter').text()){
+          $('.notify-counter').addClass('blink');
+          $('.bell-icon').addClass('bell');
+        }
+      });
+    },60000);
   });
 </script>
 <!-- jQuery -->

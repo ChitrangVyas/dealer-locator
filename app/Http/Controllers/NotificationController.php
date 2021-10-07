@@ -14,7 +14,7 @@ class NotificationController extends MainController
     public function __construct() {
         parent::__construct();
         View::share ( 'title', 'Notification' );
-        View::share ( 'elementActive', 'notification' );        
+        View::share ( 'elementActive', 'notification' );    
     }
 
     /**
@@ -25,10 +25,14 @@ class NotificationController extends MainController
     public function index()
     {
         //
+        $user = auth()->user();
+        Notification::where(function($query) use($user){
+             $query->where('user_id',$user->id)->where('is_read',0);
+        })->update(['is_read'=>1]);
         return view('admin.notification.index');
     }
 
-    public function maerAsRead(Request $request){
+    public function markAsRead(Request $request){
         $id  = $request->input('id');
         if(!empty($id)){
             $notification = Notification::findOrFail($id);
@@ -43,7 +47,7 @@ class NotificationController extends MainController
 
 
     /**
-     * Display the specified resource.
+     * Display User's All Unread Notification.
      *
      * @param  \App\Models\Notification  $notification
      * @return \Illuminate\Http\Response
@@ -56,12 +60,32 @@ class NotificationController extends MainController
         $user_id = (empty($is_admin))?$user->id:'';
         $notifications = Helpers::getUnreadNotification($user_id,$is_admin);
         $total_notifications = $notifications->count();
-        $notifications = $notifications->get();
+        $notifications = $notifications->take(10)->get();
         $json['total_notifications'] = (!empty($total_notifications))?$total_notifications:'';
         $json['content'] = view('admin.notification.ajax-notification',['total_notification'=>$total_notifications,'notifications'=>$notifications])->render();
         return response()->json($json);
     }
 
+    /**
+     * Display the specified resource.
+     *
+     * @param  \App\Models\Notification  $notification
+     * @return \Illuminate\Http\Response
+     */
+    public function userNotification(Request $request)
+    {
+        // $request_data = $request->all();
+        $id = $request->input('id');
+        if(!empty($id)){
+            $user = auth()->user();
+            $user_id = (empty($user->users_group_id))?NULL:$user->id;
+            $notifications = Helpers::getNotification($user_id,$id)->first();
+            $icon = $notifications->getIcon()['tag'];
+            return response()->json(["code"=>1,"message"=>"","data"=>["title"=>"Notification","content"=>$notifications,'icon'=>$icon]]);
+        }else{
+            return response()->json(["code"=>0,"message"=>"Unable to find notification","data"=>""]);
+        }
+    }
 
     public function listAjaxData(Request $request)
     {

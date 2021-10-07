@@ -360,7 +360,7 @@ class OrderController extends MainController
             $order = Order::create($cart_data);
             if(!empty($order)){
                 if(!empty($order->customer) && ($order->customer->users_group_id == 2 || ($order->customer->users_group_id == 3))){
-                    Helpers::storeNotification($order->customer->id,"Sale #$order->order_number has been created for you.");
+                    Helpers::storeNotification($order->customer->id,"Sale #$order->order_number has been created for you.",0,3);
                 }
                 $order_product_data = [];
                 foreach($request_data['product'] as $key => $value){

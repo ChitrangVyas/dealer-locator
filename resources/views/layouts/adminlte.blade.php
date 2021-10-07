@@ -83,6 +83,29 @@
               }
           });
     }
+
+    function getUserNotification(id){
+      var token = $("meta[name='csrf-token']").attr("content");
+      if(id != '' || id != undefined){
+        return $.ajax({
+                url: "{{route('notification.get')}}",
+                type: 'POST',
+                data:{'id':id,'_token':token},
+                success: function(res) {
+                  if(res != '' && res.code == "1"){
+                    html = `<div class='col-8 float-left'>
+                    <span class="text text-secondary">${res.data.icon} ${res.data.content.message}</span>
+                    </div>
+                    <div>
+                    <span class="badge badge-secondary float-right"><i class="far fa-calendar-alt"></i>${new Date(res.data.content.created_at).toLocaleString('en-US')}</span></div>`;
+                    $(`#notificationModal .modal-body`).html(html);
+                    $('#notificationModal .modal-title').text(res.data.title);
+                    $('#notificationModal').modal('show');
+                  }
+                }
+            });
+        }
+    }
     function markAsRead(id,is_read){
       var token = $("meta[name='csrf-token']").attr("content");
       return $.ajax({
@@ -141,16 +164,18 @@
             $(this).parent().find("label").html(fileName);
             //$('.custom-file-label').closest('label').html(fileName);
         });
-    $('body').on('click','.notifications',function(){
-      if($('.notify-counter').hasClass('blink')){
+    $('.notifications').on("show.bs.dropdown",function(e){
+      if($(".notify-counter").hasClass("blink")){
         $(".notify-counter").removeClass("blink");
         $(".bell-icon").removeClass("bell");
       }
     });
-    $('body').on('click','.dropdown-item',function(){
+    $('.notifications').on('click','.dropdown-item',function(){
       var notification = $(this).data('notification');
-      if(notification != ''){
+      if(notification != '' || (!isEmpty(notification))){
+        getUserNotification(notification).then(function(res){
           markAsRead(notification,1);
+        });
       }
     });
     setInterval(function(){

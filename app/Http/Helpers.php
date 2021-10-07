@@ -7,14 +7,15 @@ use Exception;
 use Illuminate\Support\Facades\DB;
 
 class Helpers {
-    public static function storeNotification($user_id='',$message='',$is_read=0){
+    public static function storeNotification($user_id='',$message='',$is_read=0,$icon_id=0){
         if(!empty($user_id)||!empty($message)){
             $user_id = (!isset($user_id)) ? NULL :$user_id;
             try{
                 $notification = Notification::create([
                     'user_id'=> $user_id,
-                    'message'=>$message,
-                    'is_read'=>$is_read
+                    'message'=> $message,
+                    'is_read'=> $is_read,
+                    'icon_id'=> $icon_id,
                 ]);
                 return ["code"=>1,"message"=>"","data"=>$notification];
             }catch(Exception $e){
@@ -53,6 +54,15 @@ class Helpers {
                     }
                 })->orderBy('id','DESC');
                 return $notifications;
+        }
+        return false;
+    }
+
+    public static function getNotification($user_id='',$id=''){
+        if(!empty($user_id) ){
+            return (Notification::where('id',$id)->where('user_id',$user_id));
+        }else{
+            return (Notification::whereNull('user_id')->where('id',$id));
         }
         return false;
     }

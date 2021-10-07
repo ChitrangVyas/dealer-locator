@@ -18,6 +18,7 @@ class CreateNotificationsTable extends Migration
             $table->foreignId('user_id')->nullable()->constrained();
             $table->text('message')->nullable();
             $table->boolean('is_read')->nullable()->default(0);
+            $table->integer('icon_id')->nullable()->default(0);
             $table->timestamps();
         });
     }

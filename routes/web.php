@@ -46,7 +46,8 @@ Route::group(['prefix'=>'admin','middleware'=>['auth']],function () {
     Route::any('customer/listajaxdata', [App\Http\Controllers\Admin\CustomerUserController::class,'listAjaxData'])->name('customerlistajax');
     Route::any('notification/listajaxdata', [App\Http\Controllers\NotificationController::class,'listAjaxData'])->name('notificationlistajax');
     Route::post('notification/show/all', [App\Http\Controllers\NotificationController::class,'showAll'])->name('notification.all');
-    Route::post('notification/markasread', [App\Http\Controllers\NotificationController::class,'maerAsRead'])->name('notification.markasread');
+    Route::post('notification/markasread', [App\Http\Controllers\NotificationController::class,'markAsRead'])->name('notification.markasread');
+    Route::post('notification/get', [App\Http\Controllers\NotificationController::class,'userNotification'])->name('notification.get');
     Route::get('customer/createAjax', [App\Http\Controllers\Admin\CustomerUserController::class,'createAjax'])->name('customerCreateAjax');
     Route::get('vendor/', [App\Http\Controllers\Admin\CustomerUserController::class,'vendorIndex'])->name('vendor.index');
     Route::any('vendor/listajax', [App\Http\Controllers\Admin\VendorController::class,'vendorListAjaxData'])->name('vendorlistajax');

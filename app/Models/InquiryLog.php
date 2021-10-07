@@ -58,4 +58,8 @@ class InquiryLog extends Model
         }
         return $icon;
     }
+
+    public function loggedBy(){
+        return $this->belongsTo(User::class,'logged_by');
+    }
 }

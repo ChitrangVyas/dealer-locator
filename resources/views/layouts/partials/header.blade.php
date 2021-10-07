@@ -18,7 +18,7 @@
         <i class="far fa-bell bell-icon"></i>
         <span class="badge badge-danger navbar-badge notify-counter"></span>
       </a>
-      <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right notification-menu">
+      <div class="dropdown-menu dropdown-menu-xl dropdown-menu-right notification-menu overflow-hidden">
       </div>
       </li>
       <li class="nav-item dropdown">

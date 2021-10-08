@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Admin\MainController;
+use App\Http\Helpers;
 use App\Models\City;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -76,5 +77,11 @@ class CommonController extends MainController
         // dd(DB::getQueryLog());
         echo json_encode($data);
         }
+    }
+
+    public function getUserNotification(Request $request){
+        $is_admin = $request->input('is_admin');
+        $data = Helpers::getUserNotification($request->input('user_id'),$is_admin);
+        echo json_encode($data);
     }
 }

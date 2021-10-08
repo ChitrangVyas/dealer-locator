@@ -54,6 +54,9 @@
 <!-- ./wrapper -->
 <script src="{{asset('js/app.js') }}"></script>
 <script>
+  jQuery(document).ready(function() {
+      getNotification();
+  });
   $.ajaxSetup({
       headers: {
         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -67,6 +70,54 @@
                     d._token = $("meta[name='csrf-token']").attr("content");
                 }
             }
+    }
+    function getNotification(){
+      var token = $("meta[name='csrf-token']").attr("content");
+      return $.ajax({
+              url: "{{route('notification.all')}}",
+              type: 'POST',
+              data:{'_token':token},
+              success: function(res) {
+                  $(`.notify-counter`).text(res.total_notifications);
+                  $(`.notification-menu`).html(res.content);
+              }
+          });
+    }
+
+    function getUserNotification(id){
+      var token = $("meta[name='csrf-token']").attr("content");
+      if(id != '' || id != undefined){
+        return $.ajax({
+                url: "{{route('notification.get')}}",
+                type: 'POST',
+                data:{'id':id,'_token':token},
+                success: function(res) {
+                  if(res != '' && res.code == "1"){
+                    html = `<div class='col-8 float-left'>
+                    <span class="text text-secondary">${res.data.icon} ${res.data.content.message}</span>
+                    </div>
+                    <div>
+                    <span class="badge badge-secondary float-right"><i class="far fa-calendar-alt"></i>${new Date(res.data.content.created_at).toLocaleString('en-US')}</span></div>`;
+                    $(`#notificationModal .modal-body`).html(html);
+                    $('#notificationModal .modal-title').text(res.data.title);
+                    $('#notificationModal').modal('show');
+                  }
+                }
+            });
+        }
+    }
+    function markAsRead(id,is_read){
+      var token = $("meta[name='csrf-token']").attr("content");
+      return $.ajax({
+              url: "{{route('notification.markasread')}}",
+              type: 'POST',
+              data:{'id':id,'is_read':is_read,'_token':token},
+              success: function(res) {
+                  if(res.code == 1){
+                    getNotification();
+                  }
+              }
+          });
     }
   </script>
 <!-- AdminLTE for demo purposes -->
@@ -113,6 +164,32 @@
             $(this).parent().find("label").html(fileName);
             //$('.custom-file-label').closest('label').html(fileName);
         });
+    $('.notifications').on("show.bs.dropdown",function(e){
+      if($(".notify-counter").hasClass("blink")){
+        $(".notify-counter").removeClass("blink");
+        $(".bell-icon").removeClass("bell");
+      }
+    });
+    $('.notifications').on('click','.dropdown-item',function(){
+      var notification = $(this).data('notification');
+      if(notification != '' || (!isEmpty(notification))){
+        getUserNotification(notification).then(function(res){
+          markAsRead(notification,1);
+        });
+      }
+    });
+    setInterval(function(){
+      var total_notification = "0";
+      if($('.navbar-badge').hasClass('notify-counter')){
+        total_notification = $('.notify-counter').text();
+      }
+      getNotification().then(function(res){
+        if(total_notification != $('.notify-counter').text()){
+          $('.notify-counter').addClass('blink');
+          $('.bell-icon').addClass('bell');
+        }
+      });
+    },60000);
   });
 </script>
 <!-- jQuery -->

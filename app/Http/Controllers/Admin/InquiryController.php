@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Http\Helpers;
 use App\Http\Requests\Admin\InquiriesCreateRequest;
 use App\Http\Requests\Admin\InquiriesUpdateRequest;
 use App\Mail\SendInquiryToCustomer;
@@ -82,11 +83,17 @@ class InquiryController extends MainController
         }
         try{
             $inquiry = Inquiry::create($inquiry_data);
+            if(!empty($dealer_id)){
+                Helpers::storeNotification($dealer_id,"Inquiry #$inquiry->id has been assined to you.",0,1);
+            }
+            if(!empty($retailer_id)){
+                Helpers::storeNotification($retailer_id,"Inquiry #$inquiry->id has been assined to you.",0,1);
+            }
             if(!empty($request_data['send_mail_to_customer']) && (!empty($dealer_id))){
                 try{
                     Mail::to($inquiry->customer->email)->send(new SendInquiryToCustomer(config('app.name').' - Inquiry',$inquiry));
                 }catch(Exception $e){
-                    return redirect(route('inquiry.index'))->with('exception', 'Unable to sent Mail.');    
+                    return redirect(route('inquiry.index'))->with('exception', 'Unable to sent Mail.');
                 }
             }
             if(!empty($request_data['product'])){
@@ -96,7 +103,7 @@ class InquiryController extends MainController
         }catch(Exception $e){
             return redirect(route('inquiry.create'))->with('exception', $e->getMessage());
         }
-        return view('admin.inquiry.index');
+        return redirect(route('inquiry.index'));
     }
 
     /**
@@ -153,6 +160,12 @@ class InquiryController extends MainController
         }
         try{
             $is_inquiry_updated = $inquiry->where('id',$id)->update($update_data);
+            if(!empty($update_data['dealer_id']) && $inquiry->dealer_id != $update_data['dealer_id'] ){
+                Helpers::storeNotification($update_data['dealer_id'],"Inquiry #$inquiry->id has been assined to you.",0,1);
+            }
+            if(!empty($update_data['retailer_id']) && $inquiry->retailer_id != $update_data['retailer_id'] ){
+                Helpers::storeNotification($update_data['retailer_id'],"Inquiry #$inquiry->id has been assined to you.",0,1);
+            }
         }catch(Exception $e){
             return redirect(route('inquiry.create'))->with('exception', $e->getMessage());
         }
@@ -196,6 +209,9 @@ class InquiryController extends MainController
             
             try{
                 $is_inquiry_updated = $inquiry->where('id',$request->input('id'))->update($update_data);
+                if(!empty($update_data['retailer_id']) && $inquiry->retailer_id != $update_data['retailer_id'] ){
+                    Helpers::storeNotification($update_data['retailer_id'],"Inquiry #$inquiry->id has been assined to you.",0,1);
+                }
             }catch(Exception $e){
                 return response()->json(['status' => 'error','code'=>0,'message'=>$e->getMessage()]);
             }

@@ -62,6 +62,8 @@ class CustomerUserController extends MainController
                 if($request->ajax()){
                     return response()->json($user,200,[],1);
                 }
+                return redirect(route('customer.index'));
+
             }catch(Exception $e){
                 if($request->ajax()){
                     return response()->json(['exception'=> $e->getMessage()]);
@@ -71,7 +73,7 @@ class CustomerUserController extends MainController
         }else{
             return redirect(route('customer.create'))->with('exception', 'Invalid User Group');
         }
-        return view('admin.vendor.index');
+        return view('admin.customer.index');
     }
 
     /**

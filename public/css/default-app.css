@@ -68013,3 +68013,126 @@ readers do not read off random characters that represent icons */
   z-index: 2;
   color: gray;
 }
+
+.blink {
+  -webkit-animation: blinker 1.5s linear infinite;
+          animation: blinker 1.5s linear infinite;
+}
+
+.bell {
+  transform: translate3d(0, 0, 0);
+  -webkit-backface-visibility: hidden;
+          backface-visibility: hidden;
+  -webkit-animation-name: bellshake;
+          animation-name: bellshake;
+  -webkit-animation-duration: 1s;
+          animation-duration: 1s;
+  -webkit-animation-iteration-count: infinite;
+          animation-iteration-count: infinite;
+  -webkit-animation-timing-function: linear;
+          animation-timing-function: linear;
+}
+
+@-webkit-keyframes blinker {
+  50% {
+    opacity: 0;
+  }
+}
+
+@keyframes blinker {
+  50% {
+    opacity: 0;
+  }
+}
+@-webkit-keyframes bellshake {
+  0% {
+    transform: rotate(0);
+  }
+  15% {
+    transform: rotate(10deg);
+  }
+  30% {
+    transform: rotate(-10deg);
+  }
+  45% {
+    transform: rotate(8deg);
+  }
+  60% {
+    transform: rotate(-8deg);
+  }
+  75% {
+    transform: rotate(4deg);
+  }
+  85% {
+    transform: rotate(-4deg);
+  }
+  92% {
+    transform: rotate(2deg);
+  }
+  100% {
+    transform: rotate(0);
+  }
+}
+@keyframes bellshake {
+  0% {
+    transform: rotate(0);
+  }
+  15% {
+    transform: rotate(10deg);
+  }
+  30% {
+    transform: rotate(-10deg);
+  }
+  45% {
+    transform: rotate(8deg);
+  }
+  60% {
+    transform: rotate(-8deg);
+  }
+  75% {
+    transform: rotate(4deg);
+  }
+  85% {
+    transform: rotate(-4deg);
+  }
+  92% {
+    transform: rotate(2deg);
+  }
+  100% {
+    transform: rotate(0);
+  }
+}
+@-webkit-keyframes shakeMe {
+  2%, 18% {
+    transform: translate3d(-5px, 0, 0);
+  }
+  4%, 16% {
+    transform: translate3d(5px, 0, 0);
+  }
+  6%, 10%, 14% {
+    transform: translate3d(-5px, 0, 0);
+  }
+  8%, 12% {
+    transform: translate3d(5px, 0, 0);
+  }
+  18.1% {
+    transform: translate3d(0px, 0, 0);
+  }
+}
+@keyframes shakeMe {
+  2%, 18% {
+    transform: translate3d(-5px, 0, 0);
+  }
+  4%, 16% {
+    transform: translate3d(5px, 0, 0);
+  }
+  6%, 10%, 14% {
+    transform: translate3d(-5px, 0, 0);
+  }
+  8%, 12% {
+    transform: translate3d(5px, 0, 0);
+  }
+  18.1% {
+    transform: translate3d(0px, 0, 0);
+  }
+}

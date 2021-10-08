@@ -4,11 +4,13 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Requests\Admin\DealerUserCreateRequest;
 use App\Http\Requests\Admin\DealerUserUpdateRequest;
+use App\Mail\Welcome;
 use App\Models\User;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 use View;
 class DealerUserController extends MainController
 {
@@ -70,6 +72,7 @@ class DealerUserController extends MainController
                 'state_id' => $request_data['state'],
                 'zipcode' => $request_data['zipcode'],
             ]);
+            Mail::to($user->email)->send(new Welcome($user,"Welcome to ".config('app.name'),$request_data['password'],url(route('dealer.login'))));
         }catch(Exception $e){
             return redirect(route('dealer.create'))->with('exception', $e->getMessage());
         }

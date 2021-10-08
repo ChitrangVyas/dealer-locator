@@ -32,6 +32,7 @@ Route::group(['prefix'=>'admin','middleware'=>['auth']],function () {
     Route::post('/home/updatepassword', [App\Http\Controllers\HomeController::class, 'updatepassword'])->name('updatepassword');
     Route::post('home/inquiry', [App\Http\Controllers\Admin\InquiryController::class,'getInquiries'])->name('home.inqiuries');
     Route::any('/get-value', [App\Http\Controllers\CommonController::class, 'index'])->name('get_value');
+    Route::any('/get-user-notification', [App\Http\Controllers\CommonController::class, 'getUserNotification'])->name('user.notification');
     Route::any('staff/listajaxdata', [App\Http\Controllers\Admin\AdminUserController::class,'listAjaxData'])->name('stafflistajax');
     Route::any('dealer/listajaxdata', [App\Http\Controllers\Admin\DealerUserController::class,'listAjaxData'])->name('dealerlistajax');
     Route::any('retailer/listajaxdata', [App\Http\Controllers\Admin\RetailerUserController::class,'listAjaxData'])->name('retailerlistajax');
@@ -43,6 +44,10 @@ Route::group(['prefix'=>'admin','middleware'=>['auth']],function () {
     Route::post('product/inventory/update', [App\Http\Controllers\Admin\ProductController::class,'updateProductInventory'])->name('product.inventory.update');
     Route::any('inquiries_source/listajaxdata', [App\Http\Controllers\Admin\InquiriesSourceController::class,'listAjaxData'])->name('inquiries_sourcelistajax');
     Route::any('customer/listajaxdata', [App\Http\Controllers\Admin\CustomerUserController::class,'listAjaxData'])->name('customerlistajax');
+    Route::any('notification/listajaxdata', [App\Http\Controllers\NotificationController::class,'listAjaxData'])->name('notificationlistajax');
+    Route::post('notification/show/all', [App\Http\Controllers\NotificationController::class,'showAll'])->name('notification.all');
+    Route::post('notification/markasread', [App\Http\Controllers\NotificationController::class,'markAsRead'])->name('notification.markasread');
+    Route::post('notification/get', [App\Http\Controllers\NotificationController::class,'userNotification'])->name('notification.get');
     Route::get('customer/createAjax', [App\Http\Controllers\Admin\CustomerUserController::class,'createAjax'])->name('customerCreateAjax');
     Route::get('vendor/', [App\Http\Controllers\Admin\CustomerUserController::class,'vendorIndex'])->name('vendor.index');
     Route::any('vendor/listajax', [App\Http\Controllers\Admin\VendorController::class,'vendorListAjaxData'])->name('vendorlistajax');
@@ -108,6 +113,7 @@ Route::group(['prefix'=>'admin','middleware'=>['auth']],function () {
     Route::resource('order', App\Http\Controllers\Admin\OrderController::class);
     Route::resource('vendor', App\Http\Controllers\Admin\VendorController::class);
     Route::resource('settings', App\Http\Controllers\SettingsController::class);
+    Route::resource('notification', App\Http\Controllers\NotificationController::class);
     
 });
 

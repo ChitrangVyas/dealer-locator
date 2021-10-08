@@ -24,6 +24,7 @@
                                     <th>Brand</th>
                                     <th>Image</th>
                                     <th>Inventory</th>
+                                    <th>Status</th>
                                     <th>Action</th>
                                 </tr>
                             </thead>
@@ -56,6 +57,7 @@
 @section('plugins.Datatables', true)
 @section('plugins.Select2', true)
 @section('plugins.Sweetalert2', true)
+@section('plugins.BootstrapSwitch', true)
 @section('js')
 <script>
     jQuery(document).ready(function(){
@@ -66,6 +68,7 @@
                 { "name": "brands.name" },
                 { "name": "image" },
                 { "name": "inventory" },
+                { "name": "products.status" },
                 { "name": "action" }
             ],
             "columnDefs": [
@@ -75,6 +78,10 @@
             },
             {
                 "targets": [ 5 ],
+                "orderable": false
+            },
+            {
+                "targets": [ 6 ],
                 "orderable": false
             },
             {
@@ -89,10 +96,31 @@
             "fnDrawCallback":function() {
                 let is_admin = "{{((empty(auth()->user()->users_group_id)) || auth()->user()->users_group_id == 1)? true : false }}";
                 if(is_admin){
-                    table.column(5).visible();
+                    table.column(6).visible();
                 }else{
-                    table.column(5).visible(false);
+                    table.column(6).visible(false);
                 }
+                $("input[data-bootstrap-switch]").each(function(){
+                    $(this).bootstrapSwitch();
+                });
+
+                $('.change-status').on('switchChange.bootstrapSwitch', function (e, data) {
+                    var status = ($(this).bootstrapSwitch('state'))?1:0;
+                    var id = $(this).data('id');
+                    $.ajax({
+                        url:"{{route('status.update')}}",
+                        method: "POST",
+                        data: {'table':'products','id':id,'status':status},
+                        dataType: 'json',
+                    }).done(function(res){
+                        if(res.code == 1){
+                            // toastr.success(res.message);
+                        }else{
+                            // console.error(res.message);
+                        }
+                        //window.location.reload()
+                    });
+                });
             }
         });        
     });

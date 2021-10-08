@@ -31,6 +31,7 @@ class User extends Authenticatable
         'address',
         'city_id',
         'state_id',
+        'status',
         'zipcode',
     ];
 

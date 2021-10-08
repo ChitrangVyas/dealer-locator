@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Http\Helpers;
 use App\Http\Requests\Admin\ManufacturerCreateRequest;
 use App\Http\Requests\Admin\ManufacturerUpdateRequest;
 use App\Models\Manufacturer;
@@ -104,6 +105,7 @@ class ManufacturerController extends MainController
     {
         //
         $request_data = $request->except(['_method','_token','id']);
+        $request_data['status'] = (!empty($request_data['status']))?1:0;
         $file_path = '';   
         
         if($request->file()) {
@@ -151,10 +153,17 @@ class ManufacturerController extends MainController
         $total_users = Manufacturer::where('deleted_at','=',Null)->count();
         $data = [];
         foreach($manufacturers as $manufacturer){
+            $brand_count = Helpers::getCountData('brands',['manufacturer_id'=>$manufacturer->id]);
             $manufacturer_logo_html = (!empty($manufacturer->logo))?"<img class='img logo' src=".url($manufacturer->logo)." width=50 />":'Image not found';
+            $status = (!empty($manufacturer->status)) ? 'checked': '';
+            $status_html = '<input type="checkbox" name="status" id="status" class="form-control change-status" data-id="'.$manufacturer->id.'" data-bootstrap-switch  data-on-text="Enable" data-off-text="Disable" data-off-color="danger" data-on-color="success" '.$status.'>';
             $action_html = "<span><a href=".route('manufacturer.edit',$manufacturer->id)." class='btn btn-primary'>Edit</a></span>";
-            $action_html .= "<span class='ml-3'><button type=submit data-user=$manufacturer->id class='btn btn-danger' onClick=deleteUser($manufacturer->id)>Delete</button></span>";
-            $data[] = [$manufacturer->id,$manufacturer->name,$manufacturer->email,$manufacturer->mobile,$manufacturer_logo_html,$action_html];
+            if(empty($brand_count)){
+                $action_html .= "<span class='ml-3'><button type=submit data-user=$manufacturer->id class='btn btn-danger' onClick=deleteUser($manufacturer->id)>Delete</button></span>";
+            }else{
+                $action_html .= "<span class='ml-3'><span class='badge badge-info' title='Brand'>$brand_count</span></span>";
+            }
+            $data[] = [$manufacturer->id,$manufacturer->name,$manufacturer->email,$manufacturer->mobile,$manufacturer_logo_html,$status_html,$action_html];
         }
         $return_array = array();
         $return_array['draw'] = $request['draw'];

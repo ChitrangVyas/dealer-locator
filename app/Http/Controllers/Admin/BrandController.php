@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Http\Helpers;
 use App\Http\Requests\Admin\BrandCreateRequest;
 use App\Http\Requests\Admin\BrandUpdateRequest;
 use App\Models\Brand;
@@ -121,6 +122,7 @@ class BrandController extends MainController
             'short_description' => $request_data['short_description'],
             'manufacturer_id' => $request_data['manufacturer_id'],            
         ];
+        $upload_data['status'] = (!empty($request_data['status']))?1:0;
         
         if($request->file()) {
             $fileName = time().'_'.$request->logo->getClientOriginalName();
@@ -159,7 +161,7 @@ class BrandController extends MainController
         $where .= (!empty($search)) ? " AND (name like '$search%' OR email like '$search%')":'';
         $brands = DB::table('brands')
         ->leftJoin('manufacturers','brands.manufacturer_id','=','manufacturers.id')
-        ->selectRaw('brands.id,brands.name,manufacturers.name as mname,brands.logo')
+        ->selectRaw('brands.id,brands.name,manufacturers.name as mname,brands.logo,brands.status')
         ->where('brands.deleted_at', NULL)
         ->offset($start)
         ->limit($length)
@@ -168,10 +170,17 @@ class BrandController extends MainController
         $total_users = Brand::where('deleted_at','=',Null)->count();
         $data = [];
         foreach($brands as $brand){            
+            $product_count = Helpers::getCountData('products',['brand_id'=>$brand->id]);
             $brand_logo_html = (!empty($brand->logo))?"<img class='img logo' src=".url($brand->logo)." width=50 />":'Image not found';
+            $status = (!empty($brand->status)) ? 'checked': '';
+            $status_html = '<input type="checkbox" name="status" id="status" class="form-control change-status" data-id="'.$brand->id.'" data-bootstrap-switch  data-on-text="Enable" data-off-text="Disable" data-off-color="danger" data-on-color="success" '.$status.'>';
             $action_html = "<span><a href=".route('brand.edit',$brand->id)." class='btn btn-primary'>Edit</a></span>";
-            $action_html .= "<span class='ml-3'><button type=submit data-user=$brand->id class='btn btn-danger' onClick=deleteUser($brand->id)>Delete</button></span>";
-            $data[] = [$brand->id,$brand->name,$brand->mname,$brand_logo_html,$action_html];
+            if(empty($product_count)){
+                $action_html .= "<span class='ml-3'><button type=submit data-user=$brand->id class='btn btn-danger' onClick=deleteUser($brand->id)>Delete</button></span>";
+            }else{
+                $action_html .= "<span class='ml-3'><span class='badge badge-info' title='Products'>$product_count</span></span>";
+            }
+            $data[] = [$brand->id,$brand->name,$brand->mname,$brand_logo_html,$status_html,$action_html];
         }
         $return_array = array();
         $return_array['draw'] = $request['draw'];

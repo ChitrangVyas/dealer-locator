@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Http\Helpers;
 use App\Http\Requests\Admin\CategoryCreateRequest;
 use App\Http\Requests\Admin\CategoryUpdateRequest;
 use App\Models\Category;
@@ -114,6 +115,7 @@ class CategoryController extends MainController
             'parent_category' => $request_data['parent_category'],
             'description'=> $request_data['description'],                
         ];
+        $upload_data['status'] = (!empty($request_data['status']))?1:0;
         
         if($request->file()) {
             $fileName = time().'_'.$request->image->getClientOriginalName();
@@ -150,7 +152,7 @@ class CategoryController extends MainController
         $where = 'categories.deleted_at is NULL';
         $where .= (!empty($search)) ? " AND (name like '$search%' OR parent_category like '$search%')":'';
         $categories = DB::table('categories')
-        ->selectRaw('categories.id,categories.name,categories.parent_category,categories.image')
+        ->selectRaw('categories.id,categories.name,categories.parent_category,categories.image,categories.status')
         ->whereRaw($where)
         ->offset($start)
         ->limit($length)
@@ -159,12 +161,20 @@ class CategoryController extends MainController
         $total_users = Category::where('deleted_at','=',Null)->count();
         $data = [];
         foreach($categories as $category){
+            $child_category_count = Helpers::getCountData('categories',['parent_category'=>$category->id]);
+            $product_count = Helpers::getCountData('product_category',['category_id'=>$category->id]);
+            $status = (!empty($category->status)) ? 'checked': '';
+            $status_html = '<input type="checkbox" name="status" id="status" class="form-control change-status" data-id="'.$category->id.'" data-bootstrap-switch  data-on-text="Enable" data-off-text="Disable" data-off-color="danger" data-on-color="success" '.$status.'>';
             $parent_category = Category::find($category->parent_category);
             $parent_category = (!empty($parent_category))?$parent_category->name:'N/A';
             $category_logo_html = (!empty($category->image))?"<img class='img image' src=".url($category->image)." width=50 />":'Image not found';
             $action_html = "<span><a href=".route('category.edit',$category->id)." class='btn btn-primary'>Edit</a></span>";
-            $action_html .= "<span class='ml-3'><button type=submit data-user=$category->id class='btn btn-danger' onClick=deleteUser($category->id)>Delete</button></span>";
-            $data[] = [$category->id,$category->name,$parent_category,$category_logo_html,$action_html];
+            if(empty($child_category_count) && empty($product_count)){
+                $action_html .= "<span class='ml-3'><button type=submit data-user=$category->id class='btn btn-danger' onClick=deleteUser($category->id)>Delete</button></span>";
+            }else{
+                $action_html .= "<span class='ml-3'><span class='badge badge-info' title='Category'> $child_category_count</span> | <span class='badge badge-info' title='Product'> $product_count</span></span>";
+            }
+            $data[] = [$category->id,$category->name,$parent_category,$category_logo_html,$status_html,$action_html];
         }
         $return_array = array();
         $return_array['draw'] = $request['draw'];

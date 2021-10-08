@@ -178,7 +178,7 @@ class BrandController extends MainController
             if(empty($product_count)){
                 $action_html .= "<span class='ml-3'><button type=submit data-user=$brand->id class='btn btn-danger' onClick=deleteUser($brand->id)>Delete</button></span>";
             }else{
-                $action_html .= "<span class='ml-3'>Products:$product_count</span>";
+                $action_html .= "<span class='ml-3'><span class='badge badge-info' title='Products'>$product_count</span></span>";
             }
             $data[] = [$brand->id,$brand->name,$brand->mname,$brand_logo_html,$status_html,$action_html];
         }

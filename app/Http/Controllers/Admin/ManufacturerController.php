@@ -161,7 +161,7 @@ class ManufacturerController extends MainController
             if(empty($brand_count)){
                 $action_html .= "<span class='ml-3'><button type=submit data-user=$manufacturer->id class='btn btn-danger' onClick=deleteUser($manufacturer->id)>Delete</button></span>";
             }else{
-                $action_html .= "<span class='ml-3'>Brand:$brand_count</span>";
+                $action_html .= "<span class='ml-3'><span class='badge badge-info' title='Brand'>$brand_count</span></span>";
             }
             $data[] = [$manufacturer->id,$manufacturer->name,$manufacturer->email,$manufacturer->mobile,$manufacturer_logo_html,$status_html,$action_html];
         }

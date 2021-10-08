@@ -172,7 +172,7 @@ class CategoryController extends MainController
             if(empty($child_category_count) && empty($product_count)){
                 $action_html .= "<span class='ml-3'><button type=submit data-user=$category->id class='btn btn-danger' onClick=deleteUser($category->id)>Delete</button></span>";
             }else{
-                $action_html .= "<span class='ml-3'>Category: $child_category_count | Product: $product_count</span>";
+                $action_html .= "<span class='ml-3'><span class='badge badge-info' title='Category'> $child_category_count</span> | <span class='badge badge-info' title='Product'> $product_count</span></span>";
             }
             $data[] = [$category->id,$category->name,$parent_category,$category_logo_html,$status_html,$action_html];
         }

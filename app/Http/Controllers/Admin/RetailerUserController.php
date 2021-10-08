@@ -209,7 +209,7 @@ class RetailerUserController extends MainController
             if(empty($total_assigned_inquiries)){
                 $action_html .= "<span class='ml-3'><button type=submit data-user=$user->id class='btn btn-danger' onClick=deleteUser($user->id)>Delete</button></span>";
             }else{
-                $action_html .= "<span class='ml-3'>Inquires:$total_assigned_inquiries</span>";
+                $action_html .= "<span class='ml-3'><span class='badge badge-info' title='Inquires'>$total_assigned_inquiries</span></span>";
             }
             $data[] = [$user->id,$user->name,$user->email,$user->mobile,$city,$state,$status_html,$action_html];
         }

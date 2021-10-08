@@ -19,6 +19,7 @@ class Product extends Model
         'logo',
         'inventory',
         'price',
+        'status',
     ];
     protected $dates = ['deleted_at'];
 

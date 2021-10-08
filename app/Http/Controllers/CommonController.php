@@ -84,4 +84,16 @@ class CommonController extends MainController
         $data = Helpers::getUserNotification($request->input('user_id'),$is_admin);
         echo json_encode($data);
     }
+
+    public function updateItemStatus(Request $request){
+        if(auth()->check()){
+            $request_data = $request->except('_token','method');
+            if(!empty($request_data['table']) && !empty($request_data['id'])){
+                $status = (!empty($request_data['status']))?1:0;
+                $update_status = DB::table($request_data['table'])->where('id',$request_data['id'])->update(['status'=>$status]);
+                return response()->json(['status' => 'successful','code'=>1, 'data'=>'Status successfully updated', 'message'=>'']);
+            }
+        }
+        return response()->json(['status' => 'error','code'=>0, 'data'=>'', 'message'=>'Something goes wrong']);
+    }
 }

@@ -21,6 +21,7 @@
                                         <th>Name</th>
                                         <th>Parent Category</th>
                                         <th>Images</th>
+                                        <th>Status</th>
                                         <th>Action</th>
                                     </tr>
                                 </thead>
@@ -33,6 +34,7 @@
     </section>
 @endsection
 @section('plugins.Datatables', true)
+@section('plugins.BootstrapSwitch', true)
 @section('js')
 <script>
     jQuery(document).ready(function(){
@@ -42,6 +44,7 @@
                 { "name": "name" },
                 { "name": "image" },
                 { "name": "parent_category" },
+                { "name": "status" },
                 { "name": "action" }
             ],
             "columnDefs": [
@@ -62,6 +65,28 @@
             "processing": true,
             "serverSide": true,
             "ajax": dataTableRequest("{{ route('categorylistajax') }}"),
+            "fnDrawCallback": function() {
+                $("input[data-bootstrap-switch]").each(function(){
+                    $(this).bootstrapSwitch();
+                });
+
+                $('.change-status').on('switchChange.bootstrapSwitch', function (e, data) {
+                    var status = ($(this).bootstrapSwitch('state'))?1:0;
+                    var id = $(this).data('id');
+                    $.ajax({
+                        url:"{{route('status.update')}}",
+                        method: "POST",
+                        data: {'table':'categories','id':id,'status':status},
+                        dataType: 'json',
+                    }).done(function(res){
+                        if(res.code == 1){
+                        }else{
+                            console.error(res.message);
+                        }
+                        //window.location.reload()
+                    });
+                });
+            }
         });        
     });
     function deleteUser(id){

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Http\Helpers;
 use App\Http\Requests\Admin\DealerUserCreateRequest;
 use App\Http\Requests\Admin\DealerUserUpdateRequest;
 use App\Mail\Welcome;
@@ -114,6 +115,7 @@ class DealerUserController extends MainController
     {
         //
         $request_data = $request->all();
+        $request_data['status'] = (!empty($request_data['status']))?1:0;
         $user = User::where('id',$id)->update([
             'name' => $request_data['name'],
             'email' => $request_data['email'],
@@ -124,6 +126,7 @@ class DealerUserController extends MainController
             'city_id' => $request_data['city'],
             'state_id' => $request_data['state'],
             'zipcode' => $request_data['zipcode'],
+            'status' => $request_data['status'],
         ]);
         return redirect(route('dealer.index'));
     }
@@ -150,7 +153,7 @@ class DealerUserController extends MainController
         $where = 'users_group_id = 2';
         $where .= (!empty($search)) ? " AND (users.name like '$search%' OR email like '$search%' OR mobile like '$search%' OR cities.name like '$search%' OR states.name like '$search%')":'';
         $users = DB::table('users')
-        ->selectRaw('users.id,users.name,email,mobile,cities.name as city, states.name as state')
+        ->selectRaw('users.id,users.name,email,mobile,cities.name as city, states.name as state,users.status')
         ->join('cities','users.city_id','=','cities.id')
         ->join('states','users.state_id','=','states.id')
         ->whereRaw($where)
@@ -166,8 +169,16 @@ class DealerUserController extends MainController
             $city = (!empty($user->city))?$user->city:'';
             $state = (!empty($user->state))?$user->state:'';
             $action_html = "<span><a href=".route('dealer.edit',$user->id)." class='btn btn-primary'>Edit</a></span>";
-            $action_html .= "<span class='ml-3'><button type=submit data-user=$user->id class='btn btn-danger' onClick=deleteUser($user->id)>Delete</button></span>";
-            $data[] = [$user->id,$user->name,$user->email,$user->mobile,$city,$state,$action_html];
+            $child_user =  Helpers::getChildUserCount($user->id);
+            $status = (!empty($user->status)) ? 'checked': '';
+            $status_html = '<input type="checkbox" name="status" id="status" class="form-control change-status" data-id="'.$user->id.'" data-bootstrap-switch  data-on-text="Enable" data-off-text="Disable" data-off-color="danger" data-on-color="success" '.$status.'>';
+            $total_assigned_inquiries =  Helpers::getAssignedDealerInquiryCount($user->id);
+            if(empty($child_user) && empty($total_assigned_inquiries)){
+                $action_html .= "<span class='ml-3'><button type=submit data-user=$user->id class='btn btn-danger' onClick=deleteUser($user->id)>Delete</button></span>";
+            }else{
+                $action_html .= "<span class='ml-3'>Retailers:$child_user | Inquiries:$total_assigned_inquiries</span>";
+            }
+            $data[] = [$user->id,$user->name,$user->email,$user->mobile,$city,$state,$status_html,$action_html];
         }
         $return_array = array();
         $return_array['draw'] = $request['draw'];

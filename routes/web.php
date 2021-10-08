@@ -33,6 +33,7 @@ Route::group(['prefix'=>'admin','middleware'=>['auth']],function () {
     Route::post('home/inquiry', [App\Http\Controllers\Admin\InquiryController::class,'getInquiries'])->name('home.inqiuries');
     Route::any('/get-value', [App\Http\Controllers\CommonController::class, 'index'])->name('get_value');
     Route::any('/get-user-notification', [App\Http\Controllers\CommonController::class, 'getUserNotification'])->name('user.notification');
+    Route::any('/status/update', [App\Http\Controllers\CommonController::class, 'updateItemStatus'])->name('status.update');
     Route::any('staff/listajaxdata', [App\Http\Controllers\Admin\AdminUserController::class,'listAjaxData'])->name('stafflistajax');
     Route::any('dealer/listajaxdata', [App\Http\Controllers\Admin\DealerUserController::class,'listAjaxData'])->name('dealerlistajax');
     Route::any('retailer/listajaxdata', [App\Http\Controllers\Admin\RetailerUserController::class,'listAjaxData'])->name('retailerlistajax');

@@ -22,6 +22,7 @@
                                         <th>Email</th>
                                         <th>Phone</th>
                                         <th>Logo</th>
+                                        <th>Status</th>
                                         <th>Action</th>
                                     </tr>
                                 </thead>
@@ -33,6 +34,7 @@
         </div>
     </section>
 @endsection
+@section('plugins.BootstrapSwitch', true)
 @section('plugins.Datatables', true)
 @section('js')
 <script>
@@ -43,11 +45,16 @@
                 { "name": "name" },
                 { "name": "email" },
                 { "name": "logo" },
+                { "name": "status" },
                 { "name": "action" }
             ],
             "columnDefs": [
             {
                 "targets": [ 5 ],
+                "orderable": false
+            },
+            {
+                "targets": [ 6 ],
                 "orderable": false
             },
             {
@@ -59,6 +66,29 @@
             "processing": true,
             "serverSide": true,
             "ajax": dataTableRequest("{{ route('manufacturerlistajax') }}"),
+            "fnDrawCallback": function() {
+                $("input[data-bootstrap-switch]").each(function(){
+                    $(this).bootstrapSwitch();
+                });
+
+                $('.change-status').on('switchChange.bootstrapSwitch', function (e, data) {
+                    var status = ($(this).bootstrapSwitch('state'))?1:0;
+                    var id = $(this).data('id');
+                    $.ajax({
+                        url:"{{route('status.update')}}",
+                        method: "POST",
+                        data: {'table':'manufacturers','id':id,'status':status},
+                        dataType: 'json',
+                    }).done(function(res){
+                        if(res.code == 1){
+                            // toastr.success(res.message);
+                        }else{
+                            // console.error(res.message);
+                        }
+                        //window.location.reload()
+                    });
+                });
+            }
         });        
     });
     function deleteUser(id){

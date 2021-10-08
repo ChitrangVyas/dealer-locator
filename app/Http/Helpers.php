@@ -2,7 +2,9 @@
 
 namespace App\Http;
 
+use App\Models\Inquiry;
 use App\Models\Notification;
+use App\Models\User;
 use Exception;
 use Illuminate\Support\Facades\DB;
 
@@ -65,5 +67,33 @@ class Helpers {
             return (Notification::whereNull('user_id')->where('id',$id));
         }
         return false;
+    }
+
+    public static function getChildUserCount($user_id){
+        if(!empty($user_id) ){
+            return (User::where('parent_id',$user_id)->count());
+        }
+        return 0;
+    }
+
+    public static function getAssignedRetailerInquiryCount($user_id){
+        if(!empty($user_id) ){
+            return (Inquiry::where('retailer_id',$user_id)->where('status','<>',5)->count());
+        }
+        return 0;
+    }
+
+    public static function getAssignedDealerInquiryCount($user_id){
+        if(!empty($user_id) ){
+            return (Inquiry::where('dealer_id',$user_id)->where('status','<>',5)->count());
+        }
+        return 0;
+    }
+
+    public static function getCountData($table,$where,$is_raw=0){
+            if(empty($is_raw)){
+                return DB::table($table)->where($where)->count();
+            }
+            return (DB::table($table)->whereRaw($where)->count());
     }
 }

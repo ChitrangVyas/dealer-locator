@@ -178,6 +178,10 @@
         });
       }
     });
+    $("input[data-bootstrap-switch]").each(function(){
+        // $(this).bootstrapSwitch('state', $(this).prop('checked'));
+        $(this).bootstrapSwitch();
+    });
     setInterval(function(){
       var total_notification = "0";
       if($('.navbar-badge').hasClass('notify-counter')){

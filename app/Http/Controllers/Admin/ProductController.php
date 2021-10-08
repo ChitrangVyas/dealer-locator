@@ -137,6 +137,7 @@ class ProductController extends MainController
             'inventory' => $request['inventory'],           
             'price' => $request['price'],         
         ];
+        $upload_data['status'] = (!empty($request_data['status']))?1:0;
         try{
             if($request->file()) {
                 $filename = str_replace('/storage/uploads/products/', '', $product->image);
@@ -192,7 +193,7 @@ class ProductController extends MainController
         $query = DB::table('products');
         if((empty(auth()->user()->users_group_id)) || (auth()->user()->users_group_id == 1)){
             $query->leftJoin('brands','products.brand_id','=','brands.id')
-            ->selectRaw('products.id,products.name,brands.name as brand_name,products.image,inventory');
+            ->selectRaw('products.id,products.name,brands.name as brand_name,products.image,inventory,products.status');
         }else{
             // $where .= " AND user_id=".auth()->user()->id;
             $query->leftJoin('brands','products.brand_id','=','brands.id')
@@ -200,7 +201,7 @@ class ProductController extends MainController
                 $query->on('products.id','=','inventory.product_id');
                 $query->where('user_id',auth()->user()->id);
             })
-            ->selectRaw('products.id,products.name,brands.name as brand_name,products.image,inventory.qty AS inventory');
+            ->selectRaw('products.id,products.name,brands.name as brand_name,products.image,inventory.qty AS inventory,products.status');
         }
         $query->whereRaw($where)
         ->offset($start)
@@ -215,15 +216,18 @@ class ProductController extends MainController
             $action_html = '';
             $inventory_html = '';
             $inventory = (empty($product->inventory))?'0':$product->inventory;
+            $status = (!empty($product->status)) ? 'checked': '';
+            $status_html = '<input type="checkbox" name="status" id="status" class="form-control" data-bootstrap-switch  data-on-text="Enable" data-off-text="Disable" data-off-color="danger" data-on-color="success" '.$status.' disabled>';
             if((empty(auth()->user()->users_group_id)) || (auth()->user()->users_group_id == 1)){
                 $action_html = "<span><a href=".route('product.edit',$product->id)." class='btn btn-primary'>Edit</a></span>";
                 $action_html .= "<span class='ml-3'><button type=submit data-user=$product->id class='btn btn-danger' onClick=deleteUser($product->id)>Delete</button></span>";
+                $status_html = '<input type="checkbox" name="status" id="status" class="form-control change-status" data-id="'.$product->id.'" data-bootstrap-switch  data-on-text="Enable" data-off-text="Disable" data-off-color="danger" data-on-color="success" '.$status.'>';
                 $inventory_html = "<span>$inventory</span>";
             }else{
                 $inventory_html = "<span class='ml-3'><button data-product=$product->id class='btn btn-link add-stock'>$inventory</button></span>";
                 // $inventory_html = "<button class=btn btn-default add-stock data-product=".$product->id.">".(empty($product->inventory))?'II':$product->inventory."</button>";
             }
-            $data[] = [$product->id,$product->name,$product->brand_name,$product_image_html,$inventory_html,$action_html];
+            $data[] = [$product->id,$product->name,$product->brand_name,$product_image_html,$inventory_html,$status_html,$action_html];
         }
         $return_array = array();
         $return_array['draw'] = $request['draw'];

@@ -43,7 +43,7 @@ class ManufacturerUpdateRequest extends FormRequest
             // 'state_id' => 'required|after_or_equal:1',
             // 'city_id' => 'required|after_or_equal:1',
             // 'zipcode' => 'required|min:5|max:7',
-            'logo' => 'present|mimes:png,jpeg,jpg,svg,webp|max:2048'
+            'logo' => 'nullable|mimes:png,jpeg,jpg,svg,webp|max:2048'
         ];
     }
 

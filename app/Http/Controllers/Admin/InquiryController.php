@@ -155,9 +155,7 @@ class InquiryController extends MainController
         if(!empty($request_data['dealer'])){
             $update_data['dealer_id'] = $request_data['dealer'];
         }
-        if(!empty($request_data['retailer'])){
-            $update_data['retailer_id']=$request_data['retailer'];
-        }
+        $update_data['retailer_id'] = (!empty($request_data['retailer']))?$request_data['retailer']:NULL;
         try{
             $is_inquiry_updated = $inquiry->where('id',$id)->update($update_data);
             if(!empty($update_data['dealer_id']) && $inquiry->dealer_id != $update_data['dealer_id'] ){
@@ -286,6 +284,7 @@ class InquiryController extends MainController
         $where = 'inquiries.deleted_at is NULL';
         $where .= (!empty($dealer_id))?" AND (dealer_id=$dealer_id OR inquiries.created_by=$dealer_id)":'';
         $where .= (!empty($retailer_id))?" AND (retailer_id=$retailer_id OR inquiries.created_by=$retailer_id)":'';
+        $total_where = $where;
         $where .= (!empty($search)) ? " AND (c.name like '$search%' OR p.name like '$search%' OR source like '%$search%' OR (d.name is NOT NULL AND d.name like '$search%'))":'';
         $inquiries = DB::table('inquiries')
         ->select(DB::raw('inquiries.id, inquiries.status, inquiries.created_by,source,c.name as customer,c.email AS customer_email,c.mobile AS customer_mobile,d.name as dealer, r.name as retailer,group_concat(p.name SEPARATOR "<br>") as product'))
@@ -295,13 +294,12 @@ class InquiryController extends MainController
         ->join('products AS p','inquiries_products.product_id','=','p.id','left')
         ->join('users AS d','inquiries.dealer_id','=','d.id','left')
         ->join('users AS r','inquiries.retailer_id','=','r.id','left')
-        ->whereRaw($where)
-        ->offset($start)
-        ->limit($length)
-        ->orderBy($request['columns'][$request['order'][0]['column']]['name'],$request['order'][0]['dir'])
-        ->groupby('inquiries.id')
-        ->get();
-        $total_inquiries = Inquiry::whereRaw($where)->count();
+        ->whereRaw($where);
+        $total_inquiries = $inquiries->count();
+        $inquiries = $inquiries->offset($start)
+        ->limit($length)->orderBy($request['columns'][$request['order'][0]['column']]['name'],$request['order'][0]['dir'])
+        ->groupby('inquiries.id')->get();
+        
         $data = [];
         foreach($inquiries as $inquiry){
             $dealer = (!empty($inquiry->dealer))?$inquiry->dealer:'N/A';

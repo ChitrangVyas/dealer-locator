@@ -605,7 +605,7 @@
                     return {
                         q: params.term, // search term
                         table:'products',
-                        where: 'deleted_at is NULL'
+                        where: 'deleted_at is NULL AND status = 1'
                     };
                 },
                 processResults: function (data) {

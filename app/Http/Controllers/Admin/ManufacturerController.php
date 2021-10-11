@@ -54,6 +54,7 @@ class ManufacturerController extends MainController
     {   
         //
         $request_data = $request->all();
+        $request_data['status'] = (!empty($request_data['status']))?1:0;
         $file_path = '';
         if($request->file()) {
             $fileName = time().'_'.$request->logo->getClientOriginalName();

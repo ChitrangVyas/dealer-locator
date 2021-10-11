@@ -568,7 +568,7 @@
                     return {
                         q: params.term, // search term
                         table:'products',
-                        where: 'deleted_at is NULL'
+                        where: 'deleted_at is NULL  AND status = 1'
                     };
                 },
                 processResults: function (data) {
@@ -594,7 +594,7 @@
                     return {
                         q: params.term, // search term
                         table:'users',
-                        where: 'users_group_id = 5 AND deleted_at is NULL AND created_by={{auth()->user()->id}}'
+                        where: 'users_group_id = 5 AND deleted_at is NULL  AND status = 1 AND created_by={{auth()->user()->id}}'
                     };
                 },
                 processResults: function (data) {

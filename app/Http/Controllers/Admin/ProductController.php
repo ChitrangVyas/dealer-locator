@@ -48,8 +48,8 @@ class ProductController extends MainController
     public function create()
     {
         //
-        $brands =  Brand::withoutTrashed()->get();
-        $categories = Category::withoutTrashed()->get();
+        $brands =  Brand::withoutTrashed()->where('status',1)->get();
+        $categories = Category::withoutTrashed()->where('status',1)->get();
         return view('admin.product.create',compact('brands','categories'));
     }
 
@@ -77,7 +77,8 @@ class ProductController extends MainController
                 'inventory' => $request['inventory'],
                 'price' => $request['price'],
                 // 'category' => $request_data['category'],
-                'image' => $file_path
+                'image' => $file_path,
+                'status' => (!empty($request_data['status']))?1:0,
             ]);
             if((!empty($product)) && (!empty($request_data['categories']))){
                 $categories = Category::find($request_data['categories']);
@@ -110,10 +111,10 @@ class ProductController extends MainController
     public function edit($id)
     {
         //
-        $brands = Brand::withoutTrashed()->get();        
+        $brands = Brand::withoutTrashed()->where('status',1)->get();        
         $product = Product::findOrFail($id);
         $product_category = $product->categories()->pluck('category_id')->toArray();
-        $categories = Category::withoutTrashed()->get();
+        $categories = Category::withoutTrashed()->where('status',1)->get();
         return view('admin.product.create',array('brands'=>$brands,'product'=>$product,'product_category'=>$product_category,'categories'=>$categories));
     }
 

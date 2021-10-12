@@ -9,6 +9,7 @@ use App\Models\Brand;
 use App\Models\Category;
 use App\Models\Inventory;
 use App\Models\Product;
+use App\Models\TaxGroup;
 use Illuminate\Support\Facades\Validator;
 use Exception;
 use Illuminate\Http\Request;
@@ -50,7 +51,8 @@ class ProductController extends MainController
         //
         $brands =  Brand::withoutTrashed()->where('status',1)->get();
         $categories = Category::withoutTrashed()->where('status',1)->get();
-        return view('admin.product.create',compact('brands','categories'));
+        $tax_groups = TaxGroup::where('status',1)->get();
+        return view('admin.product.create',compact('brands','categories','tax_groups'));
     }
 
     /**
@@ -79,6 +81,7 @@ class ProductController extends MainController
                 // 'category' => $request_data['category'],
                 'image' => $file_path,
                 'status' => (!empty($request_data['status']))?1:0,
+                'tax_group_id'=> $request_data['tax_group_id'],
             ]);
             if((!empty($product)) && (!empty($request_data['categories']))){
                 $categories = Category::find($request_data['categories']);
@@ -115,7 +118,8 @@ class ProductController extends MainController
         $product = Product::findOrFail($id);
         $product_category = $product->categories()->pluck('category_id')->toArray();
         $categories = Category::withoutTrashed()->where('status',1)->get();
-        return view('admin.product.create',array('brands'=>$brands,'product'=>$product,'product_category'=>$product_category,'categories'=>$categories));
+        $tax_groups = TaxGroup::where('status',1)->get();
+        return view('admin.product.create',array('brands'=>$brands,'product'=>$product,'product_category'=>$product_category,'categories'=>$categories,'tax_groups'=>$tax_groups));
     }
 
     /**
@@ -136,7 +140,8 @@ class ProductController extends MainController
             'description' => $request_data['description'],
             'brand_id' => $request_data['brand_id'],
             'inventory' => $request['inventory'],           
-            'price' => $request['price'],         
+            'price' => $request['price'],
+            'tax_group_id'=> $request_data['tax_group_id'],      
         ];
         $upload_data['status'] = (!empty($request_data['status']))?1:0;
         try{

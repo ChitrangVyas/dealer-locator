@@ -20,6 +20,7 @@ class Product extends Model
         'inventory',
         'price',
         'status',
+        'tax_group_id'
     ];
     protected $dates = ['deleted_at'];
 

@@ -87,18 +87,18 @@
     });
     function deleteItem(id){
             if(id){
-                let data = confirm("Are you sure? you wants to delete this Tax?");
+                let data = confirm("Are you sure? you wants to delete this Tax Group?");
                 if(data){
                     var token = $("meta[name='csrf-token']").attr("content");
                     $.ajax(
                     {
-                        url: "{{ url('/admin/tax-group/') }}/"+id,
+                        url: "{{ url('/admin/tax-group') }}/"+id,
                         type: 'DELETE',
                         data: {
                             "id": id,
                             "_token": token,
                         },
-                        success: function (){
+                        success: function (res){
                             window.location.reload();
                         }
                     });

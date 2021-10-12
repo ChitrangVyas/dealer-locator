@@ -112,7 +112,7 @@ class TaxController extends MainController
     {
         if((auth()->check()) && empty(auth()->user()->users_group_id)){
             $tax->delete();
-            return response(json_encode($return_array = ['data'=>'Product is successfully deleted']), 200)
+            return response(json_encode($return_array = ['data'=>'Tax is successfully deleted']), 200)
         ->header('Content-Type', 'text/plain');
         }
         return response()->json([],401);

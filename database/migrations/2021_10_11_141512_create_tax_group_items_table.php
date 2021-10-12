@@ -15,8 +15,8 @@ class CreateTaxGroupItemsTable extends Migration
     {
         Schema::create('tax_group_items', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('tax_group_id')->nullable()->constrained();
-            $table->foreignId('tax_id')->nullable()->constrained();
+            $table->foreignId('tax_group_id')->nullable()->constrained()->onDelete('cascade');
+            $table->foreignId('tax_id')->nullable()->constrained()->onDelete('cascade');
             $table->float('percentage')->nullable();
             $table->timestamps();
         });

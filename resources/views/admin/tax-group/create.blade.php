@@ -39,7 +39,8 @@
                                         <div class="form-group">
                                             <div class="pt-2">
                                                 <input type="checkbox" class="mr-2" name="tax_id[]"
-                                                    value="{{ old('tax',(!empty($tax))?$tax->id:'') }}" placeholder="Percentage" tabindex="2">
+                                                value="{{$tax->id}}"
+                                                {{((!isset($tax)) || (!empty($taxGroup) && !empty($tax->getTaxItem($taxGroup->id))) )? "checked" :"" }} tabindex="2">
                                                     <label>{{$tax->name}}</label>
                                             </div>
                                         </div>
@@ -48,8 +49,11 @@
                                         <!-- text input -->
                                         <div class="form-group">
                                             <div class="d-flex inline align-items-center col-3">
-                                                <input type="text" class="form-control" name="percentage"
-                                                value="{{ old('ame',(!empty($tax))?$tax->percentage:'') }}" placeholder="Percentage" tabindex="2">
+                                                @php
+                                                    $taxPercentage = (!empty($taxGroup) && (!empty($tax->taxGroupItems))) ? $tax->getTaxPercentage($taxGroup->id) : '';
+                                                @endphp
+                                                <input type="text" class="form-control" name="percentage[{{$tax->id}}]"
+                                                value="{{ old('percentage',(!empty($tax) && (!empty($tax->taxGroupItems) && !empty($taxPercentage))) ?  $taxPercentage: '') }}" placeholder="Percentage" tabindex="2">
                                                 <span class=" float-left ml-2">%</span>
                                             </div>
                                         </div>

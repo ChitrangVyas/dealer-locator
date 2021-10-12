@@ -97,7 +97,27 @@
             </div>
             <div class="col-sm-12 col-md-1">
                 <div class="form-group">
-                    <span class="col-4 right amount d-inline" id="amount-{{$product->id}}">{{ ($product->quantity * $product->price)}}</span>
+                    <span class="col-4 right amount d-inline" id="amount-{{$product->id}}">{{$product->getPriceSum()}}</span>
+                    @php
+                        $conditions = [];
+                        $calac = [];
+                    @endphp
+                    @foreach ($product->conditions as $condition)
+                        @php
+                            if(!in_array($condition->getName(),$conditions)){
+                                $conditions[] = $condition->getName();
+                            }
+                            if(!in_array($condition->getName(),$calac)){
+                                $calac[$condition->getName()] = $condition->getName();
+                            }
+                        @endphp
+                        ({{$condition->getName()}})
+                        @if((!in_array($condition->getName(),$conditions)))
+                            @php
+                                $calac[$condition->getName()] += ($condition->parsedRawValue * $product->quantity);
+                            @endphp
+                        @endif
+                    @endforeach
                 </div>
             </div>
             <div class="col-sm-12 col-md-1">
@@ -107,7 +127,15 @@
             </div>
         </div>
         @endforeach
-        
+        @foreach ($conditions as $condition)
+        <div class="row border-top">
+            <div class="col-sm-12 offset-md-9 col-md-2 mt-2">
+                <div class="form-group">
+                    <label for="total">{{$condition}}:</label>
+                </div>
+            </div>
+        </div>
+        @endforeach
         <div class="row border-top">
             <div class="col-sm-12 offset-md-9 col-md-1 mt-2">
                 <div class="form-group">

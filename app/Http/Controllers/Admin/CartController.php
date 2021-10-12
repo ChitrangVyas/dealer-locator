@@ -210,6 +210,13 @@ class CartController extends MainController
     public function addProductToCart(Request $request){
         $product = Product::findOrFail($request->input('product_id'));
         $cart  = \Cart::session($request->input('id'));
+        $condition = [];
+        $count=1;
+        $product_tax_group = $product->taxGroup;
+        foreach($product_tax_group->tax()->get() as $tax){
+            $condition["tax".$count] = $this->setTaxCondition($tax->name,'tax',$tax->pivot->percentage."%");
+            $count++;
+        }
         if($cart->isEmpty()){
             $cart->add(
                 array(
@@ -218,6 +225,7 @@ class CartController extends MainController
                     'price' => $product->price,
                     'quantity' => '1',
                     'attributes' => array(),
+                    'conditions'=>$condition,
                 )
             );
         }else{
@@ -229,6 +237,11 @@ class CartController extends MainController
                  break;
             }
             $cart_product = Product::findOrFail($cart_product_id);
+            $count=1;
+            foreach($cart_product->taxGroup->tax()->get() as $tax){
+                $condition["tax".$count] = $this->setTaxCondition($tax->name,'tax',$tax->pivot->percentage."%");
+                $count++;
+            }
             if($product->brand->manufacturer->id == $cart_product->brand->manufacturer->id || $this->myCart->getType($request->input('id'))== 'sale'){
                 $cart->add(
                     array(
@@ -237,13 +250,14 @@ class CartController extends MainController
                         'price' => $product->price,
                         'quantity' => '1',
                         'attributes' => array(),
+                        'conditions'=>$condition,
                     )
                 );
             }else{
                 return response()->json(['status' => 'error','code' => 0, 'data'=>'', 'message'=>'Selected product is from diffrent manufacturer.']);
             }
         }
-        
+        $cart->getSubTotal();
         if(empty($this->myCart->getTo($request->input('id'))) || ($this->myCart->getType($request->input('id'))) == 'po' ){
             // $this->myCart->setTo($request->input('id'),(!empty(auth()->user()->parent_id))?auth()->user()->parent_id : $product->brand->manufacturer->id);
             $this->myCart->setTo($request->input('id'),(!empty(auth()->user()->parent_id))?auth()->user()->parent_id : NULL);
@@ -447,5 +461,13 @@ class CartController extends MainController
         $json['cart_title'] = "Sale".(!empty($this->myCart->getOrderNumber($id)) ? " #".$this->myCart->getOrderNumber($id) : '');
         $json['cart_content'] = $this->getInquiryToQuoteCart($id,$cart,$is_new_product)->render();
         return response()->json(['status' => 'successful','code'=>1, 'data'=>$json, 'message'=>'']);
+    }
+
+    public function setTaxCondition($name,$type='tax',$value){
+        return new \Darryldecode\Cart\CartCondition(array(
+            'name' => $name,
+            'type' => $type,
+            'value' => $value,
+        ));
     }
 }

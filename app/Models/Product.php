@@ -53,8 +53,8 @@ class Product extends Model
         }
     }
 
-    public function tax(){
-        return $this->belongsTo(TaxGroup::class)->withTimestamps();
+    public function taxGroup(){
+        return $this->belongsTo(TaxGroup::class);
     }
 
 }

@@ -73,10 +73,23 @@
                         method: "POST",
                         data: {'table':'taxes','id':id,'status':status},
                         dataType: 'json',
+                        error: function (jqXHR, textStatus, errorThrown) {
+                            Toast.fire({
+                                type: 'error',
+                                title: JSON.parse(jqXHR.responseText).message
+                            });
+                        }
                     }).done(function(res){
                         if(res.code == 1){
-                            // toastr.success(res.message);
+                            Toast.fire({
+                                type: 'success',
+                                title: res.data,
+                            });
                         }else{
+                            Toast.fire({
+                                type: 'error',
+                                title: res.message
+                            });
                             // console.error(res.message);
                         }
                         //window.location.reload()

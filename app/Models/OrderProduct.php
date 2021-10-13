@@ -19,6 +19,11 @@ class OrderProduct extends Model
         return $this->belongsTo(Product::class);
     } 
 
+    public function tax()
+    {
+        return $this->hasMany(OrderProductTax::class,'order_product_id');
+    }
+
     /* public function tax(){
         return $this->hasMany(OrderTax::class);
     } */

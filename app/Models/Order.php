@@ -92,5 +92,9 @@ class Order extends Model
         return (!empty($invoice_status))?$this->getOrderStatus()[$invoice_status]:'N/A';
     }
 
+    public function getTotalTax(){
+        //query
+    }
+
     // $order->getInvoiceStatus($order->getUserOrderStatus()[0]->status_id)
 }

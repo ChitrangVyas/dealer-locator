@@ -23,4 +23,5 @@
     </div>
     <!-- /.modal-dialog -->
 </div>
+@section('plugins.Sweetalert2', true)
 <!-- /.modal -->

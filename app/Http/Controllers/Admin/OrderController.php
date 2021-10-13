@@ -11,6 +11,7 @@ use App\Models\OrderProduct;
 use App\Models\Inquiry;
 use App\Models\Inventory;
 use App\Models\OrderImage;
+use App\Models\OrderProductTax;
 use App\Models\OrderStatus;
 use App\Models\Product;
 use App\Models\User;
@@ -158,6 +159,11 @@ class OrderController extends MainController
         $request_data = $request->all();
         // $quote_data = $request->only(['type','order_number','status','from_user','to_user','inquiry_id']);
         $quote_data = $this->myCart->getAll($request_data['cart_id']);
+        // order_number, inquiry_id, type, to_user,
+        $tax_data['total_tax'] = $quote_data['total_tax'];
+        $tax_data['product_tax'] = $quote_data['product_tax'];
+        unset($quote_data['total_tax']);
+        unset($quote_data['product_tax']);
         $cart = \Cart::Session($request_data['cart_id']);
         $quote_data['status'] =  'sent';
         $quote_data['total'] = $cart->getTotal();
@@ -171,6 +177,11 @@ class OrderController extends MainController
                     $order_product = '';
                     if(!empty($quote_product_data)){
                         $order_product = OrderProduct::create($quote_product_data);
+                        if(in_array($cart_product->id,array_keys($tax_data['product_tax']))){
+                            foreach($tax_data['product_tax'][$cart_product->id] as $tax){
+                                $order_tax_data = OrderProductTax::create(["order_product_id"=>$order_product->id,"tax_id"=>$tax['tax_id'],"price"=>$tax['tax']]);
+                            }
+                        }
                     }
                 }
                 if(!empty($quote_data['inquiry_id'])){

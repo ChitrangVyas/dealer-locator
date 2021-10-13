@@ -54,7 +54,7 @@ class Product extends Model
     }
 
     public function taxGroup(){
-        return $this->belongsTo(TaxGroup::class);
+        return $this->belongsTo(TaxGroup::class,'tax_group_id');
     }
 
 }

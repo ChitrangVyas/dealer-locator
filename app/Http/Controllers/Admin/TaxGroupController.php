@@ -120,7 +120,7 @@ class TaxGroupController extends MainController
             $request_data['status'] = $status;
             $request_data['is_default'] = $is_default;
             $count=0;
-            if(empty($is_default)){
+            if(empty($is_default)|| empty($status)){
                $count = TaxGroup::where('is_default',1)->where('id',$taxGroup->id)->count(); 
             }
             if(!empty($count)){
@@ -156,11 +156,15 @@ class TaxGroupController extends MainController
     {        
         if((auth()->check()) && empty(auth()->user()->users_group_id)){
             try{
-                $taxGroup->delete();
+                if(!empty($taxGroup->is_default)){
+                    return response()->json(['code'=>0, 'error'=>'Please make at least one group as default.']);
+                }else{
+                    $taxGroup->delete();
+                }
             }catch(Exception $e){
-                return response()->json(['error'=>$e->getMessage()]);
+                return response()->json(['code'=>0 ,'error'=>$e->getMessage()]);
             }
-            return response(json_encode($return_array = ['data'=>'Tax group is successfully deleted']), 200)
+            return response(json_encode($return_array = ['code'=>1,'data'=>'Tax group is successfully deleted']), 200)
         ->header('Content-Type', 'text/plain');
         }
         return response()->json([],401);
@@ -179,7 +183,7 @@ class TaxGroupController extends MainController
         $where = '';
         $where .= (!empty($search)) ? " (name like '$search%')":'';
         $query = DB::table('tax_groups')
-                ->selectRaw('id,name,status');
+                ->selectRaw('id,name,status,is_default');
         if(!empty($where)){
             $query->whereRaw($where);
         }
@@ -193,7 +197,8 @@ class TaxGroupController extends MainController
         foreach($taxes as $tax){            
             $action_html = '';
             $status = (!empty($tax->status)) ? 'checked': '';
-            $status_html = '<input type="checkbox" name="status" id="status", data-url = '.route('tax-group.update',$tax->id).' class="form-control change-status" data-id="'.$tax->id.'" data-bootstrap-switch  data-on-text="Enable" data-off-text="Disable" data-off-color="danger" data-on-color="success" '.$status.'>';
+            $is_default = (!empty($tax->is_default)) ? 'disabled': '';
+            $status_html = '<input type="checkbox" name="status" id="status", data-url = '.route('tax-group.update',$tax->id).' class="form-control change-status" data-id="'.$tax->id.'" data-bootstrap-switch  data-on-text="Enable" data-off-text="Disable" data-off-color="danger" data-on-color="success"  '.$status.' '.$is_default.'>';
             $action_html = "<span><a href=".route('tax-group.edit',$tax->id)." class='btn btn-primary'>Edit</a></span>";
             $action_html .= "<span class='ml-3'><button type=submit data-user=$tax->id class='btn btn-danger' onClick=deleteItem($tax->id)>Delete</button></span>";
             $data[] = [$tax->id,$tax->name,$status_html,$action_html];

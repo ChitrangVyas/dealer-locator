@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use phpDocumentor\Reflection\Types\Null_;
+use Illuminate\Support\Str;
 use View;
 
 class ManufacturerController extends MainController
@@ -57,7 +58,7 @@ class ManufacturerController extends MainController
         $request_data['status'] = (!empty($request_data['status']))?1:0;
         $file_path = '';
         if($request->file()) {
-            $fileName = time().'_'.$request->logo->getClientOriginalName();
+            $fileName = time().'_'. Str::snake($request->logo->getClientOriginalName());
             $filePath = $request->file('logo')->storeAs('uploads', $fileName, 'public');
             $file_path = '/storage/' . $filePath;
             $request_data['logo'] = $file_path;
@@ -110,7 +111,7 @@ class ManufacturerController extends MainController
         $file_path = '';   
         
         if($request->file()) {
-            $fileName = time().'_'.$request->logo->getClientOriginalName();
+            $fileName = time().'_'. Str::snake($request->logo->getClientOriginalName());
             $filePath = $request->file('logo')->storeAs('uploads', $fileName, 'public');
             $file_path = '/storage/' . $filePath;
             $request_data['logo']  = $file_path;

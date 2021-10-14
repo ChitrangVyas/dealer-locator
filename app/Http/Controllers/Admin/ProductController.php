@@ -16,6 +16,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use JeroenNoten\LaravelAdminLte\AdminLte;
+use Illuminate\Support\Str;
 use View;
 
 class ProductController extends MainController
@@ -67,7 +68,7 @@ class ProductController extends MainController
         $request_data = $request->all();
         $file_path = '';
         if($request->file()) {
-            $fileName = time().'_'.$request->image->getClientOriginalName();
+            $fileName = time().'_'. Str::snake($request->image->getClientOriginalName());
             $filePath = $request->file('image')->storeAs('uploads/products', $fileName, 'public');
             $file_path = '/storage/' . $filePath;
         }
@@ -150,7 +151,7 @@ class ProductController extends MainController
                 if(!empty($product->image) && file_exists(storage_path('app/public/uploads/products/'.$filename))){
                     unlink(storage_path('app/public/uploads/products/'.$filename));
                 }
-                $fileName = time().'_'.$request->image->getClientOriginalName();
+                $fileName = time().'_'. Str::snake($request->image->getClientOriginalName());
                 $filePath = $request->file('image')->storeAs('uploads/products', $fileName, 'public');
                 $file_path = '/storage/' . $filePath;
                 $upload_data['image']  = $file_path;

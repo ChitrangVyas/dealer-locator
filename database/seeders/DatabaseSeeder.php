@@ -21,6 +21,7 @@ class DatabaseSeeder extends Seeder
             UserGroupSeeder::class,
             SettingsSeeder::class,
             AdminUserSeeder::class,
+            TaxGroupSeeder::class
         ]);
     }
 }

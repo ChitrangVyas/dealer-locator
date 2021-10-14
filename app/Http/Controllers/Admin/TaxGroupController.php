@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Http\Helpers;
 use App\Models\Tax;
 use App\Models\TaxGroup;
 use Darryldecode\Cart\Validators\Validator;
@@ -35,7 +36,7 @@ class TaxGroupController extends MainController
      */
     public function create()
     {
-        $taxes = Tax::all();
+        $taxes = Tax::where('status',1)->get();
         return view('admin.tax-group.create',['taxes'=>$taxes]);
     }
 
@@ -49,9 +50,7 @@ class TaxGroupController extends MainController
     {
         Validator::make($request->all(), [
             'name' => 'required',
-        ],[
-            'name.required'=>"Name is required.",
-        ])->validate();
+        ],['name.required'=>"Name is required."])->validate();
         try{
             $request_data = $request->only(['name']);
             $request_data['is_default'] = (!empty($request->input('is_default')))?1:0;
@@ -95,7 +94,7 @@ class TaxGroupController extends MainController
      */
     public function edit(TaxGroup $taxGroup)
     {
-        $taxes = Tax::all();
+        $taxes = Tax::where('status',1)->get();
         return view('admin.tax-group.create',['taxGroup'=>$taxGroup,'taxes'=>$taxes]);
     }
 
@@ -196,11 +195,16 @@ class TaxGroupController extends MainController
         $data = [];
         foreach($taxes as $tax){            
             $action_html = '';
+            $product_count = Helpers::getCountData('products',['tax_group_id'=>$tax->id]);
             $status = (!empty($tax->status)) ? 'checked': '';
             $is_default = (!empty($tax->is_default)) ? 'disabled': '';
             $status_html = '<input type="checkbox" name="status" id="status", data-url = '.route('tax-group.update',$tax->id).' class="form-control change-status" data-id="'.$tax->id.'" data-bootstrap-switch  data-on-text="Enable" data-off-text="Disable" data-off-color="danger" data-on-color="success"  '.$status.' '.$is_default.'>';
             $action_html = "<span><a href=".route('tax-group.edit',$tax->id)." class='btn btn-primary'>Edit</a></span>";
-            $action_html .= "<span class='ml-3'><button type=submit data-user=$tax->id class='btn btn-danger' onClick=deleteItem($tax->id)>Delete</button></span>";
+            if(empty($product_count)){
+                $action_html .= "<span class='ml-3'><button type=submit data-user=$tax->id class='btn btn-danger' onClick=deleteItem($tax->id)>Delete</button></span>";
+            }else{
+                $action_html .= "<span class='ml-3'><span class='badge badge-info' title='Product'>$product_count</span></span>";
+            }
             $data[] = [$tax->id,$tax->name,$status_html,$action_html];
         }
         $return_array = array();

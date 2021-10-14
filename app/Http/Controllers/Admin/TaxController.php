@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Http\Helpers;
 use App\Models\Tax;
 use Darryldecode\Cart\Validators\Validator;
 use Exception;
@@ -144,10 +145,15 @@ class TaxController extends MainController
         $data = [];
         foreach($taxes as $tax){            
             $action_html = '';
+            $tax_group_count = Helpers::getCountData('tax_group_items',['tax_id'=>$tax->id]);
             $status = (!empty($tax->status)) ? 'checked': '';
             $status_html = '<input type="checkbox" name="status" id="status", data-url = '.route('tax.update',$tax->id).' class="form-control change-status" data-id="'.$tax->id.'" data-bootstrap-switch  data-on-text="Enable" data-off-text="Disable" data-off-color="danger" data-on-color="success" '.$status.'>';
             $action_html = "<span><a href=".route('tax.edit',$tax->id)." class='btn btn-primary'>Edit</a></span>";
-            $action_html .= "<span class='ml-3'><button type=submit data-user=$tax->id class='btn btn-danger' onClick=deleteUser($tax->id)>Delete</button></span>";
+            if(empty($tax_group_count)){
+                $action_html .= "<span class='ml-3'><button type=submit data-user=$tax->id class='btn btn-danger' onClick=deleteUser($tax->id)>Delete</button></span>";
+            }else{
+                $action_html .= "<span class='ml-3'><span class='badge badge-info' title='Product'>$tax_group_count</span></span>";
+            }
             $data[] = [$tax->id,$tax->name,$status_html,$action_html];
         }
         $return_array = array();

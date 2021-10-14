@@ -10,6 +10,7 @@ use App\Models\State;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Str;
 use View;
 
 class SettingsController extends MainController
@@ -74,12 +75,12 @@ class SettingsController extends MainController
                 'icon_logo' => 'mimes:jpg,gif,svg,jpeg,png,bmp,tiff |max:4096',
             ]);
             if(!empty($request->file('logo'))){
-                $fileName = time().'_'.$request->logo->getClientOriginalName();
+                $fileName = time().'_'. Str::snake($request->logo->getClientOriginalName());
                 $filepath = $this->storeImage($request,$fileName,'logo');
                 $request_data['logo'] = $filepath;
             }
             if(!empty($request->file('icon_logo'))){
-                $fileName = time().'_'.$request->icon_logo->getClientOriginalName();
+                $fileName = time().'_'. Str::snake($request->icon_logo->getClientOriginalName());
                 $filepath = $this->storeImage($request,$fileName,'icon_logo');
                 $request_data['icon_logo'] = $filepath;
             }

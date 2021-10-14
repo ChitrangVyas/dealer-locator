@@ -235,6 +235,10 @@ class OrderController extends MainController
         $request_data = $request->all();
         $cart = \Cart::Session($request_data['cart_id']);
         $cart_data = $this->myCart->getAll($request_data['cart_id']);
+        $tax_data['total_tax'] = $cart_data['total_tax'];
+        $tax_data['product_tax'] = $cart_data['product_tax'];
+        unset($cart_data['total_tax']);
+        unset($cart_data['product_tax']);
         $cart_data['status'] =  'sent';
         $cart_data['total'] = $cart->getTotal();
         $cart_data['order_reference'] = (!empty($cart_data['order_reference']))?$cart_data['order_reference']:NULL;
@@ -248,6 +252,13 @@ class OrderController extends MainController
                     $order_product = '';
                     if(!empty($order_product_data)){
                         $order_product = OrderProduct::create($order_product_data);
+                        if(empty($request_data['is_new_product'])){
+                            if(in_array($cart_product->id,array_keys($tax_data['product_tax']))){
+                                foreach($tax_data['product_tax'][$cart_product->id] as $tax){
+                                    $order_tax_data = OrderProductTax::create(["order_product_id"=>$order_product->id,"tax_id"=>$tax['tax_id'],"price"=>$tax['tax']]);
+                                }
+                            }
+                        }
                     }
                 }
                 $cart->clear();
@@ -363,6 +374,10 @@ class OrderController extends MainController
         $request_data = $request->all();
         $cart = \Cart::Session($request_data['cart_id']);
         $cart_data = $this->myCart->getAll($request_data['cart_id']);
+        $tax_data['total_tax'] = $cart_data['total_tax'];
+        $tax_data['product_tax'] = $cart_data['product_tax'];
+        unset($cart_data['total_tax']);
+        unset($cart_data['product_tax']);
         unset($cart_data['for_manufacture_po_to_sale']);
         $cart_data['status'] =  'sent';
         $cart_data['total'] = $cart->getTotal();
@@ -389,6 +404,11 @@ class OrderController extends MainController
                             $invenory_qty = $invenory->first('qty');
                             if(!empty($invenory_qty)){  
                                 $invenory->update(['qty' => ($invenory_qty->qty - $cart_product->quantity)]);
+                            }
+                        }
+                        if(in_array($cart_product->id,array_keys($tax_data['product_tax']))){
+                            foreach($tax_data['product_tax'][$cart_product->id] as $tax){
+                                $order_tax_data = OrderProductTax::create(["order_product_id"=>$order_product->id,"tax_id"=>$tax['tax_id'],"price"=>$tax['tax']]);
                             }
                         }
                     }
@@ -468,7 +488,7 @@ class OrderController extends MainController
         ->groupby('orders.id')
         ->get();
         
-        $total_order = Order::where('type','quote')->where('deleted_at',NULL)->where('from_user',$user->id)->count();
+        $total_order = Order::whereRaw($where)->count();
         $data = [];
         foreach($orders as $order){
             $is_sale_generated = Order::where('type','sale')->where('order_reference',$order->id)->where('deleted_at',NULL)->count();
@@ -588,7 +608,7 @@ class OrderController extends MainController
         ->groupby('orders.id')
         ->get();
         
-        $total_order = Order::where('type','sale')->where('from_user',$user->id)->where('deleted_at',NULL)->count();
+        $total_order = Order::whereRaw($where)->count();
         $data = [];
         foreach($orders as $order){
             $order_data = Order::find($order->id);

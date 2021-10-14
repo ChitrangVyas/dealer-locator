@@ -40,7 +40,7 @@
                                             <div class="pt-2">
                                                 <input type="checkbox" class="mr-2" name="tax_id[]"
                                                 value="{{$tax->id}}"
-                                                {{((!isset($tax)) || (!empty($taxGroup) && !empty($tax->getTaxItem($taxGroup->id))) )? "checked" :"" }} tabindex="2">
+                                                {{((!isset($tax)) || (!empty($taxGroup) && !empty($tax->getTaxItem($taxGroup->id))) )? "checked" :"" }} tabindex="3">
                                                     <label>{{$tax->name}}</label>
                                             </div>
                                         </div>
@@ -53,7 +53,7 @@
                                                     $taxPercentage = (!empty($taxGroup) && (!empty($tax->taxGroupItems))) ? $tax->getTaxPercentage($taxGroup->id) : '';
                                                 @endphp
                                                 <input type="text" class="form-control" name="percentage[{{$tax->id}}]"
-                                                value="{{ old('percentage',(!empty($tax) && (!empty($tax->taxGroupItems) && !empty($taxPercentage))) ?  $taxPercentage: '') }}" placeholder="Percentage" tabindex="2">
+                                                value="{{ old('percentage[]',(!empty($tax) && (!empty($tax->taxGroupItems) && !empty($taxPercentage))) ?  $taxPercentage: '') }}" placeholder="Percentage" tabindex="4">
                                                 <span class=" float-left ml-2">%</span>
                                             </div>
                                         </div>
@@ -67,7 +67,7 @@
                     <div class="col-sm-12 col-md-12">
                         <div class="form-group">
                             <div class="pt-2">
-                                <input type="checkbox" class="input-control" name="is_default" {{((!isset($taxGroup)) || (!empty($taxGroup->is_default)))? "checked" :"" }} tabindex="2">
+                                <input type="checkbox" class="input-control" name="is_default" {{((!empty($taxGroup)) && (!empty($taxGroup->is_default)))? "checked" :"" }} tabindex="5">
                                     <label>Make as a Default</label>
                             </div>
                         </div>
@@ -76,7 +76,7 @@
                         <!-- text input -->
                         <div class="form-group">
                             <label class="col-12">Status</label>
-                            <input type="checkbox" name="status" id="status" class="form-control status" data-bootstrap-switch  data-on-text="Enable" data-off-text="Disable" data-off-color="danger" data-on-color="success" {{((!isset($taxGroup)) || (!empty($taxGroup->status)))? "checked" :"" }} tabindex="2">
+                            <input type="checkbox" name="status" id="status" class="form-control status" data-bootstrap-switch  data-on-text="Enable" data-off-text="Disable" data-off-color="danger" data-on-color="success" {{((!isset($taxGroup)) || (!empty($taxGroup->status)))? "checked" :"" }} tabindex="6">
                             @error('status')
                             <div class="alert alert-danger mt-2">{{ $message }}</div>
                             @enderror
@@ -85,7 +85,7 @@
                 </div>
                 <div class="row">
                     <div class="col-sm-12">
-                        <button type="submit" class="btn btn-primary" tabindex="6">Submit</button>
+                        <button type="submit" class="btn btn-primary" tabindex="7">Submit</button>
                     </div>
                 </div>
             </form>

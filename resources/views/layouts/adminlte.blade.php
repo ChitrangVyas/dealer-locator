@@ -4,6 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="csrf-token" content="{{ csrf_token() }}">
+  <link rel="icon" href="{{config('icon.logo')}}" type="image/x-icon" />
   <title>{{config('app.name', 'Kasyap')}} - @yield('title')</title>
 
   <!-- Google Font: Source Sans Pro -->
@@ -160,7 +161,7 @@
         $(this).parent().find(".alert").show();
       }
     });
-    $(".modal").on("show", function () {
+    $(".modal").on("show.bs.modal", function () {
       $("body").addClass("modal-open");
     }).on("hidden", function () {
       $("body").removeClass("modal-open")

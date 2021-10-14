@@ -117,7 +117,7 @@
                             <label>Tax</label>
                             <select class="form-control tax_group_id select2" name="tax_group_id" tabindex="8">
                                 @foreach($tax_groups as $tax_group)
-                                <option value="{{$tax_group->id}}" {{old('tax_group_id', (!empty($product->tax_group_id) && ($tax_group->id == $product->tax_group_id)) || ($tax_group->is_default==1))?'selected':''}}>{{$tax_group->name}}</option>
+                                <option value="{{$tax_group->id}}" {{old('tax_group_id', (!empty($product->tax_group_id) && ($tax_group->id == $product->tax_group_id)) || (empty($product->tax_group_id) && ($tax_group->is_default==1)))?'selected':''}}>{{$tax_group->name}}</option>
                                 @endforeach
                             </select>
                             @error('tax_group_id')

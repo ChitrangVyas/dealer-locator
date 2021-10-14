@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use phpDocumentor\Reflection\Types\Null_;
+use Illuminate\Support\Str;
 use View;
 
 class CategoryController extends MainController
@@ -56,7 +57,7 @@ class CategoryController extends MainController
         $request_data = $request->all();
         $file_path = '';
         if($request->file()) {
-            $fileName = time().'_'.$request->image->getClientOriginalName();
+            $fileName = time().'_'. Str::snake($request->image->getClientOriginalName());
             $filePath = $request->file('image')->storeAs('uploads', $fileName, 'public');
             $file_path = '/storage/' . $filePath;
         }
@@ -119,7 +120,7 @@ class CategoryController extends MainController
         $upload_data['status'] = (!empty($request_data['status']))?1:0;
         
         if($request->file()) {
-            $fileName = time().'_'.$request->image->getClientOriginalName();
+            $fileName = time().'_'. Str::snake($request->image->getClientOriginalName());
             $filePath = $request->file('image')->storeAs('uploads', $fileName, 'public');
             $file_path = '/storage/' . $filePath;
             $upload_data['image']  = $file_path;

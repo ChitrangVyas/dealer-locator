@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use phpDocumentor\Reflection\Types\Null_;
+use Illuminate\Support\Str;
 use View;
 
 class BrandController extends MainController
@@ -61,7 +62,7 @@ class BrandController extends MainController
         $request_data = $request->all();
         $file_path = '';
         if($request->file()) {
-            $fileName = time().'_'.$request->logo->getClientOriginalName();
+            $fileName = time().'_'. Str::snake($request->logo->getClientOriginalName());
             $filePath = $request->file('logo')->storeAs('uploads', $fileName, 'public');
             $file_path = '/storage/' . $filePath;
         }
@@ -126,7 +127,7 @@ class BrandController extends MainController
         $upload_data['status'] = (!empty($request_data['status']))?1:0;
         
         if($request->file()) {
-            $fileName = time().'_'.$request->logo->getClientOriginalName();
+            $fileName = time().'_'. Str::snake($request->logo->getClientOriginalName());
             $filePath = $request->file('logo')->storeAs('uploads', $fileName, 'public');
             $file_path = '/storage/' . $filePath;
             $upload_data['logo']  = $file_path;

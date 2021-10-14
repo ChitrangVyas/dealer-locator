@@ -205,6 +205,7 @@
             </ul>
           </li>
           @endnotCustomer 
+          @admin()
           <li class="nav-item has-treeview">
           <a href="#" class="nav-link">
               <i class="nav-icon fas fa-file"></i>
@@ -214,7 +215,6 @@
               </p>
             </a>
             <ul class="nav nav-treeview">
-            @admin()
               <li class="nav-item">
                 <a href="{{route('tax.index')}}" class="nav-link  {{ $elementActive == 'tax' ? 'active' : '' }}">
                   <i class="nav-icon fas fa-file-alt"></i>
@@ -224,7 +224,7 @@
                 </a>
               </li>
               <li class="nav-item">
-                <a href="{{route('tax-group.index')}}" class="nav-link  {{ $elementActive == 'tax_group' ? 'active' : '' }}">
+                <a href="{{route('tax-group.index')}}" class="nav-link  {{ $elementActive == 'tax-group' ? 'active' : '' }}">
                   <i class="nav-icon fas fa-file-alt"></i>
                   <p>
                   Tax Group

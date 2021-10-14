@@ -11,7 +11,7 @@ class TaxGroup extends Model
     protected $guarded = [];
 
     public function tax(){
-        return $this->belongsToMany(Tax::class,'tax_group_items')->withPivot(['percentage']);
+        return $this->belongsToMany(Tax::class,'tax_group_items')->withPivot(['percentage'])->where('status',1);
     }
     public function taxGroupItems(){
         return $this->belongsToMany(TaxGroupItem::class);

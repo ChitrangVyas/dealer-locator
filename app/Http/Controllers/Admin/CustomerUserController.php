@@ -53,6 +53,7 @@ class CustomerUserController extends MainController
         //
         $request_data = $request->all();
         $request_data['password'] = Hash::make('123456');
+        $request_data['status'] = (!empty($request_data['status']))?1:0;
         if($request_data['users_group_id'] == 4){
             try{
                 $user = User::create($request_data);

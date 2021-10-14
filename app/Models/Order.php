@@ -22,15 +22,6 @@ class Order extends Model
 
     public function customer(){
         return $this->belongsTo(User::class,'to_user','id');
-        /* if($this->type == 'po'){            
-            if($this->getUser($this->from_user)->users_group_id == 2 && (!empty($this->for_manufacturer))){
-                // return $this->belongsTo(Manufacturer::class,'to_user','id');
-            } else {
-                return $this->belongsTo(User::class,'to_user','id');
-            }
-        }else{
-            return $this->belongsTo(User::class,'to_user','id');
-        } */
     }
 
     public function addedBy(){
@@ -44,13 +35,6 @@ class Order extends Model
     public function toUser(){
         $user = User::where('id','=',$this->to_user)->first();
         return (!empty($user))?$user->name:'';
-        /* if($this->type == 'po' && $this->getUser($this->from_user)->users_group_id == 2 && (!empty($this->for_manufacturer))){
-            // $user = Manufacturer::where('id','=',$this->to_user)->first();
-            // return $user->name;
-        } else {
-            $user = User::where('id','=',$this->to_user)->first();
-            return $user->name;
-        } */
     }
     public function getUser($user_id){
         return User::findOrfail($user_id);
@@ -90,6 +74,33 @@ class Order extends Model
     }   
     public function getInvoiceStatus($invoice_status){
         return (!empty($invoice_status))?$this->getOrderStatus()[$invoice_status]:'N/A';
+    }
+
+    public function getTotalTax(){
+        $total_tax = [];
+        $total_tax = $this->select('taxes.name', DB::raw('SUM(order_product_tax.price) as total_tax'))
+        ->join('order_product', 'orders.id', '=', 'order_product.order_id')
+        ->join('order_product_tax', 'order_product.id', '=', 'order_product_tax.order_product_id')
+        ->join('taxes', 'order_product_tax.tax_id', '=', 'taxes.id')
+        ->where('orders.id', $this->id)
+        ->groupBy('order_product_tax.tax_id')
+        ->get();
+        if(!empty($total_tax)){
+            return $total_tax;
+        }else{
+            return '';
+        }
+    }
+
+    public function getSubTotal(){
+        $sub_total = [];
+         $sub_total = $this->select(DB::raw('SUM(order_product.amount * order_product.qty) AS sub_total'))->leftJoin('order_product', 'orders.id', '=', 'order_product.order_id')->where('orders.id', $this->id)
+        ->get()->first()->toArray();
+        if(!empty($sub_total)){
+            return $sub_total;
+        }else{
+             return ['sub_total' => 0.00];
+        }
     }
 
     // $order->getInvoiceStatus($order->getUserOrderStatus()[0]->status_id)

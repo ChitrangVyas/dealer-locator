@@ -20,6 +20,7 @@ class Product extends Model
         'inventory',
         'price',
         'status',
+        'tax_group_id'
     ];
     protected $dates = ['deleted_at'];
 
@@ -50,6 +51,10 @@ class Product extends Model
         }else{
             return (empty($this->productInventory->toArray()) && count($this->productInventory->toArray()) < 1 && (empty($this->productInventory->where('user_id',auth()->user()->id)->toArray()))) ? 0 : $this->productInventory->where('user_id',auth()->user()->id)->first()->qty;
         }
+    }
+
+    public function taxGroup(){
+        return $this->belongsTo(TaxGroup::class,'tax_group_id');
     }
 
 }

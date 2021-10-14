@@ -4,6 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="csrf-token" content="{{ csrf_token() }}">
+  <link rel="icon" href="{{config('icon.logo')}}" type="image/x-icon" />
   <title>{{config('app.name', 'Kasyap')}} - @yield('title')</title>
 
   <!-- Google Font: Source Sans Pro -->
@@ -132,7 +133,16 @@
 @else
     <!-- <script src="{{ mix(config('adminlte.laravel_mix_js_path', 'js/app.js')) }}"></script> -->
 @endif
-
+<script>
+  $("document").ready(function(){
+        Toast = Swal.mixin({
+          toast: true,
+          position: 'top-end',
+          showConfirmButton: false,
+          timer: 5000
+          });
+        });
+</script>
 @yield('js')
 <script>
   $("document").ready(function(){
@@ -151,7 +161,7 @@
         $(this).parent().find(".alert").show();
       }
     });
-    $(".modal").on("show", function () {
+    $(".modal").on("show.bs.modal", function () {
       $("body").addClass("modal-open");
     }).on("hidden", function () {
       $("body").removeClass("modal-open")

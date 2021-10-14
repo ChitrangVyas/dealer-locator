@@ -86,6 +86,18 @@
                 @endforeach
                 <tr>
                     <td colspan="2"></td>
+                    <td><strong>Sub Total</strong></td>
+                    <td>{{ number_format($order->getSubTotal()['sub_total'],2) }}</td>
+                </tr>
+                @foreach ($order->getTotalTax() as $tax)
+                <tr>
+                    <td colspan="2"></td>
+                    <td><strong>{{$tax->name}}</strong></td>
+                    <td>{{ number_format($tax->total_tax,2) }}</td>
+                </tr>    
+                @endforeach
+                <tr>
+                    <td colspan="2"></td>
                     <td><strong>Total</strong></td>
                     <td>{{ number_format($order->total,2) }}</td>
                 </tr>

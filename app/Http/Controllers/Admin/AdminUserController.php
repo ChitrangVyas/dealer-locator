@@ -62,6 +62,7 @@ class AdminUserController extends MainController
                     'city_id' => $request_data['city'],
                     'state_id' => $request_data['state'],
                     'zipcode' => $request_data['zipcode'],
+                    'status' => (!empty($request_data['status']))?1:0,
                 ]);
             }catch(Exception $e){               
                 return redirect(route('staff.create'))->with('exception', $e->getMessage());

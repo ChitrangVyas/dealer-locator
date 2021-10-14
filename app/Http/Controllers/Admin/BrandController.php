@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use phpDocumentor\Reflection\Types\Null_;
+use Illuminate\Support\Str;
 use View;
 
 class BrandController extends MainController
@@ -24,7 +25,7 @@ class BrandController extends MainController
         View::share ( 'elementActive', 'brand' );
     }
     public function getManufacturer(){
-        $this->manufacturer = Manufacturer::all();
+        $this->manufacturer = Manufacturer::where('status',1)->get();
     }
     /**
      * Display a listing of the resource.
@@ -61,7 +62,7 @@ class BrandController extends MainController
         $request_data = $request->all();
         $file_path = '';
         if($request->file()) {
-            $fileName = time().'_'.$request->logo->getClientOriginalName();
+            $fileName = time().'_'. Str::snake($request->logo->getClientOriginalName());
             $filePath = $request->file('logo')->storeAs('uploads', $fileName, 'public');
             $file_path = '/storage/' . $filePath;
         }
@@ -71,7 +72,8 @@ class BrandController extends MainController
                 'description' => $request_data['description'],
                 'short_description' => $request_data['short_description'],
                 'manufacturer_id' => $request_data['manufacturer_id'],
-                'logo' => $file_path
+                'logo' => $file_path,
+                'status' => (!empty($request_data['status']))?1:0,
             ]);
         }catch(Exception $e){
             return redirect(route('brand.create'))->with('exception', $e->getMessage());
@@ -125,7 +127,7 @@ class BrandController extends MainController
         $upload_data['status'] = (!empty($request_data['status']))?1:0;
         
         if($request->file()) {
-            $fileName = time().'_'.$request->logo->getClientOriginalName();
+            $fileName = time().'_'. Str::snake($request->logo->getClientOriginalName());
             $filePath = $request->file('logo')->storeAs('uploads', $fileName, 'public');
             $file_path = '/storage/' . $filePath;
             $upload_data['logo']  = $file_path;

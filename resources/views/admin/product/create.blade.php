@@ -114,8 +114,22 @@
                     <div class="col-sm-12 col-md-6">
                         <!-- text input -->
                         <div class="form-group">
+                            <label>Tax</label>
+                            <select class="form-control tax_group_id select2" name="tax_group_id" tabindex="8">
+                                @foreach($tax_groups as $tax_group)
+                                <option value="{{$tax_group->id}}" {{old('tax_group_id', (!empty($product->tax_group_id) && ($tax_group->id == $product->tax_group_id)) || (empty($product->tax_group_id) && ($tax_group->is_default==1)))?'selected':''}}>{{$tax_group->name}}</option>
+                                @endforeach
+                            </select>
+                            @error('tax_group_id')
+                            <div class="alert alert-danger mt-2">{{ $message }}</div>
+                            @enderror
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-6">
+                        <!-- text input -->
+                        <div class="form-group">
                             <label class="col-12">Status</label>
-                            <input type="checkbox" name="status" id="status" class="form-control status" data-bootstrap-switch  data-on-text="Enable" data-off-text="Disable" data-off-color="danger" data-on-color="success" {{((!isset($product)) || (!empty($product->status)))? "checked" :"" }} tabindex="2">
+                            <input type="checkbox" name="status" id="status" class="form-control status" data-bootstrap-switch  data-on-text="Enable" data-off-text="Disable" data-off-color="danger" data-on-color="success" {{((!isset($product)) || (!empty($product->status)))? "checked" :"" }} tabindex="9">
                             @error('status')
                             <div class="alert alert-danger mt-2">{{ $message }}</div>
                             @enderror
@@ -124,7 +138,7 @@
                 </div>
                 <div class="row">
                     <div class="col-sm-12 col-md-12">
-                        <button type="submit" class="btn btn-primary" tabindex="8">Submit</button>
+                        <button type="submit" class="btn btn-primary" tabindex="10">Submit</button>
                     </div>
                 </div>
             </form>

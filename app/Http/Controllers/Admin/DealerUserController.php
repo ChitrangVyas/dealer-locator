@@ -72,6 +72,7 @@ class DealerUserController extends MainController
                 'city_id' => $request_data['city'],
                 'state_id' => $request_data['state'],
                 'zipcode' => $request_data['zipcode'],
+                'status' => (!empty($request_data['status']))?1:0,
             ]);
             Mail::to($user->email)->send(new Welcome($user,"Welcome to ".config('app.name'),$request_data['password'],url(route('dealer.login'))));
         }catch(Exception $e){

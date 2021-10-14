@@ -44,7 +44,7 @@ class InquiryController extends MainController
     public function create()
     {
         //
-        $inquiries_source = InquiriesSource::withoutTrashed()->get();
+        $inquiries_source = InquiriesSource::withoutTrashed()->where('status',1)->get();
         return view('admin.inquiry.create',compact('inquiries_source'));
     }
 
@@ -192,7 +192,7 @@ class InquiryController extends MainController
 
     public function assignToRetailer(Request $request)
     {
-        $retailers = User::where('users_group_id',3)->where('parent_id',auth()->user()->id)->get();
+        $retailers = User::where('users_group_id',3)->where('parent_id',auth()->user()->id)->where('status' , '1')->get();
         return view('admin.inquiry.assignretailer',['retailers'=>$retailers]);
     }
 

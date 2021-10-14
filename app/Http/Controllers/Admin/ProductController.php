@@ -9,12 +9,14 @@ use App\Models\Brand;
 use App\Models\Category;
 use App\Models\Inventory;
 use App\Models\Product;
+use App\Models\TaxGroup;
 use Illuminate\Support\Facades\Validator;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use JeroenNoten\LaravelAdminLte\AdminLte;
+use Illuminate\Support\Str;
 use View;
 
 class ProductController extends MainController
@@ -48,9 +50,10 @@ class ProductController extends MainController
     public function create()
     {
         //
-        $brands =  Brand::withoutTrashed()->get();
-        $categories = Category::withoutTrashed()->get();
-        return view('admin.product.create',compact('brands','categories'));
+        $brands =  Brand::withoutTrashed()->where('status',1)->get();
+        $categories = Category::withoutTrashed()->where('status',1)->get();
+        $tax_groups = TaxGroup::where('status',1)->get();
+        return view('admin.product.create',compact('brands','categories','tax_groups'));
     }
 
     /**
@@ -65,7 +68,7 @@ class ProductController extends MainController
         $request_data = $request->all();
         $file_path = '';
         if($request->file()) {
-            $fileName = time().'_'.$request->image->getClientOriginalName();
+            $fileName = time().'_'. Str::snake($request->image->getClientOriginalName());
             $filePath = $request->file('image')->storeAs('uploads/products', $fileName, 'public');
             $file_path = '/storage/' . $filePath;
         }
@@ -77,7 +80,9 @@ class ProductController extends MainController
                 'inventory' => $request['inventory'],
                 'price' => $request['price'],
                 // 'category' => $request_data['category'],
-                'image' => $file_path
+                'image' => $file_path,
+                'status' => (!empty($request_data['status']))?1:0,
+                'tax_group_id'=> $request_data['tax_group_id'],
             ]);
             if((!empty($product)) && (!empty($request_data['categories']))){
                 $categories = Category::find($request_data['categories']);
@@ -110,11 +115,12 @@ class ProductController extends MainController
     public function edit($id)
     {
         //
-        $brands = Brand::withoutTrashed()->get();        
+        $brands = Brand::withoutTrashed()->where('status',1)->get();        
         $product = Product::findOrFail($id);
         $product_category = $product->categories()->pluck('category_id')->toArray();
-        $categories = Category::withoutTrashed()->get();
-        return view('admin.product.create',array('brands'=>$brands,'product'=>$product,'product_category'=>$product_category,'categories'=>$categories));
+        $categories = Category::withoutTrashed()->where('status',1)->get();
+        $tax_groups = TaxGroup::where('status',1)->get();
+        return view('admin.product.create',array('brands'=>$brands,'product'=>$product,'product_category'=>$product_category,'categories'=>$categories,'tax_groups'=>$tax_groups));
     }
 
     /**
@@ -135,7 +141,8 @@ class ProductController extends MainController
             'description' => $request_data['description'],
             'brand_id' => $request_data['brand_id'],
             'inventory' => $request['inventory'],           
-            'price' => $request['price'],         
+            'price' => $request['price'],
+            'tax_group_id'=> $request_data['tax_group_id'],      
         ];
         $upload_data['status'] = (!empty($request_data['status']))?1:0;
         try{
@@ -144,7 +151,7 @@ class ProductController extends MainController
                 if(!empty($product->image) && file_exists(storage_path('app/public/uploads/products/'.$filename))){
                     unlink(storage_path('app/public/uploads/products/'.$filename));
                 }
-                $fileName = time().'_'.$request->image->getClientOriginalName();
+                $fileName = time().'_'. Str::snake($request->image->getClientOriginalName());
                 $filePath = $request->file('image')->storeAs('uploads/products', $fileName, 'public');
                 $file_path = '/storage/' . $filePath;
                 $upload_data['image']  = $file_path;

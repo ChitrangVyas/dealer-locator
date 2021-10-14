@@ -107,6 +107,51 @@ class MyCart
         $json = (!empty($this->session->get($cart_id)))?json_decode($this->session->get($cart_id,[]),true):'';
         return !empty($json['for_manufacture_po_to_sale'])?$json['for_manufacture_po_to_sale']:'';
     }
+    
+    public function setProductTax($cart_id,$productTax){        
+        $json = json_decode($this->session->get($cart_id,'{}'),true);
+        $json['product_tax'] = $productTax;
+        $this->session->put($cart_id,json_encode($json));        
+    }
+
+    public function setTaxTotal($cart_id,$cart){
+        $total_tax = [];
+        if((!empty($cart_id)) && (!$cart->isEmpty())){
+            $conditions = [];
+            $total = 0.00;
+            $total_tax['Sub total'] = 0.00;
+            $productTax = [];
+            foreach($cart->getContent() as $product){
+                foreach ($product->conditions as $condition){
+                        $productTax[$product->id][] = ["tax_id"=>$condition->getAttributes()['tax_id'],"tax"=>($condition->parsedRawValue  * $product->quantity)];
+                        if(!in_array($condition->getName(),$conditions)){
+                            $conditions[] = $condition->getName();
+                            $total_tax[$condition->getName()] = 0.00;
+                        }
+                        if((in_array($condition->getName(),$conditions))){    
+                            $total_tax[$condition->getName()] = $total_tax[$condition->getName()] + ($condition->parsedRawValue * $product->quantity);
+                        }                        
+                }
+                $total += $product->getPriceSum();
+            }
+            $this->setProductTax($cart_id,$productTax);
+            $total_tax['Sub total'] = $total;
+            $json = json_decode($this->session->get($cart_id,'{}'),true);
+            $json['total_tax'] = $total_tax;
+            
+            $this->session->put($cart_id,json_encode($json));
+        }
+    }
+
+    public function getTaxTotal($cart_id){
+            $json = (!empty($this->session->get($cart_id)))?json_decode($this->session->get($cart_id,[]),true):'';
+            return !empty($json['total_tax'])?$json['total_tax']:'';
+    }
+
+    public function getProductTax($cart_id){
+        $json = (!empty($this->session->get($cart_id)))?json_decode($this->session->get($cart_id,[]),true):'';
+        return !empty($json['product_tax'])?$json['product_tax']:'';
+    }
 
     public function clear($cart_id){
         if ($this->session->has($cart_id)){

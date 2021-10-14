@@ -449,9 +449,19 @@ text-align: center;
                                 <td>{{Str::currency($orderProduct->getSubTotal())}}</td>
                             </tr>
                         @endforeach
+                          <tr>
+                            <td colspan="3" style="text-align: right;"><strong>Sub Total</strong></td>
+                            <td>{{ number_format($order->getSubTotal()['sub_total'],2) }}</td>
+                        </tr>
+                        @foreach ($order->getTotalTax() as $tax)
+                        <tr>
+                            <td colspan="3" style="text-align: right;"><strong>{{$tax->name}}</strong></td>
+                            <td>{{ number_format($tax->total_tax,2) }}</td>
+                        </tr>    
+                        @endforeach
                         <tr>
                             <td colspan="3" style="text-align: right;">
-                                <strong>Total:</strong>
+                                <strong>Total</strong>
                             </td>
                             <td>
                                 <strong>{{Str::currency($order->total)}}</strong>

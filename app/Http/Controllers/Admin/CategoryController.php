@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use phpDocumentor\Reflection\Types\Null_;
+use Illuminate\Support\Str;
 use View;
 
 class CategoryController extends MainController
@@ -40,7 +41,7 @@ class CategoryController extends MainController
     public function create()
     {
         //
-        $parent_category =  Category::where('parent_category','=','0')->get();  
+        $parent_category =  Category::where('status',1)->where('parent_category','=','0')->get();  
         return view('admin.category.create',array('parent_category'=>$parent_category));
     }
 
@@ -56,7 +57,7 @@ class CategoryController extends MainController
         $request_data = $request->all();
         $file_path = '';
         if($request->file()) {
-            $fileName = time().'_'.$request->image->getClientOriginalName();
+            $fileName = time().'_'. Str::snake($request->image->getClientOriginalName());
             $filePath = $request->file('image')->storeAs('uploads', $fileName, 'public');
             $file_path = '/storage/' . $filePath;
         }
@@ -65,7 +66,8 @@ class CategoryController extends MainController
                 'name' => $request_data['name'],
                 'parent_category' => $request_data['parent_category'],                
                 'image' => $file_path,
-                'description'=> $request_data['description']
+                'description'=> $request_data['description'],
+                'status' => (!empty($request_data['status']))?1:0,
             ]);
         }catch(Exception $e){
             return redirect(route('category.create'))->with('exception', $e->getMessage());
@@ -94,7 +96,7 @@ class CategoryController extends MainController
     {
         //
         $category = Category::findOrFail($id);
-        $parent_category =  Category::where('parent_category','=','0')->get();       
+        $parent_category =  Category::where('status',1)->where('parent_category','=','0')->get();       
         return view('admin.category.create',array('category'=>$category,'parent_category'=>$parent_category));
     }
 
@@ -118,7 +120,7 @@ class CategoryController extends MainController
         $upload_data['status'] = (!empty($request_data['status']))?1:0;
         
         if($request->file()) {
-            $fileName = time().'_'.$request->image->getClientOriginalName();
+            $fileName = time().'_'. Str::snake($request->image->getClientOriginalName());
             $filePath = $request->file('image')->storeAs('uploads', $fileName, 'public');
             $file_path = '/storage/' . $filePath;
             $upload_data['image']  = $file_path;

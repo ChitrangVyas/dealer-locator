@@ -206,6 +206,35 @@
           </li>
           @endnotCustomer 
           @admin()
+          <li class="nav-item has-treeview">
+          <a href="#" class="nav-link">
+              <i class="nav-icon fas fa-file"></i>
+              <p>
+                Tax
+                <i class="right fas fa-angle-left"></i>
+              </p>
+            </a>
+            <ul class="nav nav-treeview">
+              <li class="nav-item">
+                <a href="{{route('tax.index')}}" class="nav-link  {{ $elementActive == 'tax' ? 'active' : '' }}">
+                  <i class="nav-icon fas fa-file-alt"></i>
+                  <p>
+                  Tax
+                  </p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="{{route('tax-group.index')}}" class="nav-link  {{ $elementActive == 'tax-group' ? 'active' : '' }}">
+                  <i class="nav-icon fas fa-file-alt"></i>
+                  <p>
+                  Tax Group
+                  </p>
+                </a>
+              </li> 
+            </ul>
+          </li>
+          @endadmin
+          @admin()
           <li class="nav-item">
             <a href="{{ route('settings.index') }}" class="nav-link  {{ $elementActive == 'settings' ? 'active' : '' }}">
             <i class="nav-icon fas fa-cog"></i>

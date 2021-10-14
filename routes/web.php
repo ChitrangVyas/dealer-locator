@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Order;
 use Illuminate\Support\Facades\Route;
 // use Illuminate\Support\Facades\App;
 
@@ -41,6 +42,8 @@ Route::group(['prefix'=>'admin','middleware'=>['auth']],function () {
     Route::any('brand/listajaxdata', [App\Http\Controllers\Admin\BrandController::class,'listAjaxData'])->name('brandlistajax');
     Route::any('category/listajaxdata', [App\Http\Controllers\Admin\CategoryController::class,'listAjaxData'])->name('categorylistajax');
     Route::any('product/listajaxdata', [App\Http\Controllers\Admin\ProductController::class,'listAjaxData'])->name('productlistajax');
+    Route::any('tax/listajaxdata', [App\Http\Controllers\Admin\TaxController::class,'listAjaxData'])->name('taxlistajax');
+    Route::any('tax-group/listajaxdata', [App\Http\Controllers\Admin\TaxGroupController::class,'listAjaxData'])->name('taxgrouplistajax');
     Route::post('product/inventory', [App\Http\Controllers\Admin\ProductController::class,'getProductInventory'])->name('product.inventory');
     Route::post('product/inventory/update', [App\Http\Controllers\Admin\ProductController::class,'updateProductInventory'])->name('product.inventory.update');
     Route::any('inquiries_source/listajaxdata', [App\Http\Controllers\Admin\InquiriesSourceController::class,'listAjaxData'])->name('inquiries_sourcelistajax');
@@ -115,6 +118,8 @@ Route::group(['prefix'=>'admin','middleware'=>['auth']],function () {
     Route::resource('vendor', App\Http\Controllers\Admin\VendorController::class);
     Route::resource('settings', App\Http\Controllers\SettingsController::class);
     Route::resource('notification', App\Http\Controllers\NotificationController::class);
+    Route::resource('tax', App\Http\Controllers\Admin\TaxController::class);
+    Route::resource('tax-group', App\Http\Controllers\Admin\TaxGroupController::class);
     
 });
 

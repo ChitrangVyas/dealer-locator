@@ -235,10 +235,12 @@ class OrderController extends MainController
         $request_data = $request->all();
         $cart = \Cart::Session($request_data['cart_id']);
         $cart_data = $this->myCart->getAll($request_data['cart_id']);
-        $tax_data['total_tax'] = $cart_data['total_tax'];
-        $tax_data['product_tax'] = $cart_data['product_tax'];
-        unset($cart_data['total_tax']);
-        unset($cart_data['product_tax']);
+        $tax_data['total_tax'] = (!empty($cart_data['total_tax']))?$cart_data['total_tax']:'';
+        $tax_data['product_tax'] = (!empty($cart_data['product_tax']))?$cart_data['product_tax']:'';
+        if((!empty($tax_data['total_tax'])) && (!empty($tax_data['product_tax']))){
+            unset($cart_data['total_tax']);
+            unset($cart_data['product_tax']);
+        }
         $cart_data['status'] =  'sent';
         $cart_data['total'] = $cart->getTotal();
         $cart_data['order_reference'] = (!empty($cart_data['order_reference']))?$cart_data['order_reference']:NULL;
@@ -494,7 +496,7 @@ class OrderController extends MainController
             $is_sale_generated = Order::where('type','sale')->where('order_reference',$order->id)->where('deleted_at',NULL)->count();
             $customer = (!empty($order->customer))?$order->customer:$this->settingJson['name'];
             $added_by  = (!empty($order->added_by))?$order->added_by:$this->settingJson['name'];
-            $action_html = "<span><a data-url=".route('quote.show',$order->id)." data-order=".$order->id." class='btn btn-primary view-order' data-toggle='modal' data-target='#orderModal'>View</a></span>";
+            $action_html = "<span><a data-url=".route('quote.show',$order->id)." data-order=".$order->id." class='btn btn-primary view-order' data-toggle='modal' data-target='#orderModal' title='View'><i class='far fa-eye' title='View'></i></a></span>";
             // $action_html .= "<span class='ml-3 create-po-".$order->id."'><a data-url=".route('cart.po.create')." data-order=".$order->id." class='btn btn-success view-order'>Generate PO</a></span>";
             if(empty($is_sale_generated) && (auth()->user()->id == $order->from_user || (empty($user->users_group_id) && empty($order->from_user))) ){
                 $action_html .= "<span class='ml-2 create-sale-".$order->id."'><a data-url=".route('cart.sale.create')." data-order=".$order->id." class='btn btn-default view-order' data-toggle='modal' data-target='#orderModal' title='Generate Sale'><i class='fas fa-shopping-cart'></i></a></span>";
@@ -543,22 +545,23 @@ class OrderController extends MainController
         ->orderBy($request['columns'][$request['order'][0]['column']]['name'],$request['order'][0]['dir'])
         ->groupby('orders.id')
         ->get();
-        if(empty($user->userGroup) || $user->userGroup->id == '1'){
+        /* if(empty($user->userGroup) || $user->userGroup->id == '1'){
             $total_order = Order::where('type','po')->where(function($query) use($user){
                 return $query->where('from_user',$user->id)->orWhere('for_manufacturer', 1);
             })->where('deleted_at',NULL)->count();
         }else{
             $total_order = Order::where('type','po')->where('from_user',$user->id)->where('deleted_at',NULL)->count();
-        }
+        } */
+        $total_order = Order::whereRaw($where)->count();
         $data = [];
         foreach($orders as $order){
             // $orderDetail = Order::where('id','=',$order->id)->first();
             $is_sale_generated = Order::where('type','sale')->where('order_reference',$order->id)->where('deleted_at',NULL)->count();
             $customer = (!empty($order->customer))?$order->customer:$this->settingJson['name'];
             $added_by  = (!empty($order->added_by))?$order->added_by:$this->settingJson['name'];
-            $action_html = "<span><a data-url=".route('po.show',$order->id)." data-order=".$order->id." class='btn btn-primary view-order' data-toggle='modal' data-target='#orderModal'>View</a></span>";
+            $action_html = "<span><a data-url=".route('po.show',$order->id)." data-order=".$order->id." class='btn btn-primary view-order' data-toggle='modal' data-target='#orderModal' title='View'><i class='far fa-eye' title='View'></i></a></span>";
             if(((auth()->user()->id == $order->to_user) && empty($is_sale_generated)) || ((empty($user->users_group_id) || ($user->users_group_id == '1')) && (!empty($order->for_manufacturer) && empty($is_sale_generated)))){
-                $action_html .= "<span class='ml-3 create-sale-".$order->id."'><a data-url=".route('cart.sale.create')." data-order=".$order->id." class='btn btn-default view-order' data-toggle='modal' data-target='#orderModal'>Generate Sale</a></span>";
+                $action_html .= "<span class='ml-3 create-sale-".$order->id."'><a data-url=".route('cart.sale.create')." data-order=".$order->id." class='btn btn-default view-order' data-toggle='modal' data-target='#orderModal' title='Generate Sale'><i class='fas fa-shopping-cart' title='Generate Sale'></i></a></span>";
             }
             /* if((auth()->user()->id == $order->to_user)||((empty($user->userGroup) && $user->id == 1)||$user->userGroup == '1')){
                 $action_html .= "<span class='ml-3 create-sale-".$order->id."'><a data-url=".route('cart.sale.create')." data-order=".$order->id." class='btn btn-default view-order' data-toggle='modal' data-target='#orderModal'>Generate Sale</a></span>";
@@ -618,7 +621,7 @@ class OrderController extends MainController
             }
             $customer = (!empty($order->customer))?$order->customer:$this->settingJson['name'];
             $added_by  = (!empty($order->added_by))?$order->added_by:$this->settingJson['name'];
-            $action_html = "<span><a data-url=".route('sale.show',$order->id)." data-order=".$order->id." class='btn btn-primary view-order' data-toggle='modal' data-target='#orderModal'>View</a></span>";
+            $action_html = "<span><a data-url=".route('sale.show',$order->id)." data-order=".$order->id." class='btn btn-primary view-order' data-toggle='modal' data-target='#orderModal' title='View'><i class='far fa-eye' title='View'></i></a></span>";
             // $action_html .= "<span class='ml-3 create-po-".$order->id."'><a data-url=".route('cart.po.create')." data-order=".$order->id." class='btn btn-success view-quote' data-toggle='modal' data-target='#orderModal'>Generate PO</a></span>";
             // $action_html = "<span><a href=".route('order.edit',$order->id)." class='btn btn-primary'>Edit</a></span>";
             // $action_html .= "<span class='ml-3'><button type=submit data-user=$order->id class='btn btn-danger' onClick=deleteOrder($order->id)>Delete</button></span>";
@@ -673,7 +676,7 @@ class OrderController extends MainController
             }
             $customer = (!empty($order->customer))?$order->customer:$this->settingJson['name'];
             $added_by  = (!empty($order->added_by))?$order->added_by:$this->settingJson['name'];
-            $action_html = "<span><a data-url=".route('sale.show',$order->id)." data-order=".$order->id." class='btn btn-primary view-order' data-toggle='modal' data-target='#orderModal'>View</a></span>";
+            $action_html = "<span><a data-url=".route('sale.show',$order->id)." data-order=".$order->id." class='btn btn-primary view-order' data-toggle='modal' data-target='#orderModal' title='View'><i class='far fa-eye' title='View'></i></a></span>";
             // $action_html .= "<span class='ml-3 create-po-".$order->id."'><a data-url=".route('cart.po.create')." data-order=".$order->id." class='btn btn-success view-quote' data-toggle='modal' data-target='#orderModal'>Generate PO</a></span>";
             // $action_html = "<span><a href=".route('order.edit',$order->id)." class='btn btn-primary'>Edit</a></span>";
             // $action_html .= "<span class='ml-3'><button type=submit data-user=$order->id class='btn btn-danger' onClick=deleteOrder($order->id)>Delete</button></span>";

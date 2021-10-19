@@ -162,11 +162,12 @@ class OrderController extends MainController
         // order_number, inquiry_id, type, to_user,
         $tax_data['total_tax'] = $quote_data['total_tax'];
         $tax_data['product_tax'] = $quote_data['product_tax'];
+        $quote_data['total'] = $quote_data['cart_total'];
         unset($quote_data['total_tax']);
         unset($quote_data['product_tax']);
+        unset($quote_data['cart_total']);
         $cart = \Cart::Session($request_data['cart_id']);
         $quote_data['status'] =  'sent';
-        $quote_data['total'] = $cart->getTotal();
         try{
             $quote = Order::create($quote_data);
             if(!empty($quote)){

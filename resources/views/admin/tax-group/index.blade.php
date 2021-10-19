@@ -112,7 +112,14 @@
                             "_token": token,
                         },
                         success: function (res){
-                            window.location.reload();
+                            if(res.code){
+                                window.location.reload();
+                            }else{
+                                Toast.fire({
+                                type: 'error',
+                                title: res.error
+                            });
+                            }
                         }
                     });
                 }

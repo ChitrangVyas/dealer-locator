@@ -7,6 +7,7 @@ use App\Models\Inquiry;
 use App\Models\Manufacturer;
 use App\Models\Order;
 use App\Models\Product;
+use App\Models\TaxGroup;
 use App\Models\User;
 use Illuminate\Http\Request;
 
@@ -81,6 +82,7 @@ class CartController extends MainController
     public function update(Request $request)
     {
         $cart  = \Cart::session($request->input('cart_id'));
+        $selected_tax_group = [];
         if(!$cart->isEmpty()){
             if($request->input('is_new_product') == 1){
                 foreach($request->input('product') as $key=>$val){      
@@ -97,7 +99,7 @@ class CartController extends MainController
                 foreach($request->input('product') as $key=>$product){
                     $product_data = Product::findOrFail($key);
                     $cart->remove($key);
-                    $condition = $this->getProductTaxCondition($product_data);
+                    $condition = (isset($request->input('tax')[$product_data->id]))?$this->getTaxGroupCondition($request->input('cart_id'),$request->input('tax')[$product_data->id]):$this->getProductTaxCondition($product_data,$request->input('cart_id'));
                     $cart->add(array(
                         'id' => $key,
                         'name' => $product_data->name,
@@ -106,10 +108,12 @@ class CartController extends MainController
                         'attributes' => array(),
                         'conditions'=>$condition,
                     ));
+                    $selected_tax_group[$product_data->id] = (isset($request->input('tax')[$product_data->id]))?$request->input('tax')[$product_data->id]:'';
                 }
             }
         }
         $cart->getSubTotal();
+        $this->myCart->setTaxGroup($request->input('cart_id'),$selected_tax_group);
         $this->myCart->setTaxTotal($request->input('cart_id'),$cart);
         return $this->getInquiryToQuoteCart($request->input('cart_id'),$cart,$request->input('is_new_product'));
     }
@@ -166,7 +170,7 @@ class CartController extends MainController
             $items = []; 
             if((!empty($inquiry->product)) && $inquiry->product->count() > 0){
                 foreach($inquiry->product as $product){
-                    $condition = $this->getProductTaxCondition($product);
+                    $condition = $this->getProductTaxCondition($product,$id);
                     $items[] = array(
                         'id' => $product->id,
                         'name' => $product->name,
@@ -208,14 +212,18 @@ class CartController extends MainController
 
     public function getInquiryToQuoteCart($id,$cart,$is_new_product = 0){
         $to_user = [];
+        $total_tax = [];
+        $cart_total = 0.00;
         if(!empty($this->myCart->getTo($id))){
             $to_user = (!empty($this->myCart->getForManufacture($id)) && ($this->myCart->getType($id) == 'po')) ? NULL : User::findOrFail($this->myCart->getTo($id));
         }
-        $total_tax = [];
         if(!empty($this->myCart->getTaxTotal($id))){
             $total_tax = $this->myCart->getTaxTotal($id);
         }
-        return view('admin.order.cart',['cart'=>$cart,'id'=>$id,'is_new_product' => $is_new_product,'order_number'=>$this->myCart->getOrderNumber($id),'type'=>$this->myCart->getType($id),'to_user'=>$to_user,'inquiry_id'=>$this->myCart->getInquiryId($id),'total_tax'=>$total_tax]);
+        $tax_groups = TaxGroup::where('status',1)->get();
+        $selected_tax_group = $this->myCart->getTaxGroup($id);
+        $cart_total = $this->myCart->getCartTotal($id);
+        return view('admin.order.cart',['cart'=>$cart,'id'=>$id,'is_new_product' => $is_new_product,'order_number'=>$this->myCart->getOrderNumber($id),'type'=>$this->myCart->getType($id),'to_user'=>$to_user,'inquiry_id'=>$this->myCart->getInquiryId($id),'total_tax'=>$total_tax,'tax_groups'=>$tax_groups,'selected_tax_group'=>$selected_tax_group,'cart_total'=>$cart_total]);
     }
 
     public function addProductToCart(Request $request){
@@ -225,7 +233,7 @@ class CartController extends MainController
         $count=1;
         $product_tax_group = $product->taxGroup;
         if($cart->isEmpty()){
-            $condition = $this->getProductTaxCondition($product);
+            $condition = $this->getProductTaxCondition($product,$request->input('id'));
             $cart->add(
                 array(
                     'id' => $product->id,
@@ -247,7 +255,7 @@ class CartController extends MainController
             // $cart_product = Product::findOrFail($cart_product_id);
             $cart_product = $product;
             $count=1;
-            $condition = $this->getProductTaxCondition($cart_product);
+            $condition = $this->getProductTaxCondition($cart_product,$request->input('id'));
             if($product->brand->manufacturer->id == $cart_product->brand->manufacturer->id || $this->myCart->getType($request->input('id'))== 'sale'){
                 $cart->add(
                     array(
@@ -301,7 +309,7 @@ class CartController extends MainController
                 $manufacturer = NULL;
                 $is_dealer = ($order->addedBy->users_group_id == 2) ? 1 : 0;
                 foreach($order->orderProduct as $orderProduct){
-                    $condition = $this->getProductTaxCondition($orderProduct);
+                    $condition = $this->getProductTaxCondition($orderProduct,$id);
                     $items[] = array(
                         'id' => $orderProduct->product->id,
                         'name' => $orderProduct->product->name,
@@ -425,7 +433,7 @@ class CartController extends MainController
         if($cart->isEmpty()){
             $items = [];
             foreach($order->orderProduct as $orderProduct){
-                $condition = $this->getProductTaxCondition($orderProduct->product);
+                $condition = $this->getProductTaxCondition($orderProduct->product,$id);
                 $items[] = array(
                     'id' => $orderProduct->product->id,
                     'name' => $orderProduct->product->name,
@@ -489,12 +497,46 @@ class CartController extends MainController
         ));
     }
 
-    public function getProductTaxCondition($product){
+    public function getProductTaxCondition($product,$id){
         $count = 1;
         $condition = [];
-        foreach($product->taxGroup->tax()->get() as $tax){
-            $condition["tax".$count] = $this->setTaxCondition($tax->name,'tax',$tax->pivot->percentage."%",['tax_id'=>$tax->id]);
-            $count++;
+        $cart_data = $this->myCart->getAll($id);
+        $toUser  = User::find($cart_data['to_user']);
+        $user_state = (!empty(auth()->user()->users_group_id))?auth()->user()->state->id:$this->settingJson['state'];
+        if(!empty($product->taxGroup)){
+            $productTaxGroup = $product->taxGroup;
+        }else{
+            $productTaxGroup = TaxGroup::where('is_default',1)->first();
+        }
+        foreach($productTaxGroup->tax()->get() as $tax){
+            if(($user_state == $toUser->state->id) && ($tax->name != 'IGST')){
+                $condition["tax".$count] = $this->setTaxCondition($tax->name,"tax".$count,$tax->pivot->percentage."%",['tax_id'=>$tax->id]);
+                $count++;
+            }elseif(($user_state != $toUser->state->id) && ($tax->name == 'IGST')){
+                $condition["tax".$count] = $this->setTaxCondition($tax->name,"tax".$count,$tax->pivot->percentage."%",['tax_id'=>$tax->id]);
+                $count++;
+            }
+        }
+        return $condition;
+    }
+
+    public function getTaxGroupCondition($id, $taxGroup){
+        $count = 1;
+        $condition = [];
+        $taxGroup  = TaxGroup::find($taxGroup);
+        $cart_data = $this->myCart->getAll($id);
+        $toUser  = User::find($cart_data['to_user']);
+        $user_state = (!empty(auth()->user()->users_group_id))?auth()->user()->state->id:$this->settingJson['state'];
+        if(!empty($taxGroup)){
+            foreach($taxGroup->tax()->get() as $tax){
+                if(($user_state == $toUser->state->id) && ($tax->name != 'IGST')){
+                    $condition["tax".$count] = $this->setTaxCondition($tax->name,"tax".$count,$tax->pivot->percentage."%",['tax_id'=>$tax->id]);
+                    $count++;
+                }elseif(($user_state != $toUser->state->id) && ($tax->name == 'IGST')){
+                    $condition["tax".$count] = $this->setTaxCondition($tax->name,"tax".$count,$tax->pivot->percentage."%",['tax_id'=>$tax->id]);
+                    $count++;
+                }
+            }
         }
         return $condition;
     }

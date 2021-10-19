@@ -38,10 +38,7 @@
                                     <td width="15%">
                                         <div class="form-group">
                                             <div class="pt-2">
-                                                <input type="checkbox" class="mr-2" name="tax_id[]"
-                                                value="{{$tax->id}}"
-                                                {{((!isset($tax)) || (!empty($taxGroup) && !empty($tax->getTaxItem($taxGroup->id))) )? "checked" :"" }} tabindex="3">
-                                                    <label>{{$tax->name}}</label>
+                                                    <label>{{$tax->name}} <span class="required_field">*</span></label>
                                             </div>
                                         </div>
                                     </td>
@@ -49,13 +46,17 @@
                                         <!-- text input -->
                                         <div class="form-group">
                                             <div class="d-flex inline align-items-center col-3">
+                                                <input type="hidden" name="tax_id[]" value="{{$tax->id}}">
                                                 @php
                                                     $taxPercentage = (!empty($taxGroup) && (!empty($tax->taxGroupItems))) ? $tax->getTaxPercentage($taxGroup->id) : '';
                                                 @endphp
                                                 <input type="text" class="form-control" name="percentage[{{$tax->id}}]"
-                                                value="{{ old('percentage[]',(!empty($tax) && (!empty($tax->taxGroupItems) && !empty($taxPercentage))) ?  $taxPercentage: '') }}" placeholder="Percentage" tabindex="4">
+                                                value="{{ old('percentage.'.$tax->id,(!empty($tax) && (!empty($tax->taxGroupItems) && isset($taxPercentage))) ?  $taxPercentage: '') }}" placeholder="Percentage" tabindex="4" />
                                                 <span class=" float-left ml-2">%</span>
                                             </div>
+                                            @error("percentage.$tax->id")
+                                            <div class="alert alert-danger mt-2 col-3">{{ $message }}</div>
+                                            @enderror
                                         </div>
                                     </td>
                                 </tr>
@@ -67,7 +68,7 @@
                     <div class="col-sm-12 col-md-12">
                         <div class="form-group">
                             <div class="pt-2">
-                                <input type="checkbox" class="input-control" name="is_default" {{((!empty($taxGroup)) && (!empty($taxGroup->is_default)))? "checked" :"" }} tabindex="5">
+                                <input type="checkbox" class="input-control" id="is_default" name="is_default" {{((!empty($taxGroup)) && (!empty($taxGroup->is_default)))? "checked" :"" }} tabindex="5">
                                     <label>Make as a Default</label>
                             </div>
                         </div>
@@ -98,7 +99,15 @@
 @section('js')
 <script>
     jQuery(document).ready(function() {
-
+        $('#is_default').on('change',function(){
+            let data = confirm("Are you sure you wants to make it default? {{$default->name}} is already default a Tax Group.");
+            let default_val = $('#is_default').is(":checked")
+            if(data){
+                $('#is_default').prop('checked',default_val);
+            }else{
+                $('#is_default').prop('checked',!default_val);
+            }
+        })
     });
 </script>
 @endsection

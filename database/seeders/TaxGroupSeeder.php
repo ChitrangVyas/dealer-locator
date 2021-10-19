@@ -14,10 +14,26 @@ class TaxGroupSeeder extends Seeder
      */
     public function run()
     {
+        DB::table('tax_group_items')->delete();
         DB::table('tax_groups')->delete();
+        DB::table('taxes')->delete();
+        $taxes = array(
+            array('id'=>1,'name'=>'CGST','created_at' => date('Y-m-d H:i:s'),'updated_at' => date('Y-m-d H:i:s')),
+            array('id'=>2,'name'=>'SGST','created_at' => date('Y-m-d H:i:s'),'updated_at' => date('Y-m-d H:i:s')),
+            array('id'=>3,'name'=>'IGST','created_at' => date('Y-m-d H:i:s'),'updated_at' => date('Y-m-d H:i:s'))            
+        );
+        DB::table('taxes')->insert($taxes);
+
         $tax_group = array(
-            array('id'=>1,'name'=>'No Tax','is_default'=>1,'created_at' => date('Y-m-d H:i:s'),'updated_at' => date('Y-m-d H:i:s')),
+            array('id'=>1,'name'=>'Zero Tax','is_default'=>1,'created_at' => date('Y-m-d H:i:s'),'updated_at' => date('Y-m-d H:i:s')),
         );
         DB::table('tax_groups')->insert($tax_group);
+        
+        $tax_group_items = array(
+            array('id'=>1,'tax_group_id'=>'1','tax_id'=>1, 'percentage'=>"0.00",'created_at' => date('Y-m-d H:i:s'),'updated_at' => date('Y-m-d H:i:s')),
+            array('id'=>2,'tax_group_id'=>'1','tax_id'=>2, 'percentage'=>"0.00",'created_at' => date('Y-m-d H:i:s'),'updated_at' => date('Y-m-d H:i:s')),
+            array('id'=>3,'tax_group_id'=>'1','tax_id'=>3, 'percentage'=>"0.00",'created_at' => date('Y-m-d H:i:s'),'updated_at' => date('Y-m-d H:i:s')),
+        );
+        DB::table('tax_group_items')->insert($tax_group_items);
     }
 }

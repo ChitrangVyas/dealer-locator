@@ -16,7 +16,7 @@ class TaxGroupController extends MainController
     public function __construct()
     {
         parent::__construct();
-        View::share('title', 'Tax Group');
+        View::share('title', 'Tax');
         View::share('elementActive', 'tax-group');
     }
     /**
@@ -37,7 +37,8 @@ class TaxGroupController extends MainController
     public function create()
     {
         $taxes = Tax::where('status',1)->get();
-        return view('admin.tax-group.create',['taxes'=>$taxes]);
+        $default = TaxGroup::where('is_default',1)->first();
+        return view('admin.tax-group.create',['taxes'=>$taxes,'default'=>$default]);
     }
 
     /**
@@ -50,13 +51,20 @@ class TaxGroupController extends MainController
     {
         Validator::make($request->all(), [
             'name' => 'required',
-        ],['name.required'=>"Name is required."])->validate();
+            'percentage.*' => 'required'
+        ],
+        [
+            'name.required'=>"Name is required.",
+            'percentage.*.required' => "Percentage is required."
+        ])->validate();
         try{
             $request_data = $request->only(['name']);
             $request_data['is_default'] = (!empty($request->input('is_default')))?1:0;
             $tax_group = TaxGroup::create($request_data);
-            $request_data['is_default'] = $request_data['is_default'];
-            $is_tax_group = $tax_group->update($request_data);
+            // $request_data['is_default'] = $request_data['is_default'];
+            if(!empty($request_data['is_default'])){
+                $is_tax_group = $this->updateDefault($tax_group->id);
+            }
             if(!empty($is_tax_group) && !empty($request->input('tax_id'))){
                 $tax_group_data = $request->only(['tax_id','percentage']);
                 if(!empty($tax_group->tax()->count())){
@@ -95,7 +103,8 @@ class TaxGroupController extends MainController
     public function edit(TaxGroup $taxGroup)
     {
         $taxes = Tax::where('status',1)->get();
-        return view('admin.tax-group.create',['taxGroup'=>$taxGroup,'taxes'=>$taxes]);
+        $default = TaxGroup::where('is_default',1)->first();                
+        return view('admin.tax-group.create',['taxGroup'=>$taxGroup,'taxes'=>$taxes,'default'=>$default]);
     }
 
     /**
@@ -109,8 +118,10 @@ class TaxGroupController extends MainController
     {
         Validator::make($request->all(), [
             'name' => 'required',
+            'percentage.*' => 'required'
         ],[
             'name.required'=>"Name is required.",
+            'percentage.*.required' => "Percentage is required."
         ])->validate();
         try{
             $request_data = $request->only(['name','status','is_default']);
@@ -120,20 +131,22 @@ class TaxGroupController extends MainController
             $request_data['is_default'] = $is_default;
             $count=0;
             if(empty($is_default)|| empty($status)){
-               $count = TaxGroup::where('is_default',1)->where('id',$taxGroup->id)->count(); 
+                $count = TaxGroup::where('is_default',1)->count(); 
             }
-            if(!empty($count)){
+            if(!empty($count) && $count <= 1){
                 return redirect()->back()->with('exception', 'Please make at least one group as default.');
+            } 
+            if((!empty($taxGroup->is_default) && empty($count)) || !empty($is_default)){
+                $this->updateDefault($taxGroup->id);
             }
             $is_tax_group = $taxGroup->update($request_data);
-            $this->updateDefault($taxGroup->id);
             $tax_group_data = $request->only(['tax_id','percentage']);
             if(!empty($is_tax_group) && !empty($tax_group_data['tax_id'])){
                 if(!empty($taxGroup->tax()->count())){
                     $taxGroup->tax()->detach();
                 }
                 foreach ($tax_group_data['tax_id'] as $tax_id){
-                    if(!empty($tax_group_data['percentage'][$tax_id])){
+                    if(!empty($tax_group_data['percentage'][$tax_id]) || isset($tax_group_data['percentage'][$tax_id])){
                         $update_data = [$taxGroup->id=>$tax_id];
                         $is_updated = $taxGroup->tax()->attach($update_data,["percentage"=>$tax_group_data['percentage'][$tax_id]]);
                     }
@@ -156,7 +169,7 @@ class TaxGroupController extends MainController
         if((auth()->check()) && empty(auth()->user()->users_group_id)){
             try{
                 if(!empty($taxGroup->is_default)){
-                    return response()->json(['code'=>0, 'error'=>'Please make at least one group as default.']);
+                    return response()->json(['code'=>0, 'error'=>'You can not delete default tax group.']);
                 }else{
                     $taxGroup->delete();
                 }

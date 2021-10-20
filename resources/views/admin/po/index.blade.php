@@ -291,7 +291,7 @@
         
         
         
-        $("body").on("change",".product, .qty, .price", function(){
+        $("body").on("change",".tax, .product, .qty, .price", function(){
             /* price = $(this).closest('.product-detail').find('.price').val();
             qty =  $(this).closest('.product-detail').find('.qty').val();
             amount = price * qty;
@@ -374,7 +374,11 @@
                 data: formData,
                 dataType: 'JSON',
                 beforeSend: function(){
+                    $('#overlay').show();
                     $('.btn-save').attr('disabled',true);
+                },
+                complete: function(){
+                    $('#overlay').hide();
                 },
                 success: function (data) {
                     if(data.code == 1){

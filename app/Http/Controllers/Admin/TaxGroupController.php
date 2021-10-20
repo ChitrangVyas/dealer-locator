@@ -65,7 +65,7 @@ class TaxGroupController extends MainController
             if(!empty($request_data['is_default'])){
                 $is_tax_group = $this->updateDefault($tax_group->id);
             }
-            if(!empty($is_tax_group) && !empty($request->input('tax_id'))){
+            if(!empty($request->input('tax_id'))){
                 $tax_group_data = $request->only(['tax_id','percentage']);
                 if(!empty($tax_group->tax()->count())){
                     $tax_group->tax()->detach();
@@ -133,7 +133,7 @@ class TaxGroupController extends MainController
             if(empty($is_default)|| empty($status)){
                 $count = TaxGroup::where('is_default',1)->count(); 
             }
-            if(!empty($count) && $count <= 1){
+            if(!empty($count) && $count <= 1 && (!empty($taxGroup->is_default))){
                 return redirect()->back()->with('exception', 'Please make at least one group as default.');
             } 
             if((!empty($taxGroup->is_default) && empty($count)) || !empty($is_default)){

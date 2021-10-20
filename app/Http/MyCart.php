@@ -113,9 +113,14 @@ class MyCart
         $json['product_tax'] = $productTax;
         $this->session->put($cart_id,json_encode($json));        
     }
-    public function setTaxGroup($cart_id,$tax_group){        
+    public function setTaxGroup($cart_id,$tax_group,$isNew=false){
         $json = json_decode($this->session->get($cart_id,'{}'),true);
-        $json['tax_group'] = $tax_group;
+        if($isNew){
+            $key = key($tax_group);
+            $json['tax_group'][$key] = $tax_group[$key];
+        }else{
+            $json['tax_group'] = $tax_group;
+        }
         $this->session->put($cart_id,json_encode($json));     
     }
     public function setCartTotal($cart_id,$cart_total){
@@ -176,13 +181,32 @@ class MyCart
 
     public function getCartTotal($cart_id){        
         $json = (!empty($this->session->get($cart_id)))?json_decode($this->session->get($cart_id,[]),true):'';
-        return !empty($json['cart_total'])?$json['cart_total']:'';      
+        return !empty($json['cart_total'])?$json['cart_total']:'';
     }
 
     public function clear($cart_id){
         if ($this->session->has($cart_id)){
             return $this->session->forget($cart_id);
         }
+    }
+
+    public function removeItem($cart_id,$item){
+        $cart = $this->getAll($cart_id);
+        if(is_array($item)){
+            foreach($item as $key => $value){
+                foreach ($value as $val){
+                    if(in_array($key,$cart)){
+                        $keys = array_keys($cart[$key]);
+                        if(in_array($val,$keys)){
+                            unset($cart[$key][$val]);
+                        }
+                    }
+                }
+            }
+        }else{
+            unset($cart[$item]);
+        }
+        $this->session->put($cart_id,json_encode($cart));
     }
 
 }

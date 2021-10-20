@@ -393,7 +393,11 @@
                 contentType: false,
                 processData: false,
                 beforeSend: function(){
+                    $('#overlay').show();
                     $('.btn-save').attr('disabled',true);
+                },
+                complete: function(){
+                    $('#overlay').hide();
                 },
                 success: function (data) {
                     if(data.code == 1){

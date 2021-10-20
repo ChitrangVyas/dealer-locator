@@ -162,10 +162,12 @@ class OrderController extends MainController
         // order_number, inquiry_id, type, to_user,
         $tax_data['total_tax'] = $quote_data['total_tax'];
         $tax_data['product_tax'] = $quote_data['product_tax'];
+        $tax_data['tax_group'] = (!empty($quote_data['tax_group']))?$quote_data['tax_group']:[];
         $quote_data['total'] = $quote_data['cart_total'];
         unset($quote_data['total_tax']);
         unset($quote_data['product_tax']);
         unset($quote_data['cart_total']);
+        unset($quote_data['tax_group']);
         $cart = \Cart::Session($request_data['cart_id']);
         $quote_data['status'] =  'sent';
         try{
@@ -236,14 +238,26 @@ class OrderController extends MainController
         $request_data = $request->all();
         $cart = \Cart::Session($request_data['cart_id']);
         $cart_data = $this->myCart->getAll($request_data['cart_id']);
+        $tax_data['tax_group'] = (!empty($cart_data['tax_group']))?$cart_data['tax_group']:[];
         $tax_data['total_tax'] = (!empty($cart_data['total_tax']))?$cart_data['total_tax']:'';
         $tax_data['product_tax'] = (!empty($cart_data['product_tax']))?$cart_data['product_tax']:'';
-        if((!empty($tax_data['total_tax'])) && (!empty($tax_data['product_tax']))){
-            unset($cart_data['total_tax']);
+        $cart_data['total'] =$cart_data['cart_total'] ;
+        if(isset($cart_data['tax_group'])){
+            unset($cart_data['tax_group']);
+        }
+        if(isset($cart_data['product_tax'])){
             unset($cart_data['product_tax']);
         }
+        if(isset($cart_data['total_tax'])){
+            unset($cart_data['total_tax']);
+        }
+        if(isset($cart_data['product_tax'])){
+            unset($cart_data['product_tax']);
+        }
+        if(isset($cart_data['cart_total'])){
+            unset($cart_data['cart_total']);
+        }
         $cart_data['status'] =  'sent';
-        $cart_data['total'] = $cart->getTotal();
         $cart_data['order_reference'] = (!empty($cart_data['order_reference']))?$cart_data['order_reference']:NULL;
         try{
             $order = Order::create($cart_data);
@@ -296,7 +310,7 @@ class OrderController extends MainController
                 return response()->json(['status' => 'error','code'=>0,'message'=>'Unable to generate PO.']);
             }
         }catch(Exception $e){
-            return response()->json(['status' => 'error','code' => 0,'message' => $e->getMessage()]);                
+            return response()->json(['status' => 'error','code' => 0,'message' => $e->getMessage()."<br>".$e->getFile().": ".$e->getLine()]);                
         }
     }
 
@@ -372,18 +386,27 @@ class OrderController extends MainController
         $json['cart_content'] = view('admin.quote.view',['order'=>$order])->render();
         return response()->json(['status' => 'successful','code'=>1, 'data'=>$json, 'message'=>'']);
     }
+    public function showInvoice(Request $request){
+        $order = Order::findOrFail($request->get('data')['order_id']);
+        $json['cart_title'] = "Invoice #$order->order_number";
+        $json['cart_content'] = view('admin.quote.view',['order'=>$order])->render();
+        return response()->json(['status' => 'successful','code'=>1, 'data'=>$json, 'message'=>'']);
+    }
 
     public function storeSale(Request $request){
         $request_data = $request->all();
         $cart = \Cart::Session($request_data['cart_id']);
         $cart_data = $this->myCart->getAll($request_data['cart_id']);
+        $tax_data['tax_group'] = (!empty($cart_data['tax_group']))?$cart_data['tax_group']:[];
         $tax_data['total_tax'] = $cart_data['total_tax'];
         $tax_data['product_tax'] = $cart_data['product_tax'];
         unset($cart_data['total_tax']);
         unset($cart_data['product_tax']);
         unset($cart_data['for_manufacture_po_to_sale']);
         $cart_data['status'] =  'sent';
-        $cart_data['total'] = $cart->getTotal();
+        $cart_data['total'] = $cart_data['cart_total'];
+        unset($cart_data['cart_total']);
+        unset($cart_data['tax_group']);
         $cart_data['order_reference'] = (!empty($cart_data['order_reference']))?$cart_data['order_reference']:NULL;
         try{
             $order = Order::create($cart_data);
@@ -590,7 +613,7 @@ class OrderController extends MainController
         $where = 'orders.type = "sale" AND orders.deleted_at is NULL';
         if((!empty($user->userGroup)) && $user->userGroup->id == '2'){
             // $users = implode(',',User::where('parent_id',$user->id)->get()->pluck('id')->toArray());
-            $where .= (!empty($user->id))?" AND (from_user=$user->id OR to_user=$user->id ":'';
+            $where .= (!empty($user->id))?" AND (from_user=$user->id OR (to_user=$user->id AND from_user <> NULL) ":'';
             $where .= (!empty($users)) ? " OR from_user in ($users) )" :")";
         }
         if((!empty($user->userGroup)) && $user->userGroup->id == '3'){
@@ -677,7 +700,7 @@ class OrderController extends MainController
             }
             $customer = (!empty($order->customer))?$order->customer:$this->settingJson['name'];
             $added_by  = (!empty($order->added_by))?$order->added_by:$this->settingJson['name'];
-            $action_html = "<span><a data-url=".route('sale.show',$order->id)." data-order=".$order->id." class='btn btn-primary view-order' data-toggle='modal' data-target='#orderModal' title='View'><i class='far fa-eye' title='View'></i></a></span>";
+            $action_html = "<span><a data-url=".route('invoice.show',$order->id)." data-order=".$order->id." class='btn btn-primary view-order' data-toggle='modal' data-target='#orderModal' title='View'><i class='far fa-eye' title='View'></i></a></span>";
             // $action_html .= "<span class='ml-3 create-po-".$order->id."'><a data-url=".route('cart.po.create')." data-order=".$order->id." class='btn btn-success view-quote' data-toggle='modal' data-target='#orderModal'>Generate PO</a></span>";
             // $action_html = "<span><a href=".route('order.edit',$order->id)." class='btn btn-primary'>Edit</a></span>";
             // $action_html .= "<span class='ml-3'><button type=submit data-user=$order->id class='btn btn-danger' onClick=deleteOrder($order->id)>Delete</button></span>";

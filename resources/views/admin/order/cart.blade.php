@@ -54,12 +54,14 @@
             </div>
             @if(!$cart->isEmpty())
             <div class="row">
-                <div class="col-sm-12 col-md-5">
+                <div class="col-sm-12 {{(!$is_new_product)?'col-md-5':'col-md-7'}}">
                     <h5><strong>Product Name</strong></h5>
                 </div>
+                @if(!$is_new_product)
                 <div class="col-sm-12 col-md-2">
                     <h5><strong>Tax</strong></h5>
                 </div>
+                @endif
                 <div class="col-sm-12 col-md-1">
                     <h5><strong>Qty</strong></h5>
                 </div>
@@ -72,7 +74,7 @@
             </div>
             @foreach ($cart->getContent() as $product)
             <div class="row product-detail" data-product="{{$product->id}}">
-            <div class="col-sm-12 col-md-5">
+            <div class="col-sm-12 {{(!$is_new_product)?'col-md-5':'col-md-7'}}">
                 <!-- text input -->
                 <div class="form-group clearfix">
                     <div class="icheck-primary d-inline">
@@ -86,6 +88,7 @@
                     </div>
                 </div>
             </div>
+            @if(!$is_new_product)
             <div class="col-sm-12 col-md-2">
                 <!-- text input -->
                 <div class="form-group">
@@ -97,6 +100,7 @@
                     </select>
                 </div>
             </div>
+            @endif
             <div class="col-sm-12 col-md-1">
                 <div class="form-group">
                     <!-- <label for="qty">Qty</label> -->
@@ -121,6 +125,7 @@
             </div>
         </div>
         @endforeach
+        @if(!$is_new_product)
         @foreach ($total_tax as $tax => $total)
         <div class="row border-top">
             <div class="col-sm-12 offset-md-9 col-md-1 mt-2">
@@ -135,6 +140,7 @@
             </div>
         </div>
         @endforeach
+        @endif
         <div class="row border-top">
             <div class="col-sm-12 offset-md-9 col-md-1 mt-2">
                 <div class="form-group">

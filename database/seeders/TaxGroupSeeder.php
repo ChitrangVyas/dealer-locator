@@ -18,9 +18,9 @@ class TaxGroupSeeder extends Seeder
         DB::table('tax_groups')->delete();
         DB::table('taxes')->delete();
         $taxes = array(
-            array('id'=>1,'name'=>'CGST','created_at' => date('Y-m-d H:i:s'),'updated_at' => date('Y-m-d H:i:s')),
-            array('id'=>2,'name'=>'SGST','created_at' => date('Y-m-d H:i:s'),'updated_at' => date('Y-m-d H:i:s')),
-            array('id'=>3,'name'=>'IGST','created_at' => date('Y-m-d H:i:s'),'updated_at' => date('Y-m-d H:i:s'))            
+            array('id'=>1,'name'=>'CGST','slug'=>'cgst','created_at' => date('Y-m-d H:i:s'),'updated_at' => date('Y-m-d H:i:s')),
+            array('id'=>2,'name'=>'SGST','slug'=>'sgst','created_at' => date('Y-m-d H:i:s'),'updated_at' => date('Y-m-d H:i:s')),
+            array('id'=>3,'name'=>'IGST','slug'=>'igst','created_at' => date('Y-m-d H:i:s'),'updated_at' => date('Y-m-d H:i:s'))            
         );
         DB::table('taxes')->insert($taxes);
 

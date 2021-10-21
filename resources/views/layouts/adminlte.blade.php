@@ -154,9 +154,13 @@
     $('.required_field').addClass('text-danger');
     $("input,select,textarea").focusout(function(e){      
       if($(this).val()!=""){        
-        $(this).parent().find(".alert").hide();        
-      }else{
-        $(this).parent().find(".alert").show();
+        // $(this).parent().find(".alert").hide();        
+        $(this).parent().find('.alert').hide();
+        $(this).parent().parent('.form-group').find('.alert').hide();
+      }else{   
+        $(this).parent('.form-group').find('.alert').show();
+        $(this).parent().parent('.form-group').find('.alert').show();
+        // $(this).parent().find(".alert").show();
       }
     });
     $("select").change(function(e){      

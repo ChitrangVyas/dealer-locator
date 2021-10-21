@@ -28,6 +28,11 @@
     
 </head>
 <body class="hold-transition sidebar-mini">
+<div id="overlay">
+  <div class="cv-spinner">
+    <span class="spinner"></span>
+  </div>
+</div>
 <!-- Site wrapper -->
 <div class="wrapper">
   <!-- Navbar -->
@@ -161,9 +166,9 @@
         $(this).parent().find(".alert").show();
       }
     });
-    $(".modal").on("show.bs.modal", function () {
+    $("body").on("shown.bs.modal",'.modal', function () {
       $("body").addClass("modal-open");
-    }).on("hidden", function () {
+    }).on("hidden",'.modal', function () {
       $("body").removeClass("modal-open")
     });
     $(".nav-link.active").parent().parent().parent().addClass("menu-is-opening menu-open");

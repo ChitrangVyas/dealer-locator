@@ -84,6 +84,7 @@ Route::group(['prefix'=>'admin','middleware'=>['auth']],function () {
     Route::get('sale/', [App\Http\Controllers\Admin\OrderController::class,'saleIndex'])->name('sale.index');
     Route::any('sale/listSaleAjaxData', [App\Http\Controllers\Admin\OrderController::class,'listSaleAjaxData'])->name('list.sale');
     Route::post('sale/show', [App\Http\Controllers\Admin\OrderController::class,'showSale'])->name('sale.show');
+    Route::post('invoice/show', [App\Http\Controllers\Admin\OrderController::class,'showInvoice'])->name('invoice.show');
     Route::post('cart/sale/create', [App\Http\Controllers\Admin\CartController::class,'createSale'])->name('cart.sale.create');
     Route::post('order/sale/', [App\Http\Controllers\Admin\OrderController::class,'storeSale'])->name('order.sale.store');
     Route::post('invoice/create', [App\Http\Controllers\Admin\OrderController::class,'invoiceCreate'])->name('invoice.create');

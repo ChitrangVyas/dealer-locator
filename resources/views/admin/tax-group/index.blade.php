@@ -112,7 +112,14 @@
                             "_token": token,
                         },
                         success: function (res){
-                            window.location.reload();
+                            if(res.code == 1){
+                                $('#example').DataTable().ajax.reload(null, false);
+                            }else{
+                                Toast.fire({
+                                type: 'error',
+                                title: res.error
+                            });
+                            }
                         }
                     });
                 }

@@ -113,6 +113,21 @@ class MyCart
         $json['product_tax'] = $productTax;
         $this->session->put($cart_id,json_encode($json));        
     }
+    public function setTaxGroup($cart_id,$tax_group,$isNew=false){
+        $json = json_decode($this->session->get($cart_id,'{}'),true);
+        if($isNew){
+            $key = key($tax_group);
+            $json['tax_group'][$key] = $tax_group[$key];
+        }else{
+            $json['tax_group'] = $tax_group;
+        }
+        $this->session->put($cart_id,json_encode($json));     
+    }
+    public function setCartTotal($cart_id,$cart_total){
+        $json = json_decode($this->session->get($cart_id,'{}'),true);
+        $json['cart_total'] = $cart_total;
+        $this->session->put($cart_id,json_encode($json));
+    }
 
     public function setTaxTotal($cart_id,$cart){
         $total_tax = [];
@@ -121,20 +136,26 @@ class MyCart
             $total = 0.00;
             $total_tax['Sub total'] = 0.00;
             $productTax = [];
+            $cart_total = 0.00;
             foreach($cart->getContent() as $product){
                 foreach ($product->conditions as $condition){
-                        $productTax[$product->id][] = ["tax_id"=>$condition->getAttributes()['tax_id'],"tax"=>($condition->parsedRawValue  * $product->quantity)];
+                        $tax_percentage = rtrim($condition->getValue(),"%");
+                        $product_tax = ( $product->getPriceSum() * ($tax_percentage /100) );
+                        $productTax[$product->id][] = ["tax_id"=>$condition->getAttributes()['tax_id'],"tax"=>($product_tax)];
                         if(!in_array($condition->getName(),$conditions)){
                             $conditions[] = $condition->getName();
                             $total_tax[$condition->getName()] = 0.00;
                         }
                         if((in_array($condition->getName(),$conditions))){    
-                            $total_tax[$condition->getName()] = $total_tax[$condition->getName()] + ($condition->parsedRawValue * $product->quantity);
-                        }                        
+                            $total_tax[$condition->getName()] = $total_tax[$condition->getName()] + ($product_tax);
+                            $cart_total += $product_tax;
+                        }
                 }
                 $total += $product->getPriceSum();
             }
+            $cart_total += $total;
             $this->setProductTax($cart_id,$productTax);
+            $this->setCartTotal($cart_id,$cart_total);
             $total_tax['Sub total'] = $total;
             $json = json_decode($this->session->get($cart_id,'{}'),true);
             $json['total_tax'] = $total_tax;
@@ -153,10 +174,39 @@ class MyCart
         return !empty($json['product_tax'])?$json['product_tax']:'';
     }
 
+    public function getTaxGroup($cart_id){        
+        $json = (!empty($this->session->get($cart_id)))?json_decode($this->session->get($cart_id,[]),true):'';
+        return !empty($json['tax_group'])?$json['tax_group']:'';      
+    }
+
+    public function getCartTotal($cart_id){        
+        $json = (!empty($this->session->get($cart_id)))?json_decode($this->session->get($cart_id,[]),true):'';
+        return !empty($json['cart_total'])?$json['cart_total']:'';
+    }
+
     public function clear($cart_id){
         if ($this->session->has($cart_id)){
             return $this->session->forget($cart_id);
         }
+    }
+
+    public function removeItem($cart_id,$item){
+        $cart = $this->getAll($cart_id);
+        if(is_array($item)){
+            foreach($item as $key => $value){
+                foreach ($value as $val){
+                    if(in_array($key,$cart)){
+                        $keys = array_keys($cart[$key]);
+                        if(in_array($val,$keys)){
+                            unset($cart[$key][$val]);
+                        }
+                    }
+                }
+            }
+        }else{
+            unset($cart[$item]);
+        }
+        $this->session->put($cart_id,json_encode($cart));
     }
 
 }

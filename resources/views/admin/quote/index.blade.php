@@ -278,7 +278,7 @@
             });
         });    
         
-        $("body").on("change",".qty, .price", function(){
+        $("body").on("change",".tax, .qty, .price", function(){
             /* price = $(this).closest('.product-detail').find('.price').val();
             qty =  $(this).closest('.product-detail').find('.qty').val();
             amount = price * qty;
@@ -393,7 +393,11 @@
                 contentType: false,
                 processData: false,
                 beforeSend: function(){
+                    $('#overlay').show();
                     $('.btn-save').attr('disabled',true);
+                },
+                complete: function(){
+                    $('#overlay').hide();
                 },
                 success: function (data) {
                     if(data.code == 1){

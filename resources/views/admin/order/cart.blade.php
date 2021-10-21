@@ -54,9 +54,14 @@
             </div>
             @if(!$cart->isEmpty())
             <div class="row">
-                <div class="col-sm-12 col-md-7">
+                <div class="col-sm-12 {{(!$is_new_product)?'col-md-5':'col-md-7'}}">
                     <h5><strong>Product Name</strong></h5>
                 </div>
+                @if(!$is_new_product)
+                <div class="col-sm-12 col-md-2">
+                    <h5><strong>Tax</strong></h5>
+                </div>
+                @endif
                 <div class="col-sm-12 col-md-1">
                     <h5><strong>Qty</strong></h5>
                 </div>
@@ -69,7 +74,7 @@
             </div>
             @foreach ($cart->getContent() as $product)
             <div class="row product-detail" data-product="{{$product->id}}">
-            <div class="col-sm-12 col-md-7">
+            <div class="col-sm-12 {{(!$is_new_product)?'col-md-5':'col-md-7'}}">
                 <!-- text input -->
                 <div class="form-group clearfix">
                     <div class="icheck-primary d-inline">
@@ -83,6 +88,19 @@
                     </div>
                 </div>
             </div>
+            @if(!$is_new_product)
+            <div class="col-sm-12 col-md-2">
+                <!-- text input -->
+                <div class="form-group">
+                        <select class="form-control select2 tax" id='select tax' name='tax[{{$product->id}}]'>
+                        <option value="0">Select Tax</option>
+                        @foreach ($tax_groups as $tax_group)
+                        <option value="{{$tax_group->id}}" {{( (empty($selected_tax_group) && $tax_group->is_default ==1) || (isset($selected_tax_group[$product->id]) && $selected_tax_group[$product->id]==$tax_group->id))? 'selected' : '' }}>{{$tax_group->name}}</option>
+                        @endforeach
+                    </select>
+                </div>
+            </div>
+            @endif
             <div class="col-sm-12 col-md-1">
                 <div class="form-group">
                     <!-- <label for="qty">Qty</label> -->
@@ -107,6 +125,7 @@
             </div>
         </div>
         @endforeach
+        @if(!$is_new_product)
         @foreach ($total_tax as $tax => $total)
         <div class="row border-top">
             <div class="col-sm-12 offset-md-9 col-md-1 mt-2">
@@ -121,6 +140,7 @@
             </div>
         </div>
         @endforeach
+        @endif
         <div class="row border-top">
             <div class="col-sm-12 offset-md-9 col-md-1 mt-2">
                 <div class="form-group">
@@ -129,7 +149,7 @@
             </div>
             <div class="col-sm-12 col-md-1 mt-2">
                 <div class="form-group">
-                    <span class="col-4 right total d-inline" id="total">{{Str::currency($cart->getTotal())}}</span>
+                    <span class="col-4 right total d-inline" id="total">{{Str::currency((float)$cart_total)}}</span>
                 </div>
             </div>
         </div>

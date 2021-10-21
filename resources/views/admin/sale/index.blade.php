@@ -38,54 +38,6 @@
     </div>
 </section>
 <!-- modal -->
-<div class="modal fade" id="modal-lg">
-    <div class="modal-dialog modal-xl">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h4 class="modal-title">Inquiry Log</h4>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <div class="row">
-                    <div class="col-12 col-sm-12">
-                        <div class="card card-primary card-outline card-tabs">
-                            <div class="card-header p-0 pt-1 border-bottom-0">
-                                <ul class="nav nav-tabs" id="tabs" role="tablist">
-                                    <li class="nav-item">
-                                        <a class="nav-link active" id="tab-view" data-tab="view" data-toggle="pill" href="#nav-tab-view" role="tab" aria-controls="nav-tab-view" aria-selected="true" onclick="activeTab(this)">View Log</a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a class="nav-link" id="tab-add" data-tab="add" data-toggle="pill" href="#nav-tab-add" role="tab" aria-controls="nav-tab-add" aria-selected="false" onclick="activeTab(this)">Add Log</a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a class="nav-link" id="tab-task" data-tab="task" data-toggle="pill" href="#nav-tab-task" role="tab" aria-controls="nav-tab-task" aria-selected="false" onclick="activeTab(this)">Add Task</a>
-                                    </li>
-                                </ul>
-                            </div>
-                            <div class="card-body">
-                                <div class="tab-content" id="tab-content">
-                                    <div class="tab-pane fade show active" id="nav-tab-view" data-tab="view" role="tabpanel" aria-labelledby="tab-view">
-                                    </div>
-                                    <div class="tab-pane fade" id="nav-tab-add" data-tab="add" role="tabpanel" aria-labelledby="tab-add">
-                                    </div>
-                                    <div class="tab-pane fade" id="nav-tab-task" data-tab="task" role="tabpanel" aria-labelledby="tab-task">
-                                    </div>
-                                </div>
-                            </div>
-                            <!-- /.card -->
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- /.modal-content -->
-    </div>
-    <!-- /.modal-dialog -->
-</div>
-<!-- /.modal -->
-<!-- modal -->
 <div class="modal fade" id="orderModal">
     <div class="modal-dialog modal-xl">
         <div class="modal-content">
@@ -297,7 +249,7 @@
             });
         });        
         
-        $("body").on("change",".qty, .price", function(){
+        $("body").on("change",".tax, .qty, .price", function(){
             /* price = $(this).closest('.product-detail').find('.price').val();
             qty =  $(this).closest('.product-detail').find('.qty').val();
             amount = price * qty;
@@ -387,7 +339,11 @@
                 type: 'POST',
                 data: formData,
                 beforeSend: function(){
+                    $('#overlay').show();
                     $('.btn-save').attr('disabled',true);
+                },
+                complete: function(){
+                    $('#overlay').hide();
                 },
                 success: function (data) {
                     if(data.code == 1){

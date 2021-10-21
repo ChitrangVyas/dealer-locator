@@ -73,6 +73,7 @@ class DealerUserController extends MainController
                 'state_id' => $request_data['state'],
                 'zipcode' => $request_data['zipcode'],
                 'status' => (!empty($request_data['status']))?1:0,
+                'gstin' => $request_data['gstin'],
             ]);
             Mail::to($user->email)->send(new Welcome($user,"Welcome to ".config('app.name'),$request_data['password'],url(route('dealer.login'))));
         }catch(Exception $e){
@@ -128,6 +129,7 @@ class DealerUserController extends MainController
             'state_id' => $request_data['state'],
             'zipcode' => $request_data['zipcode'],
             'status' => $request_data['status'],
+            'gstin' => $request_data['gstin'],
         ]);
         return redirect(route('dealer.index'));
     }

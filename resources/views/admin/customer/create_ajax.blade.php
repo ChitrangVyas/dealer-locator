@@ -103,10 +103,20 @@
                     <input type="text" name="zipcode" value="{{ (!empty($user))?$user->zipcode:'' }}" class="form-control" placeholder="Enter zipcode" tabindex="27">
                 </div>
             </div>
+            <div class="col-sm-12 col-md-4">
+                <!-- text input -->
+                <div class="form-group">
+                    <label>GSTIN</label>
+                    <input type="text" class="form-control" name="gstin" value="{{ old('gstin',(!empty($user))?$user->gstin:'')}}" placeholder="GSTIN" tabindex="28">
+                    @error('gstin')
+                        <div class="alert alert-danger mt-2">{{ $message }}</div>
+                    @enderror
+                </div>
+            </div>
         </div>
         <div class="row">
             <div class="col-sm-12">
-                <button type="submit" class="btn btn-primary" tabindex="28">Submit</button>
+                <button type="submit" class="btn btn-primary" tabindex="29">Submit</button>
             </div>
         </div>
     </form>

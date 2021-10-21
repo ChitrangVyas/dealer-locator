@@ -128,8 +128,18 @@
                     <div class="col-sm-12 col-md-6">
                         <!-- text input -->
                         <div class="form-group">
+                            <label>HSN/SAC</label>
+                            <input type="text" class="form-control" name="hsn_sac" value="{{ old('hsn_sac',(!empty($product))?$product->hsn_sac:'')}}" placeholder="HSN/SAC" tabindex="9">
+                            @error('hsn_sac')
+                                <div class="alert alert-danger mt-2">{{ $message }}</div>
+                            @enderror
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-6">
+                        <!-- text input -->
+                        <div class="form-group">
                             <label class="col-12">Status</label>
-                            <input type="checkbox" name="status" id="status" class="form-control status" data-bootstrap-switch  data-on-text="Enable" data-off-text="Disable" data-off-color="danger" data-on-color="success" {{((!isset($product)) || (!empty($product->status)))? "checked" :"" }} tabindex="9">
+                            <input type="checkbox" name="status" id="status" class="form-control status" data-bootstrap-switch  data-on-text="Enable" data-off-text="Disable" data-off-color="danger" data-on-color="success" {{((!isset($product)) || (!empty($product->status)))? "checked" :"" }} tabindex="10">
                             @error('status')
                             <div class="alert alert-danger mt-2">{{ $message }}</div>
                             @enderror
@@ -138,7 +148,7 @@
                 </div>
                 <div class="row">
                     <div class="col-sm-12 col-md-12">
-                        <button type="submit" class="btn btn-primary" tabindex="10">Submit</button>
+                        <button type="submit" class="btn btn-primary" tabindex="11">Submit</button>
                     </div>
                 </div>
             </form>

@@ -33,6 +33,7 @@ class User extends Authenticatable
         'state_id',
         'status',
         'zipcode',
+        'gstin'
     ];
 
     /**

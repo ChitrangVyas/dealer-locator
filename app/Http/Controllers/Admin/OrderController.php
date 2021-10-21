@@ -269,7 +269,7 @@ class OrderController extends MainController
                     $order_product = '';
                     if(!empty($order_product_data)){
                         $order_product = OrderProduct::create($order_product_data);
-                        if(empty($request_data['is_new_product'])){
+                        if(empty($request_data['is_new_product']) && (!empty($tax_data['product_tax']))){
                             if(in_array($cart_product->id,array_keys($tax_data['product_tax']))){
                                 foreach($tax_data['product_tax'][$cart_product->id] as $tax){
                                     $order_tax_data = OrderProductTax::create(["order_product_id"=>$order_product->id,"tax_id"=>$tax['tax_id'],"price"=>$tax['tax']]);

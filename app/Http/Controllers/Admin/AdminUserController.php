@@ -63,6 +63,7 @@ class AdminUserController extends MainController
                     'state_id' => $request_data['state'],
                     'zipcode' => $request_data['zipcode'],
                     'status' => (!empty($request_data['status']))?1:0,
+                    'gstin' => $request_data['gstin'],
                 ]);
             }catch(Exception $e){               
                 return redirect(route('staff.create'))->with('exception', $e->getMessage());
@@ -116,6 +117,7 @@ class AdminUserController extends MainController
             'city_id' => $request_data['city'],
             'state_id' => $request_data['state'],
             'zipcode' => $request_data['zipcode'],
+            'gstin' => $request_data['gstin'],
         ];
         $data['status'] = (!empty($request_data['status']))?1:0;
         if(!empty($request['password'])){

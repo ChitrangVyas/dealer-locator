@@ -105,7 +105,9 @@ class CartController extends MainController
                         'name' => $product_data->name,
                         'price' => $request->input('amount')[$key],
                         'quantity' => $request->input('qty')[$key],
-                        'attributes' => array(),
+                        'attributes' => array(
+                            'hsn_sac' => (!empty($product_data->hsn_sac)) ? $product_data->hsn_sac : '',
+                        ),
                         'conditions'=>$condition,
                     ));
                     $selected_tax_group[$product_data->id] = (isset($request->input('tax')[$product_data->id]))?$request->input('tax')[$product_data->id]:'';
@@ -181,7 +183,9 @@ class CartController extends MainController
                         'name' => $product->name,
                         'price' => $product->price,
                         'quantity' => '1',
-                        'attributes' => array(),
+                        'attributes' => array(
+                            'hsn_sac' => (!empty($product->hsn_sac)) ? $product->hsn_sac : '',
+                        ),
                         'conditions' => $condition,
                     );
                     $selected_tax_group[$product->id] = (!empty($product_tax_group))?$product_tax_group->id:'';
@@ -248,7 +252,9 @@ class CartController extends MainController
                     'name' => $product->name,
                     'price' => $product->price,
                     'quantity' => '1',
-                    'attributes' => array(),
+                    'attributes' => array(
+                        'hsn_sac' => (!empty($product->hsn_sac)) ? $product->hsn_sac : '',
+                    ),
                     'conditions'=>$condition,
                 )
             );
@@ -271,7 +277,9 @@ class CartController extends MainController
                         'name' => $product->name,
                         'price' => $product->price,
                         'quantity' => '1',
-                        'attributes' => array(),
+                        'attributes' => array(
+                            'hsn_sac' => (!empty($product->hsn_sac)) ? $product->hsn_sac : '',
+                        ),
                         'conditions'=>$condition,
                     )
                 );
@@ -331,7 +339,9 @@ class CartController extends MainController
                         'name' => $orderProduct->product->name,
                         'price' => $orderProduct->amount,
                         'quantity' => $orderProduct->qty,
-                        'attributes' => array(),
+                        'attributes' => array(
+                            'hsn_sac' => (!empty($orderProduct->product->hsn_sac)) ? $orderProduct->product->hsn_sac : '',
+                        ),
                         'conditions' => $condition,
                     );
                     if($is_dealer){
@@ -474,7 +484,9 @@ class CartController extends MainController
                     'name' => $orderProduct->product->name,
                     'price' => $orderProduct->amount,
                     'quantity' => $orderProduct->qty,
-                    'attributes' => array(),
+                    'attributes' => array(
+                        'hsn_sac' => (!empty($orderProduct->product->hsn_sac)) ? $orderProduct->product->hsn_sac : '',
+                    ),
                     'conditions' => $condition,
                 );
                 $selected_tax_group[$orderProduct->product->id] = (!empty($product_tax_group))?$product_tax_group->id:'';

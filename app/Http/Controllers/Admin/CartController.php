@@ -459,7 +459,11 @@ class CartController extends MainController
                 if((!empty(auth()->user()->users_group_id)) || (auth()->user()->users_group_id > 1)){
                     $this->myCart->setFrom($id,auth()->user()->id);
                 }
-                $this->myCart->setTo($id,$order->from_user);
+                if($order->type == 'po'){
+                    $this->myCart->setTo($id,$order->from_user);
+                }else{
+                    $this->myCart->setTo($id,$order->to_user);
+                }
                 $this->myCart->setForManufacturePoTOSale($id,1);
             }
             foreach($order->orderProduct as $orderProduct){

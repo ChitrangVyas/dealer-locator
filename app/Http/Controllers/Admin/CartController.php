@@ -270,7 +270,7 @@ class CartController extends MainController
             $cart_product = $product;
             $count=1;
             $condition = $this->getProductTaxCondition($cart_product,$request->input('id'));
-            if($product->brand->manufacturer->id == $cart_product->brand->manufacturer->id || $this->myCart->getType($request->input('id'))== 'sale'){
+            if($this->myCart->getType($request->input('id'))== 'sale'){
                 $cart->add(
                     array(
                         'id' => $product->id,
@@ -284,7 +284,7 @@ class CartController extends MainController
                     )
                 );
             }else{
-                return response()->json(['status' => 'error','code' => 0, 'data'=>'', 'message'=>'Selected product is from diffrent manufacturer.']);
+                return response()->json(['status' => 'error','code' => 0, 'data'=>'', 'message'=>'Unable to add Product.']);
             }
         }
         $selected_tax_group[$product->id] = (!empty($product_tax_group))?$product_tax_group->id:'';

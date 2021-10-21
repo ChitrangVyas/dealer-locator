@@ -19,7 +19,8 @@
                         {{ucwords((!empty($to_user->city))?$to_user->city->name:$setting['city_name'])}},<br>
                         {{ucwords((!empty($to_user->state))?$to_user->state->name:$setting['state_name'])}} - {{(!empty($to_user->zipcode))?$to_user->zipcode:$setting['zipcode']}}<br>
                         Phone: {{(!empty($to_user->mobile))?$to_user->mobile:$setting['mobile']}}<br>
-                        Email: {{ (!empty($to_user->email))?$to_user->email:$setting['email']}}
+                        Email: {{ (!empty($to_user->email))?$to_user->email:$setting['email']}}<br>
+                        GSTIN: {{ (!empty($to_user))?((!empty($to_user->gstin))?$to_user->gstin:' N/A '):$setting['gstin'] }}
                     </address>
                 </div>
             </div>
@@ -54,10 +55,13 @@
             </div>
             @if(!$cart->isEmpty())
             <div class="row">
-                <div class="col-sm-12 {{(!$is_new_product)?'col-md-5':'col-md-7'}}">
+                <div class="col-sm-12 {{(!$is_new_product)?'col-md-4':'col-md-7'}}">
                     <h5><strong>Product Name</strong></h5>
                 </div>
                 @if(!$is_new_product)
+                <div class="col-sm-12 col-md-1">
+                    <h5><strong>HSN/SAC</strong></h5>
+                </div>
                 <div class="col-sm-12 col-md-2">
                     <h5><strong>Tax</strong></h5>
                 </div>
@@ -74,7 +78,7 @@
             </div>
             @foreach ($cart->getContent() as $product)
             <div class="row product-detail" data-product="{{$product->id}}">
-            <div class="col-sm-12 {{(!$is_new_product)?'col-md-5':'col-md-7'}}">
+            <div class="col-sm-12 {{(!$is_new_product)?'col-md-4':'col-md-7'}}">
                 <!-- text input -->
                 <div class="form-group clearfix">
                     <div class="icheck-primary d-inline">
@@ -83,12 +87,17 @@
                         <input type="text" class="form-control product d-inline" value="{{$product->name}}" name="product[{{$product->id}}]" required/>
                             @else
                             <input type="hidden" name="product[{{$product->id}}]" value="{{ $product->name }}" />
-                            <label>{{$product->name}}</label>
+                            <label class="text-break">{{$product->name}}</label>
                         @endif
                     </div>
                 </div>
             </div>
             @if(!$is_new_product)
+            <div class="col-sm-12 col-md-1 text-break text-center">
+                <div class="form-group">
+                    <label class="hsn-sac-{{$product->id}}" id="hsn-sac-{{$product->id}}">{{($product->attributes->has('hsn_sac') && (!empty($product->attributes['hsn_sac']) && strlen($product->attributes['hsn_sac']) > 0 )) ? $product->attributes['hsn_sac'] : ' -'}}</label>
+                </div>
+            </div>
             <div class="col-sm-12 col-md-2">
                 <!-- text input -->
                 <div class="form-group">

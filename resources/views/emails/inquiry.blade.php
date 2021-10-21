@@ -18,7 +18,8 @@
                     {{ucwords($inquiry->dealer->city->name)}},<br>
                     {{ucwords($inquiry->dealer->state->name)}} - {{$inquiry->dealer->zipcode}}<br>
                     Phone: {{$inquiry->dealer->mobile}}<br>
-                    Email: {{$inquiry->dealer->email}}
+                    Email: {{$inquiry->dealer->email}}<br>
+                    GSTIN: {{ ((!empty($inquiry->dealer->gstin))?$inquiry->dealer->gstin:' N/A ') }}
                 </address>
             </p>
         </td>
@@ -36,7 +37,8 @@
                     {{ucwords($inquiry->retailer->city->name)}},<br>
                     {{ucwords($inquiry->retailer->state->name)}} - {{$inquiry->retailer->zipcode}}<br>
                     Phone: {{$inquiry->retailer->mobile}}<br>
-                    Email: {{$inquiry->retailer->email}}
+                    Email: {{$inquiry->retailer->email}}<br>
+                    GSTIN: {{ ((!empty($inquiry->retailer->gstin))?$inquiry->retailer->gstin:' N/A ') }}
                 </address>
             </p>
             <hr>

@@ -393,14 +393,16 @@ text-align: center;
                                     {{ucwords($order->customer->city->name)}},<br>
                                     {{ucwords($order->customer->state->name)}} - {{$order->customer->zipcode}}<br>
                                     Phone: {{$order->customer->mobile}}<br>
-                                    Email: {{$order->customer->email}}
+                                    Email: {{$order->customer->email}}<br>
+                                    GSTIN: {{ ((!empty($order->customer->gstin))?$order->customer->gstin:' N/A ') }}
                                   @else
                                   <strong>{{ucwords($setting['name'])}}</strong><br>
                                     {{ucwords($setting['address'])}},<br>
                                     {{ucwords($setting['city_name'])}},<br>
                                     {{ucwords($setting['state_name'])}} - {{$setting['zipcode']}}<br>
                                     Phone: {{$setting['mobile']}}<br>
-                                    Email: {{$setting['email']}}
+                                    Email: {{$setting['email']}}<br>
+                                    GSTIN: {{ ((!empty($setting['gstin']))?$setting['gstin']:' N/A ') }}
                                   @endif
                                 </address>
                             </p>
@@ -419,14 +421,16 @@ text-align: center;
                               @if(!empty($order->addedBy->mobile))
                               Phone: {{$order->addedBy->mobile}}<br>
                               @endif
-                              Email: {{$order->addedBy->email}}
+                              Email: {{$order->addedBy->email}}<br>
+                              GSTIN: {{ ((!empty($order->addedBy->gstin))?$order->addedBy->gstin:' N/A ') }}
                           @else
                               <strong>{{ucwords($setting['name'])}}</strong><br>
                                 {{ucwords($setting['address'])}},<br>
                                 {{ucwords($setting['city_name'])}},<br>
                                 {{ucwords($setting['state_name'])}} - {{$setting['zipcode']}}<br>
                                 Phone: {{$setting['mobile']}}<br>
-                                Email: {{$setting['email']}}
+                                Email: {{$setting['email']}}<br>
+                                GSTIN: {{ ((!empty($setting['gstin']))?$setting['gstin']:' N/A ') }}
                           @endif
                           </address>
                         </p>
@@ -437,6 +441,7 @@ text-align: center;
                       <table class="docuementTable" border="1" cellpadding="0" cellspacing="0">
                         <tr>
                           <th align="left">Product Name</th>
+                          <th>HSN/SAC</th>
                           <th align="left">Price</th>
                           <th align="left">Qty</th>
                           <th align="left">Amount</th>
@@ -444,23 +449,24 @@ text-align: center;
                         @foreach ($order->orderProduct as $orderProduct)
                             <tr>
                                 <td style="text-align: left;">{{$orderProduct->product_name}}</td>
+                                <td style="text-align: center;">{{ (!empty($orderProduct->product->hsn_sac)) ? $orderProduct->product->hsn_sac : '-' }}</td>
                                 <td>{{Str::currency($orderProduct->amount)}}</td>
                                 <td>{{$orderProduct->qty}}</td>
                                 <td>{{Str::currency($orderProduct->getSubTotal())}}</td>
                             </tr>
                         @endforeach
                           <tr>
-                            <td colspan="3" style="text-align: right;"><strong>Sub Total</strong></td>
+                            <td colspan="4" style="text-align: right;"><strong>Sub Total</strong></td>
                             <td>{{ number_format($order->getSubTotal()['sub_total'],2) }}</td>
                         </tr>
                         @foreach ($order->getTotalTax() as $tax)
                         <tr>
-                            <td colspan="3" style="text-align: right;"><strong>{{$tax->name}}</strong></td>
+                            <td colspan="4" style="text-align: right;"><strong>{{$tax->name}}</strong></td>
                             <td>{{ number_format($tax->total_tax,2) }}</td>
                         </tr>    
                         @endforeach
                         <tr>
-                            <td colspan="3" style="text-align: right;">
+                            <td colspan="4" style="text-align: right;">
                                 <strong>Total</strong>
                             </td>
                             <td>

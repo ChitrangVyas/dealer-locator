@@ -214,6 +214,16 @@
                     @enderror
                 </div>
             </div>
+            <div class="col-sm-12 col-md-4">
+                <!-- text input -->
+                <div class="form-group">
+                    <label>GSTIN</label>
+                    <input type="text" class="form-control" name="gstin" value="{{ old('gstin',(!empty($settings) && (!empty($settings->json_data['gstin'])))?$settings->json_data['gstin']:'')}}" placeholder="GSTIN" tabindex="8">
+                    @error('gstin')
+                        <div class="alert alert-danger mt-2">{{ $message }}</div>
+                    @enderror
+                </div>
+            </div>
         </div>
         <div class="row">
             <div class="col-sm-12 col-md-12 border-bottom mt-2 mb-2">

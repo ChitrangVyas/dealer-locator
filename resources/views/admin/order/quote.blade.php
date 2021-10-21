@@ -33,6 +33,7 @@
                             <li><strong>{{ucwords($inquiry->customer->state->name)}} - {{$inquiry->customer->zipcode}}</strong></li>
                             <li><strong>Mobile: {{$inquiry->customer->mobile}}</strong></li>
                             <li><strong>Email: {{$inquiry->customer->email}}</strong></li>
+                            <li><strong>GSTIN: {{ (!empty($inquiry->customer->gstin)) ? $inquiry->customer->gstin : ' N/A ' }}</strong></li>
                         </ul>
                     </div>
                 </div>

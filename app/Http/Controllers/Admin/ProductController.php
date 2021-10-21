@@ -83,6 +83,7 @@ class ProductController extends MainController
                 'image' => $file_path,
                 'status' => (!empty($request_data['status']))?1:0,
                 'tax_group_id'=> $request_data['tax_group_id'],
+                'hsn_sac'=> $request_data['hsn_sac'],
             ]);
             if((!empty($product)) && (!empty($request_data['categories']))){
                 $categories = Category::find($request_data['categories']);
@@ -142,7 +143,8 @@ class ProductController extends MainController
             'brand_id' => $request_data['brand_id'],
             'inventory' => $request['inventory'],           
             'price' => $request['price'],
-            'tax_group_id'=> $request_data['tax_group_id'],      
+            'tax_group_id'=> $request_data['tax_group_id'],
+            'hsn_sac'=> $request_data['hsn_sac'],    
         ];
         $upload_data['status'] = (!empty($request_data['status']))?1:0;
         try{

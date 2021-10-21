@@ -176,8 +176,7 @@ class TaxGroupController extends MainController
             }catch(Exception $e){
                 return response()->json(['code'=>0 ,'error'=>$e->getMessage()]);
             }
-            return response(json_encode($return_array = ['code'=>1,'data'=>'Tax group is successfully deleted']), 200)
-        ->header('Content-Type', 'text/plain');
+            return response()->json(['code'=>1,'data'=>'Tax group is successfully deleted']);
         }
         return response()->json([],401);
     }

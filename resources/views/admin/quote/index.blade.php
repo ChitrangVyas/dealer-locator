@@ -279,11 +279,6 @@
         });    
         
         $("body").on("change",".tax, .qty, .price", function(){
-            /* price = $(this).closest('.product-detail').find('.price').val();
-            qty =  $(this).closest('.product-detail').find('.qty').val();
-            amount = price * qty;
-            // amount = ele.closest('.product-detail').find('.amount').val();
-            $(this).closest('.product-detail').find('.amount').text(amount); */
             updateCart().then(function(){     
                 select2Product();
             });

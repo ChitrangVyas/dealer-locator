@@ -3,6 +3,11 @@
 {{$title}}
 @endsection
 @section('content')
+<style>
+   input[type="checkbox"][readonly] {
+  pointer-events: none;
+}
+</style>
 <div class="card card-primary">
     <div class="card-header">
         <h3 class="card-title">{{$action_title}} {{$title}}</h3>
@@ -68,9 +73,12 @@
                     <div class="col-sm-12 col-md-12">
                         <div class="form-group">
                             <div class="pt-2">
-                                <input type="checkbox" class="input-control" id="is_default" name="is_default" {{((!empty($taxGroup)) && (!empty($taxGroup->is_default)))? "checked" :"" }} tabindex="5">
+                                <input type="checkbox" class="input-control" id="is_default" name="is_default" {{((!empty($taxGroup)) && (!empty($taxGroup->is_default)))? "checked readonly" :"" }} tabindex="5">
                                     <label>Make as a Default</label>
                             </div>
+                            @if((!empty($taxGroup)) && (!empty($taxGroup->is_default)))
+                            <label><span class="text-red"><strong>Note:</strong> System need one Tax group as default, So please go in any other group and check the checkbox for the "Make default" and save that so, This group will be removed from default.</span></label>
+                            @endif
                         </div>
                     </div>
                     <div class="col-sm-12 col-md-6">

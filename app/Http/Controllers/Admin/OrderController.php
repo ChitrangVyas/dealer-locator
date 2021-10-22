@@ -213,7 +213,7 @@ class OrderController extends MainController
                         try{
                             Mail::to($customer)->send(new OrderEmailTemplate($quote,config('app.name').' - Quote',$from,$from_name));
                         }catch(Exception $e){
-                            return response()->json(['status' => 'error','code' => 0,'message' => 'Unable to sent Mail.']);
+                            return response()->json(['status' => 'error','code' => 0,'message' => 'Unable to sent Mail.','body'=>$e->getMessage()]);
                         }
                         // $this->send($email_data);
                     }
@@ -463,7 +463,7 @@ class OrderController extends MainController
                         try{
                             Mail::to($customer)->send(new OrderEmailTemplate($order,config('app.name').' - Sales',$from,$from_name));
                         }catch(Exception $e){
-                            return response()->json(['status' => 'error','code' => 0,'message' => 'Unable to sent Mail.']);
+                            return response()->json(['status' => 'error','code' => 0,'message' => 'Unable to sent Mail.','body'=>$e->getMessage()]);
                         }
                     }
                     return response()->json(['status' => 'successful', 'data'=>['quote'=>$cart_data['order_reference']],'code'=>1,'message'=>'Sales Successfully created.']);

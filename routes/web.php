@@ -53,6 +53,8 @@ Route::group(['prefix'=>'admin','middleware'=>['auth']],function () {
     Route::post('notification/markasread', [App\Http\Controllers\NotificationController::class,'markAsRead'])->name('notification.markasread');
     Route::post('notification/get', [App\Http\Controllers\NotificationController::class,'userNotification'])->name('notification.get');
     Route::get('customer/createAjax', [App\Http\Controllers\Admin\CustomerUserController::class,'createAjax'])->name('customerCreateAjax');
+    Route::post('profile/edit', [App\Http\Controllers\CommonController::class,'editProfile'])->name('profile.edit');
+    Route::put('profile/', [App\Http\Controllers\CommonController::class,'updateProfile'])->name('profile.update');
     Route::get('vendor/', [App\Http\Controllers\Admin\CustomerUserController::class,'vendorIndex'])->name('vendor.index');
     Route::any('vendor/listajax', [App\Http\Controllers\Admin\VendorController::class,'vendorListAjaxData'])->name('vendorlistajax');
     //inquiry & inquiry-log

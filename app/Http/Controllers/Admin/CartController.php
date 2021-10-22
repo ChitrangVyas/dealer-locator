@@ -242,7 +242,6 @@ class CartController extends MainController
         $taxGroup  = TaxGroup::where('is_default',1)->first();
         $selected_tax_group = [];
         $condition = [];
-        $count=1;
         $product_tax_group = (!empty($product->taxGroup))?$product->taxGroup:$taxGroup;
         if($cart->isEmpty()){
             $condition = $this->getProductTaxCondition($product,$request->input('id'));
@@ -259,18 +258,8 @@ class CartController extends MainController
                 )
             );
         }else{
-            //
-            /* $items = $cart->getContent();
-
-            foreach($items as $row) {
-                 $cart_product_id = $row->id; 
-                 break;
-            } */
-            // $cart_product = Product::findOrFail($cart_product_id);
             $cart_product = $product;
-            $count=1;
             $condition = $this->getProductTaxCondition($cart_product,$request->input('id'));
-            if($this->myCart->getType($request->input('id'))== 'sale'){
                 $cart->add(
                     array(
                         'id' => $product->id,
@@ -283,9 +272,6 @@ class CartController extends MainController
                         'conditions'=>$condition,
                     )
                 );
-            }else{
-                return response()->json(['status' => 'error','code' => 0, 'data'=>'', 'message'=>'Unable to add Product.']);
-            }
         }
         $selected_tax_group[$product->id] = (!empty($product_tax_group))?$product_tax_group->id:'';
         $cart->getSubTotal();
@@ -344,14 +330,6 @@ class CartController extends MainController
                         ),
                         'conditions' => $condition,
                     );
-                    if($is_dealer){
-                        // $manufacturer = (empty($manufacturer))?$orderProduct->product->brand->manufacturer->id:$manufacturer;
-                        // $manufacturer = NULL;
-                        // if($manufacturer != $orderProduct->product->brand->manufacturer->id){
-                        //     $json['cart_title'] = "PO".(!empty($this->myCart->getOrderNumber($id)) ? " #".$this->myCart->getOrderNumber($id) : '');
-                        //     return response()->json(['status' => 'error','code'=>0, 'data'=>$json, 'message'=>'Please Select the Same Manufacturer Product']);    
-                        // }
-                    }
                     $selected_tax_group[$orderProduct->product->id] = (!empty($product_tax_group))?$product_tax_group->id:'';
                 }
                 $cart->add($items);

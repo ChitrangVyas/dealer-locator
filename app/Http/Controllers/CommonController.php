@@ -5,8 +5,11 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Admin\MainController;
 use App\Http\Helpers;
 use App\Models\City;
+use App\Models\User;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
 
 class CommonController extends MainController
 {
@@ -95,5 +98,46 @@ class CommonController extends MainController
             }
         }
         return response()->json(['status' => 'error','code'=>0, 'data'=>'', 'message'=>'Something goes wrong']);
+    }
+
+    public function editProfile(Request $request){
+        if($request->ajax()){
+            $user = User::findOrFail($request->input('id'));
+            $json_data = array('status' => 'success','code'=>1);
+            $json_data['title'] = 'Edit Profile';
+            $json_data['content'] =  view('layouts.partials.profile',['user'=>$user])->render();
+
+            return response()->json(['status' => 'successful','code'=>1, 'data'=>$json_data, 'message'=>'']);
+        } else {
+            return abort(404);
+        }
+
+    }
+
+    public function updateProfile(Request $request){
+        if($request->ajax()){
+            Validator::make($request->all(), [
+                'name' => 'required',
+                'mobile' => 'required',
+                'address' => 'required',
+            ],[
+                'name.required'=>"Name is required.",
+                'mobile.required' => "Mobile is required.",
+                'address.required' => "Address is required.",
+            ])->validate();
+                $request_data = $request->except('_method','_token','id');
+                $user = User::findOrFail($request->input('id'));
+                try{
+                     if($user->update($request_data)){
+                        return response()->json(['status' => 'successful','code'=>1,'data'=>'Profile has been successfully updated.']);
+                     }
+
+                }catch(Exception $e){
+                    return response()->json(['status'=>'error','code'=>0,'data'=>$e->getMessage()]);
+                }
+                return response()->json(['status'=>'error','code'=>0,'data'=>'Profile is not Updated']);
+        }else{
+            return abort(404,'Not Found');
+        }
     }
 }

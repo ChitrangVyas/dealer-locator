@@ -152,7 +152,7 @@
 <script>
   $("document").ready(function(){
     $('.required_field').addClass('text-danger');
-    $("input,select,textarea").focusout(function(e){      
+    $("body").on('focusout','input,select,textarea',function(e){      
       if($(this).val()!=""){        
         // $(this).parent().find(".alert").hide();        
         $(this).parent().find('.alert').hide();
@@ -213,6 +213,22 @@
         }
       });
     },60000);
+    $('.edit-profile').on('click',function(){
+      // $('#profileModal').modal('show');
+      var token = $("meta[name='csrf-token']").attr("content");
+      $.ajax({
+          url: "{{route('profile.edit')}}",
+          type: 'POST',
+          data:{id:"{{auth()->user()->id}}",'_token':token},
+          success: function(res) {
+            if(res != '' && res.code == "1"){
+              $(`#profileModal .modal-body`).html(res.data.content);
+              $('#profileModal .modal-title').text(res.data.title);
+              $('#profileModal').modal('show');
+            }
+          }
+      });
+    });
   });
 </script>
 <!-- jQuery -->

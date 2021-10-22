@@ -27,7 +27,10 @@
           Logged as {{auth()->user()->name}}
         </a>
         <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">          
-        <a class="dropdown-item" href="{{ route('changepassword') }}" role="button">
+          <a class="dropdown-item edit-profile" href="javascript:void(0);" role="button">
+            <i class="fas fa-user-alt"></i> @if (trans()->has('lang.edit_profile')) {{ __('lang.edit_profile') }} @else {{__('Edit Profile')}} @endif
+          </a>
+          <a class="dropdown-item" href="{{ route('changepassword') }}" role="button">
             <i class="fas fa-lock"></i> @if (trans()->has('lang.change_password')) {{ __('lang.change_password') }} @else {{__('Change Password')}} @endif   
           </a> 
           <div class="dropdown-divider"></div>                       

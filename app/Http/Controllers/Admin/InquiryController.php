@@ -332,4 +332,75 @@ class InquiryController extends MainController
         return response(json_encode($return_array), 200)
         ->header('Content-Type', 'text/plain');
     }
+
+    public function inquiryReport(){
+        View::share('title', 'Inquiry Report');
+        View::share('elementActive', 'inquiry_report');
+        return view('admin.report.inquiry');
+    }
+
+    public function reportListAjaxData(Request $request){
+        $user =  auth()->user();
+        $dealer_id = '';
+        $retailer_id = '';
+        if((!empty($user->userGroup)) && $user->userGroup->id == '2'){
+            $dealer_id = $user->id;
+        }else if((!empty($user->userGroup)) && $user->userGroup->id == '3'){
+            $retailer_id = $user->id;
+        }
+
+        $start =  $request['start'];
+        $length=  $request['length'];
+        $search = $request['search']['value'];
+        $where = 'inquiries.deleted_at is NULL';
+        $where .= (!empty($dealer_id))?" AND (dealer_id=$dealer_id OR inquiries.created_by=$dealer_id)":'';
+        $where .= (!empty($retailer_id))?" AND (retailer_id=$retailer_id OR inquiries.created_by=$retailer_id)":'';
+        $total_where = $where;
+        $where .= (!empty($search)) ? " AND (c.name like '$search%' OR c.email like '$search%' OR p.name like '$search%' OR source like '%$search%' OR (d.name is NOT NULL AND d.name like '$search%'))":'';
+        $inquiries = DB::table('inquiries')
+        ->select(DB::raw('inquiries.id, inquiries.status, inquiries.created_by,source,c.name as customer,c.email AS customer_email,c.mobile AS customer_mobile,d.name as dealer, r.name as retailer,group_concat(p.name SEPARATOR "<br>") as product'))
+        ->join('inquiries_products','inquiries.id','=','inquiries_products.inquiry_id','left')
+        ->join('inquiries_source','inquiries.inquiries_source_id','=','inquiries_source.id','left')
+        ->join('users AS c','inquiries.customer_id','=','c.id','left')
+        ->join('products AS p','inquiries_products.product_id','=','p.id','left')
+        ->join('users AS d','inquiries.dealer_id','=','d.id','left')
+        ->join('users AS r','inquiries.retailer_id','=','r.id','left')
+        ->whereRaw($where);
+        $total_inquiries = $inquiries->groupBy('inquiries.id')->get()->count();
+        $inquiries = $inquiries->offset($start)
+        ->limit($length)->orderBy($request['columns'][$request['order'][0]['column']]['name'],$request['order'][0]['dir'])
+        ->groupby('inquiries.id')->get();
+        
+        $data = [];
+        foreach($inquiries as $inquiry){
+            $dealer = (!empty($inquiry->dealer))?$inquiry->dealer:'N/A';
+            $retailer = (!empty($inquiry->retailer))?$inquiry->retailer:'N/A';
+            $action_html = "";
+            $inquiryObj = Inquiry::find($inquiry->id);
+            $inquiry_status = (!empty($inquiryObj->status) && $inquiryObj->status !=0 )?$inquiryObj->getInquirystatusName():'N/A';
+            $status_html = $inquiry_status;
+            $action_html .= "<span><button type='button' id='addLog' class='btn btn-default' data-inquiry=$inquiry->id data-view-url='".route('inquiry-log.show',$inquiry->id)."' data-add-url='".route('inquiry-log.create')."' data-task-url='".route('createReminder')."' data-toggle='modal' data-target='#modal-lg' title='View Log'><i class='fas fa-clipboard-list' title='View Log'></i></button></span>";
+            $action_html .= "<span class='ml-2'><button type='button' class='btn btn-primary view-inquiry' data-inquiry=$inquiry->id data-view-url='".route('inquiry.view',$inquiry->id)."' title='View Inquiry'><i class='far fa-eye' title='View Inquiry'></i></button></span>";
+            if((!empty($user->userGroup)) && $user->userGroup->id == '2'){
+                $action_html .= "<span class='ml-2'><button type='button' id='assignRetailer' class='btn btn-default' data-inquiry=$inquiry->id data-assign-to-retailer-url='".route('inquiry.assign.retailer')."' data-task-url='".route('createReminder')."' data-toggle='modal' data-target='#assignToRetailer' title='Assign to retailer'><i class='fas fa-user' title='Assign to retailer'></i></button></span>";
+            }
+            if(!empty($inquiry->status) && $inquiry->status < 5){
+                // $action_html .= "<span class='ml-3'><button type='button' id='createQuote' class=' ml-3 btn btn-success create-quote-".$inquiry->id."' data-inquiry=$inquiry->id data-create-quote-url='".route('order.quote.create')."' data-toggle='modal' data-target='#quoteModal'>Quote</button></span>";
+                $action_html .= "<span class='ml-2'><button type='button' id='createQuote' class='btn btn-success create-quote-".$inquiry->id."' data-inquiry=$inquiry->id data-create-quote-url='".route('cart.inquiryToQuote.create')."' data-toggle='modal' data-target='#quoteModal'><i class='fas fa-clipboard' title='Create Qute'></i></button></span>";
+            }
+            if(empty($user->userGroup) || ((($user->id == $inquiry->dealer || $user->id == $inquiry->retailer) && $user->id == $inquiry->created_by) || ($user->id == $inquiry->created_by))){
+                $action_html .= "<span class='ml-2'><a href=".route('inquiry.edit',$inquiry->id)." class='btn btn-primary'><i class='fas fa-pen' title='Edit'></i></a></span>";
+                $action_html .= "<span class='ml-2'><button type=submit data-user=$inquiry->id class='btn btn-danger' onClick=deleteUser($inquiry->id)><i class='fas fa-trash' title='Delete'></i></button></span>";
+            }
+            // $action_html .= "<span class='ml-3'><a href=# class='btn btn-primary'>View</a></span>";
+            $data[] = [$inquiry->id,$inquiry->product,ucwords($inquiry->customer),$inquiry->customer_email,$inquiry->customer_mobile,$inquiry->source,$dealer,$retailer,$status_html,$action_html];
+        }
+        $return_array = array();
+        $return_array['draw'] = $request['draw'];
+        $return_array['recordsTotal'] = $total_inquiries;
+        $return_array['recordsFiltered'] = $total_inquiries;
+        $return_array['data'] = $data;
+        return response(json_encode($return_array), 200)
+        ->header('Content-Type', 'text/plain');
+    }
 }

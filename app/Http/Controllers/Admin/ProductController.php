@@ -124,7 +124,6 @@ class ProductController extends MainController
      */
     public function edit($id)
     {
-        //
         $brands = Brand::withoutTrashed()->where('status',1)->get();        
         $product = Product::findOrFail($id);
         $product_category = $product->categories()->pluck('category_id')->toArray();
@@ -267,7 +266,55 @@ class ProductController extends MainController
         return response(json_encode($return_array), 200)
         ->header('Content-Type', 'text/plain');
     }
+/**
+     * listAjaxData
+     *
+     * @param  mixed $request
+     * @return \Illuminate\Http\Response
+     */
+    public function reportListAjaxData(Request $request){
+        $user  = auth()->user();
+        $start =  $request['start'];
+        $length=  $request['length'];
+        $search = $request['search']['value'];
+        $where = 'products.deleted_at is NULL';
+        $where .= (!empty($search)) ? " AND (products.name like '$search%' OR brands.name like '$search%')":'';
+        $query = DB::table('products');
+        $query->leftJoin('brands','products.brand_id','=','brands.id')
+        ->leftJoin('inventory',function($query) use($user){
+            $query->on('products.id','=','inventory.product_id');
+            if((empty($user->users_group_id)) || ($user->users_group_id == 1)){
+                $query->where('user_id',NULL);
+            }else{
+                $query->where('user_id',$user->id);
+            }
+        })
+        ->selectRaw('products.id,products.name,brands.name as brand_name,products.image,inventory.qty AS inventory,products.status');
+        $query->whereRaw($where)
+        ->offset($start)
+        ->limit($length)
+        ->orderBy($request['columns'][$request['order'][0]['column']]['name'],$request['order'][0]['dir']);
+        $products = $query->get();
 
+        $total_product = Product::where('deleted_at','=',Null)->count();
+        $data = [];
+        foreach($products as $product){            
+            $product_image_html = (!empty($product->image))?"<img class='img logo' src=".url($product->image)." width=50 />":'Image not found';
+            $action_html = '';
+            $inventory_html = '';
+            $inventory = (empty($product->inventory))?'0':$product->inventory;
+            $status = (!empty($product->status)) ? 'Enable': 'Disabled';
+            $status_html = $status;
+            $inventory_html = "<span>$inventory</span>";
+            $data[] = [$product->id,$product->name,$product->brand_name,$product_image_html,$inventory_html,$status_html];
+        }
+        $return_array = array();
+        $return_array['draw'] = $request['draw'];
+        $return_array['recordsTotal'] = $total_product;
+        $return_array['recordsFiltered'] = $total_product;
+        $return_array['data'] = $data;
+        return response()->json($return_array);
+    }
     public function getProductInventory(Request $request){
         Validator::make($request->all()['data'], [
             'product_id' => 'required',
@@ -306,5 +353,11 @@ class ProductController extends MainController
         }else{
             return response()->json(['status' => 'error','code'=>0,'message'=>'Bad Method Call.']);
         }
+    }
+
+    public function productReport(){
+        View::share('title', 'Product Report');
+        View::share('elementActive', 'product_report');
+        return view('admin.report.product');
     }
 }

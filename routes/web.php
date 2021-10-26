@@ -57,6 +57,10 @@ Route::group(['prefix'=>'admin','middleware'=>['auth']],function () {
     Route::put('profile/', [App\Http\Controllers\CommonController::class,'updateProfile'])->name('profile.update');
     Route::get('vendor/', [App\Http\Controllers\Admin\CustomerUserController::class,'vendorIndex'])->name('vendor.index');
     Route::any('vendor/listajax', [App\Http\Controllers\Admin\VendorController::class,'vendorListAjaxData'])->name('vendorlistajax');
+    Route::any('report/product', [App\Http\Controllers\Admin\ProductController::class,'productReport'])->name('report.product');
+    Route::any('report/inquiry', [App\Http\Controllers\Admin\InquiryController::class,'inquiryReport'])->name('report.inquiry');
+    Route::any('product/reportListAjaxData', [App\Http\Controllers\Admin\ProductController::class,'reportListAjaxData'])->name('productreportlistajax');
+    Route::any('inquiry/reportListAjaxData', [App\Http\Controllers\Admin\InquiryController::class,'reportListAjaxData'])->name('inquiryreportlistajax');
     //inquiry & inquiry-log
     Route::any('inquiry/listajaxdata', [App\Http\Controllers\Admin\InquiryController::class,'listAjaxData'])->name('inquirylistajax');
     Route::post('inquiry/view', [App\Http\Controllers\Admin\InquiryController::class,'show'])->name('inquiry.view');

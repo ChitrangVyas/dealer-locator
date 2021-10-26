@@ -146,7 +146,7 @@ class ManufacturerController extends MainController
         $where = 'deleted_at IS NULL';
         $where .= (!empty($search)) ? " AND (name like '%$search%' OR email like '%$search%' OR phone like '%$search%')":'';
         $manufacturers = DB::table('manufacturers')
-        ->selectRaw('id,name,email,mobile,logo')
+        ->selectRaw('id,name,email,mobile,logo,status')
         ->whereRaw($where)
         ->offset($start)
         ->limit($length)

@@ -419,18 +419,18 @@ class OrderController extends MainController
                     $cart_product = $cart->get($key);
                     $order_product_data = array('order_id' => $order->id, 'product_id' => $cart_product->id, 'product_name' => $cart_product->name, 'qty' => $cart_product->quantity, 'amount' => $cart_product->price);
                     $order_product = '';
+                    $user_id = '';
                     if(!empty($order_product_data)){
                         $order_product = OrderProduct::create($order_product_data);
                         if(empty(auth()->user()->users_group_id)) {
-                            $product = Product::find($cart_product->id);
-                            $invenory = $product->inventory;
-                            $product->update(['inventory' => ($invenory - $cart_product->quantity)]);
+                            $user_id = NULL;
                         }else{
-                            $invenory = Inventory::where('user_id',$cart_data['from_user'])->where('product_id',1);
-                            $invenory_qty = $invenory->first('qty');
-                            if(!empty($invenory_qty)){  
-                                $invenory->update(['qty' => ($invenory_qty->qty - $cart_product->quantity)]);
-                            }
+                            $user_id = $cart_data['from_user'];
+                        }
+                        $invenory = Inventory::where('user_id',$user_id)->where('product_id',1);
+                        $invenory_qty = $invenory->first('qty');
+                        if(!empty($invenory_qty)){  
+                            $invenory->update(['qty' => ($invenory_qty->qty - $cart_product->quantity)]);
                         }
                         if(in_array($cart_product->id,array_keys($tax_data['product_tax']))){
                             foreach($tax_data['product_tax'][$cart_product->id] as $tax){

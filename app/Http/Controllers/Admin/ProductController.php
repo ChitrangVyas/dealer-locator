@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use JeroenNoten\LaravelAdminLte\AdminLte;
 use Illuminate\Support\Str;
+use phpDocumentor\Reflection\Types\Null_;
 use View;
 
 class ProductController extends MainController
@@ -77,7 +78,7 @@ class ProductController extends MainController
                 'name' => $request_data['name'],
                 'description' => $request_data['description'],
                 'brand_id' => $request_data['brand_id'],
-                'inventory' => $request['inventory'],
+                // 'inventory' => $request['inventory'],
                 'price' => $request['price'],
                 // 'category' => $request_data['category'],
                 'image' => $file_path,
@@ -85,6 +86,14 @@ class ProductController extends MainController
                 'tax_group_id'=> $request_data['tax_group_id'],
                 'hsn_sac'=> $request_data['hsn_sac'],
             ]);
+            if(!empty($product) && !empty($request_data['inventory'])){
+                $inventory = Inventory::create([
+                    'user_id' => NULL,
+                    'product_id' => $product->id,
+                    'qty' => $request_data['inventory'],
+                    'low_stock'=> $request_data['low_stock']
+                ]);
+            }
             if((!empty($product)) && (!empty($request_data['categories']))){
                 $categories = Category::find($request_data['categories']);
                 $product->categories()->sync($categories);
@@ -141,7 +150,7 @@ class ProductController extends MainController
             'name' => $request_data['name'],
             'description' => $request_data['description'],
             'brand_id' => $request_data['brand_id'],
-            'inventory' => $request['inventory'],           
+            // 'inventory' => $request['inventory'],           
             'price' => $request['price'],
             'tax_group_id'=> $request_data['tax_group_id'],
             'hsn_sac'=> $request_data['hsn_sac'],    
@@ -160,6 +169,19 @@ class ProductController extends MainController
             }
 
             $is_updated = $product->update($upload_data);
+            if($is_updated && !empty($request_data['inventory'])){
+                $inventory = Inventory::where('user_id',NULL)->where('product_id',$id)->first();
+                if(!empty($inventory)){
+                $inventory->update(['qty'=>$request['inventory'],'low_stock'=>$request_data['low_stock']]);
+                }else{
+                        Inventory::create([
+                            'user_id' => NULL,
+                            'product_id' => $product->id,
+                            'qty' => $request_data['inventory'],
+                            'low_stock'=> $request_data['low_stock']
+                        ]);
+                }
+            }
             if($is_updated && !empty($request_data['categories'])){
                 $categories = Category::find($request_data['categories']);
                 $product->categories()->sync($categories);
@@ -194,24 +216,23 @@ class ProductController extends MainController
      * @return \Illuminate\Http\Response
      */
     public function listAjaxData(Request $request){
+        $user  = auth()->user();
         $start =  $request['start'];
         $length=  $request['length'];
         $search = $request['search']['value'];
         $where = 'products.deleted_at is NULL';
         $where .= (!empty($search)) ? " AND (products.name like '$search%' OR brands.name like '$search%')":'';
         $query = DB::table('products');
-        if((empty(auth()->user()->users_group_id)) || (auth()->user()->users_group_id == 1)){
-            $query->leftJoin('brands','products.brand_id','=','brands.id')
-            ->selectRaw('products.id,products.name,brands.name as brand_name,products.image,inventory,products.status');
-        }else{
-            // $where .= " AND user_id=".auth()->user()->id;
-            $query->leftJoin('brands','products.brand_id','=','brands.id')
-            ->leftJoin('inventory',function($query){
-                $query->on('products.id','=','inventory.product_id');
-                $query->where('user_id',auth()->user()->id);
-            })
-            ->selectRaw('products.id,products.name,brands.name as brand_name,products.image,inventory.qty AS inventory,products.status');
-        }
+        $query->leftJoin('brands','products.brand_id','=','brands.id')
+        ->leftJoin('inventory',function($query) use($user){
+            $query->on('products.id','=','inventory.product_id');
+            if((empty($user->users_group_id)) || ($user->users_group_id == 1)){
+                $query->where('user_id',NULL);
+            }else{
+                $query->where('user_id',$user->id);
+            }
+        })
+        ->selectRaw('products.id,products.name,brands.name as brand_name,products.image,inventory.qty AS inventory,products.status');
         $query->whereRaw($where)
         ->offset($start)
         ->limit($length)

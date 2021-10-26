@@ -95,8 +95,18 @@
                         <!-- text input -->
                         <div class="form-group">
                             <label>Inventory <span class="required_field">*</span></label>
-                            <input type="number" class="form-control" name="inventory" value="{{ old('inventory',(!empty($product))?$product->inventory:'') }}" placeholder="inventory" tabindex="6">
+                            <input type="number" class="form-control" name="inventory" value="{{ old('inventory',(!empty($product) && !empty($product->getInventory()))?($product->getInventory())->qty:'') }}" placeholder="inventory" tabindex="6">
                             @error('inventory')
+                            <div class="alert alert-danger mt-2">{{ $message }}</div>
+                            @enderror
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-6">
+                        <!-- text input -->
+                        <div class="form-group">
+                            <label>Low Stock <span class="required_field">*</span></label>
+                            <input type="number" class="form-control" name="low_stock" value="{{ old('low_stock',(!empty($product) && !empty($product->getInventory()))?($product->getInventory())->low_stock:'') }}" placeholder="Low Stock" tabindex="7">
+                            @error('low_stock')
                             <div class="alert alert-danger mt-2">{{ $message }}</div>
                             @enderror
                         </div>

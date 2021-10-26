@@ -42,13 +42,17 @@ class Product extends Model
     }
 
     public function productInventory(){
-        return $this->hasMany(Inventory::class)->where('user_id',auth()->user()->id);
+        $user_id = auth()->user()->id;
+        if((empty(auth()->user()->users_group_id))|| auth()->user()->users_group_id ==1){
+            $user_id = NULL;
+        }
+        return $this->hasMany(Inventory::class)->where('user_id',$user_id);
     }
 
     public function getInventory()
     {
         if((empty(auth()->user()->users_group_id))|| auth()->user()->users_group_id ==1){
-            return $this->inventory;
+            return (empty($this->productInventory->toArray()) && count($this->productInventory->toArray()) < 1 && (empty($this->productInventory->where('user_id',NULL)->toArray()))) ? 0 : $this->productInventory->where('user_id',NULL)->first();
         }else{
             return (empty($this->productInventory->toArray()) && count($this->productInventory->toArray()) < 1 && (empty($this->productInventory->where('user_id',auth()->user()->id)->toArray()))) ? 0 : $this->productInventory->where('user_id',auth()->user()->id)->first()->qty;
         }

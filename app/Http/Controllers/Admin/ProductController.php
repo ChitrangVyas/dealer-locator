@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Exports\ProductExport;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\ProductCreateRequest;
 use App\Http\Requests\Admin\ProductUpdateRequest;
@@ -17,6 +18,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use JeroenNoten\LaravelAdminLte\AdminLte;
 use Illuminate\Support\Str;
+use Maatwebsite\Excel\Facades\Excel;
 use phpDocumentor\Reflection\Types\Null_;
 use View;
 
@@ -266,7 +268,7 @@ class ProductController extends MainController
         return response(json_encode($return_array), 200)
         ->header('Content-Type', 'text/plain');
     }
-/**
+    /**
      * listAjaxData
      *
      * @param  mixed $request
@@ -274,9 +276,11 @@ class ProductController extends MainController
      */
     public function reportListAjaxData(Request $request){
         $user  = auth()->user();
-        $start =  $request['start'];
-        $length=  $request['length'];
-        $search = $request['search']['value'];
+        $start =  $request->input('start','');
+        $length=  $request->input('length','');
+        $search = $request->input('search.value','');
+        $from_date = $request->input('from_date','');
+        $to_date = $request->input('to_date','');
         $where = 'products.deleted_at is NULL';
         $where .= (!empty($search)) ? " AND (products.name like '$search%' OR brands.name like '$search%')":'';
         $query = DB::table('products');
@@ -290,13 +294,75 @@ class ProductController extends MainController
             }
         })
         ->selectRaw('products.id,products.name,brands.name as brand_name,products.image,inventory.qty AS inventory,products.status');
+        $total_product = count($query->whereRaw($where)->get());
+        if(!empty($request->input('export',''))){
+            $inventories = $query->whereRaw($where)->get();
+            return Excel::download(new ProductExport($inventories),'Inventory.xlsx');
+        }else{
+            $query->whereRaw($where)
+            ->offset($start)
+            ->limit($length)
+            ->orderBy($request['columns'][$request['order'][0]['column']]['name'],$request['order'][0]['dir']);
+            $products = $query->get();
+
+            $data = [];
+            foreach($products as $product){            
+                $product_image_html = (!empty($product->image))?"<img class='img logo' src=".url($product->image)." width=50 />":'Image not found';
+                $action_html = '';
+                $inventory_html = '';
+                $inventory = (empty($product->inventory))?'0':$product->inventory;
+                $status = (!empty($product->status)) ? 'Enable': 'Disabled';
+                $status_html = $status;
+                $inventory_html = "<span>$inventory</span>";
+                $data[] = [$product->id,$product->name,$product->brand_name,$product_image_html,$inventory_html,$status_html];
+            }
+            $return_array = array();
+            $return_array['draw'] = $request['draw'];
+            $return_array['recordsTotal'] = $total_product;
+            $return_array['recordsFiltered'] = $total_product;
+            $return_array['data'] = $data;
+            return response()->json($return_array);
+        }
+    }
+
+    /**
+     * lowStockReportListAjaxData
+     *
+     * @param  mixed $request
+     * @return \Illuminate\Http\Response
+     */
+    public function lowStockReportListAjaxData(Request $request){
+        //$this->exporter->download(new UsersExport, 'users.xlsx');
+        // 
+        $user  = auth()->user();
+        $start =  $request->input('start','');
+        $length=  $request->input('length','');
+        $search = $request->input('search.value','');
+        $where = 'products.deleted_at is NULL';
+        $where .= (!empty($search)) ? " AND (products.name like '$search%' OR brands.name like '$search%')":'';
+        $query = DB::table('products');
+        $query->leftJoin('brands','products.brand_id','=','brands.id')
+        ->leftJoin('inventory',function($query) use($user){
+            $query->on('products.id','=','inventory.product_id');
+            if((empty($user->users_group_id)) || ($user->users_group_id == 1)){
+                $query->where('user_id',NULL);
+            }else{
+                $query->where('user_id',$user->id);
+            }
+        })
+        ->selectRaw('products.id,products.name,brands.name as brand_name,products.image,inventory.qty AS inventory,products.status')
+        ->whereColumn('inventory.qty','<','low_stock');
+        $total_product = $query->whereRaw($where)->count();
+        if(!empty($request->input('export',''))){
+            $lowStockProducts = $query->whereRaw($where)->get();
+            return Excel::download(new ProductExport($lowStockProducts),'LowStock.xlsx');
+        }else{
         $query->whereRaw($where)
         ->offset($start)
         ->limit($length)
         ->orderBy($request['columns'][$request['order'][0]['column']]['name'],$request['order'][0]['dir']);
         $products = $query->get();
 
-        $total_product = Product::where('deleted_at','=',Null)->count();
         $data = [];
         foreach($products as $product){            
             $product_image_html = (!empty($product->image))?"<img class='img logo' src=".url($product->image)." width=50 />":'Image not found';
@@ -315,6 +381,7 @@ class ProductController extends MainController
         $return_array['data'] = $data;
         return response()->json($return_array);
     }
+    }
     public function getProductInventory(Request $request){
         Validator::make($request->all()['data'], [
             'product_id' => 'required',
@@ -332,11 +399,13 @@ class ProductController extends MainController
     public function updateProductInventory(Request $request){
         Validator::make($request->all(), [
             'product_id' => 'required',
-            "inventory" => 'required|numeric'
+            "inventory" => 'required|numeric',
+            "low_stock" => 'required|numeric'
         ])->validate(); 
 
         if($request->ajax()){
             $update_data['qty'] = $request->input('inventory');
+            $update_data['low_stock'] = $request->input('low_stock');
             try{
                 $inventory = Inventory::where('product_id',$request->input('product_id'))->where('user_id',auth()->user()->id);
                 if(!empty($inventory->get()->toArray())){
@@ -356,8 +425,14 @@ class ProductController extends MainController
     }
 
     public function productReport(){
-        View::share('title', 'Product Report');
-        View::share('elementActive', 'product_report');
-        return view('admin.report.product');
+        View::share('title', 'Inventory Report');
+        View::share('elementActive', 'inventory_report');
+        return view('admin.report.inventory');
+    }
+
+    public function lowStockReport(){
+        View::share('title', 'Low Stock Report');
+        View::share('elementActive', 'low_stock_report');
+        return view('admin.report.low-stock');
     }
 }

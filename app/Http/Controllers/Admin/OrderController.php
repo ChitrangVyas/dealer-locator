@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Exports\POExport;
 use App\Http\Helpers;
 use App\Http\MyCart;
 use App\Mail\OrderEmailTemplate;
-use App\Mail\OrderShipped;
 use App\Models\Order;
 use App\Models\OrderProduct;
 use App\Models\Inquiry;
@@ -13,12 +13,11 @@ use App\Models\Inventory;
 use App\Models\OrderImage;
 use App\Models\OrderProductTax;
 use App\Models\OrderStatus;
-use App\Models\Product;
-use App\Models\User;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
+use Maatwebsite\Excel\Facades\Excel;
 use View;
 class OrderController extends MainController
 {
@@ -776,5 +775,144 @@ class OrderController extends MainController
             }
         }
     }
+
+    //Reports
+
+    public function poReport(){
+        View::share('title', 'PO Report');
+        View::share('elementActive', 'po_report');
+        return view('admin.report.po');
+    }
+    public function salesReport(){
+        View::share('title', 'Sales Report');
+        View::share('elementActive', 'sales_report');
+        return view('admin.report.sales');
+    }
+    
+    public function poReportListAjaxData(Request $request){
+        $user =  auth()->user();
+        $start =  $request->input('start','');
+        $length=  $request->input('length','');
+        $search = $request->input('search.value','');
+        $from_date = $request->input('from_date','');
+        $to_date = $request->input('to_date','');
+        $sent_received = $request->input('sent_recieved','');
+        $where = 'orders.type = "po" AND orders.deleted_at is NULL';
+        if((!empty($user->userGroup)) && $user->userGroup->id == '2'){
+            if(!empty($sent_received) && $sent_received == 'sent'){
+                $where .= (!empty($user->id))?" AND (from_user=$user->id)":'';
+            }elseif(!empty($sent_received) && $sent_received == 'received'){
+                $where .= (!empty($user->id))?" AND (to_user=$user->id)":')';
+            }else{
+                $where .= (!empty($user->id))?" AND (from_user=$user->id OR to_user=$user->id":'';
+                $where .= (!empty($users)) ? " OR from_user in ($users) )" :")";
+            }
+            
+        }
+        if((!empty($user->userGroup)) && $user->userGroup->id == '3'){
+            $where .= (!empty($user->id))?" AND from_user=$user->id":'';
+        }else if(empty($user->userGroup) || $user->userGroup->id == '1'){
+            $where .= (!empty($user->id))?" AND (for_manufacturer = '1' OR from_user=$user->id OR from_user IS NULL":'';
+            $where .= (!empty($users)) ? " OR from_user in ($users) )" :")";
+        }
+        $where .= (!empty($search)) ? " AND (orders.order_number like '$search%' OR orders.total like '$search%' OR orders.created_at like '$search%' OR (c.name is NOT NULL AND c.name like '$search%') OR (d.name is NOT NULL AND d.name like '$search%'))":'';
+        if(!empty($from_date) && !empty($to_date)){
+            $where .= " AND (orders.created_at BETWEEN '$from_date 00:00:00' AND '$to_date 23:59:59')";
+        }
+        $orders = DB::table('orders')
+        ->select(DB::raw('orders.id, orders.for_manufacturer, order_number,orders.to_user,c.name as customer,d.name as added_by, orders.total as amount, orders.created_at as created_date'))
+        ->join('order_product AS op','orders.id','=','op.order_id','left')
+        ->join('users AS c','orders.to_user','=','c.id','left')
+        ->join('users AS d','orders.from_user','=','d.id','left')
+        ->whereRaw($where);
         
+        $total_order = Order::whereRaw($where)->count();
+        if(!empty($request->input('export',''))){
+            $orders = $orders
+            ->groupby('orders.id')
+            ->get();
+            return Excel::download(new POExport($orders),'PO.xlsx');
+        }else{
+            $orders = $orders->offset($start)
+            ->limit($length)
+            ->orderBy($request['columns'][$request['order'][0]['column']]['name'],$request['order'][0]['dir'])
+            ->groupby('orders.id')
+            ->get();
+            $data = [];
+            foreach($orders as $order){
+                $customer = (!empty($order->customer))?$order->customer:$this->settingJson['name'];
+                $added_by  = (!empty($order->added_by))?$order->added_by:$this->settingJson['name'];
+                $data[] = [$order->id,$order->order_number,$order->amount, ucwords($added_by), ucwords($customer),$order->created_date];
+            }
+            $return_array = array();
+            $return_array['draw'] = $request['draw'];
+            $return_array['recordsTotal'] = $total_order;
+            $return_array['recordsFiltered'] = $total_order;
+            $return_array['data'] = $data;
+            return response(json_encode($return_array), 200)
+            ->header('Content-Type', 'text/plain');
+        }
+    }
+     
+    public function salesReportListAjaxData(Request $request){
+        $user =  auth()->user();
+        $start =  $request->input('start','');
+        $length=  $request->input('length','');
+        $search = $request->input('search.value','');
+        $from_date = $request->input('from_date','');
+        $to_date = $request->input('to_date','');
+        $where = 'orders.type = "sale" AND orders.deleted_at is NULL';
+        if((!empty($user->userGroup)) && $user->userGroup->id == '2'){
+            // $users = implode(',',User::where('parent_id',$user->id)->get()->pluck('id')->toArray());
+            $where .= (!empty($user->id))?" AND (from_user=$user->id OR (to_user=$user->id AND from_user <> NULL) ":'';
+            $where .= (!empty($users)) ? " OR from_user in ($users) )" :")";
+        }
+        if((!empty($user->userGroup)) && $user->userGroup->id == '3'){
+            $where .= (!empty($user->id))?" AND from_user=$user->id":'';
+        }else{
+            $where .= (!empty($user->id))?" AND (from_user=$user->id OR from_user is NULL)":'';
+        }
+        $where .= (!empty($search)) ? " AND (orders.order_number like '$search%' OR orders.total like '$search%' OR orders.created_at like '$search%' OR (c.name is NOT NULL AND c.name like '$search%') OR (d.name is NOT NULL AND d.name like '$search%'))":'';
+        if(!empty($from_date) && !empty($to_date)){
+            $where .= " AND (orders.created_at BETWEEN '$from_date 00:00:00' AND '$to_date 23:59:59')";
+        }
+        $orders = DB::table('orders')
+        ->select(DB::raw('orders.id, orders.for_manufacturer, order_number,orders.to_user,c.name as customer,d.name as added_by, orders.total as amount, orders.created_at as created_date'))
+        ->join('order_product AS op','orders.id','=','op.order_id','left')
+        ->join('users AS c','orders.to_user','=','c.id','left')
+        ->join('users AS d','orders.from_user','=','d.id','left')
+        ->whereRaw($where);
+        
+        $total_order = Order::whereRaw($where)->count();
+        if(!empty($request->input('export',''))){
+            $orders = $orders
+            ->groupby('orders.id')
+            ->get();
+            return Excel::download(new POExport($orders),'Sales.xlsx');
+        }else{
+            $orders = $orders->offset($start)
+            ->limit($length)
+            ->orderBy($request['columns'][$request['order'][0]['column']]['name'],$request['order'][0]['dir'])
+            ->groupby('orders.id')
+            ->get();
+            $data = [];
+            foreach($orders as $order){
+                $order_data = Order::find($order->id);
+                $order_status = 'N/A';
+                if(!empty($order_data->getUserOrderStatus()) && (count($order_data->getUserOrderStatus()) > 0 )){
+                    $order_status = $order_data->getInvoiceStatus($order_data->getUserOrderStatus()[0]->status_id);
+                }
+                $customer = (!empty($order->customer))?$order->customer:$this->settingJson['name'];
+                $added_by  = (!empty($order->added_by))?$order->added_by:$this->settingJson['name'];
+                $data[] = [$order->id,$order->order_number,$order->amount, ucwords($added_by), ucwords($customer), $order_status ,$order->created_date];
+            }
+            $return_array = array();
+            $return_array['draw'] = $request['draw'];
+            $return_array['recordsTotal'] = $total_order;
+            $return_array['recordsFiltered'] = $total_order;
+            $return_array['data'] = $data;
+            return response(json_encode($return_array), 200)
+            ->header('Content-Type', 'text/plain');
+        }
+    }
 }

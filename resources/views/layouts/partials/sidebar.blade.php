@@ -225,15 +225,33 @@
             </a>
             <ul class="nav nav-treeview">
               <li class="nav-item">
-                <a href="{{route('report.product')}}" class="nav-link  {{ $elementActive == 'product_report' ? 'active' : '' }}">
+                <a href="{{route('report.product')}}" class="nav-link  {{ $elementActive == 'inventory_report' ? 'active' : '' }}">
                 <i class="nav-icon fas fa-cubes"></i>
-                  <p>Product</p>
+                  <p>Inventory</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="{{route('report.lowstock')}}" class="nav-link  {{ $elementActive == 'low_stock_report' ? 'active' : '' }}">
+                <i class="nav-icon fas fa-cubes"></i>
+                  <p>Low Stock</p>
                 </a>
               </li>
               <li class="nav-item">
                 <a href="{{route('report.inquiry')}}" class="nav-link  {{ $elementActive == 'inquiry_report' ? 'active' : '' }}">
                 <i class="nav-icon fas fa-phone-square"></i>
                   <p>Inquiry</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="{{route('report.po')}}" class="nav-link  {{ $elementActive == 'po_report' ? 'active' : '' }}">
+                <i class="nav-icon fas fa-receipt"></i>
+                  <p>PO</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="{{route('report.sales')}}" class="nav-link  {{ $elementActive == 'sales_report' ? 'active' : '' }}">
+                <i class="nav-icon fas fa-shopping-cart"></i>
+                  <p>Sales</p>
                 </a>
               </li>
             </ul>

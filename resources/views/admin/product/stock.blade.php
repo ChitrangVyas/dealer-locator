@@ -16,6 +16,14 @@
                 @error('inventory')
                 <div class="alert alert-danger mt-2">{{ $message }}</div>
                 @enderror
+            </div>            
+            <!-- text input -->
+            <div class="form-group">
+                <label>Low Stock <span class="required_field text-danger">*</span></label>
+                <input type="number" class="form-control" name="low_stock" value="{{ old('low_stock',(!empty($product) && !empty($product->getInventory()->low_stock))?($product->getInventory())->low_stock:'') }}" placeholder="Low Stock" tabindex="7">
+                @error('low_stock')
+                <div class="alert alert-danger mt-2">{{ $message }}</div>
+                @enderror
             </div>
         </div>
     </div>

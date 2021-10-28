@@ -832,7 +832,7 @@ class OrderController extends MainController
         ->join('users AS d','orders.from_user','=','d.id','left')
         ->whereRaw($where);
         
-        $total_order = Order::whereRaw($where)->count();
+        $total_order = $orders->groupby('orders.id')->get()->count();
         if(!empty($request->input('export',''))){
             $orders = $orders
             ->groupby('orders.id')
@@ -889,7 +889,7 @@ class OrderController extends MainController
         ->join('users AS d','orders.from_user','=','d.id','left')
         ->whereRaw($where);
         
-        $total_order = Order::whereRaw($where)->count();
+        $total_order = $orders->groupBy('orders.id')->get()->count();
         if(!empty($request->input('export',''))){
             $orders = $orders
             ->groupby('orders.id')

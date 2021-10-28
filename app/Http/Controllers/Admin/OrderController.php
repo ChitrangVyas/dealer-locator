@@ -812,8 +812,14 @@ class OrderController extends MainController
         if((!empty($user->userGroup)) && $user->userGroup->id == '3'){
             $where .= (!empty($user->id))?" AND from_user=$user->id":'';
         }else if(empty($user->userGroup) || $user->userGroup->id == '1'){
-            $where .= (!empty($user->id))?" AND (for_manufacturer = '1' OR from_user=$user->id OR from_user IS NULL":'';
-            $where .= (!empty($users)) ? " OR from_user in ($users) )" :")";
+            if(!empty($sent_received) && $sent_received == 'sent'){
+                $where .= (!empty($user->id))?" AND (from_user IS NULL)":'';
+            }elseif(!empty($sent_received) && $sent_received == 'received'){
+                $where .= (!empty($user->id))?" AND (to_user IS NULL)":')';
+            }else{
+                $where .= (!empty($user->id))?" AND (for_manufacturer = '1' OR from_user=$user->id OR from_user IS NULL":'';
+                $where .= (!empty($users)) ? " OR from_user in ($users) )" :")";
+            }
         }
         $where .= (!empty($search)) ? " AND (orders.order_number like '$search%' OR orders.total like '$search%' OR orders.created_at like '$search%' OR (c.name is NOT NULL AND c.name like '$search%') OR (d.name is NOT NULL AND d.name like '$search%'))":'';
         if(!empty($from_date) && !empty($to_date)){

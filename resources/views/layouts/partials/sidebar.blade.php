@@ -215,6 +215,47 @@
             </a>
           </li>
           @endadmin
+          <li class="nav-item has-treeview {{ ($elementActive == 'product_report' || $elementActive == 'inquiry_report' || $elementActive == 'bill') ? 'menu-open' : ''}}">
+            <a href="#" class="nav-link">
+              <i class="nav-icon fas fa-file"></i>
+              <p>
+                Reports
+                <i class="right fas fa-angle-left"></i>
+              </p>
+            </a>
+            <ul class="nav nav-treeview">
+              <li class="nav-item">
+                <a href="{{route('report.product')}}" class="nav-link  {{ $elementActive == 'inventory_report' ? 'active' : '' }}">
+                <i class="nav-icon fas fa-cubes"></i>
+                  <p>Inventory</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="{{route('report.lowstock')}}" class="nav-link  {{ $elementActive == 'low_stock_report' ? 'active' : '' }}">
+                <i class="nav-icon fas fa-cubes"></i>
+                  <p>Low Stock</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="{{route('report.inquiry')}}" class="nav-link  {{ $elementActive == 'inquiry_report' ? 'active' : '' }}">
+                <i class="nav-icon fas fa-phone-square"></i>
+                  <p>Inquiry</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="{{route('report.po')}}" class="nav-link  {{ $elementActive == 'po_report' ? 'active' : '' }}">
+                <i class="nav-icon fas fa-receipt"></i>
+                  <p>PO</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="{{route('report.sales')}}" class="nav-link  {{ $elementActive == 'sales_report' ? 'active' : '' }}">
+                <i class="nav-icon fas fa-shopping-cart"></i>
+                  <p>Sales</p>
+                </a>
+              </li>
+            </ul>
+          </li>
           @admin()
           <li class="nav-item">
             <a href="{{ route('settings.index') }}" class="nav-link  {{ $elementActive == 'settings' ? 'active' : '' }}">

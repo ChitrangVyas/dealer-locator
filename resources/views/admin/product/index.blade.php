@@ -133,7 +133,8 @@
 
     $('body').on('submit','#frmAddStock',function(e){
         e.preventDefault();
-        e.stopImmediatePropagation();        
+        e.stopImmediatePropagation();
+        $('#frmAddStock .alert').remove();        
         saveFormData("{{route('product.inventory.update')}}",$('#frmAddStock').serializeArray(),'productModal').then(function(res){
             $('#example').DataTable().ajax.reload(null, false);
         });

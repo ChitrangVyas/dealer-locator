@@ -27,7 +27,8 @@ class ProductCreateRequest extends FormRequest
             'name' => 'required|string|max:100',
             'brand_id' => 'required',
             'description' => 'required|min:10',
-            'inventory' =>'required'
+            'inventory' =>'required',
+            'low_stock' => 'required'
             // 'category' => 'required'
         ];
     }

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Exports\ProductExport;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\ProductCreateRequest;
 use App\Http\Requests\Admin\ProductUpdateRequest;
@@ -17,6 +18,8 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use JeroenNoten\LaravelAdminLte\AdminLte;
 use Illuminate\Support\Str;
+use Maatwebsite\Excel\Facades\Excel;
+use phpDocumentor\Reflection\Types\Null_;
 use View;
 
 class ProductController extends MainController
@@ -77,7 +80,7 @@ class ProductController extends MainController
                 'name' => $request_data['name'],
                 'description' => $request_data['description'],
                 'brand_id' => $request_data['brand_id'],
-                'inventory' => $request['inventory'],
+                // 'inventory' => $request['inventory'],
                 'price' => $request['price'],
                 // 'category' => $request_data['category'],
                 'image' => $file_path,
@@ -85,6 +88,14 @@ class ProductController extends MainController
                 'tax_group_id'=> $request_data['tax_group_id'],
                 'hsn_sac'=> $request_data['hsn_sac'],
             ]);
+            if(!empty($product) && !empty($request_data['inventory'])){
+                $inventory = Inventory::create([
+                    'user_id' => NULL,
+                    'product_id' => $product->id,
+                    'qty' => $request_data['inventory'],
+                    'low_stock'=> $request_data['low_stock']
+                ]);
+            }
             if((!empty($product)) && (!empty($request_data['categories']))){
                 $categories = Category::find($request_data['categories']);
                 $product->categories()->sync($categories);
@@ -115,7 +126,6 @@ class ProductController extends MainController
      */
     public function edit($id)
     {
-        //
         $brands = Brand::withoutTrashed()->where('status',1)->get();        
         $product = Product::findOrFail($id);
         $product_category = $product->categories()->pluck('category_id')->toArray();
@@ -141,7 +151,7 @@ class ProductController extends MainController
             'name' => $request_data['name'],
             'description' => $request_data['description'],
             'brand_id' => $request_data['brand_id'],
-            'inventory' => $request['inventory'],           
+            // 'inventory' => $request['inventory'],           
             'price' => $request['price'],
             'tax_group_id'=> $request_data['tax_group_id'],
             'hsn_sac'=> $request_data['hsn_sac'],    
@@ -160,6 +170,19 @@ class ProductController extends MainController
             }
 
             $is_updated = $product->update($upload_data);
+            if($is_updated && !empty($request_data['inventory'])){
+                $inventory = Inventory::where('user_id',NULL)->where('product_id',$id)->first();
+                if(!empty($inventory)){
+                $inventory->update(['qty'=>$request['inventory'],'low_stock'=>$request_data['low_stock']]);
+                }else{
+                        Inventory::create([
+                            'user_id' => NULL,
+                            'product_id' => $product->id,
+                            'qty' => $request_data['inventory'],
+                            'low_stock'=> $request_data['low_stock']
+                        ]);
+                }
+            }
             if($is_updated && !empty($request_data['categories'])){
                 $categories = Category::find($request_data['categories']);
                 $product->categories()->sync($categories);
@@ -194,24 +217,23 @@ class ProductController extends MainController
      * @return \Illuminate\Http\Response
      */
     public function listAjaxData(Request $request){
+        $user  = auth()->user();
         $start =  $request['start'];
         $length=  $request['length'];
         $search = $request['search']['value'];
         $where = 'products.deleted_at is NULL';
         $where .= (!empty($search)) ? " AND (products.name like '$search%' OR brands.name like '$search%')":'';
         $query = DB::table('products');
-        if((empty(auth()->user()->users_group_id)) || (auth()->user()->users_group_id == 1)){
-            $query->leftJoin('brands','products.brand_id','=','brands.id')
-            ->selectRaw('products.id,products.name,brands.name as brand_name,products.image,inventory,products.status');
-        }else{
-            // $where .= " AND user_id=".auth()->user()->id;
-            $query->leftJoin('brands','products.brand_id','=','brands.id')
-            ->leftJoin('inventory',function($query){
-                $query->on('products.id','=','inventory.product_id');
-                $query->where('user_id',auth()->user()->id);
-            })
-            ->selectRaw('products.id,products.name,brands.name as brand_name,products.image,inventory.qty AS inventory,products.status');
-        }
+        $query->leftJoin('brands','products.brand_id','=','brands.id')
+        ->leftJoin('inventory',function($query) use($user){
+            $query->on('products.id','=','inventory.product_id');
+            if((empty($user->users_group_id)) || ($user->users_group_id == 1)){
+                $query->where('user_id',NULL);
+            }else{
+                $query->where('user_id',$user->id);
+            }
+        })
+        ->selectRaw('products.id,products.name,brands.name as brand_name,products.image,inventory.qty AS inventory,products.status');
         $query->whereRaw($where)
         ->offset($start)
         ->limit($length)
@@ -246,7 +268,120 @@ class ProductController extends MainController
         return response(json_encode($return_array), 200)
         ->header('Content-Type', 'text/plain');
     }
+    /**
+     * listAjaxData
+     *
+     * @param  mixed $request
+     * @return \Illuminate\Http\Response
+     */
+    public function reportListAjaxData(Request $request){
+        $user  = auth()->user();
+        $start =  $request->input('start','');
+        $length=  $request->input('length','');
+        $search = $request->input('search.value','');
+        $from_date = $request->input('from_date','');
+        $to_date = $request->input('to_date','');
+        $where = 'products.deleted_at is NULL';
+        $where .= (!empty($search)) ? " AND (products.name like '$search%' OR brands.name like '$search%')":'';
+        $query = DB::table('products');
+        $query->leftJoin('brands','products.brand_id','=','brands.id')
+        ->leftJoin('inventory',function($query) use($user){
+            $query->on('products.id','=','inventory.product_id');
+            if((empty($user->users_group_id)) || ($user->users_group_id == 1)){
+                $query->where('user_id',NULL);
+            }else{
+                $query->where('user_id',$user->id);
+            }
+        })
+        ->selectRaw('products.id,products.name,brands.name as brand_name,products.image,inventory.qty AS inventory,products.status');
+        $total_product = count($query->whereRaw($where)->get());
+        if(!empty($request->input('export',''))){
+            $inventories = $query->whereRaw($where)->get();
+            return Excel::download(new ProductExport($inventories),'Inventory.xlsx');
+        }else{
+            $query->whereRaw($where)
+            ->offset($start)
+            ->limit($length)
+            ->orderBy($request['columns'][$request['order'][0]['column']]['name'],$request['order'][0]['dir']);
+            $products = $query->get();
 
+            $data = [];
+            foreach($products as $product){            
+                $product_image_html = (!empty($product->image))?"<img class='img logo' src=".url($product->image)." width=50 />":'Image not found';
+                $action_html = '';
+                $inventory_html = '';
+                $inventory = (empty($product->inventory))?'0':$product->inventory;
+                $status = (!empty($product->status)) ? 'Enable': 'Disabled';
+                $status_html = $status;
+                $inventory_html = "<span>$inventory</span>";
+                $data[] = [$product->id,$product->name,$product->brand_name,$product_image_html,$inventory_html,$status_html];
+            }
+            $return_array = array();
+            $return_array['draw'] = $request['draw'];
+            $return_array['recordsTotal'] = $total_product;
+            $return_array['recordsFiltered'] = $total_product;
+            $return_array['data'] = $data;
+            return response()->json($return_array);
+        }
+    }
+
+    /**
+     * lowStockReportListAjaxData
+     *
+     * @param  mixed $request
+     * @return \Illuminate\Http\Response
+     */
+    public function lowStockReportListAjaxData(Request $request){
+        //$this->exporter->download(new UsersExport, 'users.xlsx');
+        // 
+        $user  = auth()->user();
+        $start =  $request->input('start','');
+        $length=  $request->input('length','');
+        $search = $request->input('search.value','');
+        $where = 'products.deleted_at is NULL';
+        $where .= (!empty($search)) ? " AND (products.name like '$search%' OR brands.name like '$search%')":'';
+        $query = DB::table('products');
+        $query->leftJoin('brands','products.brand_id','=','brands.id')
+        ->leftJoin('inventory',function($query) use($user){
+            $query->on('products.id','=','inventory.product_id');
+            if((empty($user->users_group_id)) || ($user->users_group_id == 1)){
+                $query->where('user_id',NULL);
+            }else{
+                $query->where('user_id',$user->id);
+            }
+        })
+        ->selectRaw('products.id,products.name,brands.name as brand_name,products.image,inventory.qty AS inventory,products.status')
+        ->whereColumn('inventory.qty','<','low_stock');
+        $total_product = $query->whereRaw($where)->count();
+        if(!empty($request->input('export',''))){
+            $lowStockProducts = $query->whereRaw($where)->get();
+            return Excel::download(new ProductExport($lowStockProducts),'LowStock.xlsx');
+        }else{
+        $query->whereRaw($where)
+        ->offset($start)
+        ->limit($length)
+        ->orderBy($request['columns'][$request['order'][0]['column']]['name'],$request['order'][0]['dir']);
+        $products = $query->get();
+
+        $data = [];
+        foreach($products as $product){            
+            $product_image_html = (!empty($product->image))?"<img class='img logo' src=".url($product->image)." width=50 />":'Image not found';
+            $action_html = '';
+            $inventory_html = '';
+            $inventory = (empty($product->inventory))?'0':$product->inventory;
+            $status = (!empty($product->status)) ? 'Enable': 'Disabled';
+            $status_html = $status;
+            $inventory_html = "<span>$inventory</span>";
+            $data[] = [$product->id,$product->name,$product->brand_name,$product_image_html,$inventory_html,$status_html];
+        }
+        $return_array = array();
+        $return_array['draw'] = $request['draw'];
+        $return_array['recordsTotal'] = $total_product;
+        $return_array['recordsFiltered'] = $total_product;
+        $return_array['data'] = $data;
+        return response()->json($return_array);
+    }
+    }
     public function getProductInventory(Request $request){
         Validator::make($request->all()['data'], [
             'product_id' => 'required',
@@ -264,11 +399,13 @@ class ProductController extends MainController
     public function updateProductInventory(Request $request){
         Validator::make($request->all(), [
             'product_id' => 'required',
-            "inventory" => 'required|numeric'
+            "inventory" => 'required|numeric',
+            "low_stock" => 'required|numeric'
         ])->validate(); 
 
         if($request->ajax()){
             $update_data['qty'] = $request->input('inventory');
+            $update_data['low_stock'] = $request->input('low_stock');
             try{
                 $inventory = Inventory::where('product_id',$request->input('product_id'))->where('user_id',auth()->user()->id);
                 if(!empty($inventory->get()->toArray())){
@@ -285,5 +422,17 @@ class ProductController extends MainController
         }else{
             return response()->json(['status' => 'error','code'=>0,'message'=>'Bad Method Call.']);
         }
+    }
+
+    public function productReport(){
+        View::share('title', 'Inventory Report');
+        View::share('elementActive', 'inventory_report');
+        return view('admin.report.inventory');
+    }
+
+    public function lowStockReport(){
+        View::share('title', 'Low Stock Report');
+        View::share('elementActive', 'low_stock_report');
+        return view('admin.report.low-stock');
     }
 }

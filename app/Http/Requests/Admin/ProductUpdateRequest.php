@@ -28,6 +28,7 @@ class ProductUpdateRequest extends FormRequest
             'brand_id' => 'required',
             'description' => 'required|min:10',
             'inventory' =>'required',
+            'low_stock' => 'required'
             // 'category' => 'required'
         ];
     }

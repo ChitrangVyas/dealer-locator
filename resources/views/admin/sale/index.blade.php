@@ -146,14 +146,20 @@
             var view_url = $(this).data('url');
             $(`#orderModal .modal-body`).html("");
             getOrderData(view_url,{'order_id':$(this).data('order')}).then(function(res){
-                $('#order_status').select2({
+                $('.select2').select2({
                     width:"20%",
                 });
             });
         });
 
         $('body').on('change','#order_status',function(){
-            saveFormData("{{route('invoice.status.update')}}",$('#invoice').serializeArray(),'').then(function(res){
+            saveFormData("{{route('invoice.status.update')}}",$('#invoice').serializeArray(),'orderModal').then(function(res){
+                $('#example').DataTable().ajax.reload(null, false);
+            });
+        });
+
+        $('body').on('change','#order_stage',function(){
+            saveFormData("{{route('sale.stage.update')}}",$('#invoice').serializeArray(),'orderModal').then(function(res){
                 $('#example').DataTable().ajax.reload(null, false);
             });
         });
@@ -272,6 +278,10 @@
         $("body").on('shown.bs.modal',function(){
             var selectedTab = $(".modal-body .tab-content").find(".active");
             activeTab(selectedTab);
+        });
+
+        $('body').on('click','#btnUpdate',function(){
+            saveFormData("{{route('order.token.update')}}",$('#invoice').serializeArray());
         });
 
     });
@@ -578,6 +588,10 @@
                 }
             }
         });
+    }
+    function copyToClipboard(element) {
+        $(element).select();
+        document.execCommand("copy");
     }
 </script>
 @endsection

@@ -25,7 +25,10 @@ Route::get('/home', function () {
 Route::get('/admin', function () {
     return redirect('admin/home');
 });
-
+Route::group(['prefix'=>'installation','middleware'=>['auth']],function () {
+    Route::get('/order/login/{token}', [App\Http\Controllers\InstallationController::class, 'installlationLogin'])->name('installation.login');
+    Route::post('login', [App\Http\Controllers\InstallationController::class, 'login'])->name('installation.order.login');
+});
 Auth::routes(['register' => false]);
 Route::group(['prefix'=>'admin','middleware'=>['auth']],function () {
     Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
@@ -103,6 +106,8 @@ Route::group(['prefix'=>'admin','middleware'=>['auth']],function () {
     Route::get('invoice', [App\Http\Controllers\Admin\OrderController::class,'invoiceIndex'])->name('invoice.index');
     Route::any('invoice/listInvoiceAjaxData', [App\Http\Controllers\Admin\OrderController::class,'listInvoiceAjaxData'])->name('list.invoice');
     Route::post('invoice/status/update', [App\Http\Controllers\Admin\OrderController::class,'updateOrderStatus'])->name('invoice.status.update');
+    Route::post('sale/stage/update', [App\Http\Controllers\Admin\OrderController::class,'updateOrderStage'])->name('sale.stage.update');
+    Route::post('order/token/update',[App\Http\Controllers\Admin\OrderController::class,'updateOrderToken'])->name('order.token.update');
     
     //cart
     Route::post('cart/inquiry-to-quote/create', [App\Http\Controllers\Admin\CartController::class,'createInquiryToQuoteCart'])->name('cart.inquiryToQuote.create');

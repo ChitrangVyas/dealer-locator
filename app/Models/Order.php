@@ -63,9 +63,16 @@ class Order extends Model
     public function orderStatus(){
         return $this->hasMany(OrderStatus::class);
     }
+    public function orderStage(){
+        return $this->hasOne(OrderStage::class);
+    }
 
     public function getOrderStatus(){
         return [1 => 'Pendding', 2 => 'Paid'];
+    }
+
+    public function getOrderStage(){
+        return [0=>"Pendding", 1=>"Processing", 2=>"Ready for Installation", 3=>"Installed"];
     }
 
     public function getUserOrderStatus()
@@ -74,6 +81,14 @@ class Order extends Model
     }   
     public function getInvoiceStatus($invoice_status){
         return (!empty($invoice_status))?$this->getOrderStatus()[$invoice_status]:'N/A';
+    }
+
+    public function getSalesStage($order_stage){
+        return (isset($order_stage))?$this->getOrderStage()[$order_stage]:'N/A';
+    }
+
+    public function getSalesOrderStage(){
+        return OrderStage::where('order_id',$this->id)->get();
     }
 
     public function getTotalTax(){

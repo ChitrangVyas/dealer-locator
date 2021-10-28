@@ -17,11 +17,13 @@
                                     <input type="hidden" name="export" id="dtExport" value="" />
                                     <input type="text" class="d-inline form-control form-control-sm col-2 datetimepicker-input from_date" id="from_date" name="from_date" data-toggle="datetimepicker" data-target="#from_date" autocomplete="off" value="" placeholder="From" required/>
                                     <input type="text" class="d-inline form-control form-control-sm col-2 datetimepicker-input to_date" id="to_date" name="to_date" data-toggle="datetimepicker" data-target="#to_date" autocomplete="off" value="" placeholder="To" required/>
+                                    @dealer()
                                     <select class="d-inline form-control form-control-sm col-2" name="sent_recieved" id="sent_recieved">
                                         <option value="">All</option>
                                         <option value="sent">Sent</option>
                                         <option value="received">Recieved</option>
                                     </select>
+                                    @enddealer
                                     <button type="button" class="d-inline btn btn-primary btn-sm form-control-sm col-1" id="filter" value="">Filter</button>
                                 </form>
                                 <div class="d-inline">

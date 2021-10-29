@@ -61,7 +61,9 @@
 <script src="{{asset('js/app.js') }}"></script>
 <script>
   jQuery(document).ready(function() {
-      getNotification();
+    @auth
+    getNotification();
+    @endauth  
   });
   $.ajaxSetup({
       headers: {
@@ -201,6 +203,7 @@
         // $(this).bootstrapSwitch('state', $(this).prop('checked'));
         $(this).bootstrapSwitch();
     });
+    @auth
     setInterval(function(){
       var total_notification = "0";
       if($('.navbar-badge').hasClass('notify-counter')){
@@ -229,6 +232,7 @@
           }
       });
     });
+    @endauth
   });
 </script>
 <!-- jQuery -->

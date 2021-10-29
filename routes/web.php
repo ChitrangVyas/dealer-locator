@@ -25,9 +25,22 @@ Route::get('/home', function () {
 Route::get('/admin', function () {
     return redirect('admin/home');
 });
-Route::group(['prefix'=>'installation','middleware'=>['auth']],function () {
-    Route::get('/order/login/{token}', [App\Http\Controllers\InstallationController::class, 'installlationLogin'])->name('installation.login');
+
+Route::get('installation/logout', function(){
+    if(\Session::has('installation_user')){
+        \Session::forget('installation_user');
+    }
+    return redirect(route('installation.login'));
+    
+})->name('installation.logout');
+
+Route::group(['prefix'=>'installation'],function () {
+    Route::get('/order/login/{token?}', [App\Http\Controllers\InstallationController::class, 'installlationLogin'])->name('installation.login');
     Route::post('login', [App\Http\Controllers\InstallationController::class, 'login'])->name('installation.order.login');
+    Route::get('/dashboard', [App\Http\Controllers\InstallationController::class, 'dashboard'])->name('installation.order.dashboard');
+    Route::post('image/upload', [App\Http\Controllers\InstallationController::class, 'uploadInstallationImage'])->name('installation.image.upload');
+    Route::post('image/delete', [App\Http\Controllers\InstallationController::class, 'removeInstallationImage'])->name('installation.image.delete');
+    //
 });
 Auth::routes(['register' => false]);
 Route::group(['prefix'=>'admin','middleware'=>['auth']],function () {

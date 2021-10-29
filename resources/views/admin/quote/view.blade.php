@@ -183,6 +183,78 @@
                 </div>
             </div>
         </fieldset>
+        <fieldset class="border">
+            <legend class="w-auto m-2">Order Stage</legend>
+                <div class="col-sm-12 col-md-12">
+                    <table class="col-12 mb-3">
+                        @if(($order->from_user != auth()->user()->id) && (!empty($order->from_user)))
+                        <tr>
+                            <td>
+                                <label for="stage">Stage: </label>
+                            </td>
+                            <td>
+                                <span>{{$order->getSalesStage(!empty($order->orderStage['stage'])?$order->orderStage['stage']:0)}}</span>
+                            </td>
+                        </tr>
+                        @else
+                        <tr>
+                            <td>
+                                <label for="stage">Stage: </label>
+                            </td>
+                            <td>
+                                <select name="stage" class="form-control select2" id="order_stage">
+                                    <option value="">Select</option>
+                                    @foreach ($order->getOrderStage() as $key=>$order_stage)
+                                        <option value="{{$key}}" {{(!empty($order->orderStage) && ($order->orderStage->stage == $key))?'selected':''}}>{{$order_stage}}</option>
+                                    @endforeach
+                                </select>
+                            </td>
+                        </tr>
+                        @if(!empty($order->orderStage) && ($order->orderStage->stage == 2))
+                        <tr>
+                            <td>
+                                <label for="link">Upload Link:</label>
+                            </td>
+                            <td>
+                                <input type="text" class=" d-inline col-6 form-control col-4" id="link" value="{{route('installation.login',Crypt::encryptString($order->id))}}" readonly /><button type="button" class="d-inline btn btn-default btn-sm" onclick="copyToClipboard('#link')"><i class="far fa-copy"></i></button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <label for="password">Password:</label>
+                            </td>
+                            <td>
+                                <div class="col-sm-12 col-md-4 ml-0 pl-0">
+                                    <div class="form-group">
+                                        <input type="password" class="form-control" id="password" name="password" value="{{(!empty($order->token))?$order->token:''}}" placeholder="Password">
+                                        <span toggle="#password" class="fa fa-fw fa-eye eye-icon toggle-password"></span>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">
+                                <button type="button" id="btnUpdate" class="btn btn-primary btn-sm">Update Password</button>
+                            </td>
+                        </tr>
+                        @endif
+                        @endnotadmin
+                    </table>
+                </div>
+        </fieldset>
     </form>
 </div>
 @endif
+<script>
+if($('.toggle-password').length > 0){
+    $(".toggle-password").click(function() {
+        $(this).toggleClass("fa-eye fa-eye-slash");
+        var input = $($(this).attr("toggle"));
+        if (input.attr("type") == "password") {
+            input.attr("type", "text");
+        } else {
+            input.attr("type", "password");
+        }
+    });
+}
+</script>

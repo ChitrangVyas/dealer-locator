@@ -26,6 +26,22 @@ Route::get('/admin', function () {
     return redirect('admin/home');
 });
 
+Route::get('installation/logout', function(){
+    if(\Session::has('installation_user')){
+        \Session::forget('installation_user');
+    }
+    return redirect(route('installation.login'));
+    
+})->name('installation.logout');
+
+Route::group(['prefix'=>'installation'],function () {
+    Route::get('/order/login/{token?}', [App\Http\Controllers\InstallationController::class, 'installlationLogin'])->name('installation.login');
+    Route::post('login', [App\Http\Controllers\InstallationController::class, 'login'])->name('installation.order.login');
+    Route::get('/dashboard', [App\Http\Controllers\InstallationController::class, 'dashboard'])->name('installation.order.dashboard');
+    Route::post('image/upload', [App\Http\Controllers\InstallationController::class, 'uploadInstallationImage'])->name('installation.image.upload');
+    Route::post('image/delete', [App\Http\Controllers\InstallationController::class, 'removeInstallationImage'])->name('installation.image.delete');
+    //
+});
 Auth::routes(['register' => false]);
 Route::group(['prefix'=>'admin','middleware'=>['auth']],function () {
     Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
@@ -103,6 +119,8 @@ Route::group(['prefix'=>'admin','middleware'=>['auth']],function () {
     Route::get('invoice', [App\Http\Controllers\Admin\OrderController::class,'invoiceIndex'])->name('invoice.index');
     Route::any('invoice/listInvoiceAjaxData', [App\Http\Controllers\Admin\OrderController::class,'listInvoiceAjaxData'])->name('list.invoice');
     Route::post('invoice/status/update', [App\Http\Controllers\Admin\OrderController::class,'updateOrderStatus'])->name('invoice.status.update');
+    Route::post('sale/stage/update', [App\Http\Controllers\Admin\OrderController::class,'updateOrderStage'])->name('sale.stage.update');
+    Route::post('order/token/update',[App\Http\Controllers\Admin\OrderController::class,'updateOrderToken'])->name('order.token.update');
     
     //cart
     Route::post('cart/inquiry-to-quote/create', [App\Http\Controllers\Admin\CartController::class,'createInquiryToQuoteCart'])->name('cart.inquiryToQuote.create');

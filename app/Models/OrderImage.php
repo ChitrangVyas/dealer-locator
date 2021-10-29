@@ -26,4 +26,8 @@ class OrderImage extends Model
             return ['title'=>$fileName,'file_path'=>$this->image,'src'=>'/storage/uploads/icons/file.png'];
         }
     }
+
+    public function product(){
+        return $this->belongsTo(Product::class);
+    }
 }

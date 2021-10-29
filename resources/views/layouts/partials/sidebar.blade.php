@@ -4,7 +4,7 @@
       <img src="{{ asset(config('icon.logo')) }}" alt="Logo" class="brand-image img-circle elevation-3">
       <span class="brand-text font-weight-light">{{ ucwords(!empty(config('app.name'))?config('app.name'):'Techcelerity')}}</span>
     </a>
-
+    @auth
     <!-- Sidebar -->
     <div class="sidebar">
       <!-- Sidebar user panel (optional) -->
@@ -268,5 +268,25 @@
       </nav>
       <!-- /.sidebar-menu -->
     </div>
+    @else
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <!-- Sidebar user panel (optional) -->
+      <nav class="mt-2">
+        <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+          <!-- Add icons to the links using the .nav-icon class
+               with font-awesome or any other icon font library -->
+          
+          <li class="nav-item">
+            <a href="/admin/home" class="nav-link active">
+              <i class="nav-icon fas fa-home"></i>
+              <p>
+                Home
+              </p>
+            </a>
+          </li>
+        </ul>
+    </div>
     <!-- /.sidebar -->
+    @endauth
   </aside>

@@ -111,21 +111,6 @@
                     d.dealer = $("#dealer").val();
                 }
             },
-            "fnDrawCallback":function() {
-                let is_admin = "{{((empty(auth()->user()->users_group_id)) || auth()->user()->users_group_id == 1 ||auth()->user()->users_group_id == 2 )? true : false }}";
-                let is_dealer = "{{auth()->user()->users_group_id == 2}}";
-                if(is_admin){
-                    table.column(5).visible();
-                }else{
-                    table.column(5).visible(false);
-                }
-                if(is_dealer){
-                    table.column(4).visible(false);
-                }else{
-                    table.column(4).visible();
-                }
-                
-            }
         });
         $('.datetimepicker-input').datetimepicker({
             format: 'YYYY-MM-DD',

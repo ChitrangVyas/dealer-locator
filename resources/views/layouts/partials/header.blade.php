@@ -13,6 +13,7 @@
     <ul class="navbar-nav ml-auto">
       <!-- Navbar Search -->
       <!-- Notifications Dropdown Menu -->
+      @auth
       <li class="nav-item dropdown notifications">
       <a class="nav-link" data-toggle="dropdown" href="#">
         <i class="far fa-bell bell-icon"></i>
@@ -21,7 +22,7 @@
       <div class="dropdown-menu dropdown-menu-xl dropdown-menu-right notification-menu overflow-hidden">
       </div>
       </li>
-      <li class="nav-item dropdown">
+      <li class="nav-item dropdown"> 
         <a class="nav-link" data-toggle="dropdown" href="#">
           <i class="fas fa-user"></i>
           Logged as {{auth()->user()->name}}
@@ -39,5 +40,10 @@
           </a> 
         </div>
       </li>
+      @else
+      <a class="dropdown-item" href="{{ route('installation.logout') }}" >
+            <i class="fas fa-sign-out-alt"></i> @if (trans()->has('lang.sign_out')) {{ __('lang.sign_out') }} @else {{__('Sign Out')}} @endif 
+      </a> 
+      @endauth
     </ul>
   </nav>

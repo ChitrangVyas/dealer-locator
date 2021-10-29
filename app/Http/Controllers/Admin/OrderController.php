@@ -12,6 +12,7 @@ use App\Models\Inquiry;
 use App\Models\Inventory;
 use App\Models\OrderImage;
 use App\Models\OrderProductTax;
+use App\Models\OrderStage;
 use App\Models\OrderStatus;
 use Exception;
 use Illuminate\Http\Request;
@@ -103,7 +104,6 @@ class OrderController extends MainController
     {
         //
     }
-
     public function quoteIndex(){        
         View::share ( 'title', 'Quote' );
         View::share ( 'elementActive', 'quote' );
@@ -562,8 +562,9 @@ class OrderController extends MainController
         ->join('order_product AS op','orders.id','=','op.order_id','left')
         ->join('users AS c','orders.to_user','=','c.id','left')
         ->join('users AS d','orders.from_user','=','d.id','left')
-        ->whereRaw($where)
-        ->offset($start)
+        ->whereRaw($where);
+        $total_order = $orders->whereRaw($where)->get()->count();
+        $orders= $orders->offset($start)
         ->limit($length)
         ->orderBy($request['columns'][$request['order'][0]['column']]['name'],$request['order'][0]['dir'])
         ->groupby('orders.id')
@@ -575,7 +576,7 @@ class OrderController extends MainController
         }else{
             $total_order = Order::where('type','po')->where('from_user',$user->id)->where('deleted_at',NULL)->count();
         } */
-        $total_order = Order::whereRaw($where)->count();
+        
         $data = [];
         foreach($orders as $order){
             // $orderDetail = Order::where('id','=',$order->id)->first();
@@ -627,14 +628,14 @@ class OrderController extends MainController
         ->join('order_product AS op','orders.id','=','op.order_id','left')
         ->join('users AS c','orders.to_user','=','c.id','left')
         ->join('users AS d','orders.from_user','=','d.id','left')
-        ->whereRaw($where)
-        ->offset($start)
+        ->whereRaw($where);
+        $total_order = $orders->whereRaw($where)->get()->count();
+        $orders= $orders->offset($start)
         ->limit($length)
         ->orderBy($request['columns'][$request['order'][0]['column']]['name'],$request['order'][0]['dir'])
         ->groupby('orders.id')
         ->get();
-        
-        $total_order = Order::whereRaw($where)->count();
+            
         $data = [];
         foreach($orders as $order){
             $order_data = Order::find($order->id);
@@ -774,6 +775,56 @@ class OrderController extends MainController
                 return response()->json(['status' => 'error','code'=>0,'message'=>'Unable to Update Order Status.']);
             }
         }
+    }
+    public function updateOrderStage(Request $request){
+        $request_data = $request->except('_token','method');
+        $orderStatus = OrderStage::where('order_id',$request_data['order_id'])->where('user_id',(!empty(auth()->user()->users_group_id))?auth()->user()->id:NULL);
+        if((!empty($orderStatus->get())) && count($orderStatus->get())){
+            try{
+                
+                $is_updated = $orderStatus->update(['stage'=>$request_data['stage'],'updated_at'=> \Carbon\Carbon::now()]);
+            }catch(Exception $e){
+                return response()->json(['status' => 'error','code' => 0,'message' => $e->getMessage()]);
+            }
+            if(!empty($is_updated)){
+                return response()->json(['status' => 'successful','code'=>1,'message'=>'Order Stage Successfully Updated.']);
+            }else{
+                return response()->json(['status' => 'error','code'=>0,'message'=>'Unable to Update Order Stage.']);
+            }
+        }else{
+            $order = Order::findOrFail($request_data['order_id']);
+            $order_stage_data = array('order_id' => $order->id, 'stage' => $request_data['stage']);
+            if(empty($order->from_user->users_group_id)) {
+                $order_stage_data['user_id'] = NULL;
+            }else{
+                $order_stage_data['user_id'] = auth()->user()->id;
+            }
+            if(!empty($order_stage_data)){
+                $order_status = OrderStage::create($order_stage_data);
+            }
+            if(!empty($order_status)){
+                return response()->json(['status' => 'successful','code'=>1,'message'=>'Order Stage Successfully Updated.']);
+            }else{
+                return response()->json(['status' => 'error','code'=>0,'message'=>'Unable to Update Order Stage.']);
+            }
+        }
+    }
+
+    public function updateOrderToken(Request $request){
+        $request_data = $request->except('_token','method');
+        $is_updated = 0;
+        try{
+            $order = Order::findOrFail($request_data['order_id']);
+            if(!empty($request->input('password',''))){
+                $is_updated = $order->update(['token'=>$request_data['password'],'updated_at'=> \Carbon\Carbon::now()]);
+                if($is_updated){
+                    return response()->json(['status' => 'successful','code'=>1,'message'=>'Order Successfully Updated.']);
+                }
+            }
+        }catch(Exception $e){
+            return response()->json(['status' => 'error','code' => 0,'message' => $e->getMessage()]);
+        }
+        return response()->json(['status' => 'error','code'=>0,'message'=>'Unable to Update Order.']);
     }
 
     //Reports

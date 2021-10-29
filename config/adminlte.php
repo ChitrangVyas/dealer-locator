@@ -465,6 +465,21 @@ return [
                 ],
             ],
         ],
+        'dropzone' => [
+            'active' => false,
+            'files' => [
+                [
+                    'type' => 'css',
+                    'asset' => false,
+                    'location' => '//unpkg.com/dropzone@5/dist/min/dropzone.min.css',
+                ],
+                [
+                    'type' => 'js',
+                    'asset' => false,
+                    'location' => '//unpkg.com/dropzone@5/dist/min/dropzone.min.js',
+                ],
+            ],
+        ],
         'summernote' => [
             'active' => false,
             'files' => [

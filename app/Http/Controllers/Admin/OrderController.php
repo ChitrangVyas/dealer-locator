@@ -170,6 +170,35 @@ class OrderController extends MainController
         $cart = \Cart::Session($request_data['cart_id']);
         $quote_data['status'] =  'sent';
         try{
+            $order_data = explode('_',$request_data['cart_id']);
+            if($order_data[1] == 'edit'){
+                $quote = Order::findOrFail($order_data[2]);
+                $quote->update($quote_data);
+                if(!empty($request_data['product'])){
+                    $current_order_product = OrderProduct::where('order_id',$quote->id);
+                    if(!empty($current_order_product)){
+                        $order_product = $current_order_product->delete();
+                    }
+                    foreach($request_data['product'] as $key => $value){
+                        $cart_product = $cart->get($key);
+                        $order_product_data = array('order_id' => $quote->id, 'product_id' => ($request_data['is_new_product']==1)?NULL:$cart_product->id, 'product_name'=>$cart_product->name, 'qty' => $cart_product->quantity, 'amount' => $cart_product->price);
+                        $order_product = '';
+                        if(!empty($order_product_data)){
+                            $order_product = OrderProduct::create($order_product_data);
+                            if((!empty($tax_data['product_tax']))){
+                                if(in_array($cart_product->id,array_keys($tax_data['product_tax']))){
+                                    foreach($tax_data['product_tax'][$cart_product->id] as $tax){
+                                        $order_tax_data = OrderProductTax::create(["order_product_id"=>$order_product->id,"tax_id"=>$tax['tax_id'],"price"=>$tax['tax']]);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    $cart->clear();
+                    $this->myCart->clear($request_data['cart_id']);
+                }
+                return response()->json(['status' => 'successful', 'data'=>['quote'=>$quote_data['order_reference']],'code'=>1,'message'=>'Quote Successfully updated.']);
+            }else{
             $quote = Order::create($quote_data);
             if(!empty($quote)){
                 $quote_product_data = [];
@@ -221,6 +250,7 @@ class OrderController extends MainController
                     return response()->json(['status' => 'error','code'=>0,'message'=>'Something goes wrong.']);
                 }
             }
+        }
         }catch(Exception $e){
             return response()->json(['status' => 'error','code' => 0,'message' => $e->getMessage()]);                
         }
@@ -259,55 +289,86 @@ class OrderController extends MainController
         $cart_data['status'] =  'sent';
         $cart_data['order_reference'] = (!empty($cart_data['order_reference']))?$cart_data['order_reference']:NULL;
         try{
-            $order = Order::create($cart_data);
-            if(!empty($order)){
-                $order_product_data = []; 
-                foreach($request_data['product'] as $key => $value){
-                    $cart_product = $cart->get($key);
-                    $order_product_data = array('order_id' => $order->id, 'product_id' => ($request_data['is_new_product']==1)?NULL:$cart_product->id, 'product_name'=>$cart_product->name, 'qty' => $cart_product->quantity, 'amount' => $cart_product->price);
-                    $order_product = '';
-                    if(!empty($order_product_data)){
-                        $order_product = OrderProduct::create($order_product_data);
-                        if(empty($request_data['is_new_product']) && (!empty($tax_data['product_tax']))){
-                            if(in_array($cart_product->id,array_keys($tax_data['product_tax']))){
-                                foreach($tax_data['product_tax'][$cart_product->id] as $tax){
-                                    $order_tax_data = OrderProductTax::create(["order_product_id"=>$order_product->id,"tax_id"=>$tax['tax_id'],"price"=>$tax['tax']]);
+            if(!empty($cart_data['order_id'])){
+                $order = Order::find($cart_data['order_id']);
+                unset($cart_data['order_id']);
+                $order->update($cart_data);
+                if(!empty($request_data['product'])){
+                    $current_order_product = OrderProduct::where('order_id',$order->id);
+                    if(!empty($current_order_product)){
+                        $order_product = $current_order_product->delete();
+                    }
+                    foreach($request_data['product'] as $key => $value){
+                        $cart_product = $cart->get($key);
+                        $order_product_data = array('order_id' => $order->id, 'product_id' => ($request_data['is_new_product']==1)?NULL:$cart_product->id, 'product_name'=>$cart_product->name, 'qty' => $cart_product->quantity, 'amount' => $cart_product->price);
+                        $order_product = '';
+                        if(!empty($order_product_data)){
+                            $order_product = OrderProduct::create($order_product_data);
+                            if((!empty($tax_data['product_tax']))){
+                                if(in_array($cart_product->id,array_keys($tax_data['product_tax']))){
+                                    foreach($tax_data['product_tax'][$cart_product->id] as $tax){
+                                        $order_tax_data = OrderProductTax::create(["order_product_id"=>$order_product->id,"tax_id"=>$tax['tax_id'],"price"=>$tax['tax']]);
+                                    }
                                 }
                             }
                         }
                     }
+                    $cart->clear();
+                    $this->myCart->clear($request_data['cart_id']);
                 }
-                $cart->clear();
-                $this->myCart->clear($request_data['cart_id']);
-                if(!empty($order_product)){
-                    if((!empty($request_data['btnSave'])) && $request_data['btnSave']=='savensend')
-                    {
-                        /* $email_data = [
-                            'from'=>$order->addedBy->email,
-                            'to'=>$order->customer->email,
-                            'title' => "PO FOR #$order->order_number",
-                            'view' => 'emails.send',
-                            'content' => "<p>This is Test for the PO</p>",
+                return response()->json(['status' => 'successful', 'data'=>['quote'=>$cart_data['order_reference']],'code'=>1,'message'=>'PO Successfully updated.']);
 
-                        ]; */
-                        $from = (!empty($order->addedBy))?$order->addedBy->email:$this->settingJson['mail_from_email'];
-                        $from_name = (!empty($order->addedBy))?$order->addedBy->name:$this->settingJson['mail_from_name'];
-                        $customer = (!empty($order->customer))?$order->customer->email:$this->settingJson['mail_from_email'];
-                        try{
-                            Mail::to($customer)->send(new OrderEmailTemplate($order,config('app.name').' - PO',$from,$from_name));
-                        }catch(Exception $e){
-                            return response()->json(['status' => 'error','code' => 0,'message' => 'Unable to sent Mail.']);
+            }else{
+                $order = Order::create($cart_data);
+                if(!empty($order)){
+                    $order_product_data = []; 
+                    foreach($request_data['product'] as $key => $value){
+                        $cart_product = $cart->get($key);
+                        $order_product_data = array('order_id' => $order->id, 'product_id' => ($request_data['is_new_product']==1)?NULL:$cart_product->id, 'product_name'=>$cart_product->name, 'qty' => $cart_product->quantity, 'amount' => $cart_product->price);
+                        $order_product = '';
+                        if(!empty($order_product_data)){
+                            $order_product = OrderProduct::create($order_product_data);
+                            if(empty($request_data['is_new_product']) && (!empty($tax_data['product_tax']))){
+                                if(in_array($cart_product->id,array_keys($tax_data['product_tax']))){
+                                    foreach($tax_data['product_tax'][$cart_product->id] as $tax){
+                                        $order_tax_data = OrderProductTax::create(["order_product_id"=>$order_product->id,"tax_id"=>$tax['tax_id'],"price"=>$tax['tax']]);
+                                    }
+                                }
+                            }
                         }
-                        // Mail::to($order->customer->email)->send(new OrderShipped($order));
-                        // $this->send($email_data);
                     }
-                    return response()->json(['status' => 'successful', 'data'=>['quote'=>$cart_data['order_reference']],'code'=>1,'message'=>'PO Successfully created.']);
-                }else{
-                    return response()->json(['status' => 'error','code'=>0,'message'=>'Something goes wrong.']);
-                }
+                    $cart->clear();
+                    $this->myCart->clear($request_data['cart_id']);
+                    if(!empty($order_product)){
+                        if((!empty($request_data['btnSave'])) && $request_data['btnSave']=='savensend')
+                        {
+                            /* $email_data = [
+                                'from'=>$order->addedBy->email,
+                                'to'=>$order->customer->email,
+                                'title' => "PO FOR #$order->order_number",
+                                'view' => 'emails.send',
+                                'content' => "<p>This is Test for the PO</p>",
+
+                            ]; */
+                            $from = (!empty($order->addedBy))?$order->addedBy->email:$this->settingJson['mail_from_email'];
+                            $from_name = (!empty($order->addedBy))?$order->addedBy->name:$this->settingJson['mail_from_name'];
+                            $customer = (!empty($order->customer))?$order->customer->email:$this->settingJson['mail_from_email'];
+                            try{
+                                Mail::to($customer)->send(new OrderEmailTemplate($order,config('app.name').' - PO',$from,$from_name));
+                            }catch(Exception $e){
+                                return response()->json(['status' => 'error','code' => 0,'message' => 'Unable to sent Mail.']);
+                            }
+                            // Mail::to($order->customer->email)->send(new OrderShipped($order));
+                            // $this->send($email_data);
+                        }
+                        return response()->json(['status' => 'successful', 'data'=>['quote'=>$cart_data['order_reference']],'code'=>1,'message'=>'PO Successfully created.']);
+                    }else{
+                        return response()->json(['status' => 'error','code'=>0,'message'=>'Something goes wrong.']);
+                    }
             }else{
                 return response()->json(['status' => 'error','code'=>0,'message'=>'Unable to generate PO.']);
             }
+        }
         }catch(Exception $e){
             return response()->json(['status' => 'error','code' => 0,'message' => $e->getMessage()."<br>".$e->getFile().": ".$e->getLine()]);                
         }
@@ -521,10 +582,10 @@ class OrderController extends MainController
             $added_by  = (!empty($order->added_by))?$order->added_by:$this->settingJson['name'];
             $action_html = "<span><a data-url=".route('quote.show',$order->id)." data-order=".$order->id." class='btn btn-primary view-order' data-toggle='modal' data-target='#orderModal' title='View'><i class='far fa-eye' title='View'></i></a></span>";
             // $action_html .= "<span class='ml-3 create-po-".$order->id."'><a data-url=".route('cart.po.create')." data-order=".$order->id." class='btn btn-success view-order'>Generate PO</a></span>";
+            $action_html .= "<span class='ml-2 edit-quote-".$order->id."'><a data-url=".route('cart.quote.edit',$order->id)." data-order=".$order->id." class='btn btn-primary view-order' title='Edit'><i class='fas fa-pen'></i></a></span>";
             if(empty($is_sale_generated) && (auth()->user()->id == $order->from_user || (empty($user->users_group_id) && empty($order->from_user))) ){
                 $action_html .= "<span class='ml-2 create-sale-".$order->id."'><a data-url=".route('cart.sale.create')." data-order=".$order->id." class='btn btn-default view-order' data-toggle='modal' data-target='#orderModal' title='Generate Sale'><i class='fas fa-shopping-cart'></i></a></span>";
             }
-            // $action_html = "<span><a href=".route('order.edit',$order->id)." class='btn btn-primary'>Edit</a></span>";
             // $action_html .= "<span class='ml-3'><button type=submit data-user=$order->id class='btn btn-danger' onClick=deleteOrder($order->id)>Delete</button></span>";
             $data[] = [$order->id,$order->order_number,$order->amount, ucwords($added_by), ucwords($customer),(!empty($order->is_po_recieved))?'Y':'N',(!empty($order->recieved_date))?$order->recieved_date:'N/A',$order->created_date, $action_html];
         }
@@ -584,6 +645,7 @@ class OrderController extends MainController
             $customer = (!empty($order->customer))?$order->customer:$this->settingJson['name'];
             $added_by  = (!empty($order->added_by))?$order->added_by:$this->settingJson['name'];
             $action_html = "<span><a data-url=".route('po.show',$order->id)." data-order=".$order->id." class='btn btn-primary view-order' data-toggle='modal' data-target='#orderModal' title='View'><i class='far fa-eye' title='View'></i></a></span>";
+            $action_html .= "<span class='ml-3 edit-po edit-po-".$order->id."' data-po=".$order->id." ><a data-url=".route('po.show',$order->id)." class='btn btn-primary' title='Edit'><i class='fas fa-pen'></i></a></span>";
             if(((auth()->user()->id == $order->to_user) && empty($is_sale_generated)) || ((empty($user->users_group_id) || ($user->users_group_id == '1')) && (!empty($order->for_manufacturer) && empty($is_sale_generated)))){
                 $action_html .= "<span class='ml-3 create-sale-".$order->id."'><a data-url=".route('cart.sale.create')." data-order=".$order->id." class='btn btn-default view-order' data-toggle='modal' data-target='#orderModal' title='Generate Sale'><i class='fas fa-shopping-cart' title='Generate Sale'></i></a></span>";
             }
@@ -591,7 +653,6 @@ class OrderController extends MainController
                 $action_html .= "<span class='ml-3 create-sale-".$order->id."'><a data-url=".route('cart.sale.create')." data-order=".$order->id." class='btn btn-default view-order' data-toggle='modal' data-target='#orderModal'>Generate Sale</a></span>";
             } */
             // $action_html .= "<span class='ml-3 create-po-".$order->id."'><a data-url=".route('cart.po.create')." data-order=".$order->id." class='btn btn-success view-quote' data-toggle='modal' data-target='#orderModal'>Generate PO</a></span>";
-            // $action_html = "<span><a href=".route('order.edit',$order->id)." class='btn btn-primary'>Edit</a></span>";
             // $action_html .= "<span class='ml-3'><button type=submit data-user=$order->id class='btn btn-danger' onClick=deleteOrder($order->id)>Delete</button></span>";
             $data[] = [$order->id,$order->order_number,$order->amount, ucwords($added_by), ucwords($customer),$order->created_date, $action_html];
         }

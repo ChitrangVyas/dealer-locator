@@ -189,6 +189,14 @@
 
         });
 
+        $('body').on('click','.edit-po',function(){
+            let po = $(this).data('po');
+                getOrderData("{{route('cart.po.create')}}",{'order_id':po,'is_po_edit':1}).then(function(res){
+                    $('#orderModal').modal('show');
+                    select2Product();
+                });
+        });
+
         $('body').on('submit','#saveQuote', function(e){
             e.preventDefault();
             e.stopImmediatePropagation();

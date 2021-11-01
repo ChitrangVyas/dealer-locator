@@ -73,6 +73,7 @@ Route::group(['prefix'=>'admin','middleware'=>['auth']],function () {
     Route::put('profile/', [App\Http\Controllers\CommonController::class,'updateProfile'])->name('profile.update');
     Route::get('vendor/', [App\Http\Controllers\Admin\CustomerUserController::class,'vendorIndex'])->name('vendor.index');
     Route::any('vendor/listajax', [App\Http\Controllers\Admin\VendorController::class,'vendorListAjaxData'])->name('vendorlistajax');
+    //report
     Route::any('report/product', [App\Http\Controllers\Admin\ProductController::class,'productReport'])->name('report.product');
     Route::any('report/lowStockReport', [App\Http\Controllers\Admin\ProductController::class,'lowStockReport'])->name('report.lowstock');
     Route::any('report/po', [App\Http\Controllers\Admin\OrderController::class,'poReport'])->name('report.po');
@@ -127,6 +128,7 @@ Route::group(['prefix'=>'admin','middleware'=>['auth']],function () {
     Route::post('cart/po/create', [App\Http\Controllers\Admin\CartController::class,'createPo'])->name('cart.po.create');
     Route::post('cart/invoice/create', [App\Http\Controllers\Admin\CartController::class,'createInvoice'])->name('cart.invoice.create');
     Route::post('cart/quote/create', [App\Http\Controllers\Admin\CartController::class,'createQuote'])->name('cart.quote.create');
+    Route::post('cart/quote/edit', [App\Http\Controllers\Admin\CartController::class,'editQuote'])->name('cart.quote.edit');
     Route::post('cart/sale/create', [App\Http\Controllers\Admin\CartController::class,'createSale'])->name('cart.sale.create');
     Route::post('cart/product/add', [App\Http\Controllers\Admin\CartController::class,'addProductToCart'])->name('cart.product.add');
     Route::post('cart/product/new/', [App\Http\Controllers\Admin\CartController::class,'addNewProductToCart'])->name('cart.product.new');

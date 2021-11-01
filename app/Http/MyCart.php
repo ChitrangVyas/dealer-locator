@@ -63,13 +63,19 @@ class MyCart
         $this->session->put($cart_id,json_encode($json));
     }
 
+    public function setOrderId($cart_id,$order_id=''){        
+        $json = (!empty($this->session->get($cart_id)))?json_decode($this->session->get($cart_id,[]),true):'';
+        $json['order_id'] = $order_id;
+        $this->session->put($cart_id,json_encode($json));
+    }
+
     public function getFrom($cart_id){        
         $json = json_decode($this->session->get($cart_id,[]),true);
         return $json['from_user'];
     }
 
     public function getTo($cart_id){        
-        $json = json_decode($this->session->get($cart_id,[]),true);
+        $json = (!empty($this->session->get($cart_id)))?json_decode($this->session->get($cart_id,[]),true):'';
         return (!empty($json['to_user']))?$json['to_user']:'';
     }
 
@@ -106,6 +112,11 @@ class MyCart
     public function getForManufacturePoTOSale($cart_id){
         $json = (!empty($this->session->get($cart_id)))?json_decode($this->session->get($cart_id,[]),true):'';
         return !empty($json['for_manufacture_po_to_sale'])?$json['for_manufacture_po_to_sale']:'';
+    }
+
+    public function getOrderId($cart_id){
+        $json = (!empty($this->session->get($cart_id)))?json_decode($this->session->get($cart_id,[]),true):'';
+        return !empty($json['order_id'])?$json['order_id']:'';
     }
     
     public function setProductTax($cart_id,$productTax){        
@@ -192,21 +203,23 @@ class MyCart
 
     public function removeItem($cart_id,$item){
         $cart = $this->getAll($cart_id);
-        if(is_array($item)){
-            foreach($item as $key => $value){
-                foreach ($value as $val){
-                    if(in_array($key,$cart)){
-                        $keys = array_keys($cart[$key]);
-                        if(in_array($val,$keys)){
-                            unset($cart[$key][$val]);
+        if(!empty($cart)){
+            if(is_array($item)){
+                foreach($item as $key => $value){
+                    foreach ($value as $val){
+                        if(in_array($key,$cart)){
+                            $keys = array_keys($cart[$key]);
+                            if(in_array($val,$keys)){
+                                unset($cart[$key][$val]);
+                            }
                         }
                     }
                 }
+            }else{
+                unset($cart[$item]);
             }
-        }else{
-            unset($cart[$item]);
+            $this->session->put($cart_id,json_encode($cart));
         }
-        $this->session->put($cart_id,json_encode($cart));
     }
 
 }

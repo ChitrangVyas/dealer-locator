@@ -102,6 +102,10 @@ class InstallationController extends MainController
         try{
             $orderImage = OrderImage::findOrFail($request->input('order_image_id',''));
             if(!empty($orderImage)){
+                $filename = str_replace('/storage/uploads/installation/', '', $orderImage->image);
+                if(!empty($orderImage->image) && file_exists(storage_path('app/public/uploads/installation/'.$filename))){
+                    unlink(storage_path('app/public/uploads/installation/'.$filename));
+                }
                 if($orderImage->delete()){
                     return response()->json(['code'=>1,'status'=>'success','message'=>'Image successfully Deleted.']);
                 }

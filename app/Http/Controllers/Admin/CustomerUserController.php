@@ -195,4 +195,14 @@ class CustomerUserController extends MainController
         //
         return view('admin.customer.create_ajax',['vendor'=>(!empty($request['vendor']))?1:0]);
     }    
+
+    public function getcustomers(Request $request){
+        $user = auth()->user();
+        $customers = User::where('users_group_id',4)->where(function($query) use($user) {
+            return $query->orWhere('users.created_by',$user->id)->orWhere('dealer_id',$user->id)->orWhere('retailer_id',$user->id);
+        })->join('inquiries','inquiries.customer_id','=','users.id','left')->orderBy('users.created_at','desc')->take(10)->get();
+        $json['modal_title'] = "Customers";
+        $json['modal_content'] = view('layouts.partials.home.customers',['customers'=>$customers])->render();
+        return response()->json(['status' => 'successful','code'=>1, 'data'=>$json, 'message'=>'']);
+    }
 }

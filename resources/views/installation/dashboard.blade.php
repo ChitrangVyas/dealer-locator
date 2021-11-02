@@ -51,7 +51,7 @@
                         </span> -->
                         <div class="input-group col-12">
                             <div class="custom-file">
-                                <input type="hidden" name="images[]" id="uploadedImage" value="" />
+                                <!-- <input type="hidden" name="images[]" id="uploadedImage" value="" /> -->
                                 <input type="file" class="custom-file-input order-image-{{$orderProduct->product->id}}"  name="image" id="exampleInputFile" />
                                 <label class="custom-file-label" for="exampleInputFile">Choose file</label>
                             </div>
@@ -94,31 +94,17 @@
 @section('js')
 <script>
     jQuery(document).ready(function() {
-
-        /* var myDropzone = new Dropzone(document.body, {
-        url: "/target-url",
-        thumbnailWidth: 80,
-        thumbnailHeight: 80,
-        parallelUploads: 20,
-        previewTemplate: '',
-        disablePreviews:true,
-        autoQueue: false,
-        clickable: ".fileinput-button", 
-        });
-
-        myDropzone.on("addedfile", function(file) {
-            console.log($(this).find('.dz-clickable'));
-        }); */
-
         $('body').on('click','.fileinput-button',function(){
             let url = "{{route('installation.image.upload')}}";
             let formData = new FormData($('#uploadImage')[0]);
             let order_product = $(this).data('order-product');
             let file = $('input[type=file]')[0].files[0];
             formData.append('product_id',$(this).data('order-product'));
-            formData.append('file', file, file.name);
+            formData.append('image', file, file.name);
             saveFormData(url,formData).then(function(res){
-                
+                if(res.code ==1){
+                    window.location.reload();
+                }
             });
         });
         

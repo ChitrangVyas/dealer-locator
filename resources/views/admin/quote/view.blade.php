@@ -1,117 +1,9 @@
 <div class="row">
-    <div class="col-12">
-        <h4>
-            <!-- <i class="fas fa-globe"></i> {{config('app.name')}} -->
-            <small class="float-right">Date: {{date('d/m/Y',strtotime($order->created_at))}}</small>
-        </h4>
-    </div>
-    <!-- /.col -->
-</div>
-<!-- info row -->
-<div class="row invoice-info">
-    <div class="col-sm-4 invoice-col">
-        From
-        <address>
-            @if(!empty($order->addedBy))
-                <strong>{{ucwords($order->addedBy->name)}}</strong><br>
-                @if(!empty($order->addedBy->city))
-                {{ucwords($order->addedBy->address)}},<br>
-                {{ucwords($order->addedBy->city->name)}},<br>
-                {{ucwords($order->addedBy->state->name)}} - {{$order->addedBy->zipcode}}<br>
-                @endif
-                @if(!empty($order->addedBy->mobile))
-                Phone: {{$order->addedBy->mobile}}<br>
-                @endif
-                Email: {{$order->addedBy->email}}<br>
-                GSTIN: {{ ((!empty($to_user->gstin))?$to_user->gstin:' N/A ') }}
-            @else
-                <strong>{{ucwords($setting['name'])}}</strong><br>
-                {{ucwords($setting['address'])}},<br>
-                {{ucwords($setting['city_name'])}},<br>
-                {{ucwords($setting['state_name'])}} - {{$setting['zipcode']}}<br>
-                Phone: {{$setting['mobile']}}<br>
-                Email: {{$setting['email']}}<br>
-                GSTIN: {{ ((!empty($setting['gstin']))?$setting['gstin']:' N/A ') }}
-            @endif
-        </address>
-    </div>
-    <!-- /.col -->
-    <div class="col-sm-4 invoice-col">
-        To
-        <address>
-        @if(!empty($order->customer))
-            <strong>{{ucwords($order->customer->name)}}</strong><br>
-            {{ucwords($order->customer->address)}},<br>
-            {{ucwords($order->customer->city->name)}},<br>
-            {{ucwords($order->customer->state->name)}} - {{$order->customer->zipcode}}<br>
-            Phone: {{$order->customer->mobile}}<br>
-            Email: {{$order->customer->email}}<br>
-            GSTIN: {{ ((!empty($to_user->gstin))?$to_user->gstin:' N/A ') }}
-        @else
-            <strong>{{ucwords($setting['name'])}}</strong><br>
-            {{ucwords($setting['address'])}},<br>
-            {{ucwords($setting['city_name'])}},<br>
-            {{ucwords($setting['state_name'])}} - {{$setting['zipcode']}}<br>
-            Phone: {{$setting['mobile']}}<br>
-            Email: {{$setting['email']}}<br>
-            GSTIN: {{ ((!empty($setting['gstin']))?$setting['gstin']:' N/A ') }}
-
-        @endif
-        </address>
-    </div>
-    @if ($order->type == 'sale')
-    <!-- /.col -->
-    <div class="col-sm-4 invoice-col">
-        <b>Invoice #{{$order->order_number}}</b><br>
-        <br>
-    </div>
-    <!-- /.col -->
-    @endif
-</div>
-<div class="row">
-    <div class="col-sm-12 col-md-12">
-        <h5><strong>Order Detail</strong></h5>
-        <table class="table table-striped">
-            <thead>
-                <tr>
-                    <th style="width: 60%;">Product</th>
-                    <th class="text-center">HSN/SAC</th>
-                    <th>Price</th>
-                    <th>Qty</th>
-                    <th>Amount</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach ($order->orderProduct as $orderProduct)
-                <tr>
-                    <td style="width: 60%;">{{(!empty($orderProduct->product_name))?$orderProduct->product_name:$orderProduct->product->name}}</td>
-                    <td class="text-center">{{ (!empty($orderProduct->product->hsn_sac)) ? $orderProduct->product->hsn_sac : '-' }}</td>
-                    <td>{{ number_format($orderProduct->amount,2)}}</td>
-                    <td>{{$orderProduct->qty}}</td>
-                    <td>{{ number_format($orderProduct->getsubTotal(),2) }}</td>
-                </tr>
-                @endforeach
-                <tr>
-                    <td colspan="3"></td>
-                    <td><strong>Sub Total</strong></td>
-                    <td>{{ number_format($order->getSubTotal()['sub_total'],2) }}</td>
-                </tr>
-                @foreach ($order->getTotalTax() as $tax)
-                <tr>
-                    <td colspan="3"></td>
-                    <td><strong>{{$tax->name}}</strong></td>
-                    <td>{{ number_format($tax->total_tax,2) }}</td>
-                </tr>    
-                @endforeach
-                <tr>
-                    <td colspan="3"></td>
-                    <td><strong>Total</strong></td>
-                    <td>{{ number_format($order->total,2) }}</td>
-                </tr>
-            </tbody>
-        </table>
+    <div class="col-12 mb-3">
+        <a href="{{route('order.print',$order->id)}}" target="_blank" class="btn btn-default float-right"><i class="fas fa-print"></i> Print</a>
     </div>
 </div>
+@include('layouts.partials.invoice')
 @if($order->type == 'quote')
 <div class="row">
     <form id="uploadPo" class="col-12" enctype="multipart/form-data">
@@ -177,8 +69,8 @@
                     <label for="status">Status: </label>
                     <select name="status_id" class="form-control select2" id="order_status">
                         <option value="">Select</option>
-                        <option value="1" {{ (!empty($order->getUserOrderStatus()) && (count($order->getUserOrderStatus()) > 0 ) && $order->getUserOrderStatus()[0]->status_id == 1)? 'selected' :'' }} >Pendding</option>
-                        <option value="2" {{ (!empty($order->getUserOrderStatus()) && (count($order->getUserOrderStatus()) > 0 ) && $order->getUserOrderStatus()[0]->status_id == 2)? 'selected' :'' }}>Paid</option>
+                        <option value="1" {{ (!empty($order->getUserOrderStatus()) && ($order->getUserOrderStatus())->status_id == 1)? 'selected' :'' }} >Pendding</option>
+                        <option value="2" {{ (!empty($order->getUserOrderStatus()) && ($order->getUserOrderStatus())->status_id == 2)? 'selected' :'' }}>Paid</option>
                     </select>
                 </div>
             </div>
@@ -193,7 +85,7 @@
                                 <label for="stage">Stage: </label>
                             </td>
                             <td>
-                                <span>{{$order->getSalesStage(!empty($order->orderStage['stage'])?$order->orderStage['stage']:0)}}</span>
+                                <span><h5>{{$order->getSalesStage(!empty($order->orderStage['stage'])?$order->orderStage['stage']:0)}}</h5></span>
                             </td>
                         </tr>
                         @else
@@ -241,6 +133,38 @@
                         @endnotadmin
                     </table>
                 </div>
+        </fieldset>
+    </form>
+</div>
+<div class="row">
+    <form id="uploadPo" class="col-12" enctype="multipart/form-data">
+        @csrf
+        <input type="hidden" name="uploaded_by" value="{{auth()->user()->id}}">
+        <input type="hidden" name="order_id" value="{{ $order->id }}">
+        <fieldset class="border">
+            <legend class="w-auto m-2">Uploaded Image</legend>
+            @if(!empty($order->orderImage) && (count($order->orderImage) > 0))
+                <div class="row">
+                    @foreach ($order->orderImage as $orderImage)
+                        @if(!empty($orderImage->product))
+                        <div class="col-md-4 mt-3 mb-2 img-{{$orderImage->id}}">
+                            <div class="d-flex justify-content-center remove">
+                                <img src="{{url($orderImage->image)}}" class="img" alt="installation image" width="40%">
+                            </div>
+                            <div class="d-flex justify-content-center mt-2">
+                                <button type="button" class="btn btn-danger btn-sm delete-installation-image" data-order-image="{{$orderImage->id}}">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                        @endif
+                    @endforeach
+                </div>
+            @else
+                <div class="row">
+                    <div class="col-12 m-3 text-center">No Image Found</div>
+                </div>
+            @endif
         </fieldset>
     </form>
 </div>

@@ -48,6 +48,10 @@ Route::group(['prefix'=>'admin','middleware'=>['auth']],function () {
     Route::get('/home/changepassword', [App\Http\Controllers\HomeController::class, 'changepassword'])->name('changepassword');
     Route::post('/home/updatepassword', [App\Http\Controllers\HomeController::class, 'updatepassword'])->name('updatepassword');
     Route::post('home/inquiry', [App\Http\Controllers\Admin\InquiryController::class,'getInquiries'])->name('home.inqiuries');
+    Route::post('home/customer', [App\Http\Controllers\Admin\CustomerUserController::class,'getcustomers'])->name('home.customers');
+    Route::post('home/po', [App\Http\Controllers\Admin\OrderController::class,'getPo'])->name('home.po');
+    Route::post('home/orders', [App\Http\Controllers\Admin\OrderController::class,'getOrders'])->name('home.orders');
+    Route::post('home/installation', [App\Http\Controllers\Admin\OrderController::class,'getInstallation'])->name('home.installation');
     Route::any('/get-value', [App\Http\Controllers\CommonController::class, 'index'])->name('get_value');
     Route::any('/get-user-notification', [App\Http\Controllers\CommonController::class, 'getUserNotification'])->name('user.notification');
     Route::any('/status/update', [App\Http\Controllers\CommonController::class, 'updateItemStatus'])->name('status.update');
@@ -73,6 +77,7 @@ Route::group(['prefix'=>'admin','middleware'=>['auth']],function () {
     Route::put('profile/', [App\Http\Controllers\CommonController::class,'updateProfile'])->name('profile.update');
     Route::get('vendor/', [App\Http\Controllers\Admin\CustomerUserController::class,'vendorIndex'])->name('vendor.index');
     Route::any('vendor/listajax', [App\Http\Controllers\Admin\VendorController::class,'vendorListAjaxData'])->name('vendorlistajax');
+    //report
     Route::any('report/product', [App\Http\Controllers\Admin\ProductController::class,'productReport'])->name('report.product');
     Route::any('report/lowStockReport', [App\Http\Controllers\Admin\ProductController::class,'lowStockReport'])->name('report.lowstock');
     Route::any('report/po', [App\Http\Controllers\Admin\OrderController::class,'poReport'])->name('report.po');
@@ -121,12 +126,14 @@ Route::group(['prefix'=>'admin','middleware'=>['auth']],function () {
     Route::post('invoice/status/update', [App\Http\Controllers\Admin\OrderController::class,'updateOrderStatus'])->name('invoice.status.update');
     Route::post('sale/stage/update', [App\Http\Controllers\Admin\OrderController::class,'updateOrderStage'])->name('sale.stage.update');
     Route::post('order/token/update',[App\Http\Controllers\Admin\OrderController::class,'updateOrderToken'])->name('order.token.update');
+    Route::any('order/{id}/print',[App\Http\Controllers\Admin\OrderController::class,'printInvoice'])->name('order.print');
     
     //cart
     Route::post('cart/inquiry-to-quote/create', [App\Http\Controllers\Admin\CartController::class,'createInquiryToQuoteCart'])->name('cart.inquiryToQuote.create');
     Route::post('cart/po/create', [App\Http\Controllers\Admin\CartController::class,'createPo'])->name('cart.po.create');
     Route::post('cart/invoice/create', [App\Http\Controllers\Admin\CartController::class,'createInvoice'])->name('cart.invoice.create');
     Route::post('cart/quote/create', [App\Http\Controllers\Admin\CartController::class,'createQuote'])->name('cart.quote.create');
+    Route::post('cart/quote/edit', [App\Http\Controllers\Admin\CartController::class,'editQuote'])->name('cart.quote.edit');
     Route::post('cart/sale/create', [App\Http\Controllers\Admin\CartController::class,'createSale'])->name('cart.sale.create');
     Route::post('cart/product/add', [App\Http\Controllers\Admin\CartController::class,'addProductToCart'])->name('cart.product.add');
     Route::post('cart/product/new/', [App\Http\Controllers\Admin\CartController::class,'addNewProductToCart'])->name('cart.product.new');

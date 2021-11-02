@@ -43,8 +43,6 @@ class Order extends Model
     public function getFromUser(){
         if(!empty($this->customer)){
             return User::where('id','=',$this->to_user)->first();
-        }else{
-            dd($this->settingJson);
         }
     }
 
@@ -77,10 +75,10 @@ class Order extends Model
 
     public function getUserOrderStatus()
     {
-       return OrderStatus::where('order_id',$this->id)->where('user_id', (!empty(auth()->user()->users_group_id))?auth()->user()->id:NULL)->get();
+       return OrderStatus::where('order_id',$this->id)->where('user_id', (!empty(auth()->user()->users_group_id))?auth()->user()->id:NULL)->first() ;
     }   
     public function getInvoiceStatus($invoice_status){
-        return (!empty($invoice_status))?$this->getOrderStatus()[$invoice_status]:'N/A';
+        return (!empty($invoice_status))?$this->getOrderStatus()[$invoice_status]:'N/A.';
     }
 
     public function getSalesStage($order_stage){

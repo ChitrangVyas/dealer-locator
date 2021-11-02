@@ -275,6 +275,17 @@
             }
         });
 
+        $('body').on('click','.delete-installation-image',function(e){
+            e.preventDefault();
+            e.stopImmediatePropagation();
+            let data = confirm("Are you sure? you wants to delete this image?");
+            if(data){
+                let order_image = $(this).data('order-image');
+                saveFormData("{{route('installation.image.delete')}}",{order_image_id:$(this).data('order-image')},'orderModal').then(function(res){
+                });
+            }
+        });
+
         $("body").on('shown.bs.modal',function(){
             var selectedTab = $(".modal-body .tab-content").find(".active");
             activeTab(selectedTab);

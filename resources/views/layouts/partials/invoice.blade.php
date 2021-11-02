@@ -1,12 +1,3 @@
-<div class="row">
-    <div class="col-12">
-        <h4>
-            <!-- <i class="fas fa-globe"></i> {{config('app.name')}} -->
-            <small class="float-right">Date: {{date('d/m/Y',strtotime($order->created_at))}}</small>
-        </h4>
-    </div>
-    <!-- /.col -->
-</div>
 <!-- info row -->
 <div class="row invoice-info">
     <div class="col-sm-4 invoice-col">
@@ -59,14 +50,15 @@
         @endif
         </address>
     </div>
-    @if ($order->type == 'sale')
     <!-- /.col -->
     <div class="col-sm-4 invoice-col">
+        <b class="float-right">Date: {{date('d/m/Y',strtotime($order->created_at))}}</b>
+        @if ($order->type == 'sale')
         <b>Invoice #{{$order->order_number}}</b><br>
         <br>
+        @endif
     </div>
     <!-- /.col -->
-    @endif
 </div>
 <div class="row">
     <div class="col-sm-12 col-md-12">

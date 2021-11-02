@@ -458,7 +458,7 @@ class CartController extends MainController
         if((!empty($order->customer) && $order->customer->userGroup->id == 5) && ($order->type == 'po')){
             $is_new_product = 1;
         }
-        $this->myCart->setCartTotal($id,$cart->getTotal());
+        $this->myCart->setTaxTotal($id,$cart);
         $json['cart_title'] = "PO".(!empty($this->myCart->getOrderNumber($id)) ? " #".$this->myCart->getOrderNumber($id) : '');
         $json['cart_content'] = $this->getInquiryToQuoteCart($id,$cart,$is_new_product)->render();
         return response()->json(['status' => 'successful','code'=>1, 'data'=>$json, 'message'=>'']);

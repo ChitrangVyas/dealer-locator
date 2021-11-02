@@ -1,9 +1,9 @@
-@include('layouts.partials.invoice')
 <div class="row">
     <div class="col-12 mb-3">
-        <a href="{{route('order.print',$order->id)}}" target="_blank" class="btn btn-default"><i class="fas fa-print"></i> Print</a>
+        <a href="{{route('order.print',$order->id)}}" target="_blank" class="btn btn-default float-right"><i class="fas fa-print"></i> Print</a>
     </div>
 </div>
+@include('layouts.partials.invoice')
 @if($order->type == 'quote')
 <div class="row">
     <form id="uploadPo" class="col-12" enctype="multipart/form-data">
@@ -133,6 +133,38 @@
                         @endnotadmin
                     </table>
                 </div>
+        </fieldset>
+    </form>
+</div>
+<div class="row">
+    <form id="uploadPo" class="col-12" enctype="multipart/form-data">
+        @csrf
+        <input type="hidden" name="uploaded_by" value="{{auth()->user()->id}}">
+        <input type="hidden" name="order_id" value="{{ $order->id }}">
+        <fieldset class="border">
+            <legend class="w-auto m-2">Uploaded Image</legend>
+            @if(!empty($order->orderImage) && (count($order->orderImage) > 0))
+                <div class="row">
+                    @foreach ($order->orderImage as $orderImage)
+                        @if(!empty($orderImage->product))
+                        <div class="col-md-4 mt-3 mb-2 img-{{$orderImage->id}}">
+                            <div class="d-flex justify-content-center remove">
+                                <img src="{{url($orderImage->image)}}" class="img" alt="installation image" width="40%">
+                            </div>
+                            <div class="d-flex justify-content-center mt-2">
+                                <button type="button" class="btn btn-danger btn-sm delete-installation-image" data-order-image="{{$orderImage->id}}">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                        @endif
+                    @endforeach
+                </div>
+            @else
+                <div class="row">
+                    <div class="col-12 m-3 text-center">No Image Found</div>
+                </div>
+            @endif
         </fieldset>
     </form>
 </div>

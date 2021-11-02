@@ -43,8 +43,6 @@ class Order extends Model
     public function getFromUser(){
         if(!empty($this->customer)){
             return User::where('id','=',$this->to_user)->first();
-        }else{
-            dd($this->settingJson);
         }
     }
 

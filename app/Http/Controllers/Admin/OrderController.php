@@ -714,7 +714,7 @@ class OrderController extends MainController
         ->join('users AS c','orders.to_user','=','c.id','left')
         ->join('users AS d','orders.from_user','=','d.id','left')
         ->whereRaw($where);
-        $total_order = $orders->whereRaw($where)->get()->count();
+        $total_order = $orders->whereRaw($where)->get()->groupby('orders.id')->count();
         $orders= $orders->offset($start)
         ->limit($length)
         ->orderBy($request['columns'][$request['order'][0]['column']]['name'],$request['order'][0]['dir'])
@@ -780,7 +780,8 @@ class OrderController extends MainController
         ->join('users AS c','orders.to_user','=','c.id','left')
         ->join('users AS d','orders.from_user','=','d.id','left')
         ->whereRaw($where);
-        $total_order = $orders->whereRaw($where)->get()->count();
+        $total_order = $orders->whereRaw($where)->groupby('orders.id')->get()->count();
+
         $orders= $orders->offset($start)
         ->limit($length)
         ->orderBy($request['columns'][$request['order'][0]['column']]['name'],$request['order'][0]['dir'])

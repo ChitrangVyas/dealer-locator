@@ -94,22 +94,6 @@
 @section('js')
 <script>
     jQuery(document).ready(function() {
-
-        /* var myDropzone = new Dropzone(document.body, {
-        url: "/target-url",
-        thumbnailWidth: 80,
-        thumbnailHeight: 80,
-        parallelUploads: 20,
-        previewTemplate: '',
-        disablePreviews:true,
-        autoQueue: false,
-        clickable: ".fileinput-button", 
-        });
-
-        myDropzone.on("addedfile", function(file) {
-            console.log($(this).find('.dz-clickable'));
-        }); */
-
         $('body').on('click','.fileinput-button',function(){
             let url = "{{route('installation.image.upload')}}";
             let formData = new FormData($('#uploadImage')[0]);

@@ -589,6 +589,7 @@ class OrderController extends MainController
                         }
                     }
                 }
+                OrderStage::create(array('order_id'=>$order->id,'stage'=>0));
                 $order_status_data[] = array('order_id' => $order->id, 'status_id' => 1,'created_at'=> \Carbon\Carbon::now(), 'updated_at'=> \Carbon\Carbon::now());
                 if(empty($order->addedBy->users_group_id)) {
                     $order_status_data[0]['user_id'] = NULL;

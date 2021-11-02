@@ -196,6 +196,17 @@ class OrderController extends MainController
                     }
                     $cart->clear();
                     $this->myCart->clear($request_data['cart_id']);
+                    if((!empty($request_data['btnSave'])) && $request_data['btnSave']=='savensend')
+                    {
+                        $from = (!empty($quote->addedBy))?$quote->addedBy->email:$this->settingJson['mail_from_email'];
+                        $from_name = (!empty($quote->addedBy))?$quote->addedBy->name:$this->settingJson['mail_from_name'];
+                        $customer = (!empty($quote->customer))?$quote->customer->email:$this->settingJson['mail_from_email'];
+                        try{
+                            Mail::to($customer)->send(new OrderEmailTemplate($quote,config('app.name').' - Quote',$from,$from_name));
+                        }catch(Exception $e){
+                            return response()->json(['status' => 'error','code' => 0,'message' => 'Unable to sent Mail.','body'=>$e->getMessage()]);
+                        }
+                    }
                 }
                 return response()->json(['status' => 'successful', 'data'=>['quote'=>$quote_data['order_reference']],'code'=>1,'message'=>'Quote Successfully updated.']);
             }else{
@@ -315,6 +326,18 @@ class OrderController extends MainController
                     }
                     $cart->clear();
                     $this->myCart->clear($request_data['cart_id']);
+
+                    if((!empty($request_data['btnSave'])) && $request_data['btnSave']=='savensend')
+                        {
+                            $from = (!empty($order->addedBy))?$order->addedBy->email:$this->settingJson['mail_from_email'];
+                            $from_name = (!empty($order->addedBy))?$order->addedBy->name:$this->settingJson['mail_from_name'];
+                            $customer = (!empty($order->customer))?$order->customer->email:$this->settingJson['mail_from_email'];
+                            try{
+                                Mail::to($customer)->send(new OrderEmailTemplate($order,config('app.name').' - PO',$from,$from_name));
+                            }catch(Exception $e){
+                                return response()->json(['status' => 'error','code' => 0,'message' => 'Unable to sent Mail.']);
+                            }
+                        }
                 }
                 return response()->json(['status' => 'successful', 'data'=>['quote'=>$cart_data['order_reference']],'code'=>1,'message'=>'PO Successfully updated.']);
 

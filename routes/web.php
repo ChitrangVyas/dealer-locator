@@ -122,6 +122,7 @@ Route::group(['prefix'=>'admin','middleware'=>['auth']],function () {
     Route::post('invoice/status/update', [App\Http\Controllers\Admin\OrderController::class,'updateOrderStatus'])->name('invoice.status.update');
     Route::post('sale/stage/update', [App\Http\Controllers\Admin\OrderController::class,'updateOrderStage'])->name('sale.stage.update');
     Route::post('order/token/update',[App\Http\Controllers\Admin\OrderController::class,'updateOrderToken'])->name('order.token.update');
+    Route::any('order/{id}/print',[App\Http\Controllers\Admin\OrderController::class,'printInvoice'])->name('order.print');
     
     //cart
     Route::post('cart/inquiry-to-quote/create', [App\Http\Controllers\Admin\CartController::class,'createInquiryToQuoteCart'])->name('cart.inquiryToQuote.create');

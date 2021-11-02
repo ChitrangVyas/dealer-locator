@@ -476,6 +476,11 @@ class OrderController extends MainController
         return response()->json(['status' => 'successful','code'=>1, 'data'=>$json, 'message'=>'']);
     }
 
+    public function printInvoice(Request $request,$id=''){
+        $order = Order::findOrFail($id);
+        return view('admin.order.print',['order'=>$order]);
+    }
+
     public function storeSale(Request $request){
         $request_data = $request->all();
         $cart = \Cart::Session($request_data['cart_id']);

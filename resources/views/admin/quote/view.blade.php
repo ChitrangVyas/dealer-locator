@@ -69,8 +69,8 @@
                     <label for="status">Status: </label>
                     <select name="status_id" class="form-control select2" id="order_status">
                         <option value="">Select</option>
-                        <option value="1" {{ (!empty($order->getUserOrderStatus()) && (count($order->getUserOrderStatus()) > 0 ) && $order->getUserOrderStatus()[0]->status_id == 1)? 'selected' :'' }} >Pendding</option>
-                        <option value="2" {{ (!empty($order->getUserOrderStatus()) && (count($order->getUserOrderStatus()) > 0 ) && $order->getUserOrderStatus()[0]->status_id == 2)? 'selected' :'' }}>Paid</option>
+                        <option value="1" {{ (!empty($order->getUserOrderStatus()) && ($order->getUserOrderStatus())->status_id == 1)? 'selected' :'' }} >Pendding</option>
+                        <option value="2" {{ (!empty($order->getUserOrderStatus()) && ($order->getUserOrderStatus())->status_id == 2)? 'selected' :'' }}>Paid</option>
                     </select>
                 </div>
             </div>

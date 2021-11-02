@@ -48,6 +48,10 @@ Route::group(['prefix'=>'admin','middleware'=>['auth']],function () {
     Route::get('/home/changepassword', [App\Http\Controllers\HomeController::class, 'changepassword'])->name('changepassword');
     Route::post('/home/updatepassword', [App\Http\Controllers\HomeController::class, 'updatepassword'])->name('updatepassword');
     Route::post('home/inquiry', [App\Http\Controllers\Admin\InquiryController::class,'getInquiries'])->name('home.inqiuries');
+    Route::post('home/customer', [App\Http\Controllers\Admin\CustomerUserController::class,'getcustomers'])->name('home.customers');
+    Route::post('home/po', [App\Http\Controllers\Admin\OrderController::class,'getPo'])->name('home.po');
+    Route::post('home/orders', [App\Http\Controllers\Admin\OrderController::class,'getOrders'])->name('home.orders');
+    Route::post('home/installation', [App\Http\Controllers\Admin\OrderController::class,'getInstallation'])->name('home.installation');
     Route::any('/get-value', [App\Http\Controllers\CommonController::class, 'index'])->name('get_value');
     Route::any('/get-user-notification', [App\Http\Controllers\CommonController::class, 'getUserNotification'])->name('user.notification');
     Route::any('/status/update', [App\Http\Controllers\CommonController::class, 'updateItemStatus'])->name('status.update');

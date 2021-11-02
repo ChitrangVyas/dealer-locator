@@ -83,6 +83,7 @@ class HomeController extends MainController
         $user = auth()->user();
         return view('changepassword', compact('elementActive', 'user', 'title'));
     }
+    
     public function updatepassword(ChangePasswordRequest $request)
     {
         if (!Hash::check($request->input('old_password'), auth()->user()->password)) {   

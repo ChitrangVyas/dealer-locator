@@ -7,9 +7,8 @@
     <section class="content">
       <div class="container-fluid">
         <!-- Small boxes (Stat box) -->
-        <div class="row">
+        <!-- <div class="row">
           <div class="col-lg-3 col-6">
-            <!-- small box -->
             <div class="small-box bg-info">
               <div class="inner">
                 <h3>{{$total_order}}</h3>
@@ -22,9 +21,7 @@
               <a href="{{route('sale.index')}}" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
             </div>
           </div>
-          <!-- ./col -->
           <div class="col-lg-3 col-6">
-            <!-- small box -->
             <div class="small-box bg-success">
               <div class="inner">
                 <h3>{{$total_po}}</h3>
@@ -37,9 +34,7 @@
               <a href="{{route('po.index')}}" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
             </div>
           </div>
-          <!-- ./col -->
           <div class="col-lg-3 col-6">
-            <!-- small box -->
             <div class="small-box bg-warning">
               <div class="inner">
                 <h3>{{$total_dealer}}</h3>
@@ -54,9 +49,7 @@
               @endadmin
             </div>
           </div>
-          <!-- ./col -->
           <div class="col-lg-3 col-6">
-            <!-- small box -->
             <div class="small-box bg-danger">
               <div class="inner">
                 <h3>{{$total_dealer}}</h3>
@@ -71,9 +64,170 @@
               @enddealer
             </div>
           </div>
-          <!-- ./col -->
-        </div>
+        </div> -->
         <!-- /.row -->
+        <div class="row">
+          <div class="col-md-6">
+            <!-- Box Comment -->
+            <div class="card">
+              <div class="card-header border-transparent">
+                <h3 class="card-title">Latest Customer</h3>
+
+                <div class="card-tools">
+                  <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                    <i class="fas fa-minus"></i>
+                  </button>
+                  <button type="button" class="btn btn-tool" data-card-widget="remove">
+                    <i class="fas fa-times"></i>
+                  </button>
+                </div>
+              </div>
+              <!-- /.card-header -->
+              <div class="card-body p-0">
+                <div class="table-responsive">
+                  <table class="table m-0">
+                    <thead>
+                    <tr>
+                      <th>Name</th>
+                      <th>Email</th>
+                      <th>Mobile</th>
+                    </tr>
+                    </thead>
+                    <tbody id="customers">
+                    </tbody>
+                  </table>
+                </div>
+                <!-- /.table-responsive -->
+              </div>
+              <!-- /.card-body -->
+              <div class="card-footer clearfix">
+                <a href="{{route('customer.index')}}" class="btn btn-sm btn-secondary float-right">View All Customers</a>
+              </div>
+              <!-- /.card-footer -->
+            </div>
+            <!-- /.card -->
+          </div>
+          <div class="col-md-6">
+            <!-- Box Comment -->
+            <div class="card">
+              <div class="card-header border-transparent">
+                <h3 class="card-title">Latest PO</h3>
+
+                <div class="card-tools">
+                  <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                    <i class="fas fa-minus"></i>
+                  </button>
+                  <button type="button" class="btn btn-tool" data-card-widget="remove">
+                    <i class="fas fa-times"></i>
+                  </button>
+                </div>
+              </div>
+              <!-- /.card-header -->
+              <div class="card-body p-0">
+                <div class="table-responsive">
+                  <table class="table m-0">
+                    <thead>
+                    <tr>
+                      <th>Order Number</th>
+                      <th>Product</th>
+                      <th>Date</th>
+                    </tr>
+                    </thead>
+                    <tbody id="po">
+                    </tbody>
+                  </table>
+                </div>
+                <!-- /.table-responsive -->
+              </div>
+              <!-- /.card-body -->
+              <div class="card-footer clearfix">
+                <a href="{{route('po.index')}}" class="btn btn-sm btn-secondary float-right">View All PO</a>
+              </div>
+              <!-- /.card-footer -->
+            </div>
+            <!-- /.card -->
+          </div>
+          <div class="col-md-6">
+            <!-- Box Comment -->
+            <div class="card">
+              <div class="card-header border-transparent">
+                <h3 class="card-title">Latest Orders</h3>
+
+                <div class="card-tools">
+                  <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                    <i class="fas fa-minus"></i>
+                  </button>
+                  <button type="button" class="btn btn-tool" data-card-widget="remove">
+                    <i class="fas fa-times"></i>
+                  </button>
+                </div>
+              </div>
+              <!-- /.card-header -->
+              <div class="card-body p-0">
+                <div class="table-responsive">
+                  <table class="table m-0">
+                    <thead>
+                    <tr>
+                      <th>Order Number</th>
+                      <th>Product</th>
+                      <th>Status</th>
+                      <th>Date</th>
+                    </tr>
+                    </thead>
+                    <tbody id="orders">
+                    </tbody>
+                  </table>
+                </div>
+                <!-- /.table-responsive -->
+              </div>
+              <!-- /.card-body -->
+              <div class="card-footer clearfix">
+                <a href="{{route('sale.index')}}" class="btn btn-sm btn-secondary float-right">View All Orders</a>
+              </div>
+              <!-- /.card-footer -->
+            </div>
+            <!-- /.card -->
+          </div>
+          <div class="col-md-6">
+            <div class="card">
+              <div class="card-header border-transparent">
+                <h3 class="card-title">Latest Installation</h3>
+
+                <div class="card-tools">
+                  <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                    <i class="fas fa-minus"></i>
+                  </button>
+                  <button type="button" class="btn btn-tool" data-card-widget="remove">
+                    <i class="fas fa-times"></i>
+                  </button>
+                </div>
+              </div>
+              <!-- /.card-header -->
+              <div class="card-body p-0">
+                <div class="table-responsive">
+                  <table class="table m-0">
+                    <thead>
+                    <tr>
+                      <th>Order Number</th>
+                      <th>Product</th>
+                      <th>Status</th>
+                      <th>Date</th>
+                    </tr>
+                    </thead>
+                    <tbody id="installation">
+                    </tbody>
+                  </table>
+                </div>
+                <!-- /.table-responsive -->
+              </div>
+              <!-- /.card-body -->
+              <div class="card-footer clearfix">
+                <!-- <a href="javascript:void(0)" class="btn btn-sm btn-secondary float-right">View All Installation</a> -->
+              </div>
+              <!-- /.card-footer -->
+            </div>
+          </div>
+        </div>
         <!-- Main row -->
         <div class="row">
           <!-- Left col -->
@@ -117,7 +271,8 @@
                       <canvas id="revenue-chart-canvas" height="300" style="height: 300px;"></canvas>
                    </div>
                 </div>
-              </div><!-- /.card-body -->
+              </div
+              ><!-- /.card-body -->
             </div>
             <!-- /.card -->
           </section>
@@ -274,6 +429,10 @@
   }
   jQuery(document).ready(function(){
     getData("{{route('home.inqiuries')}}",'','inquiryList');
+    getData("{{route('home.customers')}}",'','customers');
+    getData("{{route('home.po')}}",'','po');
+    getData("{{route('home.orders')}}",'','orders');
+    getData("{{route('home.installation')}}",'','installation');
   });
 
   function getData(url,data,content='',ele_class=''){

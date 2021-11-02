@@ -19,6 +19,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Maatwebsite\Excel\Facades\Excel;
+use phpDocumentor\Reflection\Types\Null_;
 use View;
 class OrderController extends MainController
 {
@@ -104,6 +105,67 @@ class OrderController extends MainController
     {
         //
     }
+
+    public function getPo(Request $request)
+    {
+        $user = auth()->user();
+        DB::enableQueryLog();
+        $orders = Order::where('type','po')->where(function ($query) use($user)
+        {
+            if((!empty($user->userGroup)) && $user->userGroup->id == '2'){
+                return $query->where('from_user',$user->id);
+            }
+            else if((!empty($user->userGroup)) && $user->userGroup->id == '3'){
+                return $query->where('from_user',$user->id);
+            }else if(empty($user->userGroup) || $user->userGroup->id == '1'){
+                return $query->whereOr('for_manufacturer',1)->whereOr('from_user',NULL)->whereOr('to_user',NULL);
+            }
+        })->orderBy('orders.updated_at','desc')->take(10)->get();
+        $json['modal_title'] = "Customers";
+        $json['modal_content'] = view('layouts.partials.home.order',['orders'=>$orders])->render();
+        return response()->json(['status' => 'successful','code'=>1, 'data'=>$json, 'message'=>'']);
+    }
+
+    public function getOrders(Request $request)
+    {
+        $user = auth()->user();
+        $orders = Order::where('type','sale')->where(function ($query) use($user)
+        {
+            if((!empty($user->userGroup)) && $user->userGroup->id == '2'){
+                return $query->where('from_user',$user->id);
+            }
+            if((!empty($user->userGroup)) && $user->userGroup->id == '3'){
+                return $query->where('from_user',$user->id);
+            }else if(empty($user->userGroup) || $user->userGroup->id == '1'){
+                return $query->whereOr('for_manufacturer',1)->whereOr('from_user',NULL)->whereOr('to_user',NULL);
+            }
+        })->orderBy('updated_at','desc')->take(10)->get();
+        $json['modal_title'] = "Customers";
+        $json['modal_content'] = view('layouts.partials.home.order',['orders'=>$orders])->render();
+        return response()->json(['status' => 'successful','code'=>1, 'data'=>$json, 'message'=>'']);
+        
+    }
+
+    public function getInstallation(Request $request)
+    {
+        $user = auth()->user();
+        DB::enableQueryLog();
+        $orders = Order::select('orders.*')->where('type','sale')->where(function ($query) use($user)
+        {
+            if((!empty($user->userGroup)) && $user->userGroup->id == '2'){
+                return $query->where('from_user',$user->id);
+            }
+            if((!empty($user->userGroup)) && $user->userGroup->id == '3'){
+                return $query->where('from_user',$user->id);
+            }else if(empty($user->userGroup) || $user->userGroup->id == '1'){
+                return $query->whereOr('from_user',NULL)->whereOr('to_user',NULL);
+            }
+        })->where('stage','3')->join('order_stages','orders.id','=','order_stages.order_id')->orderBy('orders.updated_at','desc')->take(10)->get();
+        $json['modal_title'] = "Customers";
+        $json['modal_content'] = view('layouts.partials.home.order',['orders'=>$orders])->render();
+        return response()->json(['status' => 'successful','code'=>1, 'data'=>$json, 'message'=>'']);
+    }
+
     public function quoteIndex(){        
         View::share ( 'title', 'Quote' );
         View::share ( 'elementActive', 'quote' );
@@ -729,8 +791,8 @@ class OrderController extends MainController
         foreach($orders as $order){
             $order_data = Order::find($order->id);
             $order_status = 'N/A';
-            if(!empty($order_data->getUserOrderStatus()) && (count($order_data->getUserOrderStatus()) > 0 )){
-                $order_status = $order_data->getInvoiceStatus($order_data->getUserOrderStatus()[0]->status_id);
+            if(!empty($order_data->getUserOrderStatus())){
+                $order_status = $order_data->getInvoiceStatus(($order_data->getUserOrderStatus())->status_id);
             }
             $customer = (!empty($order->customer))?$order->customer:$this->settingJson['name'];
             $added_by  = (!empty($order->added_by))?$order->added_by:$this->settingJson['name'];

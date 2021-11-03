@@ -848,8 +848,8 @@ class OrderController extends MainController
         foreach($orders as $order){
             $order_data = Order::find($order->id);
             $order_status = 'N/A';
-            if(!empty($order_data->getUserOrderStatus()) && (count($order_data->getUserOrderStatus()) > 0 )){
-                $order_status = $order_data->getInvoiceStatus($order_data->getUserOrderStatus()[0]->status_id);
+            if(!empty($order_data->getUserOrderStatus())){
+                $order_status = $order_data->getInvoiceStatus($order_data->getUserOrderStatus()->status_id);
             }
             $customer = (!empty($order->customer))?$order->customer:$this->settingJson['name'];
             $added_by  = (!empty($order->added_by))?$order->added_by:$this->settingJson['name'];
@@ -1109,8 +1109,8 @@ class OrderController extends MainController
             foreach($orders as $order){
                 $order_data = Order::find($order->id);
                 $order_status = 'N/A';
-                if(!empty($order_data->getUserOrderStatus()) && (count($order_data->getUserOrderStatus()) > 0 )){
-                    $order_status = $order_data->getInvoiceStatus($order_data->getUserOrderStatus()[0]->status_id);
+                if(!empty($order_data->getUserOrderStatus())){
+                    $order_status = $order_data->getInvoiceStatus($order_data->getUserOrderStatus()->status_id);
                 }
                 $customer = (!empty($order->customer))?$order->customer:$this->settingJson['name'];
                 $added_by  = (!empty($order->added_by))?$order->added_by:$this->settingJson['name'];

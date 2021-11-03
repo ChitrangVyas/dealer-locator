@@ -75,6 +75,7 @@
                 </div>
             </div>
         </fieldset>
+        @if(empty(auth()->user()->users_group_id) || (auth()->user()->id == $order->from_user))
         <fieldset class="border">
             <legend class="w-auto m-2">Order Stage</legend>
                 <div class="col-sm-12 col-md-12">
@@ -134,8 +135,10 @@
                     </table>
                 </div>
         </fieldset>
+        @endif
     </form>
 </div>
+@if(empty(auth()->user()->users_group_id) || (auth()->user()->id == $order->from_user))
 <div class="row">
     <form id="uploadPo" class="col-12" enctype="multipart/form-data">
         @csrf
@@ -168,6 +171,7 @@
         </fieldset>
     </form>
 </div>
+@endif
 @endif
 <script>
 if($('.toggle-password').length > 0){

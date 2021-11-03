@@ -658,14 +658,14 @@ class OrderController extends MainController
         ->join('order_product AS op','orders.id','=','op.order_id','left')
         ->join('users AS c','orders.to_user','=','c.id','left')
         ->join('users AS d','orders.from_user','=','d.id','left')
-        ->whereRaw($where)
-        ->offset($start)
+        ->whereRaw($where);
+        $total_order = $orders->groupby('orders.id')->get()->count();
+        $orders = $orders->offset($start)
         ->limit($length)
         ->orderBy($request['columns'][$request['order'][0]['column']]['name'],$request['order'][0]['dir'])
         ->groupby('orders.id')
         ->get();
         
-        $total_order = Order::whereRaw($where)->count();
         $data = [];
         foreach($orders as $order){
             $is_sale_generated = Order::where('type','sale')->where('order_reference',$order->id)->where('deleted_at',NULL)->count();

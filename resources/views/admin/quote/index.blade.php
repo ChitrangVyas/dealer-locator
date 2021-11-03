@@ -563,20 +563,39 @@
         });
     }
 
-    function deleteUser(id) {
+    function deleteOrder(id) {
         if (id) {
-            let data = confirm("Are you sure? you wants to delete this inquiry?");
+            let data = confirm("Are you sure? you wants to delete this quote?");
             if (data) {
                 var token = $("meta[name='csrf-token']").attr("content");
                 $.ajax({
-                    url: "{{ url('/admin/inquiry') }}/" + id,
-                    type: 'DELETE',
+                    url: "{{route('order.delete')}}",
+                    type: 'POST',
                     data: {
-                        "id": id,
+                        "order_id": id,
                         "_token": token,
                     },
-                    success: function() {
-                        window.location.reload();
+                    success: function(res) {
+                        if(res.code == 1){
+                            Toast.fire({
+                                type: 'success',
+                                title: res.data
+                            });
+                            $('#example').DataTable().ajax.reload(null, false);
+                        }else{
+                            Toast.fire({
+                                type: 'error',
+                                title: res.message
+                            });
+                        }
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        $('.btn-save').attr('disabled',false);
+                        var err = JSON.parse(jqXHR.responseText).errors;
+                        Toast.fire({
+                            type: 'error',
+                            title: JSON.parse(jqXHR.responseText).message
+                        });
                     }
                 });
             }

@@ -539,20 +539,20 @@
         }); 
     }
 
-    function deleteUser(id) {
+    function deleteOrder(id) {
         if (id) {
-            let data = confirm("Are you sure? you wants to delete this inquiry?");
+            let data = confirm("Are you sure? you wants to delete this Sale?");
             if (data) {
                 var token = $("meta[name='csrf-token']").attr("content");
                 $.ajax({
-                    url: "{{ url('/admin/inquiry') }}/" + id,
-                    type: 'DELETE',
+                    url: "{{route('order.delete')}}",
+                    type: 'POST',
                     data: {
-                        "id": id,
+                        "order_id": id,
                         "_token": token,
                     },
                     success: function() {
-                        window.location.reload();
+                        $('#example').DataTable().ajax.reload(null, false);
                     }
                 });
             }

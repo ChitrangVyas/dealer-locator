@@ -19,7 +19,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Maatwebsite\Excel\Facades\Excel;
-use phpDocumentor\Reflection\Types\Null_;
+use Illuminate\Support\Str;
 use View;
 class OrderController extends MainController
 {
@@ -490,7 +490,7 @@ class OrderController extends MainController
 
     public function storeImage($request){
         if($request->file()) {
-            $fileName = time().'_'.$request->image->getClientOriginalName();
+            $fileName = time().'_'.Str::snake(Str::replace('#','_',$request->image->getClientOriginalName()));
             $filePath = $request->file('image')->storeAs('uploads/po', $fileName, 'public');
             return '/storage/' . $filePath;
         }

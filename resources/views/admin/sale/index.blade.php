@@ -147,7 +147,7 @@
             $(`#orderModal .modal-body`).html("");
             getOrderData(view_url,{'order_id':$(this).data('order')}).then(function(res){
                 $('.select2').select2({
-                    width:"20%",
+                    width:"26%",
                 });
             });
         });

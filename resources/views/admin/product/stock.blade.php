@@ -11,8 +11,8 @@
                 <span><h5><strong>{{$product->name}}</strong></h5></span>
             </div>
             <div class="form-group">
-                <label>Available no. of product</label>
-                <input type="number" name="inventory" id="inventory" class="form-control" value="{{$product->getInventory()}}" />
+                <label>Available no. of product <span class="required_field text-danger">*</span></label>
+                <input type="number" name="inventory" id="inventory" class="form-control" value="{{(!empty($product->getInventory()))?$product->getInventory()->qty:''}}" />
                 @error('inventory')
                 <div class="alert alert-danger mt-2">{{ $message }}</div>
                 @enderror

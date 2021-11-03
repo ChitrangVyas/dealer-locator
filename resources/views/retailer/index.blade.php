@@ -108,7 +108,7 @@
                             "_token": token,
                         },
                         success: function (){
-                            window.location.reload;
+                            $('#example').DataTable().ajax.reload(null, false);
                         }
                     });
                 }

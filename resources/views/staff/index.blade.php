@@ -101,14 +101,18 @@
                     var token = $("meta[name='csrf-token']").attr("content");
                     $.ajax(
                     {
-                        url: "{{ url('/admin/dealer/') }}/"+id,
+                        url: "{{ url('/admin/staff/') }}/"+id,
                         type: 'DELETE',
                         data: {
                             "id": id,
                             "_token": token,
                         },
-                        success: function (){
-                            window.location.reload;
+                        success: function (data){
+                            $('#example').DataTable().ajax.reload(null, false);
+                            Toast.fire({
+                                type: 'success',
+                                title: data.message
+                            });
                         }
                     });
                 }

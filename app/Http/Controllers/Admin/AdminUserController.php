@@ -146,11 +146,9 @@ class AdminUserController extends MainController
         if(!empty($id)){
             $user = User::findOrFail($id);
             if($user->users_group_id == '1'){
-                if($user->delete()){
-                    $return_array = ['message'=>'User successfully deleted'];
-                    return response(json_encode($return_array), 200)
-                        ->header('Content-Type', 'application/json');
-                }
+                $user->delete();
+                $return_array = ['message'=>'User successfully deleted'];
+                return response()->json($return_array);
             }
         }
     }

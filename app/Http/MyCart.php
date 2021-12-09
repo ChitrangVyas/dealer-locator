@@ -139,6 +139,56 @@ class MyCart
         $json['cart_total'] = $cart_total;
         $this->session->put($cart_id,json_encode($json));
     }
+    public function getSubtotalWithDiscuount($product,$cart_id,$cart){
+        $subtotal = $product->getPriceSum();
+        return $subtotal -= $subtotal*$this->getDiscountPerProductPercentage($product->id,$cart_id,$cart)/100;
+    }
+    public function getDiscountPerProductPercentage($productId,$cart_id,$cart){
+        $totalDiscount=0.00;        
+        if((!empty($cart_id)) && (!$cart->isEmpty())){                        
+            foreach($cart->getContent() as $product){                
+                if($product->id==$productId){                    
+                    foreach ($product->conditions as $key=>$condition){                        
+                        if(strpos($key,'Discount')!==false){                                                   
+                            $totalDiscount = abs(rtrim($condition->getValue(),"%"));
+                        }    
+                    }
+                }
+            }                       
+        }
+        return $totalDiscount;
+    }
+    public function getDiscountPerProduct($productId,$cart_id,$cart){
+        $totalDiscount=0.00;        
+        if((!empty($cart_id)) && (!$cart->isEmpty())){                        
+            foreach($cart->getContent() as $product){                
+                if($product->id==$productId){                    
+                    foreach ($product->conditions as $key=>$condition){                        
+                        if(strpos($key,'Discount')!==false){                                                   
+                            $discount_percentage = abs(rtrim($condition->getValue(),"%"));
+                            $totalDiscount += ( $product->getPriceSum() * ($discount_percentage /100) );                                                
+                        }    
+                    }
+                }
+            }                       
+        }
+        return $totalDiscount;
+    }
+
+    public function getDiscountTotal($cart_id,$cart){
+        $totalDiscount=0.00;        
+        if((!empty($cart_id)) && (!$cart->isEmpty())){                        
+            foreach($cart->getContent() as $product){
+                foreach ($product->conditions as $key=>$condition){
+                    if(strpos($key,'Discount')!==false){                    
+                        $discount_percentage = abs(rtrim($condition->getValue(),"%"));
+                        $totalDiscount += ( $product->getPriceSum() * ($discount_percentage /100) );                                                
+                    }    
+                }                
+            }                       
+        }
+        return $totalDiscount;
+    }
 
     public function setTaxTotal($cart_id,$cart){
         $total_tax = [];
@@ -149,9 +199,10 @@ class MyCart
             $productTax = [];
             $cart_total = 0.00;
             foreach($cart->getContent() as $product){
-                foreach ($product->conditions as $condition){
+                foreach ($product->conditions as $key=>$condition){
+                    if(strpos($key,'tax')!==false){                    
                         $tax_percentage = rtrim($condition->getValue(),"%");
-                        $product_tax = ( $product->getPriceSum() * ($tax_percentage /100) );
+                        $product_tax = ( $this->getSubtotalWithDiscuount($product,$cart_id,$cart) * ($tax_percentage /100) );
                         $productTax[$product->id][] = ["tax_id"=>$condition->getAttributes()['tax_id'],"tax"=>($product_tax)];
                         if(!in_array($condition->getName(),$conditions)){
                             $conditions[] = $condition->getName();
@@ -161,11 +212,13 @@ class MyCart
                             $total_tax[$condition->getName()] = $total_tax[$condition->getName()] + ($product_tax);
                             $cart_total += $product_tax;
                         }
+                    }    
                 }
-                $total += $product->getPriceSum();
+                $total += ($product->getPriceSum()-$this->getDiscountPerProduct($product->id,$cart_id,$cart));
             }
             $cart_total += $total;
-            $this->setProductTax($cart_id,$productTax);
+            $this->setProductTax($cart_id,$productTax);        
+            
             $this->setCartTotal($cart_id,$cart_total);
             $total_tax['Sub total'] = $total;
             $json = json_decode($this->session->get($cart_id,'{}'),true);
@@ -192,7 +245,7 @@ class MyCart
 
     public function getCartTotal($cart_id){        
         $json = (!empty($this->session->get($cart_id)))?json_decode($this->session->get($cart_id,[]),true):'';
-        return !empty($json['cart_total'])?$json['cart_total']:'';
+        return !empty($json['cart_total'])?($json['cart_total']):'';
     }
 
     public function clear($cart_id){

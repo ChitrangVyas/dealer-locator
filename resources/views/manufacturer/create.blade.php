@@ -79,6 +79,46 @@
                 </div>
             </div>
             <div class="col-sm-12 col-md-4">
+                        <!-- text input -->
+                <div class="form-group">
+                    <label>Country <span class="required_field">*</span></label>
+                    <select class="form-control country" id='country' name='country_id' tabindex="5">
+                        <option value="">Select</option>
+                        
+                        @if(!empty($allowedcountry))
+                         @php
+                         $selectcountry=''
+                         @endphp
+                            @foreach($allowedcountry as $acountry)
+                            @if(!empty($user) && $user->country_id)
+                               @php 
+                               
+                                $selectcountry=($user->country_id == $acountry->id)? 'selected' : ''
+                                
+                                @endphp
+                            @endif
+                            @if(old('country_id'))
+                                @php 
+                               
+                                $selectcountry=(old('country_id') == $acountry->id)? 'selected' : ''
+                                
+                                @endphp
+                            @endif
+                            
+
+                                <option value="{{$acountry->id}}"  {{$selectcountry}}>{{$acountry->name}}</option>
+                               
+                                @endforeach
+                        @endif
+                       
+                    </select>
+                    <input type="hidden" id="country_id" value="{{old('country_id')}}">
+                    @error('country_id')
+                    <div class="alert alert-danger mt-2">{{ $message }}</div>
+                    @enderror
+                </div>
+            </div>
+            <div class="col-sm-12 col-md-4">
                 <!-- text input -->
                 <div class="form-group">
                     <label>State</label>
@@ -147,35 +187,95 @@
 @section('js')
 <script>
 jQuery(document).ready(function(){
-    $('.state').select2({
-        placeholder: "Select",
-        allowClear: true,
-        minimumInputLength: 2,
-        ajax: {
-            url: "{{route('get_value')}}",
-            type: 'POST',
-            dataType: 'json',
-            data: function (params) {
-                return {
-                    q: params.term, // search term
-                    table:'states',
-                    where: "country_id={{$country}}"
-                };
-            },
-            processResults: function (data) {
-                return {
-                    results: data
-                };
-            }
-        }
-    }).on('select2:clear',function(){
-        checkState();
+
+    $('.state').select2();
+    $('.country').on('change', function() {
+        $(`.state`).empty().append(new Option()).trigger('change');
+            $('.state').select2({
+                placeholder: "Select",
+                allowClear: true,
+            });
+            $(`.city`).empty().append(new Option()).trigger('change');
+            $('.city').select2({
+                placeholder: "Select",
+                allowClear: true,
+            });
+        select2state();
     });
+    if ($('#country').val() || $('#state').val()) {
+        select2state();
+    }
+
+    // $('.state').select2({
+    //     placeholder: "Select",
+    //     allowClear: true,
+    //     minimumInputLength: 2,
+    //     ajax: {
+    //         url: "{{route('get_value')}}",
+    //         type: 'POST',
+    //         dataType: 'json',
+    //         data: function (params) {
+    //             return {
+    //                 q: params.term, // search term
+    //                 table:'states',
+    //                 where: "country_id={{$country}}"
+    //             };
+    //         },
+    //         processResults: function (data) {
+    //             return {
+    //                 results: data
+    //             };
+    //         }
+    //     }
+    // }).on('select2:clear',function(){
+    //     checkState();
+    // });
+
+    function select2state(){
+        if ($('.country').val()) {
+            
+            $('.state').select2({
+                placeholder: "Select",
+                allowClear: true,
+                minimumInputLength: 2,
+                ajax: {
+                    url: "{{route('get_value')}}",
+                    type: 'POST',
+                    dataType: 'json',
+                    data: function(params) {
+                        return {
+                            q: params.term, // search term
+                            table: 'states',
+                            page: params.page,
+                            where: `country_id=${$('#country').val()}`
+                        };
+                    },
+                    processResults: function(data) {
+                        return {
+                            results: data
+                        };
+                    }
+                }
+            });
+        }else {
+            $(`.state`).empty().append(new Option()).trigger('change');
+            $('.state').select2({
+                placeholder: "Select",
+                allowClear: true,
+            });
+        }
+    }
+
     $('.city').select2({
         placeholder: "Select",
         allowClear: true,
     });
     $('.state').on('change', function(){
+        $(`.city`).empty().append(new Option()).trigger('change');
+            $('.city').select2({
+                placeholder: "Select",
+                allowClear: true,
+            });
         checkState();
         $(`.city`).val(null).trigger('change');
     });

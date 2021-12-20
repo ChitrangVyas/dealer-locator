@@ -40,6 +40,7 @@ class ManufacturerUpdateRequest extends FormRequest
             'mobile' => 'required',
             'zipcode' => 'present|nullable|min:5|max:7',
             // 'address' => 'required',
+            //'country_id'=>'required|after_or_equal:1',
             // 'state_id' => 'required|after_or_equal:1',
             // 'city_id' => 'required|after_or_equal:1',
             // 'zipcode' => 'required|min:5|max:7',

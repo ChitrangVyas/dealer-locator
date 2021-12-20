@@ -14,6 +14,7 @@ use App\Models\OrderImage;
 use App\Models\OrderProductTax;
 use App\Models\OrderStage;
 use App\Models\OrderStatus;
+use App\Models\Settings;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -175,6 +176,9 @@ class OrderController extends MainController
 
     public function showQuote(Request $request){
         $order = Order::findOrFail($request->get('data')['order_id']);
+        // echo "<pre>";
+        // print_r($order);
+        // die;
         $json['cart_title'] = "Quote #$order->order_number";
         $json['cart_content'] = view('admin.quote.view',['order'=>$order])->render();
         return response()->json(['status' => 'successful','code'=>1, 'data'=>$json, 'message'=>'']);
@@ -243,7 +247,7 @@ class OrderController extends MainController
                     }
                     foreach($request_data['product'] as $key => $value){
                         $cart_product = $cart->get($key);
-                        $order_product_data = array('order_id' => $quote->id, 'product_id' => ($request_data['is_new_product']==1)?NULL:$cart_product->id, 'product_name'=>$cart_product->name, 'qty' => $cart_product->quantity, 'amount' => $cart_product->price);
+                        $order_product_data = array('order_id' => $quote->id, 'product_id' => ($request_data['is_new_product']==1)?NULL:$cart_product->id, 'product_name'=>$cart_product->name, 'qty' => $cart_product->quantity, 'amount' => $cart_product->price, 'discount_percentage'=>$this->myCart->getDiscountPerProductPercentage($cart_product->id,$request_data['cart_id'],$cart), 'discount'=>$this->myCart->getDiscountPerProduct($cart_product->id,$request_data['cart_id'],$cart));
                         $order_product = '';
                         if(!empty($order_product_data)){
                             $order_product = OrderProduct::create($order_product_data);
@@ -277,7 +281,7 @@ class OrderController extends MainController
                 $quote_product_data = [];
                 foreach($request_data['product'] as $key => $value){
                     $cart_product = $cart->get($key);
-                    $quote_product_data = array('order_id' => $quote->id, 'product_id' => $cart_product->id,'product_name'=>$cart_product->name, 'qty' => $cart_product->quantity, 'amount' => $cart_product->price);
+                    $quote_product_data = array('order_id' => $quote->id, 'product_id' => $cart_product->id,'product_name'=>$cart_product->name, 'qty' => $cart_product->quantity, 'amount' => $cart_product->price, 'discount_percentage'=>$this->myCart->getDiscountPerProductPercentage($cart_product->id,$request_data['cart_id'],$cart), 'discount'=>$this->myCart->getDiscountPerProduct($cart_product->id,$request_data['cart_id'],$cart));
                     $order_product = '';
                     if(!empty($quote_product_data)){
                         $order_product = OrderProduct::create($quote_product_data);
@@ -540,7 +544,25 @@ class OrderController extends MainController
 
     public function printInvoice(Request $request,$id=''){
         $order = Order::findOrFail($id);
-        return view('admin.order.print',['order'=>$order]);
+        
+        $settings=Settings::find(1);
+        if(!empty($settings)){
+        $settings = json_decode($settings['json_data'],true);
+        if($order->type == 'sale'){
+            $termscondition=$settings['terms_condition_sale'];
+        } else if($order->type == 'po'){
+            $termscondition=$settings['terms_condition_po'];
+        } else if($order->type == 'quote'){
+            $termscondition=$settings['terms_condition_quote'];
+        } else {
+            $termscondition='';
+        }
+        
+        }
+       
+        // print_r($termscondition);
+        // die;
+        return view('admin.order.print',['order'=>$order,'termscondition'=>$termscondition]);
     }
 
     public function storeSale(Request $request){
@@ -566,8 +588,9 @@ class OrderController extends MainController
                 }
                 $order_product_data = [];
                 foreach($request_data['product'] as $key => $value){
-                    $cart_product = $cart->get($key);
-                    $order_product_data = array('order_id' => $order->id, 'product_id' => $cart_product->id, 'product_name' => $cart_product->name, 'qty' => $cart_product->quantity, 'amount' => $cart_product->price);
+                    
+                    $cart_product = $cart->get($key);                    
+                    $order_product_data = array('order_id' => $order->id, 'product_id' => $cart_product->id, 'product_name' => $cart_product->name, 'qty' => $cart_product->quantity, 'amount' => $cart_product->price, 'discount_percentage'=>$this->myCart->getDiscountPerProductPercentage($cart_product->id,$request_data['cart_id'],$cart), 'discount'=>$this->myCart->getDiscountPerProduct($cart_product->id,$request_data['cart_id'],$cart));
                     $order_product = '';
                     $user_id = '';
                     if(!empty($order_product_data)){

@@ -39,6 +39,8 @@ class AdminUserController extends MainController
         return view('staff.create');
     }
 
+    
+
     /**
      * Store a newly created resource in storage.
      *
@@ -59,6 +61,7 @@ class AdminUserController extends MainController
                     'users_group_id' => $request_data['user_group'],
                     'created_by' => $request_data['created_by'],
                     'address' => $request_data['address'],
+                    'country_id' => $request_data['country_id'],
                     'city_id' => $request_data['city'],
                     'state_id' => $request_data['state'],
                     'zipcode' => $request_data['zipcode'],
@@ -114,6 +117,7 @@ class AdminUserController extends MainController
             'users_group_id' => $request_data['user_group'],
             'created_by' => $request_data['created_by'],
             'address' => $request_data['address'],
+            'country_id' => $request_data['country_id'],
             'city_id' => $request_data['city'],
             'state_id' => $request_data['state'],
             'zipcode' => $request_data['zipcode'],

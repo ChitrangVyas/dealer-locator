@@ -41,6 +41,7 @@ class AdminUserCreateRequest extends FormRequest
             'password' => 'required|min:6|max:16',
             'address'=>'required',
             'mobile' => 'required',
+            'country_id'=>'required|after_or_equal:1',
             'state' => 'required|after_or_equal:1',
             'city' => 'required|after_or_equal:1',
             'zipcode' => 'required|min:5|max:7',
@@ -49,7 +50,7 @@ class AdminUserCreateRequest extends FormRequest
 
     /**
      * Custom message for validation
-     *
+     *  
      * @return array
      */
     public function messages()
@@ -64,6 +65,7 @@ class AdminUserCreateRequest extends FormRequest
             'password.max' => 'Password must not be greater than :max characters.',
             'address.required' => 'Address is required.',
             'mobile.required'=> 'Mobile is required.',
+            'country_id.required'=>'Country is required',
             'state.required' => 'State is required.',
             'city.required' => 'City is required.',
             'zipcode.required' => 'Zip code is required.',

@@ -29,6 +29,7 @@ class User extends Authenticatable
         'updated_by',
         'parent_id',
         'address',
+        'country_id',
         'city_id',
         'state_id',
         'status',
@@ -68,6 +69,9 @@ class User extends Authenticatable
     }
     public function state(){
         return $this->belongsTo(State::class);
+    }
+    public function country(){
+        return $this->belongsTo(Country::class);
     }
     /* public function getCustomerType(){
         if($this->contact_type==1){

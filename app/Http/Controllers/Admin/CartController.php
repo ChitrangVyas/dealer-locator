@@ -100,7 +100,14 @@ class CartController extends MainController
                 foreach($request->input('product') as $key=>$product){
                     $product_data = Product::findOrFail($key);
                     $cart->remove($key);
-                    $condition = (isset($request->input('tax')[$product_data->id]))?$this->getTaxGroupCondition($request->input('cart_id'),$request->input('tax')[$product_data->id]):$this->getProductTaxCondition($product_data,$request->input('cart_id'));
+                    $condition = (isset($request->input('tax')[$product_data->id]))?$this->getTaxGroupCondition($request->input('cart_id'),$request->input('tax')[$product_data->id]):$this->getProductTaxCondition($product_data,$request->input('cart_id'));                    
+                    if($request->input('discount')[$key] > 0){
+                        $condition['Discount'] = new \Darryldecode\Cart\CartCondition(array(
+                            'name' => 'Discount',
+                            'type' => 'coupon',
+                            'value' => '-'.$request->input('discount')[$key].'%',
+                        ));
+                    }
                     $cart->add(array(
                         'id' => $key,
                         'name' => $product_data->name,
@@ -271,14 +278,16 @@ class CartController extends MainController
         $cart_total = 0.00;
         if(!empty($this->myCart->getTo($id))){
             $to_user = (!empty($this->myCart->getForManufacture($id)) && ($this->myCart->getType($id) == 'po')) ? NULL : User::findOrFail($this->myCart->getTo($id));
+            
         }
         if(!empty($this->myCart->getTaxTotal($id))){
             $total_tax = $this->myCart->getTaxTotal($id);
         }
+        $createtype=($this->myCart->getType($id) == 'po')? 'PO' : '';
         $tax_groups = TaxGroup::where('status',1)->get();
         $selected_tax_group = $this->myCart->getTaxGroup($id);
         $cart_total = $this->myCart->getCartTotal($id);
-        return view('admin.order.cart',['cart'=>$cart,'id'=>$id,'is_new_product' => $is_new_product,'order_number'=>$this->myCart->getOrderNumber($id),'type'=>$this->myCart->getType($id),'to_user'=>$to_user,'inquiry_id'=>$this->myCart->getInquiryId($id),'total_tax'=>$total_tax,'tax_groups'=>$tax_groups,'selected_tax_group'=>$selected_tax_group,'cart_total'=>$cart_total]);
+        return view('admin.order.cart',['cart'=>$cart,'id'=>$id,'is_new_product' => $is_new_product,'order_number'=>$this->myCart->getOrderNumber($id),'type'=>$this->myCart->getType($id),'to_user'=>$to_user,'inquiry_id'=>$this->myCart->getInquiryId($id),'total_tax'=>$total_tax,'tax_groups'=>$tax_groups,'selected_tax_group'=>$selected_tax_group,'cart_total'=>$cart_total,'myCart'=>$this->myCart,'createtype'=>$createtype]);
     }
 
     public function addProductToCart(Request $request){
@@ -459,6 +468,7 @@ class CartController extends MainController
             $is_new_product = 1;
         }
         $this->myCart->setTaxTotal($id,$cart);
+        // $json['carttype']='PO';
         $json['cart_title'] = "PO".(!empty($this->myCart->getOrderNumber($id)) ? " #".$this->myCart->getOrderNumber($id) : '');
         $json['cart_content'] = $this->getInquiryToQuoteCart($id,$cart,$is_new_product)->render();
         return response()->json(['status' => 'successful','code'=>1, 'data'=>$json, 'message'=>'']);

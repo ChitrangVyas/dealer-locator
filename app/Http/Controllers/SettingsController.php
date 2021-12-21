@@ -7,6 +7,7 @@ use App\Http\Requests\Admin\SettingsRequest;
 use App\Models\City;
 use App\Models\Settings;
 use App\Models\State;
+use App\Models\Country;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
@@ -85,6 +86,7 @@ class SettingsController extends MainController
                 $request_data['icon_logo'] = $filepath;
             }
         }
+        
         if(empty($request->input('id'))){
             $settings = Settings::create(['json_data'=>json_encode($request_data)]);
         }else{
@@ -169,5 +171,8 @@ class SettingsController extends MainController
     }
     public function getCity($city_id){
         return City::find($city_id);
+    }
+    public function getCountry($country_id){
+        return Country::find($country_id);
     }
 }

@@ -41,6 +41,19 @@ class ManufacturerCreateRequest extends FormRequest
             'mobile' => 'required',
             'zipcode' => 'present|nullable|min:5|max:7',
             // 'address' => 'required',
+            //'country_id'=>'required|after_or_equal:1',
+            // 'state' => [
+            //     'required',
+            //     Rule::exists('states','id')->where(function ($query) {
+            //         return $query->where('country_id', $this->input('country_id'));
+            //     }),
+            // ],
+            // 'city' => [
+            //     'required',
+            //     Rule::exists('cities','id')->where(function ($query) {
+            //         return $query->where('state_id', $this->input('state'));
+            //     }),
+            // ],
             // 'state_id' => 'required|after_or_equal:1',
             // 'city_id' => 'required|after_or_equal:1',
             // 'zipcode' => 'required|min:5|max:7',

@@ -278,7 +278,7 @@
             });
         });    
         
-        $("body").on("change",".tax, .qty, .price", function(){
+        $("body").on("change",".tax, .qty, .price, .discount", function(){
             updateCart().then(function(){     
                 select2Product();
             });

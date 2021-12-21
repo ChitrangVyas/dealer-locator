@@ -40,8 +40,19 @@ class RetailerUserCreateRequest extends FormRequest
             'name' => 'required|string|max:100',            
             'mobile' => 'required',
             'address' => 'required',
-            'state' => 'required|after_or_equal:1',
-            'city' => 'required|after_or_equal:1',
+            'country_id'=>'required|after_or_equal:1',
+            'state' => [
+                'required',
+                Rule::exists('states','id')->where(function ($query) {
+                    return $query->where('country_id', $this->input('country_id'));
+                }),
+            ],
+            'city' => [
+                'required',
+                Rule::exists('cities','id')->where(function ($query) {
+                    return $query->where('state_id', $this->input('state'));
+                }),
+            ],
             'zipcode' => 'required|min:5|max:7',
         ];
     }
@@ -64,6 +75,7 @@ class RetailerUserCreateRequest extends FormRequest
             'password.max' => 'Password must not be greater than :max characters.',
             'mobile.required'=> 'Mobile is required.',
             'address.required'=> 'Address is required.',
+            'country_id.required'=>'Country is required',
             'state.required'=> 'State is required.',
             'city.required'=> 'City is required.',
             'zipcode.required' => 'Zip code is required.',

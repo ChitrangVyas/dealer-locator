@@ -156,10 +156,30 @@
                             @enderror
                         </div>
                     </div>
+                    <div class="col-sm-12 col-md-6">
+                        <!-- text input -->
+                        <div class="form-group">
+                            <label>Max. Pipe Size & Water Flow</label>
+                            <input type="text" class="form-control" name="max_pipe_size_and_water_flow" value="{{ old('max_pipe_size_and_water_flow',(!empty($product))?$product->max_pipe_size_and_water_flow:'')}}" placeholder="Max. Pipe Size & Water Flow" tabindex="11">
+                            @error('max_pipe_size_and_water_flow')
+                                <div class="alert alert-danger mt-2">{{ $message }}</div>
+                            @enderror
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-6">
+                        <!-- text input -->
+                        <div class="form-group">
+                            <label>Installation Space</label>
+                            <input type="text" class="form-control" name="installation_place" value="{{ old('installation_place',(!empty($product))?$product->installation_place:'')}}" placeholder="Installation Space" tabindex="12">
+                            @error('installation_place')
+                                <div class="alert alert-danger mt-2">{{ $message }}</div>
+                            @enderror
+                        </div>
+                    </div>
                 </div>
                 <div class="row">
                     <div class="col-sm-12 col-md-12">
-                        <button type="submit" class="btn btn-primary" tabindex="11">Submit</button>
+                        <button type="submit" class="btn btn-primary" tabindex="13">Submit</button>
                     </div>
                 </div>
             </form>

@@ -28,6 +28,6 @@ class OrderProduct extends Model
         return $this->hasMany(OrderTax::class);
     } */
     public function getSubTotal(){
-        return round($this->qty * $this->amount,2);
+        return round(($this->qty * $this->amount) - $this->discount,2);
     }
 }

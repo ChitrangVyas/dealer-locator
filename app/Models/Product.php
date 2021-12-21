@@ -22,6 +22,8 @@ class Product extends Model
         'status',
         'tax_group_id',
         'hsn_sac',
+        'installation_place',
+        'max_pipe_size_and_water_flow'
     ];
     protected $dates = ['deleted_at'];
 

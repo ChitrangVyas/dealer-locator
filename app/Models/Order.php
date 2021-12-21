@@ -107,7 +107,7 @@ class Order extends Model
 
     public function getSubTotal(){
         $sub_total = [];
-         $sub_total = $this->select(DB::raw('SUM(order_product.amount * order_product.qty) AS sub_total'))->leftJoin('order_product', 'orders.id', '=', 'order_product.order_id')->where('orders.id', $this->id)
+         $sub_total = $this->select(DB::raw('SUM((order_product.amount * order_product.qty) - order_product.discount)  AS sub_total'))->leftJoin('order_product', 'orders.id', '=', 'order_product.order_id')->where('orders.id', $this->id)
         ->get()->first()->toArray();
         if(!empty($sub_total)){
             return $sub_total;

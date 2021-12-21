@@ -26,25 +26,35 @@ class AdminUserUpdateRequest extends FormRequest
      */
     public function rules()
     {
-        return [          
+        return [
             'email' => [
                 'required',
-                'email' => 'email:rfc',function($attribute, $value, $fail) {
+                'email' => 'email:rfc', function ($attribute, $value, $fail) {
                     if (!filter_var($value, FILTER_VALIDATE_EMAIL)) {
-                       $fail('Enter a valid email address.');
+                        $fail('Enter a valid email address.');
                     }
                 },
                 Rule::unique('users')->where(function ($query) {
-                    return $query->whereNull('deleted_at')->where('users_group_id','=', $this->input('user_group'));
+                    return $query->whereNull('deleted_at')->where('users_group_id', '=', $this->input('user_group'));
                 })->ignore($this->id)
-            ],            
+            ],
             'name' => 'required|string|max:100',
-            'password' => 'present|nullable|min:6|max:16',            
+            'password' => 'present|nullable|min:6|max:16',
             'mobile' => 'required',
-            'address'=>'required',
-            'country_id'=>'required|after_or_equal:1',
-            'state' => 'required|after_or_equal:1',
-            'city' => 'required|after_or_equal:1',
+            'address' => 'required',
+            'country_id' => 'required|after_or_equal:1',
+            'state' => [
+                'required',
+                Rule::exists('states','id')->where(function ($query) {
+                    return $query->where('country_id', $this->input('country_id'));
+                }),
+            ],
+            'city' => [
+                'required',
+                Rule::exists('cities','id')->where(function ($query) {
+                    return $query->where('state_id', $this->input('state'));
+                }),
+            ],
             'zipcode' => 'required|min:5|max:7',
         ];
     }
@@ -64,8 +74,8 @@ class AdminUserUpdateRequest extends FormRequest
             'password.max' => 'Password must not be greater than :max characters.',
             'name.required' => 'Name is required.',
             'address.required' => 'Address is required.',
-            'country_id.required'=>'Country is required',
-            'mobile.required'=> 'Mobile is required.',
+            'country_id.required' => 'Country is required',
+            'mobile.required' => 'Mobile is required.',
             'state.required' => 'State is required.',
             'city.required' => 'City is required.',
             'zipcode.required' => 'Zip code is required.',

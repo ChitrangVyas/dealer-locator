@@ -31,4 +31,7 @@ class Manufacturer extends Model
     public function state(){
         return $this->belongsTo(State::class);
     }
+    public function country(){
+        return $this->belongsTo(Country::class);
+    }
 }

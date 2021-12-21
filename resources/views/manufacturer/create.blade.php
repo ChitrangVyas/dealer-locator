@@ -90,10 +90,10 @@
                          $selectcountry=''
                          @endphp
                             @foreach($allowedcountry as $acountry)
-                            @if(!empty($user) && $user->country_id)
+                            @if(!empty($manufacturer) && $manufacturer->country_id)
                                @php 
                                
-                                $selectcountry=($user->country_id == $acountry->id)? 'selected' : ''
+                                $selectcountry=($manufacturer->country_id == $acountry->id)? 'selected' : ''
                                 
                                 @endphp
                             @endif

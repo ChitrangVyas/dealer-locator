@@ -48,7 +48,7 @@ class CustomerCreateRequest extends FormRequest
             'city_id' => [
                 'required',
                 Rule::exists('cities','id')->where(function ($query) {
-                    return $query->where('state_id', $this->input('state'));
+                    return $query->where('state_id', $this->input('state_id'));
                 }),
             ],
             'zipcode' => 'required|min:5|max:7',

@@ -41,8 +41,18 @@ class DealerUserUpdateRequest extends FormRequest
             'mobile' => 'required',
             'address' => 'required',
             'country_id'=>'required|after_or_equal:1',
-            'state' => 'required|after_or_equal:1',
-            'city' => 'required|after_or_equal:1',
+            'state' => [
+                'required',
+                Rule::exists('states','id')->where(function ($query) {
+                    return $query->where('country_id', $this->input('country_id'));
+                }),
+            ],
+            'city' => [
+                'required',
+                Rule::exists('cities','id')->where(function ($query) {
+                    return $query->where('state_id', $this->input('state'));
+                }),
+            ],
             'zipcode' => 'required|min:5|max:7',
         ];
     }

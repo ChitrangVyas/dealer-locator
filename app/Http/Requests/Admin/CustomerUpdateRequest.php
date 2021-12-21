@@ -38,8 +38,19 @@ class CustomerUpdateRequest extends FormRequest
             'name' => 'required|string|max:100',            
             'mobile' => 'required',
             'address' => 'required',
-            'state_id' => 'required|after_or_equal:1',
-            'city_id' => 'required|after_or_equal:1',
+            'country_id'=>'required|after_or_equal:1',
+            'state_id' => [
+                'required',
+                Rule::exists('states','id')->where(function ($query) {
+                    return $query->where('country_id', $this->input('country_id'));
+                }),
+            ],
+            'city_id' => [
+                'required',
+                Rule::exists('cities','id')->where(function ($query) {
+                    return $query->where('state_id', $this->input('state_id'));
+                }),
+            ],
             'zipcode' => 'required|min:5|max:7',
             'users_group_id' => 'required',
         ];
@@ -54,6 +65,7 @@ class CustomerUpdateRequest extends FormRequest
             'email.email' =>'Please enter valid email.',
             'mobile.required'=>'Mobile is required.',
             'address.required'=>'Address is required.',
+            'country_id.required'=>'Country is required',
             'state_id.required'=>'State is required.',
             'city_id.required'=>'City is required.',
             'zipcode.required' => 'Zip code is required.',

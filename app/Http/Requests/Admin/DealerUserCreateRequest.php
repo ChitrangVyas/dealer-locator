@@ -40,8 +40,19 @@ class DealerUserCreateRequest extends FormRequest
             'password' => 'required|min:6|max:16',
             'mobile' => 'required',
             'address' => 'required',
-            'state' => 'required|after_or_equal:1',
-            'city' => 'required|after_or_equal:1',
+            'country_id'=>'required|after_or_equal:1',
+            'state' => [
+                'required',
+                Rule::exists('states','id')->where(function ($query) {
+                    return $query->where('country_id', $this->input('country_id'));
+                }),
+            ],
+            'city' => [
+                'required',
+                Rule::exists('cities','id')->where(function ($query) {
+                    return $query->where('state_id', $this->input('state'));
+                }),
+            ],
             'zipcode' => 'required|min:5|max:7',
         ];
     }
@@ -61,6 +72,7 @@ class DealerUserCreateRequest extends FormRequest
             'password.required' => 'Password is required.',
             'mobile.required'=> 'Mobile is required.',
             'address.required'=> 'Address is required.',
+            'country_id.required'=>'Country is required',
             'state.required'=> 'State is required.',
             'city.required'=> 'City is required.',
             'zipcode.required' => 'Zip code is required.',

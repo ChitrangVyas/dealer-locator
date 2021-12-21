@@ -182,6 +182,7 @@
             data.push({name:'btnSave', value:btn.val()});
             // let inquiry_id = $('#inquiry_id').val();
             saveFormData(url,data,'orderModal').then(function(res){
+                // console.log(res);
                 if(res.code == 1){
                   $(`.create-po-${res.data.quote}`).hide();  
                 }
@@ -255,7 +256,7 @@
             });
         });        
         
-        $("body").on("change",".tax, .qty, .price", function(){
+        $("body").on("change",".tax, .qty, .price, .discount", function(){
             /* price = $(this).closest('.product-detail').find('.price').val();
             qty =  $(this).closest('.product-detail').find('.qty').val();
             amount = price * qty;

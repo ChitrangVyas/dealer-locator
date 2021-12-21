@@ -87,6 +87,8 @@ class ProductController extends MainController
                 'status' => (!empty($request_data['status']))?1:0,
                 'tax_group_id'=> $request_data['tax_group_id'],
                 'hsn_sac'=> $request_data['hsn_sac'],
+                'installation_place'=> $request_data['installation_place'],
+                'max_pipe_size_and_water_flow'=> $request_data['max_pipe_size_and_water_flow'],
             ]);
             if(!empty($product) && !empty($request_data['inventory'])){
                 $inventory = Inventory::create([
@@ -154,8 +156,13 @@ class ProductController extends MainController
             // 'inventory' => $request['inventory'],           
             'price' => $request['price'],
             'tax_group_id'=> $request_data['tax_group_id'],
-            'hsn_sac'=> $request_data['hsn_sac'],    
+            'hsn_sac'=> $request_data['hsn_sac'],
+            'installation_place'=> $request_data['installation_place'],
+            'max_pipe_size_and_water_flow'=> $request_data['max_pipe_size_and_water_flow'],    
         ];
+        // echo "<pre>";
+        // print_r($upload_data);
+        // die;
         $upload_data['status'] = (!empty($request_data['status']))?1:0;
         try{
             if($request->file()) {

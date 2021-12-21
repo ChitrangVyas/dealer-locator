@@ -224,6 +224,66 @@
                     @enderror
                 </div>
             </div>
+            <div class="col-sm-12 col-md-4">
+                <!-- text input -->
+                <div class="form-group">
+                    <label>Allowed countries to sale</label>
+                    <select class="form-control select2 allowedcountry" id='allowed_countries' name='allowed_countries[]' tabindex="8" multiple="multiple">
+                        <option value="">Select</option>
+                        @if(!empty($settings) && (!empty($settings->json_data['allowed_countries'])))
+                        @foreach($settings->json_data['allowed_countries'] as $allowedcountrys)     
+                        @php 
+                                $selectedCountry = $select2Old->getSelect2Data('countries',$allowedcountrys)
+                            @endphp
+                            <option value="{{$allowedcountrys}}" selected>{{$selectedCountry->name}}</option>
+                            @endforeach
+                            @endif
+                        @if(old('allowed_countries'))
+                            @foreach(old('allowed_countries') as $oldcountrys)     
+                            @php 
+                                $data = $select2Old->getSelect2Data('countries',$oldcountrys)
+                            @endphp
+                                               
+                            <option value="{{$data->id}}" selected>{{$data->name}}</option>
+                            @endforeach
+                        @endif
+                    </select>
+                    @error('allowed_countries')
+                        <div class="alert alert-danger mt-2">{{ $message }}</div>
+                    @enderror
+                </div>
+            </div>
+            <div class="col-sm-12 col-md-12">
+                <!-- text input -->
+                <div class="form-group">
+                    <label>Terms and Conditions for sale</label>
+                    <textarea class="form-control" name="terms_condition_sale" placeholder="Terms and Conditions for Sale">{{ old('terms_condition_sale',(!empty($settings) && (!empty($settings->json_data['terms_condition_sale'])))?$settings->json_data['terms_condition_sale']:'')}}</textarea>
+                   
+                    @error('terms_condition_sale')
+                        <div class="alert alert-danger mt-2">{{ $message }}</div>
+                    @enderror
+                </div>
+            </div>
+            <div class="col-sm-12 col-md-12">
+                <!-- text input -->
+                <div class="form-group">
+                    <label>Terms and Conditions for PO</label>
+                    <textarea class="form-control" name="terms_condition_po" placeholder="Terms and Conditions for PO">{{ old('terms_condition_po',(!empty($settings) && (!empty($settings->json_data['terms_condition_po'])))?$settings->json_data['terms_condition_po']:'')}}</textarea>
+                    @error('terms_condition_po')
+                        <div class="alert alert-danger mt-2">{{ $message }}</div>
+                    @enderror
+                </div>
+            </div>
+            <div class="col-sm-12 col-md-12">
+                <!-- text input -->
+                <div class="form-group">
+                    <label>Terms and Conditions for Quote</label>
+                    <textarea class="form-control" name="terms_condition_quote" placeholder="Terms and Conditions for Quote">{{ old('terms_condition_quote',(!empty($settings) && (!empty($settings->json_data['terms_condition_quote'])))?$settings->json_data['terms_condition_quote']:'')}}</textarea>
+                    @error('terms_condition_quote')
+                        <div class="alert alert-danger mt-2">{{ $message }}</div>
+                    @enderror
+                </div>
+            </div>
         </div>
         <div class="row">
             <div class="col-sm-12 col-md-12 border-bottom mt-2 mb-2">
@@ -342,6 +402,28 @@ jQuery(document).ready(function(){
         allowClear: true,
     });
     $('.country').select2({
+        placeholder: "Select Country",
+        allowClear: true,
+        minimumInputLength: 2,
+        ajax: {
+            url: "{{route('get_value')}}",
+            type: 'POST',
+            dataType: 'json',
+            data: function (params) {
+                return {
+                    q: params.term, // search term
+                    table:'countries',
+                    where: ''
+                };
+            },
+            processResults: function (data) {
+                return {
+                    results: data
+                };
+            }
+        }
+    }); 
+    $('.allowedcountry').select2({
         placeholder: "Select Country",
         allowClear: true,
         minimumInputLength: 2,

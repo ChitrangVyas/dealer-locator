@@ -40,19 +40,19 @@ class ManufacturerUpdateRequest extends FormRequest
             'mobile' => 'required',
             'zipcode' => 'present|nullable|min:5|max:7',
             // 'address' => 'required',
-            //'country_id'=>'required|after_or_equal:1',
-            // 'state' => [
-            //     'required',
-            //     Rule::exists('states','id')->where(function ($query) {
-            //         return $query->where('country_id', $this->input('country_id'));
-            //     }),
-            // ],
-            // 'city' => [
-            //     'required',
-            //     Rule::exists('cities','id')->where(function ($query) {
-            //         return $query->where('state_id', $this->input('state'));
-            //     }),
-            // ],
+            'country_id'=>'required|after_or_equal:1',
+            'state_id' => [
+                'required',
+                Rule::exists('states','id')->where(function ($query) {
+                    return $query->where('country_id', $this->input('country_id'));
+                }),
+            ],
+            'city_id' => [
+                'required',
+                Rule::exists('cities','id')->where(function ($query) {
+                    return $query->where('state_id', $this->input('state_id'));
+                }),
+            ],
             // 'state_id' => 'required|after_or_equal:1',
             // 'city_id' => 'required|after_or_equal:1',
             // 'zipcode' => 'required|min:5|max:7',
@@ -77,8 +77,10 @@ class ManufacturerUpdateRequest extends FormRequest
             'zipcode.required' => 'Zip code is required.',
             'zipcode.min' => 'Zip code must be at least :min characters.',
             'zipcode.max' => 'Zip code must not be greater than :max characters.'
-            // 'state_id.required'=> 'Please select state',
+            // 'state_id.required' => 'Please select state.',
+            // 'state_id.exist'=> 'The selected state is invalid',
             // 'city_id.required'=> 'Please select city',
+            // 'city_id.exist'=> 'The selected city is invalid',
         ];
     }
 }

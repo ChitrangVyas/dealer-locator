@@ -127,7 +127,14 @@
                         @if(!empty($manufacturer) && $manufacturer->state_id)
                             <option value="{{$manufacturer->state_id}}" selected>{{$manufacturer->state->name}}</option>
                         @endif
+                        @if(old('state_id'))     
+                            @php 
+                                $data = $select2Old->getSelect2Data('states',old('state_id'))
+                            @endphp                   
+                            <option value="{{$data->id}}" selected>{{$data->name}}</option>
+                        @endif
                     </select>
+                    <label><span class="text-red"><strong>Note:</strong> Please select the country before select the state.</span></label>
                     <input type="hidden" id="state_id" value="{{old('state_id')}}">
                     @error('state_id')
                         <div class="alert alert-danger mt-2">{{ $message }}</div>
@@ -142,6 +149,14 @@
                         <option value="">Select</option>
                         @if(!empty($manufacturer) && !empty($manufacturer->city_id))
                             <option value="{{$manufacturer->city_id}}" selected>{{$manufacturer->city->name}}</option>
+                        @endif
+                        @if(old('city_id'))     
+                            @php 
+                                $data = $select2Old->getSelect2Data('cities',old('city_id'),' state_id='. old('state_id'))
+                            @endphp          
+                            @if (!empty($data))
+                                <option value="{{$data->id}}" selected>{{$data->name}}</option>
+                            @endif         
                         @endif
                     </select>
                     <label><span class="text-red"><strong>Note:</strong> Please select the state before select the city.</span></label>

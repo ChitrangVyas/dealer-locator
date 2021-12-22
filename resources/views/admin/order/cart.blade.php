@@ -132,7 +132,7 @@
            @if($createtype != 'PO')
             <div class="col-sm-12 col-md-1">
                 <div class="form-group">                    
-                    <input type="number" class="form-control discount d-inline" id="price-{{$product->id}}" value="{{  $myCart->getDiscountPerProductPercentage($product->id,$id,$cart) }}" name="discount[{{$product->id}}]" min="1" required />
+                    <input type="text" class="form-control discount d-inline" id="price-{{$product->id}}" value="{{  $myCart->getDiscountPerProductPercentage($product->id,$id,$cart) }}" name="discount[{{$product->id}}]" min="1" required />
                 </div>
             </div>
             @endif

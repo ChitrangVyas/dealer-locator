@@ -72,7 +72,7 @@ class CartController extends MainController
         //
     }
     public function validateForMaxMin($val){
-        if($val<0){
+        if($val<=0){
             return 1;
         }
         return $val;

@@ -71,7 +71,12 @@ class CartController extends MainController
     {
         //
     }
-
+    public function validateForMaxMin($val){
+        if($val<0){
+            return 1;
+        }
+        return $val;
+    }
     /**
      * Update the specified resource in storage.
      *
@@ -91,8 +96,8 @@ class CartController extends MainController
                     $cart->add(array(
                         'id' => $key,
                         'name' => $request->input('product')[$key],
-                        'price' => $request->input('amount')[$key],
-                        'quantity' => $request->input('qty')[$key],
+                        'price' => $this->validateForMaxMin($request->input('amount')[$key]),
+                        'quantity' => $this->validateForMaxMin($request->input('qty')[$key]),
                         'attributes' => array(),
                     ));
                 }
@@ -105,14 +110,14 @@ class CartController extends MainController
                         $condition['Discount'] = new \Darryldecode\Cart\CartCondition(array(
                             'name' => 'Discount',
                             'type' => 'coupon',
-                            'value' => '-'.$request->input('discount')[$key].'%',
+                            'value' => '-'.($request->input('discount')[$key]>100 ? 100 : $request->input('discount')[$key]).'%',
                         ));
                     }
                     $cart->add(array(
                         'id' => $key,
                         'name' => $product_data->name,
-                        'price' => $request->input('amount')[$key],
-                        'quantity' => $request->input('qty')[$key],
+                        'price' => $this->validateForMaxMin($request->input('amount')[$key]),
+                        'quantity' => $this->validateForMaxMin($request->input('qty')[$key]),
                         'attributes' => array(
                             'hsn_sac' => (!empty($product_data->hsn_sac)) ? $product_data->hsn_sac : '',
                         ),

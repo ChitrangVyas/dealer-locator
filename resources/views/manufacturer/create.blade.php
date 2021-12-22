@@ -281,26 +281,26 @@ jQuery(document).ready(function(){
         }
     }
 
-    $('.city').select2({
-        placeholder: "Select",
-        allowClear: true,
-    });
+    $('.city').select2();
     $('.state').on('change', function(){
         $(`.city`).empty().append(new Option()).trigger('change');
             $('.city').select2({
                 placeholder: "Select",
                 allowClear: true,
             });
-        checkState();
+        select2city();
         $(`.city`).val(null).trigger('change');
     });
-
+    if ($('#state').val() || $('#city').val()) {
+        select2city();
+    }
     /* if ($('#state').val() || $('#city').val()) {
         getStateCity('states',` id=${$('#state').val()}`,'state');
         getStateCity('cities', ` id=${$('#city').val()}`,'city');
     } */
-    function checkState(){
-        if($('.state').val()){
+    function select2city(){
+        if ($('.state').val()) {
+           
             $('.city').select2({
                 placeholder: "Select",
                 allowClear: true,
@@ -309,22 +309,22 @@ jQuery(document).ready(function(){
                     url: "{{route('get_value')}}",
                     type: 'POST',
                     dataType: 'json',
-                    data: function (params) {
+                    data: function(params) {
                         return {
                             q: params.term, // search term
-                            table:'cities',
+                            table: 'cities',
                             page: params.page,
                             where: `state_id=${$('#state').val()}`
                         };
                     },
-                    processResults: function (data) {
+                    processResults: function(data) {
                         return {
                             results: data
                         };
                     }
                 }
             });
-        }else{
+        }else {
             $(`.city`).empty().append(new Option()).trigger('change');
             $('.city').select2({
                 placeholder: "Select",

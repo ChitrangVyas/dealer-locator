@@ -119,7 +119,7 @@
             <div class="col-sm-12 col-md-1">
                 <div class="form-group">
                     <!-- <label for="qty">Qty</label> -->
-                    <input type="number" class="form-control qty d-inline" id="qty-{{$product->id}}" name="qty[{{$product->id}}]" value="{{$product->quantity}}" min="1" required />
+                    <input type="text" class="form-control qty d-inline" id="qty-{{$product->id}}" name="qty[{{$product->id}}]" value="{{$product->quantity}}" min="1" required />
                 </div>
             </div>
             <div class="col-sm-12 col-md-2">

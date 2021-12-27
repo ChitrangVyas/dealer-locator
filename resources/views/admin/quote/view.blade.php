@@ -62,7 +62,7 @@
         <input type="hidden" name="user_id" value="{{auth()->user()->id}}">
         <input type="hidden" name="order_id" value="{{ $order->id }}">
         <fieldset class="border">
-            <legend class="w-auto m-2">Invoice Status</legend>
+            <legend class="w-auto m-2">Payment Status</legend>
             <div class="col-sm-12 col-md-12">
                 <!-- text input -->
                 <div class="form-group clearfix">
@@ -77,7 +77,7 @@
         </fieldset>
         @if(empty(auth()->user()->users_group_id) || (auth()->user()->id == $order->from_user))
         <fieldset class="border">
-            <legend class="w-auto m-2">Order Stage</legend>
+            <legend class="w-auto m-2">Order Status</legend>
                 <div class="col-sm-12 col-md-12">
                     <table class="col-12 mb-3">
                         @if(($order->from_user != auth()->user()->id) && (!empty($order->from_user)))

@@ -510,7 +510,7 @@ class OrderController extends MainController
 
     //sale
     public function saleIndex(){
-        View::share ( 'title', 'Sales' );
+        View::share ( 'title', 'Orders' );
         View::share ( 'elementActive', 'sales' );
         // id|number|total|from|to|created_date
         return view('admin.sale.index');
@@ -524,14 +524,14 @@ class OrderController extends MainController
     }
 
     public function invoiceCreate(Request $request){
-        $json['modal_title'] = "Create Sale";
+        $json['modal_title'] = "Create Order";
         $json['modal_content'] = view('admin.invoice.create')->render();
         return response()->json(['status' => 'successful','code'=>1, 'data'=>$json, 'message'=>'']);
     }
 
     public function showSale(Request $request){
         $order = Order::findOrFail($request->get('data')['order_id']);
-        $json['cart_title'] = "Sale #$order->order_number";
+        $json['cart_title'] = "Order #$order->order_number";
         $json['cart_content'] = view('admin.quote.view',['order'=>$order])->render();
         return response()->json(['status' => 'successful','code'=>1, 'data'=>$json, 'message'=>'']);
     }
@@ -584,7 +584,7 @@ class OrderController extends MainController
             $order = Order::create($cart_data);
             if(!empty($order)){
                 if(!empty($order->customer) && ($order->customer->users_group_id == 2 || ($order->customer->users_group_id == 3))){
-                    Helpers::storeNotification($order->customer->id,"Sale #$order->order_number has been created for you.",0,3);
+                    Helpers::storeNotification($order->customer->id,"Order #$order->order_number has been created for you.",0,3);
                 }
                 $order_product_data = [];
                 foreach($request_data['product'] as $key => $value){
@@ -635,17 +635,17 @@ class OrderController extends MainController
                         $from_name = (!empty($order->addedBy))?$order->addedBy->name:$this->settingJson['mail_from_name'];
                         $customer = (!empty($order->customer))?$order->customer->email:$this->settingJson['mail_from_email'];
                         try{
-                            Mail::to($customer)->send(new OrderEmailTemplate($order,config('app.name').' - Sales',$from,$from_name));
+                            Mail::to($customer)->send(new OrderEmailTemplate($order,config('app.name').' - Orders',$from,$from_name));
                         }catch(Exception $e){
                             return response()->json(['status' => 'error','code' => 0,'message' => 'Unable to sent Mail.','body'=>$e->getMessage()]);
                         }
                     }
-                    return response()->json(['status' => 'successful', 'data'=>['quote'=>$cart_data['order_reference']],'code'=>1,'message'=>'Sales Successfully created.']);
+                    return response()->json(['status' => 'successful', 'data'=>['quote'=>$cart_data['order_reference']],'code'=>1,'message'=>'Orders Successfully created.']);
                 }else{
                     return response()->json(['status' => 'error','code'=>0,'message'=>'Something goes wrong.']);
                 }
             }else{
-                return response()->json(['status' => 'error','code'=>0,'message'=>'Unable to generate Sale.']);
+                return response()->json(['status' => 'error','code'=>0,'message'=>'Unable to generate Order.']);
             }
         }catch(Exception $e){
             return response()->json(['status' => 'error','code' => 0,'message' => $e->getMessage()]);                
@@ -697,7 +697,7 @@ class OrderController extends MainController
             $action_html = "<span><a data-url=".route('quote.show',$order->id)." data-order=".$order->id." class='btn btn-primary view-order' data-toggle='modal' data-target='#orderModal' title='View'><i class='far fa-eye' title='View'></i></a></span>";
             // $action_html .= "<span class='ml-3 create-po-".$order->id."'><a data-url=".route('cart.po.create')." data-order=".$order->id." class='btn btn-success view-order'>Generate PO</a></span>";
             if(empty($is_sale_generated) && (auth()->user()->id == $order->from_user || (empty($user->users_group_id) && empty($order->from_user))) ){
-                $action_html .= "<span class='ml-2 create-sale-".$order->id."'><a data-url=".route('cart.sale.create')." data-order=".$order->id." class='btn btn-default view-order' data-toggle='modal' data-target='#orderModal' title='Generate Sale'><i class='fas fa-shopping-cart'></i></a></span>";
+                $action_html .= "<span class='ml-2 create-sale-".$order->id."'><a data-url=".route('cart.sale.create')." data-order=".$order->id." class='btn btn-default view-order' data-toggle='modal' data-target='#orderModal' title='Generate Order'><i class='fas fa-shopping-cart'></i></a></span>";
             }
             $action_html .= "<span class='ml-2 edit-quote-".$order->id."'><a data-url=".route('cart.quote.edit',$order->id)." data-order=".$order->id." class='btn btn-primary view-order' title='Edit'><i class='fas fa-pen'></i></a></span>";
             $action_html .= "<span class='ml-2'><button type=button data-order=$order->id class='btn btn-danger' onClick=deleteOrder($order->id) title='Delete'><i class='fas fa-trash'></i></button></span>";
@@ -753,14 +753,14 @@ class OrderController extends MainController
             $added_by  = (!empty($order->added_by))?$order->added_by:$this->settingJson['name'];
             $action_html = "<span><a data-url=".route('po.show',$order->id)." data-order=".$order->id." class='btn btn-primary view-order' data-toggle='modal' data-target='#orderModal' title='View'><i class='far fa-eye' title='View'></i></a></span>";
             if(((auth()->user()->id == $order->to_user) && empty($is_sale_generated)) || ((empty($user->users_group_id) || ($user->users_group_id == '1')) && (!empty($order->for_manufacturer) && empty($is_sale_generated)))){
-                $action_html .= "<span class='ml-3 create-sale-".$order->id."'><a data-url=".route('cart.sale.create')." data-order=".$order->id." class='btn btn-default view-order' data-toggle='modal' data-target='#orderModal' title='Generate Sale'><i class='fas fa-shopping-cart' title='Generate Sale'></i></a></span>";
+                $action_html .= "<span class='ml-3 create-sale-".$order->id."'><a data-url=".route('cart.sale.create')." data-order=".$order->id." class='btn btn-default view-order' data-toggle='modal' data-target='#orderModal' title='Generate Order'><i class='fas fa-shopping-cart' title='Generate Order'></i></a></span>";
             }
             if(((auth()->user()->id == $order->from_user) || (empty(auth()->user()->users_group_id)) && (empty($order->from_user)))){
                 $action_html .= "<span class='ml-3 edit-po edit-po-".$order->id."' data-po=".$order->id." ><a data-url=".route('po.show',$order->id)." class='btn btn-primary' title='Edit'><i class='fas fa-pen'></i></a></span>";
                 $action_html .= "<span class='ml-2'><button type=button data-order=$order->id class='btn btn-danger' onClick=deleteOrder($order->id) title='Delete'><i class='fas fa-trash'></i></button></span>";
             }
             /* if((auth()->user()->id == $order->to_user)||((empty($user->userGroup) && $user->id == 1)||$user->userGroup == '1')){
-                $action_html .= "<span class='ml-3 create-sale-".$order->id."'><a data-url=".route('cart.sale.create')." data-order=".$order->id." class='btn btn-default view-order' data-toggle='modal' data-target='#orderModal'>Generate Sale</a></span>";
+                $action_html .= "<span class='ml-3 create-sale-".$order->id."'><a data-url=".route('cart.sale.create')." data-order=".$order->id." class='btn btn-default view-order' data-toggle='modal' data-target='#orderModal'>Generate Order</a></span>";
             } */
             // $action_html .= "<span class='ml-3 create-po-".$order->id."'><a data-url=".route('cart.po.create')." data-order=".$order->id." class='btn btn-success view-quote' data-toggle='modal' data-target='#orderModal'>Generate PO</a></span>";
             // $action_html .= "<span class='ml-3'><button type=submit data-user=$order->id class='btn btn-danger' onClick=deleteOrder($order->id)>Delete</button></span>";
@@ -1007,7 +1007,7 @@ class OrderController extends MainController
         return view('admin.report.po');
     }
     public function salesReport(){
-        View::share('title', 'Sales Report');
+        View::share('title', 'Orders Report');
         View::share('elementActive', 'sales_report');
         return view('admin.report.sales');
     }
@@ -1117,7 +1117,7 @@ class OrderController extends MainController
             $orders = $orders
             ->groupby('orders.id')
             ->get();
-            return Excel::download(new POExport($orders),'Sales.xlsx');
+            return Excel::download(new POExport($orders),'Orders.xlsx');
         }else{
             $orders = $orders->offset($start)
             ->limit($length)

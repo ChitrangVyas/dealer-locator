@@ -10,7 +10,7 @@
                 <div class="card">
                     <div class="card-header">
                         <h2 class="card-title">{{ucwords($title)}}</h3>
-                        <div class="float-right"><a id="newinvoice" data-create-quote-url="{{route('cart.quote.create')}}" class="btn btn-primary btn-md create-quote-0">Create Sale</a></div>
+                        <div class="float-right"><a id="newinvoice" data-create-quote-url="{{route('cart.quote.create')}}" class="btn btn-primary btn-md create-quote-0">Create Order</a></div>
                     </div>
                     <!-- /.card-header -->
                     <div class="card-body">

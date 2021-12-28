@@ -266,8 +266,8 @@
         $("body").on("click",".product", function(){
             var selected_product = $('input:checkbox:checked').length;
             if(selected_product < 1){
-                alert("Please select at least one product.");
-                $(this).prop('checked',true);
+                //alert("Please select at least one product.");
+                //$(this).prop('checked',true);
             }
             toggleProductDetail($(this));
             getTotal();

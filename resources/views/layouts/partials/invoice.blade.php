@@ -57,8 +57,8 @@
     <!-- /.col -->
     <div class="col-sm-4 invoice-col">
         <b class="float-right">Date: {{date('d/m/Y',strtotime($order->created_at))}}</b>
-        @if ($order->type == 'sale')
-        <b>Invoice #{{$order->order_number}}</b><br>
+        @if ($order->type == 'sale' || $order->type == 'quote')
+            <b>{{ucfirst($order->type)}} #{{$order->order_number}}</b><br>
         <br>
         @endif
     </div>

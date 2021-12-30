@@ -27,6 +27,11 @@
     
 </head>
 <body class="hold-transition sidebar-mini" onload="window.print();" onfocus="window.close()">
+
+<div class="hdr" style="padding: 15px 0;">
+  <div class="invoice-logo"><img src="{{ asset(config('icon.logo')) }}" alt="Logo" class="brand-image img-circle elevation-3" style="max-height: 300px;background:#000"></div>
+</div>
+
 @include('layouts.partials.invoice')
 @if($termscondition != '')
   <div class="col-sm-6 col-md-6">

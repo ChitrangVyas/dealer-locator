@@ -168,7 +168,7 @@
               <li class="nav-item">
                 <a href="{{ route('sale.index') }}" class="nav-link  {{ $elementActive == 'sales' ? 'active' : '' }}">
                 <i class="nav-icon fas fa-shopping-cart"></i>
-                  <p>Sales</p>
+                  <p>Order</p>
                 </a>
               </li>
             </ul>

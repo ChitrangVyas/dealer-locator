@@ -28,8 +28,14 @@
 </head>
 <body class="hold-transition sidebar-mini" onload="window.print();" onfocus="window.close()">
 
-<div class="hdr" style="padding: 15px 0;">
-  <div class="invoice-logo"><img src="{{ asset(config('icon.logo')) }}" alt="Logo" class="brand-image img-circle elevation-3" style="max-height: 300px;background:#000"></div>
+<div class="hdr" style="padding: 30px 0;">
+  <div class="invoice-logo">
+  @if(is_null($order->from_user))
+  <img src="{{ config('logo') }}"  class="brand-image" style="max-height: 300px;">
+  @else  
+  <img src="{{ $order->addedBy->logo }}" alt="Logo" class="brand-image" style="max-height: 300px;">
+  @endif
+  </div>
 </div>
 
 @include('layouts.partials.invoice')
@@ -38,6 +44,11 @@
     <label>Terms and Conditions</label>
     <p>{{$termscondition}}</p>
   </div>
+@endif
+@if(!is_null($order->from_user))
+<footer class="col-sm-12 col-md-12">
+{!! $order->addedBy->footer_text !!}
+</footer> 
 @endif
 </body>
 <script>

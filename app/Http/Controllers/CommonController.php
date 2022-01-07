@@ -10,6 +10,7 @@ use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
 
 class CommonController extends MainController
 {
@@ -124,9 +125,16 @@ class CommonController extends MainController
                 'name.required'=>"Name is required.",
                 'mobile.required' => "Mobile is required.",
                 'address.required' => "Address is required.",
-            ])->validate();
+            ])->validate();            
+            
                 $request_data = $request->except('_method','_token','id');
+                //print_r($request_data);exit;
                 $user = User::findOrFail($request->input('id'));
+                if(!empty($request->file('logo'))){
+                    $fileName = time().'_'. Str::snake($request->logo->getClientOriginalName());
+                    $filepath = $this->storeImage($request,$fileName,'logo');
+                    $request_data['logo'] = $filepath;
+                }
                 try{
                      if($user->update($request_data)){
                         return response()->json(['status' => 'successful','code'=>1,'data'=>'Profile has been successfully updated.']);
@@ -139,5 +147,12 @@ class CommonController extends MainController
         }else{
             return abort(404,'Not Found');
         }
+    }
+    public function storeImage($request,$fileName,$input){
+        if((!empty($fileName)) && (!empty($input))) {
+            $filePath = $request->file($input)->storeAs('uploads/userlogo', $fileName, 'public');
+            return '/storage/' . $filePath;
+        }
+        return '';
     }
 }

@@ -74,6 +74,7 @@ class InquiryController extends MainController
             'inquiries_source_id'=>$request_data['inquiry_source'],
             'customer_id'=>$request_data['customer'],
             'created_by'=>$request_data['created_by'],
+            'comments'=>$request_data['comments'],
             'dealer_id' => $dealer_id,
             // 'product_id'=>$request_data['product'],
         ];
@@ -152,6 +153,7 @@ class InquiryController extends MainController
         $update_data = [
             'inquiries_source_id'=>$request_data['inquiry_source'],
             'customer_id'=>$request_data['customer'],
+            'comments'=>$request_data['comments'],
             // 'product_id'=>$request_data['product'],
         ];
         if(!empty($request_data['dealer'])){

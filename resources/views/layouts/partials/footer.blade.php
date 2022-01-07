@@ -40,5 +40,5 @@
     <!-- /.modal-dialog -->
 </div>
 @section('plugins.Sweetalert2', true)
-
+@section('plugins.summernote', true)
 <!-- /.modal -->

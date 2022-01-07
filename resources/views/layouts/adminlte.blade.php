@@ -152,7 +152,7 @@
 </script>
 @yield('js')
 <script>
-  $("document").ready(function(){
+  $("document").ready(function(){  
     $('.required_field').addClass('text-danger');
     $("body").on('focusout','input,select,textarea',function(e){      
       if($(this).val()!=""){        
@@ -228,6 +228,20 @@
               $(`#profileModal .modal-body`).html(res.data.content);
               $('#profileModal .modal-title').text(res.data.title);
               $('#profileModal').modal('show');
+              $('#rutika').summernote({
+            height: 200,
+            toolbar: [
+                ["history", ["undo", "redo"]],
+                ["style", ["style"]],
+                ["font", ["bold", "italic", "underline", "fontname", "strikethrough", "superscript", "subscript", "clear"]],
+                ["color", ["forecolor", "backcolor", "color"]],
+                ["paragraph", ["ul", "ol", "paragraph", "height"]],
+                ["table", ["table"]],
+                ["insert", ["link", "picture", "video"]],
+                ["view", ["codeview"]],
+            ],
+
+    });
             }
           }
       });

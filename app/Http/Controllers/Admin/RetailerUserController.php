@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Prophecy\Doubler\Generator\Node\ReturnTypeNode;
+use Illuminate\Support\Str;
 use View;
 
 class RetailerUserController extends MainController
@@ -67,6 +68,11 @@ class RetailerUserController extends MainController
         $dealer = (auth()->user()->users_group_id == 2)?auth()->user()->id:$request_data['dealer'];
         if($request_data['user_group'] == 3 && (!empty($dealer))){
         try{
+            if(!empty($request->file('logo'))){
+                $fileName = time().'_'. Str::snake($request->logo->getClientOriginalName());
+                $filepath = $this->storeImage($request,$fileName,'logo');
+                $request_data['logo'] = $filepath;
+            }
             $user = User::create([
                 'parent_id' => $dealer,
                 'name' => $request_data['name'],
@@ -82,6 +88,8 @@ class RetailerUserController extends MainController
                 'zipcode' => $request_data['zipcode'],
                 'status' => (!empty($request_data['status']))?1:0,
                 'gstin' => $request_data['gstin'],
+                'logo' => $request_data['logo'],
+                'footer_text' => $request_data['footer_text'],
             ]);
             Mail::to($user->email)->send(new Welcome($user,"Welcome to ".config('app.name'),$request_data['password'],url(route('dealer.login'))));
         }catch(Exception $e){
@@ -144,6 +152,11 @@ class RetailerUserController extends MainController
         $request_data = $request->all();
         $request_data['status'] = (!empty($request_data['status']))?1:0;
         if($request_data['user_group'] == 3){
+            if(!empty($request->file('logo'))){
+                $fileName = time().'_'. Str::snake($request->logo->getClientOriginalName());
+                $filepath = $this->storeImage($request,$fileName,'logo');
+                $request_data['logo'] = $filepath;
+            }
             $user = User::where('id',$id)->update([
                 'parent_id' => $request_data['dealer'],
                 'name' => $request_data['name'],
@@ -158,11 +171,19 @@ class RetailerUserController extends MainController
                 'zipcode' => $request_data['zipcode'],
                 'status' => $request_data['status'],
                 'gstin' => $request_data['gstin'],
+                'logo' => $request_data['logo'],
+                'footer_text' => $request_data['footer_text'],
             ]);
         }
         return redirect(route('retailer.index'));
     }
-
+    public function storeImage($request,$fileName,$input){
+        if((!empty($fileName)) && (!empty($input))) {
+            $filePath = $request->file($input)->storeAs('uploads/userlogo', $fileName, 'public');
+            return '/storage/' . $filePath;
+        }
+        return '';
+    }
     /**
      * Remove the specified resource from storage.
      *

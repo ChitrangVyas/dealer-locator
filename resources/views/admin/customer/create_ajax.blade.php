@@ -64,38 +64,93 @@
                 </div>
             </div>
             <div class="col-sm-12 col-md-4">
-                <!-- text input -->
+                        <!-- text input -->
                 <div class="form-group">
-                    <label>State <span class="required_field">*</span></label>
-                    <select class="form-control select2 state" id='state' name='state_id' tabindex="25">
+                    <label>Country <span class="required_field">*</span></label>
+                    <select class="form-control country" id='country' name='country_id' tabindex="5">
                         <option value="">Select</option>
-                        @if(!empty($user) && $user->state_id)
-                            <option value="{{$user->state_id}}" selected>{{$user->state->name}}</option>
+                        
+                        @if(!empty($allowedcountry))
+                         @php
+                         $selectcountry=''
+                         @endphp
+                            @foreach($allowedcountry as $acountry)
+                            @if(!empty($user) && $user->country_id)
+                               @php 
+                               
+                                $selectcountry=($user->country_id == $acountry->id)? 'selected' : ''
+                                
+                                @endphp
+                            @endif
+                            @if(old('country_id'))
+                                @php 
+                               
+                                $selectcountry=(old('country_id') == $acountry->id)? 'selected' : ''
+                                
+                                @endphp
+                            @endif
+                            
+
+                                <option value="{{$acountry->id}}"  {{$selectcountry}}>{{$acountry->name}}</option>
+                               
+                                @endforeach
                         @endif
+                       
                     </select>
+                    <input type="hidden" id="country_id" value="{{old('country_id')}}">
+                    @error('country_id')
+                    <div class="alert alert-danger mt-2">{{ $message }}</div>
+                    @enderror
                 </div>
             </div>
-            <div class="col-sm-12 col-md-4">
-                <!-- text input -->
-                <div class="form-group">
-                    <label>City <span class="required_field">*</span></label>
-                    <select class="form-control select2 city" id='city' name='city_id' tabindex="26">
-                        <option value="">Select</option>
-                        @if(!empty($user) && !empty($user->city_id))
-                            <option value="{{$user->city_id}}" selected>{{$user->city->name}}</option>
-                        @endif
-                        @if(old('city_id'))     
-                            @php 
-                                $data = $select2Old->getSelect2Data('cities',old('city_id'),' state_id='. old('state_id'))
-                            @endphp          
-                            @if (!empty($data))
-                                <option value="{{$data->id}}" selected>{{$data->name}}</option>
-                            @endif         
-                        @endif
-                    </select>
-                    <label><span class="text-red"><strong>Note:</strong> Please select the state before select the city.</span></label>
-                </div>
-            </div>
+                    <div class="col-sm-12 col-md-4">
+                        <!-- text input -->
+                        <div class="form-group">
+                            <label>State <span class="required_field">*</span></label>
+                            <select class="form-control select2 state" id='state' name='state_id' tabindex="5">
+                                <option value="">Select</option>
+                                @if(!empty($user) && $user->state_id)
+                                <option value="{{$user->state_id}}" selected>{{$user->state->name}}</option>
+                                @endif
+                                @if(old('state_id'))     
+                                    @php 
+                                        $data = $select2Old->getSelect2Data('states',old('state_id'))
+                                    @endphp                   
+                                    <option value="{{$data->id}}" selected>{{$data->name}}</option>
+                                @endif
+                            </select>
+                            <input type="hidden" id="state_id" value="{{old('state_id')}}">
+                            <label><span class="text-red"><strong>Note:</strong> Please select the country before select the state.</span></label>
+                            @error('state_id')
+                            <div class="alert alert-danger mt-2">{{ $message }}</div>
+                            @enderror
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-4">
+                        <!-- text input -->
+                        <div class="form-group">
+                            <label>City <span class="required_field">*</span></label>
+                            <select class="form-control select2 city" id='city' name='city_id' tabindex="6">
+                                <option value="">Select</option>
+                                @if(!empty($user) && !empty($user->city_id))
+                                <option value="{{$user->city_id}}" selected>{{$user->city->name}}</option>
+                                @endif
+                                @if(old('city_id'))     
+                                    @php 
+                                        $data = $select2Old->getSelect2Data('cities',old('city_id'),' state_id='. old('state_id'))
+                                    @endphp          
+                                    @if (!empty($data))
+                                        <option value="{{$data->id}}" selected>{{$data->name}}</option>
+                                    @endif         
+                                @endif
+                            </select>
+                            <label><span class="text-red"><strong>Note:</strong> Please select the state before select the city.</span></label>
+                            <input type="hidden" id="city_id" value="{{old('city_id')}}">
+                            @error('city_id')
+                            <div class="alert alert-danger mt-2">{{ $message }}</div>
+                            @enderror
+                        </div>
+                    </div>
             <div class="col-sm-12 col-md-4">
                 <!-- text input -->
                 <div class="form-group">
@@ -149,33 +204,68 @@ jQuery(document).ready(function(){
             }
         }
     });
-    $('.state').select2({
+    $('.country').on('change', function() {
+        $(`.state`).empty().append(new Option()).trigger('change');
+            $('.state').select2({
+                placeholder: "Select",
+                allowClear: true,
+            });
+            $(`.city`).empty().append(new Option()).trigger('change');
+            $('.city').select2({
+                placeholder: "Select",
+                allowClear: true,
+            });
+        select2state();
+    });
+    if ($('#country').val() || $('#state').val()) {
+        select2state();
+    }
+
+    function select2state(){
+        if ($('.country').val()) {
+            
+            $('.state').select2({
+                placeholder: "Select",
+                allowClear: true,
+                minimumInputLength: 2,
+                ajax: {
+                    url: "{{route('get_value')}}",
+                    type: 'POST',
+                    dataType: 'json',
+                    data: function(params) {
+                        return {
+                            q: params.term, // search term
+                            table: 'states',
+                            page: params.page,
+                            where: `country_id=${$('#country').val()}`
+                        };
+                    },
+                    processResults: function(data) {
+                        return {
+                            results: data
+                        };
+                    }
+                }
+            });
+        }else {
+            $(`.state`).empty().append(new Option()).trigger('change');
+            $('.state').select2({
+                placeholder: "Select",
+                allowClear: true,
+            });
+        }
+    }
+    $('.city').select2({
         placeholder: "Select",
         allowClear: true,
-        minimumInputLength: 2,
-        width:"100%",
-        ajax: {
-            url: "{{route('get_value')}}",
-            type: 'POST',
-            dataType: 'json',
-            data: function (params) {
-                return {
-                    q: params.term, // search term
-                    table:'states',
-                    where: "country_id={{$country}}"
-                };
-            },
-            processResults: function (data) {
-                return {
-                    results: data
-                };
-            }
-        }
-    }).on('select2:clear',function(){
-        select2city();
+        width:'100%'
     });
-    $('.city').select2({width:"100%"});
     $('.state').on('change', function() {
+        $(`.city`).empty().append(new Option()).trigger('change');
+            $('.city').select2({
+                placeholder: "Select",
+                allowClear: true,
+            });
         select2city();
     });
     if ($('#state').val() || $('#city').val()) {
@@ -212,6 +302,25 @@ jQuery(document).ready(function(){
             $('.city').select2({
                 placeholder: "Select",
                 allowClear: true,
+            });
+        }
+    }
+
+    function getStateCity(table,where,eleClass) {
+        if($('#state_id').val() || $('#city_id').val()){
+            $.ajax({
+                url: "{{route('get_value')}}",
+                type: 'POST',
+                data: {
+                    table: table,
+                    where: where,
+                },
+                success: function(res) {
+                    $.each(JSON.parse(res), function(key, val) {
+                        var newOption = new Option(val.text, val.id, true, true);
+                        $(`.${eleClass}`).append(newOption).trigger('change');
+                    })
+                }
             });
         }
     }

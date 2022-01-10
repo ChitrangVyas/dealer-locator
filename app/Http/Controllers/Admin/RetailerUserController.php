@@ -149,15 +149,11 @@ class RetailerUserController extends MainController
     public function update(RetailerUserUpdateRequest $request, $id)
     {
         //
+        $user_data = User::findOrFail($id);
         $request_data = $request->all();
-        $request_data['status'] = (!empty($request_data['status']))?1:0;
+        
         if($request_data['user_group'] == 3){
-            if(!empty($request->file('logo'))){
-                $fileName = time().'_'. Str::snake($request->logo->getClientOriginalName());
-                $filepath = $this->storeImage($request,$fileName,'logo');
-                $request_data['logo'] = $filepath;
-            }
-            $user = User::where('id',$id)->update([
+            $upload_data =[
                 'parent_id' => $request_data['dealer'],
                 'name' => $request_data['name'],
                 'email' => $request_data['email'],
@@ -170,10 +166,20 @@ class RetailerUserController extends MainController
                 'state_id' => $request_data['state'],
                 'zipcode' => $request_data['zipcode'],
                 'status' => $request_data['status'],
-                'gstin' => $request_data['gstin'],
-                'logo' => $request_data['logo'],
+                'gstin' => $request_data['gstin'],                
                 'footer_text' => $request_data['footer_text'],
-            ]);
+            ];
+            if(!empty($request->file('logo'))){
+                $filename = str_replace('/storage/uploads/userlogo/', '', $user_data->logo);
+                if(!empty($product->image) && file_exists(storage_path('app/public/uploads/userlogo/'.$filename))){
+                    unlink(storage_path('app/public/uploads/userlogo/'.$filename));
+                }
+                $fileName = time().'_'. Str::snake($request->logo->getClientOriginalName());
+                $filepath = $this->storeImage($request,$fileName,'logo');
+                $upload_data['logo'] = $filepath;
+            }
+            $upload_data['status'] = (!empty($request_data['status']))?1:0;
+            $user = User::where('id',$id)->update($upload_data);
         }
         return redirect(route('retailer.index'));
     }

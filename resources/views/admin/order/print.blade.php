@@ -33,7 +33,7 @@
   @if(is_null($order->from_user))
   <img src="{{ config('logo') }}"  class="brand-image" style="max-height: 300px;">
   @else  
-  <img src="{{ $order->addedBy->logo }}" alt="Logo" class="brand-image" style="max-height: 300px;">
+  <img src="{{ $order->addedBy->logo }}" class="brand-image" style="max-height: 300px;">
   @endif
   </div>
 </div>

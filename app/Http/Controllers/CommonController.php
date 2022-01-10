@@ -9,6 +9,7 @@ use App\Models\User;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 
@@ -126,14 +127,19 @@ class CommonController extends MainController
                 'mobile.required' => "Mobile is required.",
                 'address.required' => "Address is required.",
             ])->validate();            
-            
-                $request_data = $request->except('_method','_token','id');
+            //dd($request);
+                $request_data = $request->except('_method','_token','id','logo');
                 //print_r($request_data);exit;
                 $user = User::findOrFail($request->input('id'));
-                if(!empty($request->file('logo'))){
+                if(!empty($request->file())){
+                    $filename = str_replace('/storage/uploads/userlogo/', '', $user->logo);
+                    if(!empty($user->logo) && file_exists(storage_path('app/public/uploads/userlogo/'.$filename))){
+                        unlink(storage_path('app/public/uploads/userlogo/'.$filename));
+                    }
                     $fileName = time().'_'. Str::snake($request->logo->getClientOriginalName());
-                    $filepath = $this->storeImage($request,$fileName,'logo');
-                    $request_data['logo'] = $filepath;
+                    $filePath = $request->file('logo')->storeAs('uploads/userlogo', $fileName, 'public');
+                    $file_path = '/storage/' . $filePath;
+                    $request_data['logo'] = $file_path;
                 }
                 try{
                      if($user->update($request_data)){

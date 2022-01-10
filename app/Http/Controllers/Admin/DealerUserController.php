@@ -123,15 +123,9 @@ class DealerUserController extends MainController
      */
     public function update(DealerUserUpdateRequest $request, $id)
     {
+        $user_data = User::findOrFail($id);
         $request_data = $request->all();
-        if(!empty($request->file('logo'))){
-            $fileName = time().'_'. Str::snake($request->logo->getClientOriginalName());
-            $filepath = $this->storeImage($request,$fileName,'logo');
-            $request_data['logo'] = $filepath;
-        }
-        
-        $request_data['status'] = (!empty($request_data['status']))?1:0;
-        $user = User::where('id',$id)->update([
+        $upload_data =[
             'name' => $request_data['name'],
             'email' => $request_data['email'],
             'mobile' => $request_data['mobile'],
@@ -144,9 +138,20 @@ class DealerUserController extends MainController
             'zipcode' => $request_data['zipcode'],
             'status' => $request_data['status'],
             'gstin' => $request_data['gstin'],
-            'logo' => $request_data['logo'],
             'footer_text' => $request_data['footer_text'],
-        ]);
+        ];
+        if(!empty($request->file())){
+            $filename = str_replace('/storage/uploads/userlogo/', '', $user_data->logo);
+            if(!empty($user_data->logo) && file_exists(storage_path('app/public/uploads/userlogo/'.$filename))){
+                unlink(storage_path('app/public/uploads/userlogo/'.$filename));
+            }
+            $fileName = time().'_'. Str::snake($request->logo->getClientOriginalName());
+            $filepath = $this->storeImage($request,$fileName,'logo');
+            $upload_data['logo'] = $filepath;
+        }
+        
+        $upload_data['status'] = (!empty($request_data['status']))?1:0;
+        $user = User::where('id',$id)->update($upload_data);
         return redirect(route('dealer.index'));
     }
 

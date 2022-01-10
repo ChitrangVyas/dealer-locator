@@ -80,8 +80,8 @@
 <script>
 jQuery(document).ready(function(){  
     $('.required_field').addClass('text-danger');
-        
-    $('#userForm').submit(function(e) {
+    $('body').on('submit','#userForm',function(e){  
+    //$('#userForm').on('submit',function(e) {
         e.preventDefault();
         e.stopImmediatePropagation;
         $("#userForm .alert").remove();  

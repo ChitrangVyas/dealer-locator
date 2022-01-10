@@ -23,6 +23,10 @@
                     <td>{{!(empty($inquiry->inquirySource)) ? $inquiry->inquirySource->source : 'N/A'}}</td>
                 </tr>
                 <tr>
+                    <td><strong>Purpose / Comments</strong></td>
+                    <td>{{(!empty($inquiry->comments))?$inquiry->comments:'N/A'}}</td>
+                </tr>
+                <tr>
                     <td><strong>Dealer</strong></td>
                     <td>{{(!empty($inquiry->dealer))?$inquiry->dealer->name:'N/A'}}</td>
                 </tr>

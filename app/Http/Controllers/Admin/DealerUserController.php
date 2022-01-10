@@ -12,6 +12,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Str;
 use View;
 class DealerUserController extends MainController
 {
@@ -58,9 +59,13 @@ class DealerUserController extends MainController
      */
     public function store(DealerUserCreateRequest $request)
     {   
-        //
         $request_data = $request->all();
         try{
+            if(!empty($request->file('logo'))){
+                $fileName = time().'_'. Str::snake($request->logo->getClientOriginalName());
+                $filepath = $this->storeImage($request,$fileName,'logo');
+                $request_data['logo'] = $filepath;
+            }
             $user = User::create([
                 'name' => $request_data['name'],
                 'email' => $request_data['email'],
@@ -75,6 +80,8 @@ class DealerUserController extends MainController
                 'zipcode' => $request_data['zipcode'],
                 'status' => (!empty($request_data['status']))?1:0,
                 'gstin' => $request_data['gstin'],
+                'logo' => $request_data['logo'],
+                'footer_text' => $request_data['footer_text'],
             ]);
             Mail::to($user->email)->send(new Welcome($user,"Welcome to ".config('app.name'),$request_data['password'],url(route('dealer.login'))));
         }catch(Exception $e){
@@ -116,8 +123,13 @@ class DealerUserController extends MainController
      */
     public function update(DealerUserUpdateRequest $request, $id)
     {
-        //
         $request_data = $request->all();
+        if(!empty($request->file('logo'))){
+            $fileName = time().'_'. Str::snake($request->logo->getClientOriginalName());
+            $filepath = $this->storeImage($request,$fileName,'logo');
+            $request_data['logo'] = $filepath;
+        }
+        
         $request_data['status'] = (!empty($request_data['status']))?1:0;
         $user = User::where('id',$id)->update([
             'name' => $request_data['name'],
@@ -132,6 +144,8 @@ class DealerUserController extends MainController
             'zipcode' => $request_data['zipcode'],
             'status' => $request_data['status'],
             'gstin' => $request_data['gstin'],
+            'logo' => $request_data['logo'],
+            'footer_text' => $request_data['footer_text'],
         ]);
         return redirect(route('dealer.index'));
     }
@@ -150,7 +164,13 @@ class DealerUserController extends MainController
             $user->delete();
         }
     }
-
+    public function storeImage($request,$fileName,$input){
+        if((!empty($fileName)) && (!empty($input))) {
+            $filePath = $request->file($input)->storeAs('uploads/userlogo', $fileName, 'public');
+            return '/storage/' . $filePath;
+        }
+        return '';
+    }
     public function listAjaxData(Request $request){
         $start =  $request['start'];
         $length=  $request['length'];

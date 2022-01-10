@@ -117,6 +117,13 @@
                 </div>
             </div>
             @enddealer
+            <div class="col-sm-12 col-md-8">
+                <!-- text input -->
+                <div class="form-group summernote-container">
+                    <label>Purpose / Comments</label>
+                    <textarea name="comments" class="form-control" tabindex="5">{{ old('comments',(!empty($inquiry))?$inquiry->comments:'') }}</textarea>                    
+                </div>
+            </div> 
             @notCustomer()
                 <div class="col-sm-12 col-md-12">
                     <!-- text input -->
@@ -125,7 +132,7 @@
                     <label>Send dealer/retailer details to customer?</label>
                     </div>
                 </div>
-            @endnotCustomer
+            @endnotCustomer           
         </div>
         <div class="row">
             <div class="col-sm-12">

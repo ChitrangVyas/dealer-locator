@@ -10,10 +10,10 @@
     <!-- /.card-header -->
     <div class="card-body">     
         @if(!empty($user))
-            <form method="POST" action="{{ route('retailer.update',$user->id) }}">
+            <form method="POST" action="{{ route('retailer.update',$user->id) }}" enctype="multipart/form-data">
             @method('PUT')
         @else
-            <form method="POST" action="{{ route('retailer.index') }}">
+            <form method="POST" action="{{ route('retailer.index') }}" enctype="multipart/form-data">
         @endif
         @csrf
         <input type="hidden" name="id" value="{{ (!empty($user))?$user->id:'' }}">
@@ -204,6 +204,30 @@
                     @enderror
                 </div>
             </div>
+            <div class="col-sm-12 col-md-4">
+                <!-- file input -->
+                <div class="form-group">
+                    <label>Logo</label>
+                    <div class="input-group">
+                        <div class="custom-file">
+                            <input type="file" class="custom-file-input" id="logo" value='' name="logo" tabindex="4">
+                            <label class="custom-file-label" for="logo">Choose file</label>
+                        </div>
+                    </div>
+                    @if(!empty($user->logo))
+                    <div class="user_logo">
+                        <img class='img logo mt-3 mb-4' src="{{ url($user->logo) }}" width=100 />
+                    </div>
+                    @endif                   
+                </div>
+            </div>  
+            <div class="col-sm-12 col-md-12">
+                <!-- text input -->
+                <div class="form-group summernote-container">
+                    <label>Footer Text</label>
+                    <textarea name="footer_text" class="form-control summernote" tabindex="5">{{ old('footer_text',(!empty($user))?$user->footer_text:'') }}</textarea>                    
+                </div>
+            </div> 
             <div class="col-sm-12 col-md-6">
                 <!-- text input -->
                 <div class="form-group">
@@ -227,6 +251,7 @@
 @endsection
 @section('plugins.Select2', true)
 @section('plugins.BootstrapSwitch', true)
+@section('plugins.summernote', true)
 @section('js')
 <script>
 jQuery(document).ready(function(){
@@ -252,7 +277,20 @@ jQuery(document).ready(function(){
             }
         }
     });
+    $('.summernote').summernote({
+            height: 200,
+            toolbar: [
+                ["history", ["undo", "redo"]],
+                ["style", ["style"]],
+                ["font", ["bold", "italic", "underline", "fontname", "strikethrough", "superscript", "subscript", "clear"]],
+                ["color", ["forecolor", "backcolor", "color"]],
+                ["paragraph", ["ul", "ol", "paragraph", "height"]],
+                ["table", ["table"]],
+                ["insert", ["link", "picture", "video"]],
+                ["view", ["codeview"]],
+            ],
 
+    });
     $('.state').select2();
     $('.country').on('change', function() {
         $(`.state`).empty().append(new Option()).trigger('change');

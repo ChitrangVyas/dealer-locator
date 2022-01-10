@@ -27,12 +27,28 @@
     
 </head>
 <body class="hold-transition sidebar-mini" onload="window.print();" onfocus="window.close()">
+
+<div class="hdr" style="padding: 30px 0;">
+  <div class="invoice-logo">
+  @if(is_null($order->from_user))
+  <img src="{{ config('logo') }}"  class="brand-image" style="max-height: 300px;">
+  @else  
+  <img src="{{ $order->addedBy->logo }}" alt="Logo" class="brand-image" style="max-height: 300px;">
+  @endif
+  </div>
+</div>
+
 @include('layouts.partials.invoice')
 @if($termscondition != '')
   <div class="col-sm-6 col-md-6">
     <label>Terms and Conditions</label>
     <p>{{$termscondition}}</p>
   </div>
+@endif
+@if(!is_null($order->from_user))
+<footer class="col-sm-12 col-md-12">
+{!! $order->addedBy->footer_text !!}
+</footer> 
 @endif
 </body>
 <script>

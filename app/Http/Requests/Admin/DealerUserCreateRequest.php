@@ -38,7 +38,7 @@ class DealerUserCreateRequest extends FormRequest
             ],
             'name' => 'required|string|max:100',
             'password' => 'required|min:6|max:16',
-            'mobile' => 'required',
+            'mobile'=>'required|digits_between:10,12',
             'address' => 'required',
             'country_id'=>'required|after_or_equal:1',
             'state' => [

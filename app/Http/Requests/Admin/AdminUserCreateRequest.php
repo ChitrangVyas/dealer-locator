@@ -40,7 +40,7 @@ class AdminUserCreateRequest extends FormRequest
             'name' => 'required|string|max:100',
             'password' => 'required|min:6|max:16',
             'address'=>'required',
-            'mobile' => 'required',
+            'mobile'=>'required|digits_between:10,12',
             'country_id'=>'required|after_or_equal:1',
             'state' => [
                 'required',

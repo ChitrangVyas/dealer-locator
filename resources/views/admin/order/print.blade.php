@@ -31,9 +31,9 @@
 <div class="hdr" style="padding: 30px 0;">
   <div class="invoice-logo">
   @if(is_null($order->from_user))
-  <img src="{{ config('logo') }}"  class="brand-image" style="max-height: 300px;">
+  <img src="{{ config('logo') }}"  class="brand-image" style="max-height: 300px;max-width: 200px;">
   @else  
-  <img src="{{ $order->addedBy->logo }}" class="brand-image" style="max-height: 300px;">
+  <img src="{{ $order->addedBy->logo }}" class="brand-image" style="max-height: 300px;max-width: 200px;">
   @endif
   </div>
 </div>

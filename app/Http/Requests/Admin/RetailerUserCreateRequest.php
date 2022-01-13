@@ -38,7 +38,7 @@ class RetailerUserCreateRequest extends FormRequest
             ],   
             'password' => 'required|min:6|max:16',
             'name' => 'required|string|max:100',            
-            'mobile' => 'required',
+            'mobile'=>'required|digits_between:10,12',
             'address' => 'required',
             'country_id'=>'required|after_or_equal:1',
             'state' => [

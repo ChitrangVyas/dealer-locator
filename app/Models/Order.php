@@ -66,11 +66,11 @@ class Order extends Model
     }
 
     public function getOrderStatus(){
-        return [1 => 'Pendding', 2 => 'Paid'];
+        return [1 => 'Pending', 2 => 'Paid'];
     }
 
     public function getOrderStage(){
-        return [0=>"Pendding", 1=>"Processing", 2=>"Ready for Installation", 3=>"Installed"];
+        return [0=>"Pending", 1=>"Processing", 2=>"Ready for Installation", 3=>"Installed"];
     }
 
     public function getUserOrderStatus()

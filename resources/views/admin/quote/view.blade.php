@@ -1,6 +1,7 @@
 <div class="row">
     <div class="col-12 mb-3">
-        <a href="{{route('order.print',$order->id)}}" target="_blank" class="btn btn-default float-right"><i class="fas fa-print"></i> Print</a>
+        <a href="javascript: page = window.open('{{route('order.print',$order->id)}}'); page.print()"
+         class="btn btn-default float-right"><i class="fas fa-print"></i> Print</a>
     </div>
 </div>
 @include('layouts.partials.invoice')

@@ -36,7 +36,7 @@ class CustomerUpdateRequest extends FormRequest
                 }
             ],
             'name' => 'required|string|max:100',            
-            'mobile' => 'required',
+            'mobile'=>'required|digits_between:10,12',
             'address' => 'required',
             'country_id'=>'required|after_or_equal:1',
             'state_id' => [

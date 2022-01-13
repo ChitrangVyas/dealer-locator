@@ -61,10 +61,11 @@ class DealerUserController extends MainController
     {   
         $request_data = $request->all();
         try{
+            $filepath = '';
             if(!empty($request->file('logo'))){
                 $fileName = time().'_'. Str::snake($request->logo->getClientOriginalName());
                 $filepath = $this->storeImage($request,$fileName,'logo');
-                $request_data['logo'] = $filepath;
+                //$request_data['logo'] = $filepath;
             }
             $user = User::create([
                 'name' => $request_data['name'],
@@ -80,7 +81,7 @@ class DealerUserController extends MainController
                 'zipcode' => $request_data['zipcode'],
                 'status' => (!empty($request_data['status']))?1:0,
                 'gstin' => $request_data['gstin'],
-                'logo' => $request_data['logo'],
+                'logo' => $filepath,
                 'footer_text' => $request_data['footer_text'],
             ]);
             Mail::to($user->email)->send(new Welcome($user,"Welcome to ".config('app.name'),$request_data['password'],url(route('dealer.login'))));

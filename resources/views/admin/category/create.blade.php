@@ -51,7 +51,7 @@
                             <label>Image <span class="required_field">*</span></label>
                             <div class="input-group">
                                 <div class="custom-file">
-                                    <input type="file" class="custom-file-input" id="image" name="image" tabindex="3">
+                                    <input type="file" class="custom-file-input restrictFileUpload" id="image" name="image" tabindex="3">
                                     <label class="custom-file-label" for="image">Choose file</label>
                                 </div>
                             </div>

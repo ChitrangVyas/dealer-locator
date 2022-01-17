@@ -65,6 +65,18 @@
     getNotification();
     @endauth  
   });
+  
+
+    $(".restrictFileUpload").change(function(e) {
+        var filePath = $(this).val();
+        var allowedExtensions =/(\.jpg|\.jpeg|\.png|\.gif)$/i;
+        if (!allowedExtensions.exec(filePath)) {
+            alert('Invalid file type, Only allowed .jpg, .jpeg, .png, .gif');
+            filePath = $(this).val('');
+            return false;
+        }
+    });
+
   $.ajaxSetup({
       headers: {
         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')

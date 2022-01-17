@@ -27,7 +27,8 @@ class BrandCreateRequest extends FormRequest
             'name' => 'required|string|max:100',
             'description' => 'required|string',
             'short_description' => 'required|string',
-            'manufacturer_id' => 'required|integer',            
+            'manufacturer_id' => 'required|integer',  
+            'logo' => 'mimes:jpeg,png,jpg,gif',           
         ];
     }
 

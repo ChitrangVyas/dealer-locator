@@ -263,6 +263,12 @@
               <p>Settings</p>
             </a>
           </li>
+          <li class="nav-item">
+            <a href="{{ route('sms.settings') }}" class="nav-link  {{ $elementActive == 'sms_settings' ? 'active' : '' }}">
+            <i class="nav-icon far fa-envelope"></i>
+              <p>SMS Settings</p>
+            </a>
+          </li>
           @endadmin
         </ul>
       </nav>

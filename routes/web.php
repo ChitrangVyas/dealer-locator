@@ -142,6 +142,9 @@ Route::group(['prefix'=>'admin','middleware'=>['auth']],function () {
     Route::put('cart/product/update', [App\Http\Controllers\Admin\CartController::class,'update'])->name('cart.update');
     Route::delete('cart/product/', [App\Http\Controllers\Admin\CartController::class,'removeCartProduct'])->name('cart.product.destroy');
 
+    // SMS Settings
+    Route::get('settings/sms', [App\Http\Controllers\SettingsController::class,'smsSettings'])->name('sms.settings');
+    Route::post('settings/sms', [App\Http\Controllers\SettingsController::class,'StoreSmsSettings'])->name('sms.settings.store');
 
     Route::resource('staff', App\Http\Controllers\Admin\AdminUserController::class);
     Route::resource('dealer', App\Http\Controllers\Admin\DealerUserController::class);   

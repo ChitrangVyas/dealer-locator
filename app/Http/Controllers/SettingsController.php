@@ -55,7 +55,7 @@ class SettingsController extends MainController
     public function create()
     {
         //
-        $settings = json_decode(Settings::where('slug',NULL)->get());
+        $settings = json_decode(Settings::where('slug','settings')->get());
     
         return view('settings',['timezone_list'=>$this->timezone_list(),'settings'=>$settings]);
     }
@@ -177,6 +177,7 @@ class SettingsController extends MainController
 
     public function StoreSmsSettings(Request $request){
         $request_data = $request->except(['id','_token']);
+        if(!isset($request_data['is_enabled'])) $request_data['is_enabled'] = 0;
         if(!empty($request->input('id',''))){
             $setting = Settings::where('id',$request->input('id'));
             $settings_data = (!empty($setting->first()->json_data))?json_decode($setting->first()->json_data,true):'';

@@ -19,6 +19,10 @@ class MainController extends Controller
     public $allowed_country = [101];
     public $settingJson = [];
     public $allowedcountry=[];
+    public $msg = array('inquiry_assign'=>'Hello {name},\n
+    You are assigned a new Inquiry No. {inquiry_no}\n
+    Please login to your account to view more details.\n
+    - Kashyap Technology');
     public function __construct() {                
         list(, $action) = explode('@', Route::getCurrentRoute()->getActionName());        
         if($action=="create" || $action=="store"){
@@ -93,6 +97,9 @@ class MainController extends Controller
     }
     public function getAllowedCountries($countryalllowed){      
       return  Country::whereIn('id',$countryalllowed)->get();   
+    }
+    public function getMsg($key){
+        return $this->msg[$key];
     }
 
 }

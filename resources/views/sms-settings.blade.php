@@ -18,6 +18,14 @@
                         <h4 class="text-muted">SMS Settings</h4>
                     </div>
             </div>
+            <div class="col-sm-12 col-md-12">
+                <div class="form-group">
+                    <div class="pt-2">
+                        <input type="checkbox" class="input-control" id="is_enabled" value="1" name="is_enabled" tabindex="5" {{((!empty($settings)) && (!empty($settings->json_data['is_enabled'])))? "checked readonly" :"" }} >
+                            <label>Enabled</label>
+                    </div>
+                </div>
+            </div>
             <div class="col-sm-12 col-md-4">
                 <!-- text input -->
                 <div class="form-group">

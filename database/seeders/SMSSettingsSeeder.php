@@ -30,5 +30,6 @@ class SMSSettingsSeeder extends Seeder
         );
         DB::table('settings')->where('slug','sms-settings')->delete();
         DB::table('settings')->insert($sms_settings);
+        DB::table('settings')->where('id','1')->update(['slug'=>'settings']);
     }
 }

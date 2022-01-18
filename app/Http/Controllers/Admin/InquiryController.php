@@ -10,6 +10,7 @@ use App\Mail\SendInquiryToCustomer;
 use App\Models\InquiriesSource;
 use App\Models\Inquiry;
 use App\Models\Product;
+use App\Models\Settings;
 use App\Models\User;
 use Exception;
 use Illuminate\Http\Request;
@@ -88,9 +89,31 @@ class InquiryController extends MainController
             $inquiry = Inquiry::create($inquiry_data);
             if(!empty($dealer_id)){
                 Helpers::storeNotification($dealer_id,"Inquiry #$inquiry->id has been assined to you.",0,1);
+                $data = array();
+                $data['name'] = $inquiry->dealer->name;
+                $data['mobile_number'] = $inquiry->dealer->mobile;
+                $data['inquiry_id'] = $inquiry->id;
+                $respnose = $this->sentSMS($data);
+                $sms_res = explode('|',$respnose);
+                if($sms_res[0] == 'ok'){
+                    Helpers::storeNotification($dealer_id,"Inquiry #$inquiry->id SMS sent to you.",0,1);
+                }else{
+                    $msg ="Failed to sent SMS".$sms_res[0];
+                }
             }
             if(!empty($retailer_id)){
                 Helpers::storeNotification($retailer_id,"Inquiry #$inquiry->id has been assined to you.",0,1);
+                $data = array();
+                $data['name'] = $inquiry->retailer->name;
+                $data['mobile_number'] = $inquiry->retailer->mobile;
+                $data['inquiry_id'] = $inquiry->id;
+                $respnose = $this->sentSMS($data);
+                $sms_res = explode('|',$respnose);
+                if($sms_res[0] == 'ok'){
+                    Helpers::storeNotification($retailer_id,"Inquiry #$inquiry->id SMS sent to you.",0,1);
+                }else{
+                   $msg ="Failed to sent SMS".$sms_res[0];
+                }
             }
             if(!empty($request_data['send_mail_to_customer']) && (!empty($dealer_id))){
                 try{
@@ -164,9 +187,31 @@ class InquiryController extends MainController
             $is_inquiry_updated = $inquiry->where('id',$id)->update($update_data);
             if(!empty($update_data['dealer_id']) && $inquiry->dealer_id != $update_data['dealer_id'] ){
                 Helpers::storeNotification($update_data['dealer_id'],"Inquiry #$inquiry->id has been assined to you.",0,1);
+                $data = array();
+                $data['name'] = $inquiry->dealer->name;
+                $data['mobile_number'] = $inquiry->dealer->mobile;
+                $data['inquiry_id'] = $inquiry->id;
+                $respnose = $this->sentSMS($data);
+                $sms_res = explode('|',$respnose);
+                if($sms_res[0] == 'ok'){
+                    Helpers::storeNotification($update_data['dealer_id'],"Inquiry #$inquiry->id SMS sent to you.",0,1);
+                }else{
+                    $msg ="Failed to sent SMS".$sms_res[0];
+                }
             }
             if(!empty($update_data['retailer_id']) && $inquiry->retailer_id != $update_data['retailer_id'] ){
                 Helpers::storeNotification($update_data['retailer_id'],"Inquiry #$inquiry->id has been assined to you.",0,1);
+                $data = array();
+                $data['name'] = $inquiry->retailer->name;
+                $data['mobile_number'] = $inquiry->retailer->mobile;
+                $data['inquiry_id'] = $inquiry->id;
+                $respnose = $this->sentSMS($data);
+                $sms_res = explode('|',$respnose);
+                if($sms_res[0] == 'ok'){
+                    Helpers::storeNotification($update_data['retailer_id'],"Inquiry #$inquiry->id SMS sent to you.",0,1);
+                }else{
+                    $msg ="Failed to sent SMS".$sms_res[0];
+                }
             }
         }catch(Exception $e){
             return redirect(route('inquiry.create'))->with('exception', $e->getMessage());
@@ -417,5 +462,36 @@ class InquiryController extends MainController
             return response(json_encode($return_array), 200)
             ->header('Content-Type', 'text/plain');
         }
+    }
+    public function sentSMS($data){
+        $settings = Settings::where('slug','sms-settings')->first();
+        $settings['json_data'] = json_decode($settings['json_data'],true);
+        $post_response = '';
+        if($settings['json_data']['is_enabled'] == '1'){
+        $searchReplaceArray = array('{name}'=>$data['name'],'{inquiry_no}'=>$data['inquiry_id']);
+        $txt = $this->getMsg('inquiry_assign');
+        $txtMsg = str_replace(array_keys($searchReplaceArray),  array_values($searchReplaceArray),  $txt);
+        $sms_data = array();
+        $sms_data['APIkey'] = $settings['json_data']['api_key'];
+        $sms_data['SenderID'] = $settings['json_data']['sender_id'];
+        $sms_data['SMSType'] = $settings['json_data']['sms_type'];
+        $sms_data['Mobile'] = $data['mobile_number'];
+        $sms_data['MsgText'] = $txtMsg;
+        $sms_data['EntityID'] = $settings['json_data']['entity_id'];
+        $sms_data['TemplateID'] = $settings['json_data']['template_id'];
+        $query_string= "";
+        foreach($sms_data as $k=>$v){
+            $query_string .=$k."=".urlencode($v)."&"; 
+        }
+        $url = "http://web.shreesms.net/API/SendSMS.aspx?".$query_string;
+         $ch = curl_init($url);
+				curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "GET");
+				curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+				$post_response = curl_exec($ch); 
+		curl_close($ch);
+        
+    }
+    return $post_response;
+
     }
 }

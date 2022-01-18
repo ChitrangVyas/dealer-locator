@@ -34,7 +34,7 @@
                 <label>Logo</label>
                 <div class="input-group">
                     <div class="custom-file">
-                        <input type="file" class="custom-file-input" id="logo" name="logo" tabindex="2">
+                        <input type="file" class="custom-file-input restrictFileUpload" id="logo" name="logo" tabindex="2">
                         <label class="custom-file-label" for="logo">Choose file</label>
                     </div>
                 </div>
@@ -54,7 +54,7 @@
                 <label>Icon Logo</label>
                 <div class="input-group">
                     <div class="custom-file">
-                        <input type="file" class="custom-file-input" id="icon_logo" name="icon_logo" tabindex="2">
+                        <input type="file" class="custom-file-input restrictFileUpload" id="icon_logo" name="icon_logo" tabindex="2">
                         <label class="custom-file-label" for="icon_logo">Choose file</label>
                     </div>
                 </div>

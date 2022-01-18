@@ -166,7 +166,6 @@ class RetailerUserController extends MainController
                 'city_id' => $request_data['city'],
                 'state_id' => $request_data['state'],
                 'zipcode' => $request_data['zipcode'],
-                'status' => $request_data['status'],
                 'gstin' => $request_data['gstin'],                
                 'footer_text' => $request_data['footer_text'],
             ];

@@ -54,6 +54,7 @@ class RetailerUserCreateRequest extends FormRequest
                 }),
             ],
             'zipcode' => 'required|min:5|max:7',
+            'logo' => 'mimes:png,jpeg,jpg,svg,webp'
         ];
     }
 

@@ -174,7 +174,7 @@
                     <label>Logo</label>
                     <div class="input-group">
                         <div class="custom-file">
-                            <input type="file" class="custom-file-input" id="logo" value='' name="logo" tabindex="4">
+                            <input type="file" class="custom-file-input restrictFileUpload" id="logo" value='' name="logo" tabindex="4">
                             <label class="custom-file-label" for="logo">Choose file</label>
                         </div>
                     </div>

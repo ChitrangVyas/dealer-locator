@@ -55,7 +55,7 @@ class SettingsController extends MainController
     public function create()
     {
         //
-        $settings = json_decode(Settings::all());
+        $settings = json_decode(Settings::where('slug','settings')->get());
     
         return view('settings',['timezone_list'=>$this->timezone_list(),'settings'=>$settings]);
     }
@@ -166,6 +166,26 @@ class SettingsController extends MainController
     {
         //
     }
+
+    public function smsSettings(){
+        View::share ( 'title', 'SMS Settings' );
+        View::share ( 'elementActive', 'sms_settings' );
+        $settings = Settings::where('slug','sms-settings')->first();
+        $settings['json_data'] = json_decode($settings['json_data'],true);
+        return view('sms-settings',['settings'=>$settings]);
+    }
+
+    public function StoreSmsSettings(Request $request){
+        $request_data = $request->except(['id','_token']);
+        if(!isset($request_data['is_enabled'])) $request_data['is_enabled'] = 0;
+        if(!empty($request->input('id',''))){
+            $setting = Settings::where('id',$request->input('id'));
+            $settings_data = (!empty($setting->first()->json_data))?json_decode($setting->first()->json_data,true):'';
+            $settings = $setting->update(['json_data'=>json_encode($request_data)]);
+        }
+        return redirect(route('sms.settings'));
+    }
+
     public function getState($state_id){
         return State::find($state_id);
     }

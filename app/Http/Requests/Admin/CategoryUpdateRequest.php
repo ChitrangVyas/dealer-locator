@@ -25,7 +25,8 @@ class CategoryUpdateRequest extends FormRequest
     {
         return [
             'name' => 'required|string|max:100',      
-            'parent_category' => 'required'         
+            'parent_category' => 'required',  
+            'image' => 'mimes:jpeg,png,jpg,gif',
         ];
     }
 }

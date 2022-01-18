@@ -27,7 +27,8 @@ class BrandUpdateRequest extends FormRequest
             'name' => 'required|string|max:100',
             'description' => 'required|string',
             'short_description' => 'required|string',
-            'manufacturer_id' => 'required|string',           
+            'manufacturer_id' => 'required|string',      
+            'logo' => 'mimes:jpeg,png,jpg,gif',      
         ];
     }
 }

@@ -267,7 +267,8 @@ jQuery(document).ready(function(){
                 return {
                     q: params.term, // search term
                     table:'users',
-                    where: 'users_group_id=2'
+                    where: 'users_group_id=2',
+                    whereAnd:'AND deleted_at IS NULL'
                 };
             },
             processResults: function (data) {

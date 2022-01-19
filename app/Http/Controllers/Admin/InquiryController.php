@@ -472,7 +472,8 @@ class InquiryController extends MainController
         $txt = $this->getMsg('inquiry_assign');
         $txtMsg = str_replace(array_keys($searchReplaceArray),  array_values($searchReplaceArray),  $txt);
         $sms_data = array();
-        $sms_data['APIkey'] = $settings['json_data']['api_key'];
+        $sms_data['UserID'] = $settings['json_data']['userId'];
+        $sms_data['Password'] = $settings['json_data']['sms_password'];
         $sms_data['SenderID'] = $settings['json_data']['sender_id'];
         $sms_data['SMSType'] = $settings['json_data']['sms_type'];
         $sms_data['Mobile'] = $data['mobile_number'];
@@ -483,12 +484,13 @@ class InquiryController extends MainController
         foreach($sms_data as $k=>$v){
             $query_string .=$k."=".urlencode($v)."&"; 
         }
-        $url = "http://web.shreesms.net/API/SendSMS.aspx?".$query_string;
+        echo $url = "http://web.shreesms.net/API/SendSMS.aspx?".$query_string;
          $ch = curl_init($url);
 				curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "GET");
 				curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 				$post_response = curl_exec($ch); 
 		curl_close($ch);
+        
         
     }
     return $post_response;

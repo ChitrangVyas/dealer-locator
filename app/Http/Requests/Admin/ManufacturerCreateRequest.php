@@ -38,7 +38,7 @@ class ManufacturerCreateRequest extends FormRequest
                 })->ignore($this->id)
             ],
             'name' => 'required|string|max:100',
-            'mobile' => 'required',
+            'mobile'=>'required|digits_between:10,12',
             'zipcode' => 'present|nullable|min:5|max:7',
             // 'address' => 'required',
             'country_id'=>'required|after_or_equal:1',

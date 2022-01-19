@@ -19,10 +19,8 @@ class MainController extends Controller
     public $allowed_country = [101];
     public $settingJson = [];
     public $allowedcountry=[];
-    public $msg = array('inquiry_assign'=>'Hello {name},\n
-    You are assigned a new Inquiry No. {inquiry_no}\n
-    Please login to your account to view more details.\n
-    - Kashyap Technology');
+    public $msg = array('inquiry_assign'=>'Hello {name} You are assigned a new Inquiry No. {inquiry_no} Please login to your account to view more details. - Kashyap Technology EWTIND');
+    
     public function __construct() {                
         list(, $action) = explode('@', Route::getCurrentRoute()->getActionName());        
         if($action=="create" || $action=="store"){

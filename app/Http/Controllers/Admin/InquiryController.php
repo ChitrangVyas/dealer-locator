@@ -490,10 +490,10 @@ class InquiryController extends MainController
 				curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 				$post_response = curl_exec($ch); 
 		curl_close($ch);
-        print_r($post_response);exit;
+        
         
     }
-    //return $post_response;
+    return $post_response;
 
     }
 }

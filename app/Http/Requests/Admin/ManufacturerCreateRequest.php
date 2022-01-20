@@ -77,9 +77,10 @@ class ManufacturerCreateRequest extends FormRequest
             'logo.required'=> 'Logo is required.',
             'zipcode.required' => 'Zip code is required.',
             'zipcode.min' => 'Zip code must be at least :min characters.',
-            'zipcode.max' => 'Zip code must not be greater than :max characters.'  
-            // 'state_id.required'=> 'Please select state.',
-            // 'city_id.required'=> 'Please select city.',         
+            'zipcode.max' => 'Zip code must not be greater than :max characters.' , 
+            'country_id.required'=> 'Please select country.',
+            'state_id.required'=> 'Please select state.',
+            'city_id.required'=> 'Please select city.',         
         ];
     }
 }

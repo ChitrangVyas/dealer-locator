@@ -77,7 +77,19 @@ class InquiryController extends MainController
             'created_by'=>$request_data['created_by'],
             'comments'=>$request_data['comments'],
             'dealer_id' => $dealer_id,
-            // 'product_id'=>$request_data['product'],
+            'application'=>$request_data['application'],
+            'application_type'=>$request_data['application_type'],
+            'pump_capacity'=>$request_data['pump_capacity'],
+            'pressure_pump'=>$request_data['pressure_pump'],
+            'submersible_pump'=>$request_data['submersible_pump'],
+            'water_flow'=>$request_data['water_flow'],
+            'other_gravity'=>$request_data['other_gravity'],
+            'pipe_diameters'=>$request_data['pipe_diameters'],
+            'tds'=>$request_data['tds'],
+            'hardness'=>$request_data['hardness'],
+            'bore_well_water'=>$request_data['bore_well_water'],
+            'soft_water'=>$request_data['soft_water'],
+            'others_water_type'=>$request_data['others_water_type'],
         ];
         if(empty($inquiry_data['status'])){
             $inquiry_data['status'] = 1;
@@ -177,7 +189,19 @@ class InquiryController extends MainController
             'inquiries_source_id'=>$request_data['inquiry_source'],
             'customer_id'=>$request_data['customer'],
             'comments'=>$request_data['comments'],
-            // 'product_id'=>$request_data['product'],
+            'application'=>$request_data['application'],
+            'application_type'=>$request_data['application_type'],
+            'pump_capacity'=>$request_data['pump_capacity'],
+            'pressure_pump'=>$request_data['pressure_pump'],
+            'submersible_pump'=>$request_data['submersible_pump'],
+            'water_flow'=>$request_data['water_flow'],
+            'other_gravity'=>$request_data['other_gravity'],
+            'pipe_diameters'=>$request_data['pipe_diameters'],
+            'tds'=>$request_data['tds'],
+            'hardness'=>$request_data['hardness'],
+            'bore_well_water'=>$request_data['bore_well_water'],
+            'soft_water'=>$request_data['soft_water'],
+            'others_water_type'=>$request_data['others_water_type'],
         ];
         if(!empty($request_data['dealer'])){
             $update_data['dealer_id'] = $request_data['dealer'];

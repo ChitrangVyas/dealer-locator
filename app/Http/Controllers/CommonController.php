@@ -89,6 +89,25 @@ class CommonController extends MainController
         $data = Helpers::getUserNotification($request->input('user_id'),$is_admin);
         echo json_encode($data);
     }
+    public function getApplication(Request $request){
+        $application = [
+            'Domestic'=>['Private Bunglows','Appartments','Common Society','RO System','Others'],
+            'Industrial'=>['Cooling Tower','Boiler','Common Utility','RO System','Others']
+        ];
+        $option[] = '<option value="">Please Select</option>';
+       
+        if(array_key_exists($request['q'],$application)){            
+            foreach($application[$request['q']] as $k=>$v){
+                if($request['app_type'] == $v){
+                    $selected = "selected";
+                }else{
+                    $selected="";
+                }
+                $option[] = '<option value="'.$v.'"'.$selected.'>'.$v.'</option>';
+            }
+        }
+       return $option;
+    }
 
     public function updateItemStatus(Request $request){
         if(auth()->check()){

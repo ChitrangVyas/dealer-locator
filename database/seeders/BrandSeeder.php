@@ -1,7 +1,7 @@
 <?php
 
 namespace Database\Seeders;
-
+use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Seeder;
 
 class BrandSeeder extends Seeder
@@ -14,6 +14,7 @@ class BrandSeeder extends Seeder
     public function run()
     {
        $brands = array([
+           'id' => '1',
            'name' => 'KASHYAP',
            'description' => 'kashyap anti-scale',
            'short_description' => 'kashyap anti-scale',

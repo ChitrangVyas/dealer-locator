@@ -74,9 +74,13 @@
             alert('Invalid file type, Only allowed .jpg, .jpeg, .png, .gif');
             filePath = $(this).val('');
             return false;
+        }else{          
+          $(this).parent().parent().parent().find('.alert').hide();
         }
     });
-
+    $(".note-editable").focusout(function(e) {
+      $(this).parent().parent().parent().find('.alert').hide();
+    });
   $.ajaxSetup({
       headers: {
         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')

@@ -59,6 +59,10 @@
                 "orderable": false
             },
             {
+                "targets": [ 8 ],
+                "orderable": false
+            },
+            {
                 "targets": [ 0 ],
                 "visible": false
             },

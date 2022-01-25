@@ -115,7 +115,7 @@
                         <!-- text input -->
                         <div class="form-group">
                             <label>Price <span class="required_field">*</span></label>
-                            <input type="number" class="form-control" name="price" value="{{ old('price',(!empty($product))?$product->price:'') }}" placeholder="Price" tabindex="7" min=1 required>
+                            <input type="number" class="form-control" name="price" value="{{ old('price',(!empty($product))?$product->price:'') }}" placeholder="Price" tabindex="7" min=1>
                             @error('price')
                             <div class="alert alert-danger mt-2">{{ $message }}</div>
                             @enderror

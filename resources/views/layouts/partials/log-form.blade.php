@@ -15,7 +15,7 @@
                 <!-- text input -->
                 <div class="form-group">
                     <label>Log Type</label>
-                    <select class="form-control select2 type" id='type' name='type' required>
+                    <select class="form-control select2 type" id='type' name='type'>
                         <option value="">Select</option>
                         <option value="email">Email</option>
                         <option value="calls">Calls</option>

@@ -51,7 +51,7 @@ class AdminUserSeeder extends Seeder
         ],
         [
             'name' => "Dealer",
-            'email' => "dealer@mail.com",
+            'email' => "hardik@techcelerity.com",
             'password' => Hash::make('woodbird9'),
             'users_group_id'=>2,
             'parent_id'=>NULL,
@@ -67,7 +67,7 @@ class AdminUserSeeder extends Seeder
         ],
         [
             'name' => "Retailer",
-            'email' => "retailer@mail.com",
+            'email' => "mehul.prajapati@techcelerity.com",
             'password' => Hash::make('woodbird9'),
             'users_group_id'=>3,
             'parent_id'=>3,

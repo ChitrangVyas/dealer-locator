@@ -55,7 +55,7 @@ class AdminUserUpdateRequest extends FormRequest
                     return $query->where('state_id', $this->input('state'));
                 }),
             ],
-            'zipcode' => 'required|min:5|max:7',
+            'zipcode' => 'required|digits_between:5,7',
         ];
     }
 

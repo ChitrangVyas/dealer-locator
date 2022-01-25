@@ -117,7 +117,7 @@
                 </div>
             </div>
             @enddealer
-            <div class="col-sm-12 col-md-8">
+            <div class="col-sm-12 col-md-4">
                 <!-- text input -->
                 <div class="form-group summernote-container">
                     <label>Purpose / Comments</label>
@@ -132,7 +132,125 @@
                     <label>Send dealer/retailer details to customer?</label>
                     </div>
                 </div>
-            @endnotCustomer           
+            @endnotCustomer  
+            <div class="col-sm-12 col-md-4">
+                <!-- text input -->
+                <div class="form-group">
+                    <label>Application</label>
+                    <select class="form-control application" id='application' name='application' tabindex="4">
+                        <option value="">Select</option>
+                        <option value="Domestic" @if(!empty($inquiry) && !empty($inquiry->application == 'Domestic')) selected   @endif()>Domestic</option>      
+                        <option value="Industrial" @if(!empty($inquiry) && !empty($inquiry->application == 'Industrial')) selected   @endif()>Industrial</option>                   
+                    </select>
+                </div>
+            </div>  
+            <div class="col-sm-12 col-md-4">
+                <!-- text input -->
+                <div class="form-group">
+                    <label>Application Type</label>
+                    <select class="form-control application_type" id='application_type' name='application_type' tabindex="4">
+                        <option value="">Select</option>                  
+                    </select>
+                </div>
+            </div>      
+        </div>
+        <div class="row">
+            <div class="col-sm-12 col-md-12 border-bottom mt-2 mb-2">
+                    <div class="col-6">
+                        <h4 class="text-muted">Pumps Design & Pipe Size Water Parameters</h4>
+                    </div>
+            </div>
+            <div class="col-sm-12 col-md-4">
+                <!-- text input -->
+                <div class="form-group">
+                    <label>Pump Capacity</label>
+                    <input type="text" class="form-control" name="pump_capacity" value="{{ old('pump_capacity',(!empty($inquiry))?$inquiry->pump_capacity:'') }}"  tabindex="1">
+                </div>
+            </div>             
+            <div class="col-sm-12 col-md-4">
+                <!-- text input -->
+                <div class="form-group">
+                    <label>Pressure Pump</label>
+                    <input type="text" class="form-control" name="pressure_pump" value="{{ old('pressure_pump',(!empty($inquiry))?$inquiry->pressure_pump:'') }}"  tabindex="1">
+                </div>
+            </div> 
+            <div class="col-sm-12 col-md-4">
+                <!-- text input -->
+                <div class="form-group">
+                    <label>Submersible Pump</label>
+                    <input type="text" class="form-control" name="submersible_pump" value="{{ old('submersible_pump',(!empty($inquiry))?$inquiry->submersible_pump:'') }}"  tabindex="1">
+                </div>
+            </div> 
+            <div class="col-sm-12 col-md-4">
+                <!-- text input -->
+                <div class="form-group">
+                    <label>Water Flow L/H</label>
+                    <input type="text" class="form-control" name="water_flow" value="{{ old('water_flow',(!empty($inquiry))?$inquiry->water_flow:'') }}"  tabindex="1">
+                </div>
+            </div> 
+            <div class="col-sm-12 col-md-4">
+                <!-- text input -->
+                <div class="form-group">
+                    <label>Other (Gravity)</label>
+                    <input type="text" class="form-control" name="other_gravity" value="{{ old('other_gravity',(!empty($inquiry))?$inquiry->other_gravity:'') }}"  tabindex="1">
+                </div>
+            </div> 
+            <div class="col-sm-12 col-md-4">
+                <!-- text input -->
+                <div class="form-group">
+                    <label>Pipe Diameters</label>
+                    <input type="text" class="form-control" name="pipe_diameters" value="{{ old('pipe_diameters',(!empty($inquiry))?$inquiry->pipe_diameters:'') }}"  tabindex="1">
+                </div>
+            </div> 
+        </div>
+        <div class="row">
+            <div class="col-sm-12 col-md-12 border-bottom mt-2 mb-2">
+                    <div class="col-6">
+                        <h4 class="text-muted">Water Parameters</h4>
+                    </div>
+            </div>
+            <div class="col-sm-12 col-md-4">
+                <!-- text input -->
+                <div class="form-group">
+                    <label>TDS</label>
+                    <input type="text" class="form-control" name="tds" value="{{ old('tds',(!empty($inquiry))?$inquiry->tds:'') }}"  tabindex="1">
+                </div>
+            </div>             
+            <div class="col-sm-12 col-md-4">
+                <!-- text input -->
+                <div class="form-group">
+                    <label>Hardness</label>
+                    <input type="text" class="form-control" name="hardness" value="{{ old('hardness',(!empty($inquiry))?$inquiry->hardness:'') }}"  tabindex="1">
+                </div>
+            </div> 
+        </div>
+        <div class="row">
+            <div class="col-sm-12 col-md-12 border-bottom mt-2 mb-2">
+                    <div class="col-6">
+                        <h4 class="text-muted">Water Type</h4>
+                    </div>
+            </div>
+            <div class="col-sm-12 col-md-4">
+                <!-- text input -->
+                <div class="form-group">
+                    <label>Bore well Water</label>
+                    <input type="text" class="form-control" name="bore_well_water" value="{{ old('bore_well_water',(!empty($inquiry))?$inquiry->bore_well_water:'') }}"  tabindex="1">
+                </div>
+            </div>             
+            <div class="col-sm-12 col-md-4">
+                <!-- text input -->
+                <div class="form-group">
+                    <label>Soft Water</label>
+                    <input type="text" class="form-control" name="soft_water" value="{{ old('soft_water',(!empty($inquiry))?$inquiry->soft_water:'') }}"  tabindex="1">
+                </div>
+            </div>
+            <div class="col-sm-12 col-md-4">
+                <!-- text input -->
+                <div class="form-group">
+                    <label>Others</label>
+                    <input type="text" class="form-control" name="others_water_type" value="{{ old('others_water_type',(!empty($inquiry))?$inquiry->others_water_type:'') }}"  tabindex="1">
+                </div>
+            </div> 
         </div>
         <div class="row">
             <div class="col-sm-12">
@@ -257,6 +375,29 @@ jQuery(document).ready(function(){
     $('.dealer').on('change',function(){
         getRetailers($(this).val())
     });
+    $('.application').on('change',function(){
+        var ap=$('#application'). val();
+        $.ajax({
+            url: "{{route('get-application')}}",
+            type: 'POST',
+            data: {q : ap},
+            success: function (data) {
+                $("#application_type").html(data);
+            }
+        });
+    });
+    @if(!empty($inquiry))
+    var ap=$('#application'). val();
+    //var app_type={{$inquiry->application_type}};
+        $.ajax({
+            url: "{{route('get-application')}}",
+            type: 'POST',
+            data: {q : ap,app_type:'{{$inquiry->application_type}}'},
+            success: function (data) {
+                $("#application_type").html(data);
+            }
+        });
+    @endif()
 
     $('#addCustomer').on('click',function(e){
         e.preventDefault();

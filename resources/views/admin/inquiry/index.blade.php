@@ -153,22 +153,19 @@
                     "name": "inquiries.id"
                 },
                 {
-                    "name": "source"
+                    "name": "customer"
                 },
                 {
-                    "name": "c.name"
+                    "name": "customer_email"
                 },
                 {
-                    "name": "c.email"
+                    "name": "customer_mobile"
                 },
                 {
-                    "name": "c.phone"
+                    "name": "dealer"
                 },
                 {
-                    "name": "d.name"
-                },
-                {
-                    "name": "r.name"
+                    "name": "retailer"
                 },
                 {
                     "name": "status",sWidth: '10%'

@@ -440,6 +440,11 @@
             },
             complete:function(){
                 $('#loader').hide();
+            },
+            error:function(xhr, ajaxOptions, thrownError){
+                if(xhr.status==404) {
+                    alert("Either From user or a To user for this, seems deleted, You can't edit it.");
+                }
             }
         });
     }

@@ -42,7 +42,7 @@
             "columns": [
                 { "name": "id" },
                 { "name": "name" },
-                { "name": "brand" },
+                { "name": "mname" },
                 { "name": "logo" },
                 { "name": "status" },
                 { "name": "action" }

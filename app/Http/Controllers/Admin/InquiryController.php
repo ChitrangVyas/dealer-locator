@@ -239,6 +239,13 @@ class InquiryController extends MainController
                     $msg ="Failed to sent SMS".$sms_res[0];
                 } 
             }
+            if(!empty($request_data['send_mail_to_customer']) && (!empty($dealer_id))){
+                try{
+                    Mail::to($inquiry->customer->email)->send(new SendInquiryToCustomer(config('app.name').' - Inquiry',$inquiry));
+                }catch(Exception $e){
+                    return redirect(route('inquiry.index'))->with('exception', 'Unable to sent Mail.');
+                }
+            }
         }catch(Exception $e){
             return redirect(route('inquiry.create'))->with('exception', $e->getMessage());
         }

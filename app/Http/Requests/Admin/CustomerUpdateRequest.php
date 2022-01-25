@@ -51,7 +51,7 @@ class CustomerUpdateRequest extends FormRequest
                     return $query->where('state_id', $this->input('state_id'));
                 }),
             ],
-            'zipcode' => 'required|min:5|max:7',
+            'zipcode' => 'required|digits_between:5,7',
             'users_group_id' => 'required',
         ];
     }

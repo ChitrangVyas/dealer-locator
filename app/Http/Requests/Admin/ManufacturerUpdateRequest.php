@@ -76,11 +76,10 @@ class ManufacturerUpdateRequest extends FormRequest
             'logo.required'=> 'Logo is required.',
             'zipcode.required' => 'Zip code is required.',
             'zipcode.min' => 'Zip code must be at least :min characters.',
-            'zipcode.max' => 'Zip code must not be greater than :max characters.'
-            // 'state_id.required' => 'Please select state.',
-            // 'state_id.exist'=> 'The selected state is invalid',
-            // 'city_id.required'=> 'Please select city',
-            // 'city_id.exist'=> 'The selected city is invalid',
+            'zipcode.max' => 'Zip code must not be greater than :max characters.',
+            'country_id.required'=> 'Please select country.',
+            'state_id.required'=> 'Please select state.',
+            'city_id.required'=> 'Please select city.',  
         ];
     }
 }

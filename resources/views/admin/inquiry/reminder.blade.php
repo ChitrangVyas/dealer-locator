@@ -15,7 +15,7 @@
                 <!-- text input -->
                 <div class="form-group">
                     <label>Log Type</label>
-                    <select class="form-control select2 type" id='reminder_type' name='type' required>
+                    <select class="form-control select2 type" id='reminder_type' name='type' >
                         <option value="">Select</option>
                         <option value="email">Email</option>
                         <option value="calls">Calls</option>
@@ -30,14 +30,14 @@
                 <!-- text input -->
                 <div class="form-group">
                     <label for="source">Source</label>
-                    <input type="text" class="form-control source" id="reminder_source" name="source" required />
+                    <input type="text" class="form-control source" id="reminder_source" name="source"  />
                 </div>
             </div>
             <div class="col-sm-12 col-md-4">
                 <!-- text input -->
                 <div class="form-group clearfix">
                     <label>Reminder</label>
-                        <input type="text" class="form-control datetimepicker-input reminder" id="reminder_datetimepicker" name="for_created_at" data-toggle="datetimepicker" data-target="#reminder_datetimepicker" autocomplete="off" required/>
+                        <input type="text" class="form-control datetimepicker-input reminder" id="reminder_datetimepicker" name="for_created_at" data-toggle="datetimepicker" data-target="#reminder_datetimepicker" autocomplete="off" />
                         @error('for_created_at')
                             <div class="alert alert-danger mt-2">{{ $message }}</div>
                         @enderror

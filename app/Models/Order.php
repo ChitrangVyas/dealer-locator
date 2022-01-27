@@ -70,7 +70,7 @@ class Order extends Model
     }
 
     public function getOrderStage(){
-        return [0=>"Pending", 1=>"Processing", 2=>"Ready for Installation", 3=>"Installed"];
+        return [0=>"Pending", 1=>"Processing", '4'=>"Dispatched" , 2=>"Ready for Installation", 3=>"Installed",'5'=>'Closed'];
     }
 
     public function getUserOrderStatus()

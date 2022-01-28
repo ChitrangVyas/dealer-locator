@@ -198,13 +198,13 @@ class DealerUserController extends MainController
         foreach($users as $user){
             $city = (!empty($user->city))?$user->city:'';
             $state = (!empty($user->state))?$user->state:'';
-            $action_html = "<span><a href=".route('dealer.edit',$user->id)." class='btn btn-primary'>Edit</a></span>";
+            $action_html = "<span><a href=".route('dealer.edit',$user->id)." class='btn btn-primary'><i class='fas fa-pen' title='Edit'></i></a></span>";
             $child_user =  Helpers::getChildUserCount($user->id);
             $status = (!empty($user->status)) ? 'checked': '';
             $status_html = '<input type="checkbox" name="status" id="status" class="form-control change-status" data-id="'.$user->id.'" data-bootstrap-switch  data-on-text="Enable" data-off-text="Disable" data-off-color="danger" data-on-color="success" '.$status.'>';
             $total_assigned_inquiries =  Helpers::getAssignedDealerInquiryCount($user->id);
             if(empty($child_user) && empty($total_assigned_inquiries)){
-                $action_html .= "<span class='ml-3'><button type=submit data-user=$user->id class='btn btn-danger' onClick=deleteUser($user->id)>Delete</button></span>";
+                $action_html .= "<span class='ml-3'><button type=submit data-user=$user->id class='btn btn-danger' onClick=deleteUser($user->id)><i class='fas fa-trash' title='Delete'></i></button></span>";
             }else{
                 $action_html .= "<span class='ml-3'><span class='badge badge-info' title='Retailers'>$child_user</span> |  <span class='badge badge-info' title='Inquiries'>$total_assigned_inquiries</span></span>";
             }

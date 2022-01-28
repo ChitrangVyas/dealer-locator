@@ -105,7 +105,7 @@ class CartController extends MainController
                 foreach($request->input('product') as $key=>$product){
                     $product_data = Product::findOrFail($key);
                     $cart->remove($key);
-                    $condition = (isset($request->input('tax')[$product_data->id]))?$this->getTaxGroupCondition($request->input('cart_id'),$request->input('tax')[$product_data->id]):$this->getProductTaxCondition($product_data,$request->input('cart_id'));                    
+                    $condition = (isset($request->input('tax')[$product_data->id]))?$this->getTaxGroupCondition($request->input('cart_id'),$request->input('tax')[$product_data->id]):$this->getProductTaxCondition($product_data,$request->input('cart_id'),$request->input('tax')[$product_data->id]);                    
                     if($request->input('discount')[$key] > 0){
                         $condition['Discount'] = new \Darryldecode\Cart\CartCondition(array(
                             'name' => 'Discount',
@@ -250,8 +250,8 @@ class CartController extends MainController
                 $this->myCart->setTo($id,$order->to_user);
             }
             foreach($order->orderProduct as $orderProduct){
-                $condition = $this->getProductTaxCondition($orderProduct->product,$id);
-                $product_tax_group = (!empty($orderProduct->product->taxGroup))?$orderProduct->product->taxGroup:$taxGroup;
+                $condition = $this->getProductTaxCondition($orderProduct->product,$id,$orderProduct->tax_group_id);
+                //$product_tax_group = (!empty($orderProduct->product->taxGroup))?$orderProduct->product->taxGroup:'';
                 $items[] = array(
                     'id' => $orderProduct->product->id,
                     'name' => $orderProduct->product->name,
@@ -262,8 +262,8 @@ class CartController extends MainController
                     ),
                     'conditions' => $condition,
                 );
-                $selected_tax_group[$orderProduct->product->id] = (!empty($product_tax_group))?$product_tax_group->id:'';
-            }
+                $selected_tax_group[$orderProduct->product->id] = (!empty($orderProduct->tax_group_id))?$orderProduct->tax_group_id:$taxGroup->id;
+            }                    
             $cart->add($items);
             $cart->getSubTotal();
             $this->myCart->setTaxTotal($id,$cart);
@@ -303,7 +303,7 @@ class CartController extends MainController
         $condition = [];
         $product_tax_group = (!empty($product->taxGroup))?$product->taxGroup:$taxGroup;
         if($cart->isEmpty()){
-            $condition = $this->getProductTaxCondition($product,$request->input('id'));
+            $condition = $this->getProductTaxCondition($product,$request->input('id'),$taxGroup->id);
             $cart->add(
                 array(
                     'id' => $product->id,
@@ -318,7 +318,7 @@ class CartController extends MainController
             );
         }else{
             $cart_product = $product;
-            $condition = $this->getProductTaxCondition($cart_product,$request->input('id'));
+            $condition = $this->getProductTaxCondition($cart_product,$request->input('id'),$taxGroup->id);
                 $cart->add(
                     array(
                         'id' => $product->id,
@@ -332,7 +332,7 @@ class CartController extends MainController
                     )
                 );
         }
-        $selected_tax_group[$product->id] = (!empty($product_tax_group))?$product_tax_group->id:'';
+        $selected_tax_group[$product->id] = (!empty($product_tax_group))?$product_tax_group->id:$taxGroup->id;
         $cart->getSubTotal();
         $this->myCart->setTaxTotal($request->input('id'),$cart);
         $this->myCart->setTaxGroup($request->input('id'),$selected_tax_group,true);
@@ -383,7 +383,7 @@ class CartController extends MainController
                 $count = 1;
                 $is_new_product = 0;
                 foreach($order->orderProduct as $orderProduct){
-                    $condition = $this->getProductTaxCondition($orderProduct,$id);
+                    $condition = $this->getProductTaxCondition($orderProduct,$id,$orderProduct->tax_group_id);
                     $product_tax_group = (!empty($orderProduct->product->taxGroup))?$orderProduct->product->taxGroup:$taxGroup;
                     $is_new_product = (!empty($orderProduct->product))?0:1;
                     $count++;
@@ -535,8 +535,8 @@ class CartController extends MainController
                 $this->myCart->setForManufacturePoTOSale($id,1);
             }
             foreach($order->orderProduct as $orderProduct){
-                $condition = $this->getProductTaxCondition($orderProduct->product,$id);
-                $product_tax_group = (!empty($orderProduct->product->taxGroup))?$orderProduct->product->taxGroup:$taxGroup;
+                $condition = $this->getProductTaxCondition($orderProduct->product,$id,$orderProduct->tax_group_id);
+                $product_tax_group = (!empty($orderProduct->product->taxGroup))?$orderProduct->product->taxGroup:'';
                 $items[] = array(
                     'id' => $orderProduct->product->id,
                     'name' => $orderProduct->product->name,
@@ -547,7 +547,7 @@ class CartController extends MainController
                     ),
                     'conditions' => $condition,
                 );
-                $selected_tax_group[$orderProduct->product->id] = (!empty($product_tax_group))?$product_tax_group->id:'';
+                $selected_tax_group[$orderProduct->product->id] = (!empty($orderProduct->tax_group_id))?$orderProduct->tax_group_id:$taxGroup->id;
             }
             $cart->add($items);
             $cart->getSubTotal();
@@ -592,13 +592,16 @@ class CartController extends MainController
         ));
     }
 
-    public function getProductTaxCondition($product,$id){
+    public function getProductTaxCondition($product,$id,$tax_group_id=0){
         $condition = [];
-        if(!empty($product->taxGroup)){
+        
+        if($tax_group_id != 0){
+            $productTaxGroup = TaxGroup::where('id',$tax_group_id)->first();
+        }elseif(!empty($product->taxGroup)){
             $productTaxGroup = $product->taxGroup;
         }else{
             $productTaxGroup = TaxGroup::where('is_default',1)->first();
-        }
+        }        
         $condition = $this->getTaxCondition($id,$productTaxGroup);
         return $condition;
     }

@@ -23,7 +23,6 @@
                                     <!-- <th>Product</th> -->
                                     <!-- <th>Qty</th> -->
                                     <th>Total</th>
-                                    <th>From</th>
                                     <th>To</th>
                                     <th>Status</th>
                                     <th>Created Date</th>
@@ -93,9 +92,6 @@
                     "name": "orders.total"
                 },
                 {
-                    "name": "d.name"
-                },
-                {
                     "name": "c.name"
                 },
                 {
@@ -110,11 +106,11 @@
             ],
             "columnDefs": [
                 {
-                    "targets": [5],
+                    "targets": [4],
                     "orderable": false
                 },
                 {
-                    "targets": [7],
+                    "targets": [6],
                     "orderable": false
                 },
                 {

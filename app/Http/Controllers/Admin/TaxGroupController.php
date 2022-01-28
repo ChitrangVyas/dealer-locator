@@ -211,9 +211,9 @@ class TaxGroupController extends MainController
             $status = (!empty($tax->status)) ? 'checked': '';
             $is_default = (!empty($tax->is_default)) ? 'disabled': '';
             $status_html = '<input type="checkbox" name="status" id="status", data-url = '.route('tax-group.update',$tax->id).' class="form-control change-status" data-id="'.$tax->id.'" data-bootstrap-switch  data-on-text="Enable" data-off-text="Disable" data-off-color="danger" data-on-color="success"  '.$status.' '.$is_default.'>';
-            $action_html = "<span><a href=".route('tax-group.edit',$tax->id)." class='btn btn-primary'>Edit</a></span>";
+            $action_html = "<span><a href=".route('tax-group.edit',$tax->id)." class='btn btn-primary'><i class='fas fa-pen' title='Edit'></i></a></span>";
             if(empty($product_count)){
-                $action_html .= "<span class='ml-3'><button type=submit data-user=$tax->id class='btn btn-danger' onClick=deleteItem($tax->id)>Delete</button></span>";
+                $action_html .= "<span class='ml-3'><button type=submit data-user=$tax->id class='btn btn-danger' onClick=deleteItem($tax->id)><i class='fas fa-trash' title='Delete'></i></button></span>";
             }else{
                 $action_html .= "<span class='ml-3'><span class='badge badge-info' title='Product'>$product_count</span></span>";
             }

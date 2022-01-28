@@ -1135,7 +1135,7 @@ class OrderController extends MainController
                 }
                 $customer = (!empty($order->customer))?$order->customer:$this->settingJson['name'];
                 $added_by  = (!empty($order->added_by))?$order->added_by:$this->settingJson['name'];
-                $data[] = [$order->id,$order->order_number,$order->amount, ucwords($added_by), ucwords($customer), $order_status ,$order->created_date];
+                $data[] = [$order->id,$order->order_number,$order->amount, ucwords($added_by), ucwords($customer), $order_status,$order_data->getSalesStage(!empty($order_data->orderStage['stage'])?$order_data->orderStage['stage']:0) ,$order->created_date];
             }
             $return_array = array();
             $return_array['draw'] = $request['draw'];

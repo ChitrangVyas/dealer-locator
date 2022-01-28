@@ -35,7 +35,8 @@
                                     <th>Total</th>
                                     <th>From</th>
                                     <th>To</th>
-                                    <th>status</th>
+                                    <th>Payment Status</th>
+                                    <th>Order Status</th>
                                     <th>Created Date</th>
                                 </tr>
                             </thead>
@@ -69,6 +70,9 @@
                 },
                 {
                     "name": "c.name"
+                },
+                {
+                    "name": "orders.status"
                 },
                 {
                     "name": "orders.status"

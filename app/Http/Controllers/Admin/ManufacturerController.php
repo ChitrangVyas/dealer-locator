@@ -159,9 +159,9 @@ class ManufacturerController extends MainController
             $manufacturer_logo_html = (!empty($manufacturer->logo))?"<img class='img logo' src=".url($manufacturer->logo)." width=50 />":'Image not found';
             $status = (!empty($manufacturer->status)) ? 'checked': '';
             $status_html = '<input type="checkbox" name="status" id="status" class="form-control change-status" data-id="'.$manufacturer->id.'" data-bootstrap-switch  data-on-text="Enable" data-off-text="Disable" data-off-color="danger" data-on-color="success" '.$status.'>';
-            $action_html = "<span><a href=".route('manufacturer.edit',$manufacturer->id)." class='btn btn-primary'>Edit</a></span>";
+            $action_html = "<span><a href=".route('manufacturer.edit',$manufacturer->id)." class='btn btn-primary'><i class='fas fa-pen' title='Edit'></i></a></span>";
             if(empty($brand_count)){
-                $action_html .= "<span class='ml-3'><button type=submit data-user=$manufacturer->id class='btn btn-danger' onClick=deleteUser($manufacturer->id)>Delete</button></span>";
+                $action_html .= "<span class='ml-3'><button type=submit data-user=$manufacturer->id class='btn btn-danger' onClick=deleteUser($manufacturer->id)><i class='fas fa-trash' title='Delete'></i></button></span>";
             }else{
                 $action_html .= "<span class='ml-3'><span class='badge badge-info' title='Brand'>$brand_count</span></span>";
             }

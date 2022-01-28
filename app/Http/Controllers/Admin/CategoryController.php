@@ -170,9 +170,9 @@ class CategoryController extends MainController
             $parent_category = Category::find($category->parent_category);
             $parent_category = (!empty($parent_category))?$parent_category->name:'N/A';
             $category_logo_html = (!empty($category->image))?"<img class='img image' src=".url($category->image)." width=50 />":'Image not found';
-            $action_html = "<span><a href=".route('category.edit',$category->id)." class='btn btn-primary'>Edit</a></span>";
+            $action_html = "<span><a href=".route('category.edit',$category->id)." class='btn btn-primary'><i class='fas fa-pen' title='Edit'></i></a></span>";
             if(empty($child_category_count) && empty($product_count)){
-                $action_html .= "<span class='ml-3'><button type=submit data-user=$category->id class='btn btn-danger' onClick=deleteUser($category->id)>Delete</button></span>";
+                $action_html .= "<span class='ml-3'><button type=submit data-user=$category->id class='btn btn-danger' onClick=deleteUser($category->id)><i class='fas fa-trash' title='Delete'></i></button></span>";
             }else{
                 $action_html .= "<span class='ml-3'><span class='badge badge-info' title='Category'> $child_category_count</span> | <span class='badge badge-info' title='Product'> $product_count</span></span>";
             }

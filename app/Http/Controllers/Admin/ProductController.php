@@ -257,8 +257,8 @@ class ProductController extends MainController
             $status = (!empty($product->status)) ? 'checked': '';
             $status_html = '<input type="checkbox" name="status" id="status" class="form-control" data-bootstrap-switch  data-on-text="Enable" data-off-text="Disable" data-off-color="danger" data-on-color="success" '.$status.' disabled>';
             if((empty(auth()->user()->users_group_id)) || (auth()->user()->users_group_id == 1)){
-                $action_html = "<span><a href=".route('product.edit',$product->id)." class='btn btn-primary'>Edit</a></span>";
-                $action_html .= "<span class='ml-3'><button type=submit data-user=$product->id class='btn btn-danger' onClick=deleteUser($product->id)>Delete</button></span>";
+                $action_html = "<span><a href=".route('product.edit',$product->id)." class='btn btn-primary'><i class='fas fa-pen' title='Edit'></i></a></span>";
+                $action_html .= "<span class='ml-3'><button type=submit data-user=$product->id class='btn btn-danger' onClick=deleteUser($product->id)><i class='fas fa-trash' title='Delete'></i></button></span>";
                 $status_html = '<input type="checkbox" name="status" id="status" class="form-control change-status" data-id="'.$product->id.'" data-bootstrap-switch  data-on-text="Enable" data-off-text="Disable" data-off-color="danger" data-on-color="success" '.$status.'>';
                 $inventory_html = "<span>$inventory</span>";
             }else{

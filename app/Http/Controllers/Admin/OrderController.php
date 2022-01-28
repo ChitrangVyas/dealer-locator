@@ -247,7 +247,8 @@ class OrderController extends MainController
                     }
                     foreach($request_data['product'] as $key => $value){
                         $cart_product = $cart->get($key);
-                        $order_product_data = array('order_id' => $quote->id, 'product_id' => ($request_data['is_new_product']==1)?NULL:$cart_product->id, 'product_name'=>$cart_product->name, 'qty' => $cart_product->quantity, 'amount' => $cart_product->price, 'discount_percentage'=>$this->myCart->getDiscountPerProductPercentage($cart_product->id,$request_data['cart_id'],$cart), 'discount'=>$this->myCart->getDiscountPerProduct($cart_product->id,$request_data['cart_id'],$cart));
+                        $tax_group_id = $this->myCart->getTaxGroup($request_data['cart_id']);
+                        $order_product_data = array('order_id' => $quote->id, 'product_id' => ($request_data['is_new_product']==1)?NULL:$cart_product->id, 'product_name'=>$cart_product->name, 'qty' => $cart_product->quantity, 'amount' => $cart_product->price, 'discount_percentage'=>$this->myCart->getDiscountPerProductPercentage($cart_product->id,$request_data['cart_id'],$cart), 'discount'=>$this->myCart->getDiscountPerProduct($cart_product->id,$request_data['cart_id'],$cart),'tax_group_id'=>$tax_group_id[$cart_product->id]);
                         $order_product = '';
                         if(!empty($order_product_data)){
                             $order_product = OrderProduct::create($order_product_data);
@@ -281,7 +282,8 @@ class OrderController extends MainController
                 $quote_product_data = [];
                 foreach($request_data['product'] as $key => $value){
                     $cart_product = $cart->get($key);
-                    $quote_product_data = array('order_id' => $quote->id, 'product_id' => $cart_product->id,'product_name'=>$cart_product->name, 'qty' => $cart_product->quantity, 'amount' => $cart_product->price, 'discount_percentage'=>$this->myCart->getDiscountPerProductPercentage($cart_product->id,$request_data['cart_id'],$cart), 'discount'=>$this->myCart->getDiscountPerProduct($cart_product->id,$request_data['cart_id'],$cart));
+                    $tax_group_id = $this->myCart->getTaxGroup($request_data['cart_id']);
+                    $quote_product_data = array('order_id' => $quote->id, 'product_id' => $cart_product->id,'product_name'=>$cart_product->name, 'qty' => $cart_product->quantity, 'amount' => $cart_product->price, 'discount_percentage'=>$this->myCart->getDiscountPerProductPercentage($cart_product->id,$request_data['cart_id'],$cart), 'discount'=>$this->myCart->getDiscountPerProduct($cart_product->id,$request_data['cart_id'],$cart),'tax_group_id'=>$tax_group_id[$cart_product->id]);
                     $order_product = '';
                     if(!empty($quote_product_data)){
                         $order_product = OrderProduct::create($quote_product_data);
@@ -472,7 +474,7 @@ class OrderController extends MainController
             $orderImage = OrderImage::create(['order_id'=>$order->id,'image'=>$filePath,'uploaded_by'=>$request->post('uploaded_by')]);
         }
         if($updateOrder){
-           return response()->json(['status' => 'successful', 'data'=>[$updateOrder,$orderImage],'code'=>1,'message'=>'PO has been successfully Uploaded.']);
+           return response()->json(['status' => 'successful', 'data'=>[$updateOrder,$orderImage],'code'=>1,'message'=>'PO has been successfully Upadated.']);
         }else{
             return response()->json(['status' => 'error','code'=>0,'message'=>'Unable to upload PO.']);
         }
@@ -793,7 +795,7 @@ class OrderController extends MainController
             $where .= (!empty($user->id))?" AND (from_user=$user->id OR from_user is NULL)":'';
         }
         // $where .= (!empty($dealer_id))?" AND (dealer_id=$dealer_id OR inquiries.created_by=$dealer_id)":'';
-        $where .= (!empty($search)) ? " AND (orders.order_number like '$search%' OR orders.total like '$search%' OR orders.created_at like '$search%' OR (c.name is NOT NULL AND c.name like '$search%') OR (d.name is NOT NULL AND d.name like '$search%'))":'';
+        $where .= (!empty($search)) ? " AND (orders.order_number like '$search%' OR orders.total like '$search%' OR orders.created_at like '$search%' OR (c.name is NOT NULL AND c.name like '$search%'))":'';
         $orders = DB::table('orders')
         ->select(DB::raw('orders.id,order_number,c.name as customer,d.name as added_by, orders.total as amount, orders.created_at as created_date'))
         ->join('order_product AS op','orders.id','=','op.order_id','left')
@@ -816,12 +818,12 @@ class OrderController extends MainController
                 $order_status = $order_data->getInvoiceStatus(($order_data->getUserOrderStatus())->status_id);
             }
             $customer = (!empty($order->customer))?$order->customer:$this->settingJson['name'];
-            $added_by  = (!empty($order->added_by))?$order->added_by:$this->settingJson['name'];
+            //$added_by  = (!empty($order->added_by))?$order->added_by:$this->settingJson['name'];
             $action_html = "<span><a data-url=".route('sale.show',$order->id)." data-order=".$order->id." class='btn btn-primary view-order' data-toggle='modal' data-target='#orderModal' title='View'><i class='far fa-eye' title='View'></i></a></span>";
             // $action_html .= "<span class='ml-3 create-po-".$order->id."'><a data-url=".route('cart.po.create')." data-order=".$order->id." class='btn btn-success view-quote' data-toggle='modal' data-target='#orderModal'>Generate PO</a></span>";
             // $action_html = "<span><a href=".route('order.edit',$order->id)." class='btn btn-primary'>Edit</a></span>";
             // $action_html .= "<span class='ml-3'><button type=submit data-user=$order->id class='btn btn-danger' onClick=deleteOrder($order->id)>Delete</button></span>";
-            $data[] = [$order->id,$order->order_number,$order->amount, ucwords($added_by), ucwords($customer), $order_status ,$order->created_date, $action_html];
+            $data[] = [$order->id,$order->order_number,$order->amount, ucwords($customer), $order_status ,$order->created_date, $action_html];
         }
         $return_array = array();
         $return_array['draw'] = $request['draw'];

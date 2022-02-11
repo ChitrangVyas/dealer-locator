@@ -30,7 +30,13 @@ class Product extends Model
     public function brand(){
         return $this->belongsTo(Brand::class);
     }
-
+    public function getDiscountPrice($price,$discount){
+        $final_amount = $price - (($price*$discount)/100);
+        return $final_amount;
+    }
+    public function DiscountProduct(){
+        return $this->hasOne(ProductDiscount::class);
+    }
     public function categories(){
         return $this->belongsToMany(Category::class,'product_category')->withTimestamps();
     }

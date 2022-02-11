@@ -10,19 +10,50 @@
                 <div class="card">
                     <div class="card-header">
                         <div class="row">
-                            <div class="col-12">
+                            <div class="col-10">
                                 <form action="{{route('salesreportlistajax')}}" class="d-inline" id="exportFile" method="post">
                                     @csrf
                                     <input type="hidden" name="search[value]" id="dtSearch" value="" />
                                     <input type="hidden" name="export" id="dtExport" value="" />
-                                    <input type="text" class="d-inline form-control form-control-sm col-2 datetimepicker-input from_date" id="from_date" name="from_date" data-toggle="datetimepicker" data-target="#from_date" autocomplete="off" value="" placeholder="From" required/>
-                                    <input type="text" class="d-inline form-control form-control-sm col-2 datetimepicker-input to_date" id="to_date" name="to_date" data-toggle="datetimepicker" data-target="#to_date" autocomplete="off" value="" placeholder="To" required/>
-                                    <button type="button" class="d-inline btn btn-primary btn-sm form-control-sm col-1" id="filter" value="">Filter</button>
+                                    <div class="row">
+                                        <div class="col-2">
+                                            <label>Payment Status</label>
+                                            <select name="status_id" class="form-control" id="order_status">
+                                                <option value="">Select</option>
+                                                <option value="1">Pending</option>
+                                                <option value="2">Paid</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-2">
+                                            <label>Order Status</label>
+                                            <select name="stage" class="form-control" id="order_stage">
+                                                <option value="">Select</option>
+                                                <option value="0">Pending</option>
+                                                <option value="1">Processing</option>
+                                                <option value="2">Ready for Installation</option>
+                                                <option value="3">Installed</option>
+                                                <option value="4">Dispatched</option>
+                                                <option value="5">Closed</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-2">
+                                            <label>From Date</label>
+                                            <input type="text" class="form-control form-control-sm  datetimepicker-input from_date" id="from_date" name="from_date" data-toggle="datetimepicker" data-target="#from_date" autocomplete="off" value="" placeholder="From" required/>
+                                        </div>
+                                        <div class="col-2">
+                                            <label>To Date</label>
+                                            <input type="text" class="form-control form-control-sm  datetimepicker-input to_date" id="to_date" name="to_date" data-toggle="datetimepicker" data-target="#to_date" autocomplete="off" value="" placeholder="To" required/>
+                                        </div>
+                                        <div class="col-2">
+                                            <label></label>
+                                            <button type="button" class=" btn btn-primary btn-md form-control-md " id="filter" value="">Filter</button>
+                                        </div>
+                                    </div>
                                 </form>
-                                <div class="d-inline">
-                                    <button type="button" class="btn btn-primary btn-sm form-control-sm col-1 float-right" id="export" value="">Export</button>
-                                </div>
                             </div>
+                            <div class="col-2">
+                                    <button type="button" class="btn btn-primary btn-md form-control-md  float-right" id="export" value="">Export</button>
+                            </div>                            
                         </div>
                     </div>
                     <!-- /.card-header -->
@@ -101,6 +132,8 @@
                     d._token = $("meta[name='csrf-token']").attr("content");
                     d.from_date = $("#from_date").val();
                     d.to_date = $("#to_date").val();
+                    d.order_stage = $("#order_stage").val();
+                    d.order_status = $("#order_status").val();
                     d.dealer = $("#dealer").val();
                 }
             }

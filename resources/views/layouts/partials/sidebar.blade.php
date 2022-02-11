@@ -251,7 +251,7 @@
               <li class="nav-item">
                 <a href="{{route('report.sales')}}" class="nav-link  {{ $elementActive == 'sales_report' ? 'active' : '' }}">
                 <i class="nav-icon fas fa-shopping-cart"></i>
-                  <p>Sales</p>
+                  <p>Orders</p>
                 </a>
               </li>
             </ul>

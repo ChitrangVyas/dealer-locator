@@ -46,7 +46,7 @@ class ProductCategorySeeder extends Seeder
             'updated_at' => date('Y-m-d H:i:s')),
             array('id' => '16','product_id' => '17','category_id' => '1','created_at' => date('Y-m-d H:i:s'),
             'updated_at' => date('Y-m-d H:i:s')),
-            array('id' => '15','product_id' => '18','category_id' => '1','created_at' => date('Y-m-d H:i:s'),
+            array('id' => '17','product_id' => '18','category_id' => '1','created_at' => date('Y-m-d H:i:s'),
             'updated_at' => date('Y-m-d H:i:s'))
           );
           DB::table('product_category')->insert($product_category);

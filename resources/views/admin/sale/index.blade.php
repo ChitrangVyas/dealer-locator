@@ -140,14 +140,25 @@
 
         $('body').on('click','.view-order',function(){
             var view_url = $(this).data('url');
+            $("#uploadedPo").html("");
             $(`#orderModal .modal-body`).html("");
             getOrderData(view_url,{'order_id':$(this).data('order')}).then(function(res){
+                $('.dateimepicker-input').datetimepicker({
+                    format: 'YYYY-MM-DD HH:mm',
+                    // date: moment(),
+                    icons: {
+                        time: "far fa-clock",
+                    }
+                });
                 $('.select2').select2({
                     width:"26%",
                 });
+                if($('input[name=order_id]').val()){
+                    getOrderImage("{{ route('order.po.image') }}",{'order_id':$('input[name=order_id]').val()}).then(function(res){    
+                    });
+                }
             });
         });
-
         $('body').on('change','#order_status',function(){
             saveFormData("{{route('invoice.status.update')}}",$('#invoice').serializeArray(),'orderModal').then(function(res){
                 $('#example').DataTable().ajax.reload(null, false);
@@ -217,7 +228,7 @@
         });
 
         $('body').on('click','#imageUpload',function(){
-            let formData = new FormData($('#uploadPo')[0]);
+            let formData = new FormData($('#rutika')[0]);
             let url = "{{route('order.po.upload.image')}}";
             let file = $('input[type=file]')[0].files[0];
             formData.append('file', file, file.name);
@@ -236,7 +247,23 @@
                 });
             });
         });
-        
+        $('body').on('submit','#rutika',function(e){
+            e.preventDefault();
+            e.stopImmediatePropagation();
+            let url = "{{route('order.po.recieved')}}";
+            // let formData = new FormData($(this)[0]);
+            let formData = new FormData($('#rutika')[0]);
+            let file = $('input[type=file]')[0].files[0];
+            if(file != '' && file != undefined && file.length != 0){
+                formData.append('file', file, file.name);
+            }
+            saveFormData(url,formData).then(function(res){
+                if(res.code == 1){
+                  $(`#orderModal`).modal('hide');
+                }
+                $('#example').DataTable().ajax.reload(null, false);
+            });
+        });
         $("body").on("click",".product", function(){
             var selected_product = $('input:checkbox:checked').length;
             if(selected_product < 1){

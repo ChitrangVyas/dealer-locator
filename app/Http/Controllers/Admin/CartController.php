@@ -175,7 +175,8 @@ class CartController extends MainController
             $this->myCart->setTaxGroup($id,$selected_tax_group);
             $this->myCart->setOrderNumber($id,$order->order_number);
             $this->myCart->setOrderReference($id,$order->id);
-            $this->myCart->setType($id,'quote');
+            $this->myCart->setType($id,'sale');
+            $this->myCart->setCreatedat($id,$order->created_at);
         }
         $json['cart_title'] = "Order".(!empty($this->myCart->getOrderNumber($id)) ? " #".$this->myCart->getOrderNumber($id) : '');
         $json['cart_content'] = $this->getInquiryToQuoteCart($id,$cart)->render();
@@ -213,6 +214,8 @@ class CartController extends MainController
             }
             $this->myCart->setTo($id,$request_data['data']['customer']);
         }
+        $created_at = date("Y-m-d");
+        $this->myCart->setCreatedat($id,$created_at);
         $this->myCart->setType($id,'quote');
         if((!empty(auth()->user()->users_group_id)) || (auth()->user()->users_group_id > 1)){
             $this->myCart->setFrom($id,auth()->user()->id);
@@ -316,7 +319,7 @@ class CartController extends MainController
                     'conditions' => $condition,
                 );
                 $selected_tax_group[$orderProduct->product->id] = (!empty($orderProduct->tax_group_id))?$orderProduct->tax_group_id:$taxGroup->id;
-            }                    
+            }          
             $cart->add($items);
             $cart->getSubTotal();
             $this->myCart->setTaxTotal($id,$cart);
@@ -324,7 +327,9 @@ class CartController extends MainController
             $this->myCart->setOrderNumber($id,$order->order_number);
             $this->myCart->setOrderReference($id,$order->id);
             $this->myCart->setType($id,'quote');
+            $this->myCart->setCreatedat($id,$order->created_at);
         }
+       
         $json['cart_title'] = "Quote".(!empty($this->myCart->getOrderNumber($id)) ? " #".$this->myCart->getOrderNumber($id) : '');
         $json['cart_content'] = $this->getInquiryToQuoteCart($id,$cart)->render();
         return response()->json(['status' => 'successful','code'=>1, 'data'=>$json, 'message'=>'']);
@@ -463,6 +468,7 @@ class CartController extends MainController
                 $this->myCart->setTaxGroup($id,$selected_tax_group);
                 $this->myCart->setOrderNumber($id,$order->order_number);
                 $this->myCart->setOrderReference($id,$order->id);
+                $this->myCart->setCreatedat($id,$order->created_at);
             }
             // $this->myCart->setTo($id,(!empty(auth()->user()->parent_id))?auth()->user()->parent_id:$manufacturer);
             
@@ -516,7 +522,9 @@ class CartController extends MainController
             if($cart->isEmpty()){
                 $this->myCart->setOrderNumber($id,random_int(100000, 999999));
                 $this->myCart->setTo($id,$to_user);
-            }           
+            }     
+            $created_at = date("Y-m-d");
+            $this->myCart->setCreatedat($id,$created_at);      
         }
         $this->myCart->setType($id,'po');
         if((!empty(auth()->user()->users_group_id)) || (auth()->user()->users_group_id > 1)){
@@ -525,6 +533,7 @@ class CartController extends MainController
         if((!empty($order->customer) && $order->customer->userGroup->id == 5) && ($order->type == 'po')){
             $is_new_product = 1;
         }
+        
         $this->myCart->setTaxTotal($id,$cart);
         // $json['carttype']='PO';
         $json['cart_title'] = "PO".(!empty($this->myCart->getOrderNumber($id)) ? " #".$this->myCart->getOrderNumber($id) : '');
@@ -614,6 +623,7 @@ class CartController extends MainController
             $this->myCart->setOrderNumber($id,$order->order_number);
             $this->myCart->setOrderReference($id,$order->id);
             $this->myCart->setType($id,'sale');
+            $this->myCart->setCreatedat($id,$order->created_at);
         }
         $json['cart_title'] = "Sale".(!empty($this->myCart->getOrderNumber($id)) ? " #".$this->myCart->getOrderNumber($id) : '');
         $json['cart_content'] = $this->getInquiryToQuoteCart($id,$cart)->render();
@@ -636,6 +646,8 @@ class CartController extends MainController
         if((!empty(auth()->user()->users_group_id)) || (auth()->user()->users_group_id > 1)){
             $this->myCart->setFrom($id,auth()->user()->id);
         }
+        $created_at = date("Y-m-d");
+        $this->myCart->setCreatedat($id,$created_at);
         $json['cart_title'] = "Sale".(!empty($this->myCart->getOrderNumber($id)) ? " #".$this->myCart->getOrderNumber($id) : '');
         $json['cart_content'] = $this->getInquiryToQuoteCart($id,$cart,$is_new_product)->render();
         return response()->json(['status' => 'successful','code'=>1, 'data'=>$json, 'message'=>'']);

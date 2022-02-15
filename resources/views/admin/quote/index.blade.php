@@ -166,6 +166,7 @@
             $(`#orderModal .modal-body`).html("");
             $(`#cartTitle`).html("");
             getOrderData(view_url,{'order_id':$(this).data('order')}).then(function(res){
+                if($(this).attr('title')=="View"){
                 $('.dateimepicker-input').datetimepicker({
                     format: 'YYYY-MM-DD HH:mm',
                     // date: moment(),
@@ -173,6 +174,12 @@
                         time: "far fa-clock",
                     }
                 });
+            }else{
+                $('.dateimepicker-input').datetimepicker({
+                    format: 'YYYY-MM-DD',      
+                                  
+                });
+            }
                 select2Product();
                 if($('input[name=order_id]').val()){
                     getOrderImage("{{ route('order.po.image') }}",{'order_id':$('input[name=order_id]').val()}).then(function(res){    

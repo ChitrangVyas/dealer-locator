@@ -23,8 +23,26 @@
                         GSTIN: {{ (!empty($to_user))?((!empty($to_user->gstin))?$to_user->gstin:' N/A '):((!empty($setting['gstin']))?$setting['gstin'] : ' N/A ') }}
                     </address>
                 </div>
-            </div>
-        
+                <div class="col-sm-4 invoice-col">
+                    <div class="form-group">
+                        <label for="date">Date:</label>                        
+                        <input type="text" class="mr-3 dateimepicker-input form-control col-md-6" name="created_at" id="datetimepickerM" data-toggle="datetimepicker" data-target="#datetimepicker"  value="{{$myCart->getCreatedat($id)}}"/>
+                    </div>
+                </div>
+                @notadmin()
+                @if(!empty($type) && $type=='po')
+                <div class="col-sm-12 col-md-4 mt-2">
+                    <!-- text input -->
+                    <div class="form-group">
+                        <label>Inquiry</label>
+                        <select class="form-control select2 select-inquiry" id='selectInquiry'>
+                            <option value="">Select</option>
+                        </select>
+                    </div>
+                </div>
+                @endif
+                @endnotadmin()
+            </div>        
             <div class="row">
                 @if($is_new_product)
                 <div class="col-sm-12 col-md-4 mt-2">

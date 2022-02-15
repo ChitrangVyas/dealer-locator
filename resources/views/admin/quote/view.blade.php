@@ -5,7 +5,7 @@
     </div>
 </div>
 @include('layouts.partials.invoice')
-@if($order->type == 'quote')
+@if($order->type == 'sale')
 <div class="row">
     <form id="rutika" class="col-12" enctype="multipart/form-data">
         @csrf

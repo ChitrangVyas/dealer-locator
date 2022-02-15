@@ -123,10 +123,7 @@
             "serverSide": true,
             "ajax": dataTableRequest("{{ route('list.sale') }}"),
         });
-        $('.datetimepicker-input').datetimepicker({
-            format: 'YYYY-MM-DD HH:mm',
-            date: moment()
-        });
+       
         $('.summernote').summernote({
             height: 150
         });
@@ -143,6 +140,7 @@
             $("#uploadedPo").html("");
             $(`#orderModal .modal-body`).html("");
             getOrderData(view_url,{'order_id':$(this).data('order')}).then(function(res){
+                if($(this).attr('title')=="View"){
                 $('.dateimepicker-input').datetimepicker({
                     format: 'YYYY-MM-DD HH:mm',
                     // date: moment(),
@@ -150,9 +148,14 @@
                         time: "far fa-clock",
                     }
                 });
-                $('.select2').select2({
-                    width:"26%",
+            }else{
+                $('.dateimepicker-input').datetimepicker({
+                    format: 'YYYY-MM-DD',      
+                                  
                 });
+            }
+                              
+            select2Product();
                 if($('input[name=order_id]').val()){
                     getOrderImage("{{ route('order.po.image') }}",{'order_id':$('input[name=order_id]').val()}).then(function(res){    
                     });
@@ -179,7 +182,7 @@
                 select2Customer();
             });
         });
-
+       
         $('body').on('submit','#saveQuote', function(e){
             e.preventDefault();
             let url = ($('#type').val() == 'sale')?"{{ route('order.sale.store') }}":"{{ route('order.po.store') }}";

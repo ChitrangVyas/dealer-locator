@@ -617,9 +617,10 @@
                 data: function (params) {
                     return {
                         q: params.term, // search term
-                        fields:'customer_id,created_at',
+                        fields:"customer_id,inquiries.created_at,CONCAT(`users`.`name`, ' - ', DATE(inquiries.created_at)) as text",
                         table:'inquiries',
-                        where: 'deleted_at is NULL '
+                        where: "inquiries.deleted_at is NULL AND users.name like '%${params.term}%'",
+                        joins:[{'join_table':'users','to_column':'customer_id','from_column':'users.id','type':'left'}]
                     };
                 },
                 processResults: function (data) {

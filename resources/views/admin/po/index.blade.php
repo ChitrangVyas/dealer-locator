@@ -150,10 +150,6 @@
             "serverSide": true,
             "ajax": dataTableRequest("{{ route('list.po') }}"),
         });
-        $('.datetimepicker-input').datetimepicker({
-            format: 'YYYY-MM-DD HH:mm',
-            date: moment()
-        });
         $('.summernote').summernote({
             height: 150
         });
@@ -168,8 +164,13 @@
         $('body').on('click','.view-order',function(){
             var view_url = $(this).data('url');
             $(`#orderModal .modal-body`).html("");
-            getOrderData(view_url,{'order_id':$(this).data('order')}).then(function(res){
+            getOrderData(view_url,{'order_id':$(this).data('order')}).then(function(res){                
+                $('.dateimepicker-input').datetimepicker({
+                    format: 'YYYY-MM-DD',      
+                                  
+                });
                 select2Product();
+                select2Inquiry();
             });
         });
 
@@ -178,12 +179,14 @@
             if(type=='vendor'){
                 getData("{{route('po.create')}}",{'type':type},'PoModal','modalTitle').then(function(res){
                     select2Vendor();
+                    select2Inquiry();
                     $('#PoModal').modal('show');
                 });
             }else{
                 getOrderData("{{route('cart.po.create')}}",{'dealer':"{{auth()->user()->parent_id}}"}).then(function(res){
                     $('#orderModal').modal('show');
                     select2Product();
+                    select2Inquiry();
                 });
             }
 
@@ -194,6 +197,7 @@
                 getOrderData("{{route('cart.po.create')}}",{'order_id':po,'is_po_edit':1}).then(function(res){
                     $('#orderModal').modal('show');
                     select2Product();
+                    select2Inquiry();
                 });
         });
 
@@ -234,6 +238,7 @@
                 getOrderData("{{route('cart.po.create')}}",{'vendor':$(this).val()}).then(function(res){
                     $('#orderModal').modal('show');
                     select2Product();
+                    select2Inquiry();
                 });
             }
         });
@@ -291,6 +296,7 @@
         $("body").on("click","#addProductToCart",function(){
             addProductToCart().then(function(){
                 select2Product();
+                select2Inquiry();
             });
         });
         $("body").on("click","#addNewProductToCart",function(){
@@ -307,6 +313,7 @@
             $(this).closest('.product-detail').find('.amount').text(amount); */
             updateCart().then(function(){     
                 select2Product();
+                select2Inquiry();
             });
         });
 
@@ -314,6 +321,7 @@
             if(confirm("Do you want to remove this product from the cart?")){
                 removeCartProduct($(this).data('product')).then(function(){
                     select2Product();
+                    select2Inquiry();
                 });
 
             }
@@ -586,6 +594,32 @@
                         q: params.term, // search term
                         table:'products',
                         where: 'deleted_at is NULL  AND status = 1'
+                    };
+                },
+                processResults: function (data) {
+                    return {
+                        results: data
+                    };
+                }
+            }
+        });
+    }
+    function select2Inquiry(){
+        $('.select-inquiry').select2({
+            placeholder: "Select",
+            allowClear: true,
+            minimumInputLength: 2,
+            width:"100%",
+            ajax: {
+                url: "{{route('get_value')}}",
+                type: 'POST',
+                dataType: 'json',
+                data: function (params) {
+                    return {
+                        q: params.term, // search term
+                        fields:'customer_id,created_at',
+                        table:'inquiries',
+                        where: 'deleted_at is NULL '
                     };
                 },
                 processResults: function (data) {

@@ -20,8 +20,15 @@ class DatabaseSeeder extends Seeder
             CitiesTableSeeder::class, 
             UserGroupSeeder::class,
             SettingsSeeder::class,
+            SMSSettingsSeeder::class,
             AdminUserSeeder::class,
-            TaxGroupSeeder::class
+            TaxGroupSeeder::class,
+            ManufactureSeeder::class,
+            BrandSeeder::class,
+            CategorySeeder::class,
+            ProductSeeder::class,
+            ProductCategorySeeder::class,
+            InventorySeeder::class
         ]);
     }
 }

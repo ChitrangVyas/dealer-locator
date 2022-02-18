@@ -58,6 +58,10 @@ Route::group(['prefix'=>'admin','middleware'=>['auth']],function () {
     Route::any('/status/update', [App\Http\Controllers\CommonController::class, 'updateItemStatus'])->name('status.update');
     Route::any('staff/listajaxdata', [App\Http\Controllers\Admin\AdminUserController::class,'listAjaxData'])->name('stafflistajax');
     Route::any('dealer/listajaxdata', [App\Http\Controllers\Admin\DealerUserController::class,'listAjaxData'])->name('dealerlistajax');
+    Route::post('dealer/showProduct', [App\Http\Controllers\Admin\DealerUserController::class,'showProduct'])->name('dealer.showProduct');
+    Route::post('dealer/addProductdiscount', [App\Http\Controllers\Admin\DealerUserController::class,'addProductdiscount'])->name('dealer.addProductdiscount');
+    Route::post('retailer/showProduct', [App\Http\Controllers\Admin\RetailerUserController::class,'showProduct'])->name('retailer.showProduct');
+    Route::post('retailer/addProductdiscount', [App\Http\Controllers\Admin\RetailerUserController::class,'addProductdiscount'])->name('retailer.addProductdiscount');
     Route::any('retailer/listajaxdata', [App\Http\Controllers\Admin\RetailerUserController::class,'listAjaxData'])->name('retailerlistajax');
     Route::any('manufacturer/listajaxdata', [App\Http\Controllers\Admin\ManufacturerController::class,'listAjaxData'])->name('manufacturerlistajax');
     Route::any('brand/listajaxdata', [App\Http\Controllers\Admin\BrandController::class,'listAjaxData'])->name('brandlistajax');
@@ -138,6 +142,7 @@ Route::group(['prefix'=>'admin','middleware'=>['auth']],function () {
     Route::post('cart/quote/create', [App\Http\Controllers\Admin\CartController::class,'createQuote'])->name('cart.quote.create');
     Route::post('cart/quote/edit', [App\Http\Controllers\Admin\CartController::class,'editQuote'])->name('cart.quote.edit');
     Route::post('cart/sale/create', [App\Http\Controllers\Admin\CartController::class,'createSale'])->name('cart.sale.create');
+    Route::post('cart/sale/edit', [App\Http\Controllers\Admin\CartController::class,'editSale'])->name('cart.sale.edit');
     Route::post('cart/product/add', [App\Http\Controllers\Admin\CartController::class,'addProductToCart'])->name('cart.product.add');
     Route::post('cart/product/new/', [App\Http\Controllers\Admin\CartController::class,'addNewProductToCart'])->name('cart.product.new');
     Route::put('cart/product/update', [App\Http\Controllers\Admin\CartController::class,'update'])->name('cart.update');

@@ -583,6 +583,47 @@ class OrderController extends MainController
         unset($cart_data['tax_group']);
         $cart_data['order_reference'] = (!empty($cart_data['order_reference']))?$cart_data['order_reference']:NULL;
         try{
+            $order_data = explode('_',$request_data['cart_id']);
+            if($order_data[1] == 'edit'){
+                $sale = Order::findOrFail($order_data[2]);
+                $sale->update($cart_data);
+                if(!empty($request_data['product'])){
+                    $current_order_product = OrderProduct::where('order_id',$sale->id);
+                    if(!empty($current_order_product)){
+                        $order_product = $current_order_product->delete();
+                    }
+                    foreach($request_data['product'] as $key => $value){
+                        $cart_product = $cart->get($key);
+                        $tax_group_id = $this->myCart->getTaxGroup($request_data['cart_id']);
+                        $order_product_data = array('order_id' => $sale->id, 'product_id' => ($request_data['is_new_product']==1)?NULL:$cart_product->id, 'product_name'=>$cart_product->name, 'qty' => $cart_product->quantity, 'amount' => $cart_product->price, 'discount_percentage'=>$this->myCart->getDiscountPerProductPercentage($cart_product->id,$request_data['cart_id'],$cart), 'discount'=>$this->myCart->getDiscountPerProduct($cart_product->id,$request_data['cart_id'],$cart),'tax_group_id'=>$tax_group_id[$cart_product->id]);
+                        $order_product = '';
+                        if(!empty($order_product_data)){
+                            $order_product = OrderProduct::create($order_product_data);
+                            if((!empty($tax_data['product_tax']))){
+                                if(in_array($cart_product->id,array_keys($tax_data['product_tax']))){
+                                    foreach($tax_data['product_tax'][$cart_product->id] as $tax){
+                                        $order_tax_data = OrderProductTax::create(["order_product_id"=>$order_product->id,"tax_id"=>$tax['tax_id'],"price"=>$tax['tax']]);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    $cart->clear();
+                    $this->myCart->clear($request_data['cart_id']);
+                    if((!empty($request_data['btnSave'])) && $request_data['btnSave']=='savensend')
+                    {
+                        $from = (!empty($sale->addedBy))?$sale->addedBy->email:$this->settingJson['mail_from_email'];
+                        $from_name = (!empty($sale->addedBy))?$sale->addedBy->name:$this->settingJson['mail_from_name'];
+                        $customer = (!empty($sale->customer))?$sale->customer->email:$this->settingJson['mail_from_email'];
+                        try{
+                            Mail::to($customer)->send(new OrderEmailTemplate($sale,config('app.name').' - Order',$from,$from_name));
+                        }catch(Exception $e){
+                            return response()->json(['status' => 'error','code' => 0,'message' => 'Unable to sent Mail.','body'=>$e->getMessage()]);
+                        }
+                    }
+                }
+                return response()->json(['status' => 'successful', 'data'=>['quote'=>$cart_data['order_reference']],'code'=>1,'message'=>'Order Successfully updated.']);
+            }else{
             $order = Order::create($cart_data);
             if(!empty($order)){
                 if(!empty($order->customer) && ($order->customer->users_group_id == 2 || ($order->customer->users_group_id == 3))){
@@ -649,6 +690,7 @@ class OrderController extends MainController
             }else{
                 return response()->json(['status' => 'error','code'=>0,'message'=>'Unable to generate Order.']);
             }
+        }
         }catch(Exception $e){
             return response()->json(['status' => 'error','code' => 0,'message' => $e->getMessage()]);                
         }
@@ -821,7 +863,8 @@ class OrderController extends MainController
             //$added_by  = (!empty($order->added_by))?$order->added_by:$this->settingJson['name'];
             $action_html = "<span><a data-url=".route('sale.show',$order->id)." data-order=".$order->id." class='btn btn-primary view-order' data-toggle='modal' data-target='#orderModal' title='View'><i class='far fa-eye' title='View'></i></a></span>";
             // $action_html .= "<span class='ml-3 create-po-".$order->id."'><a data-url=".route('cart.po.create')." data-order=".$order->id." class='btn btn-success view-quote' data-toggle='modal' data-target='#orderModal'>Generate PO</a></span>";
-            // $action_html = "<span><a href=".route('order.edit',$order->id)." class='btn btn-primary'>Edit</a></span>";
+            $action_html .= "<span class='ml-3'>
+            <a data-url=".route('cart.sale.edit',$order->id)." data-order=".$order->id." class='btn btn-primary view-order' data-toggle='modal' data-target='#orderModal' title='Edit'><i class='fas fa-pen'></i></a></span>";
             // $action_html .= "<span class='ml-3'><button type=submit data-user=$order->id class='btn btn-danger' onClick=deleteOrder($order->id)>Delete</button></span>";
             $data[] = [$order->id,$order->order_number,$order->amount, ucwords($customer), $order_status ,$order->created_date, $action_html];
         }
@@ -1090,8 +1133,10 @@ class OrderController extends MainController
         $start =  $request->input('start','');
         $length=  $request->input('length','');
         $search = $request->input('search.value','');
-        $from_date = $request->input('from_date','');
+        $from_date = $request->input('from_date','');        
         $to_date = $request->input('to_date','');
+        $order_stage = $request->input('order_stage','');
+        $payment_status = $request->input('order_status','');
         $where = 'orders.type = "sale" AND orders.deleted_at is NULL';
         if((!empty($user->userGroup)) && $user->userGroup->id == '2'){
             // $users = implode(',',User::where('parent_id',$user->id)->get()->pluck('id')->toArray());
@@ -1107,13 +1152,21 @@ class OrderController extends MainController
         if(!empty($from_date) && !empty($to_date)){
             $where .= " AND (orders.created_at BETWEEN '$from_date 00:00:00' AND '$to_date 23:59:59')";
         }
+        if($order_stage != " "){
+            $where .= " AND (os.stage='$order_stage')";
+        }
+        if(!empty($payment_status)){
+            $where .= " AND (sa.status_id='$payment_status')";
+        }
         $orders = DB::table('orders')
-        ->select(DB::raw('orders.id, orders.for_manufacturer, order_number,orders.to_user,c.name as customer,d.name as added_by, orders.total as amount, orders.created_at as created_date'))
+        ->select(DB::raw('orders.id,os.stage,sa.status_id, orders.for_manufacturer, order_number,orders.to_user,c.name as customer,d.name as added_by, orders.total as amount, orders.created_at as created_date'))
         ->join('order_product AS op','orders.id','=','op.order_id','left')
         ->join('users AS c','orders.to_user','=','c.id','left')
         ->join('users AS d','orders.from_user','=','d.id','left')
+        ->join('order_stages AS os','orders.id','=','os.order_id','left')
+        ->join('order_status AS sa','orders.id','=','sa.order_id','left')
         ->whereRaw($where);
-        
+        //echo $orders->toSql();exit;
         $total_order = $orders->groupBy('orders.id')->get()->count();
         if(!empty($request->input('export',''))){
             $orders = $orders
@@ -1130,12 +1183,12 @@ class OrderController extends MainController
             foreach($orders as $order){
                 $order_data = Order::find($order->id);
                 $order_status = 'N/A';
-                if(!empty($order_data->getUserOrderStatus())){
-                    $order_status = $order_data->getInvoiceStatus($order_data->getUserOrderStatus()->status_id);
+                if(!empty($order->status_id)){
+                    $order_status = $order_data->getInvoiceStatus($order->status_id);
                 }
                 $customer = (!empty($order->customer))?$order->customer:$this->settingJson['name'];
                 $added_by  = (!empty($order->added_by))?$order->added_by:$this->settingJson['name'];
-                $data[] = [$order->id,$order->order_number,$order->amount, ucwords($added_by), ucwords($customer), $order_status,$order_data->getSalesStage(!empty($order_data->orderStage['stage'])?$order_data->orderStage['stage']:0) ,$order->created_date];
+                $data[] = [$order->id,$order->order_number,$order->amount, ucwords($added_by), ucwords($customer), $order_status,$order_data->getSalesStage(!empty($order->stage)?$order->stage:0) ,$order->created_date];
             }
             $return_array = array();
             $return_array['draw'] = $request['draw'];

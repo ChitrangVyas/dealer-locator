@@ -5,9 +5,9 @@
     </div>
 </div>
 @include('layouts.partials.invoice')
-@if($order->type == 'quote')
+@if($order->type == 'sale')
 <div class="row">
-    <form id="uploadPo" class="col-12" enctype="multipart/form-data">
+    <form id="rutika" class="col-12" enctype="multipart/form-data">
         @csrf
         <input type="hidden" name="uploaded_by" value="{{auth()->user()->id}}">
         <input type="hidden" name="order_id" value="{{ $order->id }}">

@@ -374,7 +374,7 @@ class OrderController extends MainController
                 $order = Order::find($cart_data['order_id']);
                 unset($cart_data['order_id']);
                 $order->update($cart_data);
-                $this->saveOrderInquiries($order->id,$cart_data['inquiries']);
+                $this->saveOrderInquiries($order->id,isset($cart_data['inquiries']) ?$cart_data['inquiries'] : [] );
                 if (!empty($request_data['product'])) {
                     $current_order_product = OrderProduct::where('order_id', $order->id);
                     if (!empty($current_order_product)) {
@@ -414,7 +414,7 @@ class OrderController extends MainController
                 $order = Order::create($cart_data);
                 if (!empty($order)) {
                     $order_product_data = [];
-                    $this->saveOrderInquiries($order->id,$cart_data['inquiries']);
+                    $this->saveOrderInquiries($order->id,isset($cart_data['inquiries']) ?$cart_data['inquiries'] : [] );
                     foreach ($request_data['product'] as $key => $value) {
                         $cart_product = $cart->get($key);
                         $order_product_data = array('order_id' => $order->id, 'product_id' => ($request_data['is_new_product'] == 1) ? NULL : $cart_product->id, 'product_name' => $cart_product->name, 'qty' => $cart_product->quantity, 'amount' => $cart_product->price);

@@ -1,8 +1,8 @@
 <div class="row">
     <form id="discountProducts" class="col-12" enctype="multipart/form-data">
         @csrf
-        <input type="hidden" name="buyer_id" value="{{auth()->user()->id}}">
-        <input type="hidden" name="seller_id" value="{{ $users->id }}">
+        <input type="hidden" name="buyer_id" value="{{ $users->id }}">
+        <input type="hidden" name="seller_id" value="{{ (!empty(auth()->user()->parent_id) ? auth()->user()->id : 0) }}">
         <div class="row">
             <div class="col-sm-12 col-md-3">
                 <!-- text input -->

@@ -34,9 +34,11 @@
                 <div class="col-sm-12 col-md-4 mt-2">
                     <!-- text input -->
                     <div class="form-group">
-                        <label>Inquiry</label>
-                        <select class="form-control select2 select-inquiry" id='selectInquiry'>
-                            <option value="">Select</option>
+                        <label>Inquiry</label>                        
+                        <select class="form-control select2 select-inquiry" name="inquiries[]" multiple="true" id='selectInquiry'>                            
+                            @foreach($myCart->getInquires($id) as $key=>$value)
+                                <option selected="true" value="{{$key}}">{{$value}}</option>
+                            @endforeach
                         </select>
                     </div>
                 </div>

@@ -164,7 +164,7 @@
     $('body').on('submit','#discountProducts',function(e){
             e.preventDefault();
             e.stopImmediatePropagation();
-            let url = "{{ route('retailer.addProductdiscount') }}";
+            let url = "{{ route('dealer.addProductdiscount') }}";
             let formData  = $( this ).serialize();   
             saveFormData(url,formData).then(function(res){
                 if(res.code == 1){

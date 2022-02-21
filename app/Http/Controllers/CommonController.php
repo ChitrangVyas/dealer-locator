@@ -78,8 +78,7 @@ class CommonController extends MainController
             }
             $data = $obj->get();
         }
-
-        // dd(DB::getQueryLog());
+         
         echo json_encode($data);
         }
     }

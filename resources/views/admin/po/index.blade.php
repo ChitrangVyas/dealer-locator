@@ -291,7 +291,17 @@
                     }); */
             }
         });
+                        
+        
     });
+    
+    $('body').on('change','#selectInquiry',function(e){        
+            updateCart().then(function(){     
+                select2Product();
+                select2Inquiry();
+            });
+
+     });
         
         $("body").on("click","#addProductToCart",function(){
             addProductToCart().then(function(){
@@ -606,7 +616,7 @@
     }
     function select2Inquiry(){
         $('.select-inquiry').select2({
-            placeholder: "Select",
+            placeholder: false,
             allowClear: true,
             minimumInputLength: 2,
             width:"100%",
@@ -615,12 +625,11 @@
                 type: 'POST',
                 dataType: 'json',
                 data: function (params) {
-                    return {
-                        q: params.term, // search term
-                        fields:"customer_id,inquiries.created_at,CONCAT(`users`.`name`, ' - ', DATE(inquiries.created_at)) as text",
+                    return {                             
+                        fields:"inquiries.id as id,inquiries.created_at,CONCAT(`users`.`name`, ' - ', DATE(inquiries.created_at)) as text",
                         table:'inquiries',
-                        where: "inquiries.deleted_at is NULL AND users.name like '%${params.term}%'",
-                        joins:[{'join_table':'users','to_column':'customer_id','from_column':'users.id','type':'left'}]
+                        where: "inquiries.deleted_at is NULL AND users.name like '%"+params.term+"%'",
+                        joins:[{'join_table':'users','to_column':'customer_id','from_column':'users.id','type':'inner'}]
                     };
                 },
                 processResults: function (data) {

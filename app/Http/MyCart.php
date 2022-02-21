@@ -283,5 +283,13 @@ class MyCart
             $this->session->put($cart_id,json_encode($cart));
         }
     }
-
+    public function setInquires($cart_id,$inquiries){        
+        $json = json_decode($this->session->get($cart_id,'{}'),true);
+        $json['inquiries'] = $inquiries;
+        $this->session->put($cart_id,json_encode($json));        
+    }
+    public function getInquires($cart_id){        
+        $json = json_decode($this->session->get($cart_id,[]),true);        
+        return isset($json['inquiries']) ? $json['inquiries'] : [];
+    }
 }

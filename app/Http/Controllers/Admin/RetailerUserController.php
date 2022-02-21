@@ -140,40 +140,7 @@ class RetailerUserController extends MainController
             
         }
         return abort(404);
-    }
-    public function showProduct(Request $request)
-    {
-        $users = User::findOrFail($request->get('data')['user_id']);
-        $products = DB::table('products')
-        ->selectRaw('products.id,products.name,products.price,product_discounts.discount_percentage')
-        ->leftjoin("product_discounts",function($join) use ($request){
-            $join->on("product_discounts.product_id","=","products.id")
-                ->on("product_discounts.seller_id","=",DB::raw($request->get('data')['user_id']));
-
-        },'left')
-        ->where('product_discounts.deleted_at', NULL)
-        ->get();  
-        $json['cart_content'] = view('retailer.show',['users'=>$users,'products'=>$products])->render();
-        return response()->json(['status' => 'successful','code'=>1, 'data'=>$json, 'message'=>'']);
-    }
-    public function addProductdiscount(Request $request)
-    {
-        $request_data = $request->all();
-        $add_data = [];
-        $i=0;
-        $affectedRows = ProductDiscount::where('seller_id', $request_data['seller_id'])->delete();       
-        foreach($request_data['product_id'] as $k=>$v){
-            if(!empty($request_data['discount_percentage'][$k])){
-                $add_data['product_id']=$k;
-                $add_data['discount_percentage'] = $request_data['discount_percentage'][$k];
-                $add_data['seller_id'] = $request_data['seller_id'];
-                $add_data['buyer_id'] = $request_data['buyer_id'];            
-                $product_discount = ProductDiscount::create($add_data);
-                $i++;
-            }
-        }       
-        return response()->json(['status' => 'successful', 'code'=>1,'message'=>'Product Discount added Succesfully']);
-    }
+    }   
     /**
      * Update the specified resource in storage.
      *
@@ -277,7 +244,7 @@ class RetailerUserController extends MainController
             }else{
                 $action_html .= "<span class='ml-3'><span class='badge badge-info' title='Inquires'>$total_assigned_inquiries</span></span>";
             }
-            $action_html .="<span class='ml-3'><a data-url=".route('retailer.showProduct',$user->id)." data-product=".$user->id." class='btn btn-primary view-product' data-toggle='modal' data-target='#productModal' title='View'><i class='fa fa-rupee-sign' title='View'></i></a></span>";
+            $action_html .="<span class='ml-3'><a data-url=".route('dealer.showProduct',$user->id)." data-product=".$user->id." class='btn btn-primary view-product' data-toggle='modal' data-target='#productModal' title='View'><i class='fa fa-rupee-sign' title='View'></i></a></span>";
             $data[] = [$user->id,$user->name,$user->email,$user->mobile,$city,$state,$status_html,$action_html];
         }
         $return_array = array();

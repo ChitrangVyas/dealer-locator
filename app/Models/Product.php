@@ -6,7 +6,7 @@ use App\Models\Order;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-
+use App\Models\ProductDiscount;
 class Product extends Model
 {
     use HasFactory;
@@ -68,6 +68,13 @@ class Product extends Model
 
     public function taxGroup(){
         return $this->belongsTo(TaxGroup::class,'tax_group_id');
+    }
+    public function getDiscountedMRP($seller_id,$buyer_id){
+        $ifDiscounted =  ProductDiscount::where('seller_id',$seller_id)->where('buyer_id', $buyer_id)->where('product_id', $this->id)->first() ;
+        if($ifDiscounted){
+            return  $this->price - (($this->price*$ifDiscounted->discount_percentage)/100);
+        }        
+        return $this->price;
     }
 
 }

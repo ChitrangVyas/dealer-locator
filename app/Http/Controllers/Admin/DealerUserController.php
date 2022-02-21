@@ -106,7 +106,8 @@ class DealerUserController extends MainController
         ->selectRaw('products.id,products.name,products.price,product_discounts.discount_percentage')
         ->leftjoin("product_discounts",function($join) use ($request){
             $join->on("product_discounts.product_id","=","products.id")
-                ->on("product_discounts.seller_id","=",DB::raw($request->get('data')['user_id']));
+                ->on("product_discounts.seller_id","=",DB::raw(!empty(auth()->user()->parent_id)?auth()->user()->id:0))
+                ->on("product_discounts.buyer_id","=",DB::raw($request->get('data')['user_id']));
 
         },'left')
         ->where('product_discounts.deleted_at', NULL)
@@ -119,7 +120,7 @@ class DealerUserController extends MainController
         $request_data = $request->all();
         $add_data = [];
         $i=0;
-        $affectedRows = ProductDiscount::where('seller_id', $request_data['seller_id'])->delete();       
+        $affectedRows = ProductDiscount::where('seller_id', $request_data['seller_id'])->where('buyer_id', $request_data['buyer_id'])->delete();       
         foreach($request_data['product_id'] as $k=>$v){
             if(!empty($request_data['discount_percentage'][$k])){
                 $add_data['product_id']=$k;

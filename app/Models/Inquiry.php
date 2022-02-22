@@ -23,7 +23,7 @@ class Inquiry extends Model
     
     public function customer(){
         return $this->belongsTo(User::class,'customer_id');
-    }
+    }        
 
     public function dealer(){
         return $this->belongsTo(User::class,'dealer_id');
@@ -63,5 +63,5 @@ class Inquiry extends Model
     public function getInquirystatusName(){
         return $this->getInquiryStatus()[$this->status];
     }
-
+    
 }

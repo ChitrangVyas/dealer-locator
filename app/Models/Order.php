@@ -114,7 +114,17 @@ class Order extends Model
         }else{
              return ['sub_total' => 0.00];
         }
+    }    
+    public function inquiries(){
+        return $this->hasMany(OrderInquiries::class);
     }
-
+    public function getInquiries(){
+        return DB::table('inquiries')
+        ->selectRaw('inquiries.id,users.name,inquiries.created_at')        
+        ->join('users', 'users.id', '=', 'inquiries.customer_id')
+        ->join('order_inquiries', 'inquiries.id', '=', 'order_inquiries.inquiry_id')
+        ->where('order_inquiries.order_id', $this->id)
+        ->get();   
+    }
     // $order->getInvoiceStatus($order->getUserOrderStatus()[0]->status_id)
 }

@@ -345,13 +345,18 @@ class OrderController extends MainController
             'amount' => 'required|array|min:1',
             'amount.*' => 'required|numeric|min:1'
         ])->validate();
+
         $request_data = $request->all();
         $cart = \Cart::Session($request_data['cart_id']);
         $cart_data = $this->myCart->getAll($request_data['cart_id']);
         $tax_data['tax_group'] = (!empty($cart_data['tax_group'])) ? $cart_data['tax_group'] : [];
+        $inquiries = (!empty($cart_data['inquiries'])) ? $cart_data['inquiries'] : [];
         $tax_data['total_tax'] = (!empty($cart_data['total_tax'])) ? $cart_data['total_tax'] : '';
-        $tax_data['product_tax'] = (!empty($cart_data['product_tax'])) ? $cart_data['product_tax'] : '';        
+        $tax_data['product_tax'] = (!empty($cart_data['product_tax'])) ? $cart_data['product_tax'] : '';
         $cart_data['total'] = $cart_data['cart_total'];
+        if (isset($cart_data['inquiries'])) {
+            unset($cart_data['inquiries']);
+        }
         if (isset($cart_data['tax_group'])) {
             unset($cart_data['tax_group']);
         }
@@ -374,7 +379,7 @@ class OrderController extends MainController
                 $order = Order::find($cart_data['order_id']);
                 unset($cart_data['order_id']);
                 $order->update($cart_data);
-                $this->saveOrderInquiries($order->id,isset($cart_data['inquiries']) ?$cart_data['inquiries'] : [] );
+                $this->saveOrderInquiries($order->id, $inquiries);
                 if (!empty($request_data['product'])) {
                     $current_order_product = OrderProduct::where('order_id', $order->id);
                     if (!empty($current_order_product)) {
@@ -414,7 +419,7 @@ class OrderController extends MainController
                 $order = Order::create($cart_data);
                 if (!empty($order)) {
                     $order_product_data = [];
-                    $this->saveOrderInquiries($order->id,isset($cart_data['inquiries']) ?$cart_data['inquiries'] : [] );
+                    $this->saveOrderInquiries($order->id, $inquiries);
                     foreach ($request_data['product'] as $key => $value) {
                         $cart_product = $cart->get($key);
                         $order_product_data = array('order_id' => $order->id, 'product_id' => ($request_data['is_new_product'] == 1) ? NULL : $cart_product->id, 'product_name' => $cart_product->name, 'qty' => $cart_product->quantity, 'amount' => $cart_product->price);
@@ -1241,7 +1246,7 @@ class OrderController extends MainController
     }
     public function saveOrderInquiries($order, $array)
     {
-        OrderInquiries::where('order_id', $order)->delete();               
+        OrderInquiries::where('order_id', $order)->delete();
         if (!empty($array)) {
             foreach ($array as $key => $value) {
                 OrderInquiries::create(array('order_id' => $order, 'inquiry_id' => $key));

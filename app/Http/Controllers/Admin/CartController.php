@@ -10,7 +10,7 @@ use App\Models\Product;
 use App\Models\TaxGroup;
 use App\Models\User;
 use Illuminate\Http\Request;
-
+use Illuminate\Support\Facades\DB;
 
 class CartController extends MainController
 {
@@ -135,7 +135,7 @@ class CartController extends MainController
         foreach($request->input('inquiries') as $inquiry){
             $obj = Inquiry::findOrFail($inquiry);
             if($obj){
-                $inquiryArray[$obj->id] = $obj->customer->name." ".$obj->created;
+                $inquiryArray[$obj->id] = $obj->customer->name." ".$obj->created_at->format("Y-m-d");
             }            
         }
         $this->myCart->setInquires($request->input('cart_id'),$inquiryArray);                
@@ -437,6 +437,7 @@ class CartController extends MainController
         if(!empty($request_data['data']['order_id'])){
             $id = (!empty($request_data['data']['is_po_edit']))?"po_edit_".$request_data['data']['order_id']:"po_".$request_data['data']['order_id'];
             $order = Order::findOrFail($request_data['data']['order_id']);
+            $this->setInquiriesTocartFromOrder($order,$id);
             $taxGroup  = TaxGroup::where('is_default',1)->first();
             $product_tax_group = [];
             $selected_tax_group = [];
@@ -714,5 +715,20 @@ class CartController extends MainController
             }
         }
         return $condition;
+    }
+    public function setInquiriesTocartFromOrder($order,$cartId){
+        $inquiries=[];    
+        $data = DB::table('inquiries')
+        ->selectRaw('inquiries.id,users.name,inquiries.created_at')        
+        ->join('users', 'users.id', '=', 'inquiries.customer_id')
+        ->join('order_inquiries', 'inquiries.id', '=', 'order_inquiries.inquiry_id')
+        ->where('order_inquiries.order_id', $order->id)
+        ->get();   
+        
+        foreach($data as $inquiry){
+                     
+            $inquiries[$inquiry->id]= $inquiry->name." - ".date('Y-m-d',strtotime($inquiry->created_at));
+        }        
+        $this->myCart->setInquires($cartId,$inquiries);
     }
 }

@@ -16,6 +16,6 @@ class OrderInquiries extends Model
         return $this->belongsTo(Order::class);
     }
     public function inquiry(){
-        return $this->belongsTo(Inquiry::class);
+        return $this->belongsTo(Inquiry::class);        
     }
 }

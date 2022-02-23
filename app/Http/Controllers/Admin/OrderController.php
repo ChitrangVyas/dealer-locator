@@ -977,9 +977,10 @@ class OrderController extends MainController
     public function updateOrderStatus(Request $request)
     {
         $request_data = $request->except('_token', 'method');
-
         $orderStatus = OrderStatus::where('order_id', $request_data['order_id'])->where('user_id', (!empty(auth()->user()->users_group_id)) ? auth()->user()->id : NULL);
         if ((!empty($orderStatus->get())) && count($orderStatus->get())) {
+            $order = Order::findOrFail($request_data['order_id']);
+            $order->update(['courier_detail'=>$request_data['courier_details']]);
             try {
                 $is_updated = $orderStatus->update(['status_id' => $request_data['status_id'], 'updated_at' => \Carbon\Carbon::now()]);
             } catch (Exception $e) {
@@ -992,6 +993,7 @@ class OrderController extends MainController
             }
         } else {
             $order = Order::findOrFail($request_data['order_id']);
+            $order->update(['courier_detail'=>$request_data['courier_details']]);
             $order_status_data[] = array('order_id' => $order->id, 'status_id' => $request_data['status_id'], 'created_at' => \Carbon\Carbon::now(), 'updated_at' => \Carbon\Carbon::now());
             if (empty($order->from_user->users_group_id)) {
                 $order_status_data[0]['user_id'] = NULL;

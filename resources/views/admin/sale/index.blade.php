@@ -134,7 +134,12 @@
             return false;
             }
         });
-
+        
+        $('body').on('click','.courier_details_btn',function(){
+            saveFormData("{{route('invoice.status.update')}}",$('#invoice').serialize(),'orderModal').then(function(res){
+                $('#example').DataTable().ajax.reload(null, false);
+            });
+        });
         $('body').on('click','.view-order',function(){
             var view_url = $(this).data('url');
             $("#uploadedPo").html("");
@@ -163,13 +168,13 @@
             });
         });
         $('body').on('change','#order_status',function(){
-            saveFormData("{{route('invoice.status.update')}}",$('#invoice').serializeArray(),'orderModal').then(function(res){
+            saveFormData("{{route('invoice.status.update')}}",$('#invoice').serialize(),'orderModal').then(function(res){
                 $('#example').DataTable().ajax.reload(null, false);
             });
         });
 
         $('body').on('change','#order_stage',function(){
-            saveFormData("{{route('sale.stage.update')}}",$('#invoice').serializeArray(),'orderModal').then(function(res){
+            saveFormData("{{route('sale.stage.update')}}",$('#invoice').serialize(),'orderModal').then(function(res){
                 $('#example').DataTable().ajax.reload(null, false);
             });
         });
@@ -208,7 +213,7 @@
             if(file != '' && file != undefined && file.length != 0){
                 formData.append('file', file, file.name);
             }
-            saveFormData(url,formData).then(function(res){
+            saveFormDataForFile(url,formData).then(function(res){
                 
             });
         });
@@ -235,7 +240,7 @@
             let url = "{{route('order.po.upload.image')}}";
             let file = $('input[type=file]')[0].files[0];
             formData.append('file', file, file.name);
-            saveFormData(url,formData).then(function(res){
+            saveFormDataForFile(url,formData).then(function(res){
                 let images = [];
                 if($('#uploadedImage').val() != "" && $('#uploadedImage').val().length !== 0){
 
@@ -255,14 +260,12 @@
             e.stopImmediatePropagation();
             let url = "{{route('order.po.recieved')}}";
             // let formData = new FormData($(this)[0]);
-            let formData = new FormData($('#rutika')[0]);
-            console.log(formData);
-            return true;
-            let file = $('input[type=file]')[0].files[0];
+            let formData = new FormData($('#rutika')[0]);                        
+            let file = $('#rutika input[type=file]')[0].files[0];
             if(file != '' && file != undefined && file.length != 0){
                 formData.append('file', file, file.name);
             }
-            saveFormData(url,formData).then(function(res){
+            saveFormDataForFile(url,formData).then(function(res){
                 if(res.code == 1){
                   $(`#orderModal`).modal('hide');
                 }
@@ -387,7 +390,60 @@
             return $.ajax({
                 url: url,
                 type: 'POST',
+                data: formData,                
+                beforeSend: function(){
+                    $('#overlay').show();
+                    $('.btn-save').attr('disabled',true);
+                },
+                complete: function(){
+                    $('#overlay').hide();
+                },
+                success: function (data) {
+                    if(data.code == 1){
+                        Toast.fire({
+                            type: 'success',
+                            title: data.message
+                        });
+                        if(modal !== ''){
+                            $(`#${modal}`).modal('hide');
+                        }
+                    }else{
+                        Toast.fire({
+                            type: 'error',
+                            title: data.message
+                        })
+                    }
+                },
+                completed:function(){
+                    $('.btn-save').attr('disabled',false);
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    $('.btn-save').attr('disabled',false);
+                    var err = JSON.parse(jqXHR.responseText).errors;
+                    $.each(err,function(key,val){                
+                        $(`[name=${key}]`).closest('.form-group').after(`<div class="alert alert-danger mt-2">${val}</div>`);                                        
+                    });
+                    Toast.fire({
+                        type: 'error',
+                        title: JSON.parse(jqXHR.responseText).message
+                    });
+                }
+            });
+    }
+
+    function saveFormDataForFile(url,formData,modal=''){
+            const Toast = Swal.mixin({
+                        toast: true,
+                        position: 'top-end',
+                        showConfirmButton: false,
+                        timer: 5000
+                        });
+            return $.ajax({
+                url: url,
+                type: 'POST',
                 data: formData,
+                processData: false,
+                contentType: false,
                 beforeSend: function(){
                     $('#overlay').show();
                     $('.btn-save').attr('disabled',true);

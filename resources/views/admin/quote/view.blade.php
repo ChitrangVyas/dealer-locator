@@ -76,6 +76,19 @@
                 </div>
             </div>
         </fieldset>
+        <fieldset class="border">
+            <legend class="w-auto m-2">Courier Details</legend>
+            <div class="col-sm-12 col-md-12">
+                <!-- text input -->
+                <div class="form-group clearfix">
+                    <label for="status">Courier Details: </label>
+                    <textarea class="form-control" name="courier_details" id="courier_details">{{$order->courier_detail}}</textarea>                    
+                </div>
+                <div class="form-group clearfix">                                        
+                    <input type="button" value="Update" class="btn btn-primary courier_details_btn" />
+                </div>
+            </div>
+        </fieldset>
         @if(empty(auth()->user()->users_group_id) || (auth()->user()->id == $order->from_user))
         <fieldset class="border">
             <legend class="w-auto m-2">Order Status</legend>

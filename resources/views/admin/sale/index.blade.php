@@ -255,10 +255,8 @@
             e.stopImmediatePropagation();
             let url = "{{route('order.po.recieved')}}";
             // let formData = new FormData($(this)[0]);
-            let formData = new FormData($('#rutika')[0]);
-            console.log(formData);
-            return true;
-            let file = $('input[type=file]')[0].files[0];
+            let formData = new FormData($('#rutika')[0]);                        
+            let file = $('#rutika input[type=file]')[0].files[0];
             if(file != '' && file != undefined && file.length != 0){
                 formData.append('file', file, file.name);
             }
@@ -388,6 +386,8 @@
                 url: url,
                 type: 'POST',
                 data: formData,
+                processData: false,
+                contentType: false,
                 beforeSend: function(){
                     $('#overlay').show();
                     $('.btn-save').attr('disabled',true);

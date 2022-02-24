@@ -305,7 +305,7 @@
                     @enderror
                 </div>
             </div>
-            <div class="col-sm-12 col-md-4">
+            <div class="col-sm-12 col-md-4 mail_more_info">
                 <!-- text input -->
                 <div class="form-group">
                     <label>User Name</label>
@@ -315,7 +315,7 @@
                     @enderror
                 </div>
             </div>
-            <div class="col-sm-12 col-md-4">
+            <div class="col-sm-12 col-md-4 mail_more_info">
                 <!-- text input -->
                 <div class="form-group">
                     <label>Password</label>
@@ -326,7 +326,7 @@
                     @enderror
                 </div>
             </div>
-            <div class="col-sm-12 col-md-4">
+            <div class="col-sm-12 col-md-4 mail_more_info">
                 <!-- text input -->
                 <div class="form-group">
                     <label>Mail Host</label>
@@ -336,7 +336,7 @@
                     @enderror
                 </div>
             </div>
-            <div class="col-sm-12 col-md-4">
+            <div class="col-sm-12 col-md-4 mail_more_info">
                 <!-- text input -->
                 <div class="form-group">
                     <label>Mail Port</label>
@@ -346,7 +346,7 @@
                     @enderror
                 </div>
             </div>
-            <div class="col-sm-12 col-md-4">
+            <div class="col-sm-12 col-md-4 mail_more_info">
                 <!-- text input -->
                 <div class="form-group">
                     <label>Mail Encryption</label>
@@ -396,6 +396,15 @@
 @section('js')
 <script>
 jQuery(document).ready(function(){
+    $("#mail_mailer").change(function(){
+        if($(this).val()=="sendmail"){
+            $(".mail_more_info").hide();
+        }else{
+            $(".mail_more_info").show();
+        }        
+    });
+    $("#mail_mailer").trigger('change');
+
     //timezone
     $('.timezone').select2({
         placeholder: "Select Timezone",

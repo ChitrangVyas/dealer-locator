@@ -55,15 +55,19 @@ class MainController extends Controller
                 $this->settingJson['state_name']=(!empty($state))?$state->name:'';
                 $this->settingJson['city_name']=(!empty($city))?$city->name:'';
                 $this->settingJson['country_name']=(!empty($country))?$country->name:'';
-                $mailConfig = [
-                    'transport' => $this->settingJson['mail_mailer'],
-                    'host' => $this->settingJson['mail_host'],
-                    'port' => $this->settingJson['mail_port'],
-                    'encryption' => ($this->settingJson['mail_encryption']=='null') ? null :$this->settingJson['mail_encryption'],
-                    'username' => $this->settingJson['mail_username'],
-                    'password' => $this->settingJson['mail_password'],
-                    'timeout' => null
-                ];
+                $mailConfig['transport'] = $this->settingJson['mail_mailer'];
+                if($this->settingJson['mail_mailer']=="sendmail"){
+                    $mailConfig['path']='/usr/sbin/sendmail -bs';
+                }else{
+                    $mailConfig = array_merge($mailConfig,[                    
+                        'host' => $this->settingJson['mail_host'],
+                        'port' => $this->settingJson['mail_port'],
+                        'encryption' => ($this->settingJson['mail_encryption']=='null') ? null :$this->settingJson['mail_encryption'],
+                        'username' => $this->settingJson['mail_username'],
+                        'password' => $this->settingJson['mail_password'],
+                        'timeout' => null
+                    ]);
+                }
                 config(['mail.mailers.smtp' => $mailConfig]);            
                 config(['mail.from.address' => $this->settingJson['mail_from_email']]);
                 config(['mail.from.name' => $this->settingJson['mail_from_name']]);

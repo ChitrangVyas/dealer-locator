@@ -288,7 +288,7 @@
         <div class="row">
             <div class="col-sm-12 col-md-12 border-bottom mt-2 mb-2">
                     <div class="col-6">
-                        <h4 class="text-muted">SMTP Settings</h4>
+                        <h4 class="text-muted">Mail Settings</h4>
                     </div>
             </div>
             <div class="col-sm-12 col-md-4">

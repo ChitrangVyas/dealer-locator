@@ -597,6 +597,7 @@ class OrderController extends MainController
         $cart_data['total'] = $cart_data['cart_total'];
         unset($cart_data['cart_total']);
         unset($cart_data['tax_group']);
+        unset($cart_data['inquiries']);
         $cart_data['order_reference'] = (!empty($cart_data['order_reference'])) ? $cart_data['order_reference'] : NULL;
         try {
             $order_data = explode('_', $request_data['cart_id']);
@@ -638,8 +639,8 @@ class OrderController extends MainController
                     }
                 }
                 return response()->json(['status' => 'successful', 'data' => ['quote' => $cart_data['order_reference']], 'code' => 1, 'message' => 'Order Successfully updated.']);
-            } else {
-                $order = Order::create($cart_data);
+            } else {                
+                $order = Order::create($cart_data);                
                 if (!empty($order)) {
                     if (!empty($order->customer) && ($order->customer->users_group_id == 2 || ($order->customer->users_group_id == 3))) {
                         Helpers::storeNotification($order->customer->id, "Order #$order->order_number has been created for you.", 0, 3);

@@ -236,6 +236,9 @@ class OrderController extends MainController
         unset($quote_data['product_tax']);
         unset($quote_data['cart_total']);
         unset($quote_data['tax_group']);
+        if (isset($cart_data['inquiries'])) {
+            unset($cart_data['inquiries']);
+        }
         $cart = \Cart::Session($request_data['cart_id']);
         $quote_data['status'] =  'sent';
         try {

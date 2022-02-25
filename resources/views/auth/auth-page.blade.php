@@ -21,7 +21,7 @@
         {{-- Logo --}}
         <div class="{{ $auth_type ?? 'login' }}-logo">
             <a href="{{ $dashboard_url }}">
-                <img src="{{ asset(config('logo')) }}" alt="Logo" height="80">
+                <img src="{{ asset(config('logo')) }}" alt="Logo" class="img-fluid">
             </a>
         </div>
 

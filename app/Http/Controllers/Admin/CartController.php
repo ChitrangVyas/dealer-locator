@@ -253,6 +253,7 @@ class CartController extends MainController
             if ($cart->isEmpty()) {
                 $items = [];
                 $this->myCart->setTo($id, $inquiry->customer_id);
+                $this->myCart->setCreatedat($id, date('Y-m-d'));
                 if ((!empty($inquiry->product)) && $inquiry->product->count() > 0) {
                     foreach ($inquiry->product as $product) {
                         $condition = $this->getProductTaxCondition($product, $id);

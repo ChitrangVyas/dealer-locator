@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Models\Product;
 use Illuminate\Support\Facades\DB;
-
+use App\Models\OrderImage;
 class Order extends Model
 {
     use HasFactory;
@@ -86,7 +86,7 @@ class Order extends Model
     }
 
     public function getSalesOrderStage(){
-        return OrderStage::where('order_id',$this->id)->get();
+        return OrderStage::where('order_id',$this->id)->orderBy('id','desc')->first();
     }
 
     public function getTotalTax(){
@@ -127,4 +127,12 @@ class Order extends Model
         ->get();   
     }
     // $order->getInvoiceStatus($order->getUserOrderStatus()[0]->status_id)
+
+    public function getPOImages(){                
+        return OrderImage::where('order_id',$this->id)->whereNull('product_id')->get();
+    }
+    public function getInstallation(){        
+        return OrderImage::where('order_id',$this->id)->where('product_id','>','0')->get();
+    }
+    
 }

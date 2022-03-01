@@ -46,7 +46,7 @@ class InstallationController extends MainController
         }
         try{
             $order = Order::findOrFail(Crypt::decryptString($request_data['token']));
-            if(!empty($order->orderStage) && ($order->orderStage->stage == 2)){
+            if(!empty($order->getSalesOrderStage()) && ($order->getSalesOrderStage()->stage == 2)){
                 if(!empty($order->token) && $order->token == $request_data['password']){
                     \Session::put('installation_user',$order->id);
                     return redirect(route('installation.order.dashboard'));

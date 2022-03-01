@@ -112,12 +112,12 @@
                                 <select name="stage" class="form-control select2" id="order_stage">
                                     <option value="">Select</option>
                                     @foreach ($order->getOrderStage() as $key=>$order_stage)
-                                        <option value="{{$key}}" {{(!empty($order->orderStage) && ($order->orderStage->stage == $key))?'selected':''}}>{{$order_stage}}</option>
+                                        <option value="{{$key}}" {{(!empty($order->orderStage) && ($order->getSalesOrderStage()->stage == $key))?'selected':''}}>{{$order_stage}}</option>
                                     @endforeach
                                 </select>
                             </td>
                         </tr>
-                        @if(!empty($order->orderStage) && ($order->orderStage->stage == 2))
+                        @if(!empty($order->getSalesOrderStage()) && ($order->getSalesOrderStage()->stage == 2))
                         <tr>
                             <td>
                                 <label for="link">Upload Link:</label>
@@ -160,9 +160,9 @@
         <input type="hidden" name="order_id" value="{{ $order->id }}">
         <fieldset class="border">
             <legend class="w-auto m-2">Uploaded Image</legend>
-            @if(!empty($order->orderImage) && (count($order->orderImage) > 0))
+            @if(!empty($order->getInstallation()) && (count($order->getInstallation()) > 0))
                 <div class="row">
-                    @foreach ($order->orderImage as $orderImage)
+                    @foreach ($order->getInstallation() as $orderImage)
                         @if(!empty($orderImage->product))
                         <div class="col-md-4 mt-3 mb-2 img-{{$orderImage->id}}">
                             <div class="d-flex justify-content-center remove">

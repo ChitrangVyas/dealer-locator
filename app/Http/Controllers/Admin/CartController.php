@@ -250,9 +250,11 @@ class CartController extends MainController
             $product_tax_group = [];
             $selected_tax_group = [];
             $cart  = \Cart::session($id);
+            $this->myCart->setCreatedat($id, date('Y-m-d'));
             if ($cart->isEmpty()) {
                 $items = [];
                 $this->myCart->setTo($id, $inquiry->customer_id);
+                
                 if ((!empty($inquiry->product)) && $inquiry->product->count() > 0) {
                     foreach ($inquiry->product as $product) {
                         $condition = $this->getProductTaxCondition($product, $id);

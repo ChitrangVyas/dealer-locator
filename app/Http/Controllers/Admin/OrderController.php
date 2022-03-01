@@ -1023,7 +1023,6 @@ class OrderController extends MainController
         $orderStatus = OrderStage::where('order_id', $request_data['order_id'])->where('user_id', (!empty(auth()->user()->users_group_id)) ? auth()->user()->id : NULL);
         if ((!empty($orderStatus->get())) && count($orderStatus->get())) {
             try {
-
                 $is_updated = $orderStatus->update(['stage' => $request_data['stage'], 'updated_at' => \Carbon\Carbon::now()]);
             } catch (Exception $e) {
                 return response()->json(['status' => 'error', 'code' => 0, 'message' => $e->getMessage()]);

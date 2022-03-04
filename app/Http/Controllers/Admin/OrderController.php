@@ -23,6 +23,7 @@ use Illuminate\Support\Facades\Mail;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Str;
 use View;
+use App\Models\User;
 
 class OrderController extends MainController
 {
@@ -784,8 +785,8 @@ class OrderController extends MainController
         $search = $request['search']['value'];
         $where = 'orders.type = "po" AND orders.deleted_at is NULL';
         if ((!empty($user->userGroup)) && $user->userGroup->id == '2') {
-            // $users = implode(',',User::where('parent_id',$user->id)->get()->pluck('id')->toArray());
-            // $where .= (!empty($user->id))?" AND (from_user=$user->id OR to_user=$user->id ":'';
+            $users = implode(',',User::where('parent_id',$user->id)->get()->pluck('id')->toArray());
+            //$where .= (!empty($user->id))?" AND (from_user=$user->id OR to_user=$user->id ":'';
             $where .= (!empty($user->id)) ? " AND (from_user=$user->id OR to_user=$user->id" : '';
             $where .= (!empty($users)) ? " OR from_user in ($users) )" : ")";
         }
@@ -844,28 +845,31 @@ class OrderController extends MainController
     public function listSaleAjaxData(Request $request)
     {
         $user =  auth()->user();
-        $start =  $request['start'];
-        $length =  $request['length'];
-        $search = $request['search']['value'];
+        $start =  @$request['start'];
+        $length =  @$request['length'];
+        $search = @$request['search']['value'];
         $where = 'orders.type = "sale" AND orders.deleted_at is NULL';
+        
         if ((!empty($user->userGroup)) && $user->userGroup->id == '2') {
-            // $users = implode(',',User::where('parent_id',$user->id)->get()->pluck('id')->toArray());
+            //Dealer
+            $users = implode(',',User::where('parent_id',$user->id)->get()->pluck('id')->toArray());
             $where .= (!empty($user->id)) ? " AND (from_user=$user->id OR (to_user=$user->id AND from_user <> NULL) " : '';
-            $where .= (!empty($users)) ? " OR from_user in ($users) )" : ")";
-        }
-        if ((!empty($user->userGroup)) && $user->userGroup->id == '3') {
+            $where .= (!empty($users)) ? " OR from_user in ($users) )" : ")";              
+        }else if ((!empty($user->userGroup)) && $user->userGroup->id == '3') {
             $where .= (!empty($user->id)) ? " AND from_user=$user->id" : '';
         } else {
             $where .= (!empty($user->id)) ? " AND (from_user=$user->id OR from_user is NULL)" : '';
         }
         // $where .= (!empty($dealer_id))?" AND (dealer_id=$dealer_id OR inquiries.created_by=$dealer_id)":'';
         $where .= (!empty($search)) ? " AND (orders.order_number like '$search%' OR orders.total like '$search%' OR orders.created_at like '$search%' OR (c.name is NOT NULL AND c.name like '$search%'))" : '';
+        
         $orders = DB::table('orders')
             ->select(DB::raw('orders.id,order_number,c.name as customer,d.name as added_by, orders.total as amount, orders.created_at as created_date'))
             ->join('order_product AS op', 'orders.id', '=', 'op.order_id', 'left')
             ->join('users AS c', 'orders.to_user', '=', 'c.id', 'left')
             ->join('users AS d', 'orders.from_user', '=', 'd.id', 'left')
             ->whereRaw($where);
+        // $orders->whereRaw($where)->groupby('orders.id')->toSql();
         $total_order = $orders->whereRaw($where)->groupby('orders.id')->get()->count();
 
         $orders = $orders->offset($start)
@@ -885,8 +889,12 @@ class OrderController extends MainController
             //$added_by  = (!empty($order->added_by))?$order->added_by:$this->settingJson['name'];
             $action_html = "<span><a data-url=" . route('sale.show', $order->id) . " data-order=" . $order->id . " class='btn btn-primary view-order' data-toggle='modal' data-target='#orderModal' title='View'><i class='far fa-eye' title='View'></i></a></span>";
             // $action_html .= "<span class='ml-3 create-po-".$order->id."'><a data-url=".route('cart.po.create')." data-order=".$order->id." class='btn btn-success view-quote' data-toggle='modal' data-target='#orderModal'>Generate PO</a></span>";
-            $action_html .= "<span class='ml-3'>
-            <a data-url=" . route('cart.sale.edit', $order->id) . " data-order=" . $order->id . " class='btn btn-primary view-order' data-toggle='modal' data-target='#orderModal' title='Edit'><i class='fas fa-pen'></i></a></span>";
+            
+            if( ( ($user->users_group_id == '1' ||  is_null($user->users_group_id) ) && $order_data->from_user == null) || $user->id == $order_data->from_user)
+            {
+            $action_html .= "<span class='ml-3'><a data-url=" . route('cart.sale.edit', $order->id) . " data-order=" . $order->id . " class='btn btn-primary view-order' data-toggle='modal' data-target='#orderModal' title='Edit'><i class='fas fa-pen'></i></a></span>";}
+            
+
             // $action_html .= "<span class='ml-3'><button type=submit data-user=$order->id class='btn btn-danger' onClick=deleteOrder($order->id)>Delete</button></span>";
             $data[] = [$order->id, $order->order_number, $order->amount, ucwords($customer), $order_status, $order->created_date, $action_html];
         }

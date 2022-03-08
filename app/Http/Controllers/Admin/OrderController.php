@@ -878,8 +878,10 @@ class OrderController extends MainController
             $where .= (!empty($users)) ? " OR from_user in ($users) )" : ")";              
         }else if ((!empty($user->userGroup)) && $user->userGroup->id == '3') {
             $where .= (!empty($user->id)) ? " AND from_user=$user->id" : '';
-        } else {
+        }
+        else if ((!empty($user->userGroup)) && $user->userGroup->id == '1') {
             $where .= (!empty($user->id)) ? " AND (from_user=$user->id OR from_user is NULL)" : '';
+            // $where .= (!empty($users)) ? " OR from_user in ($users) )" : ")";
         }
         // $where .= (!empty($dealer_id))?" AND (dealer_id=$dealer_id OR inquiries.created_by=$dealer_id)":'';
         $where .= (!empty($search)) ? " AND (orders.order_number like '$search%' OR orders.total like '$search%' OR orders.created_at like '$search%' OR (c.name is NOT NULL AND c.name like '$search%'))" : '';
@@ -890,7 +892,7 @@ class OrderController extends MainController
             ->join('users AS c', 'orders.to_user', '=', 'c.id', 'left')
             ->join('users AS d', 'orders.from_user', '=', 'd.id', 'left')
             ->whereRaw($where);
-        // $orders->whereRaw($where)->groupby('orders.id')->toSql();
+        
         $total_order = $orders->whereRaw($where)->groupby('orders.id')->get()->count();
 
         $orders = $orders->offset($start)

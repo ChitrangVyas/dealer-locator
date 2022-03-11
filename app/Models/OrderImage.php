@@ -23,7 +23,7 @@ class OrderImage extends Model
         if(in_array($file_extention,$allowed_images)){
             return ['title'=>$fileName, 'file_path'=>$this->image,'src'=>$this->image];
         }elseif(in_array($file_extention,$allowed_docs)){
-            return ['title'=>$fileName,'file_path'=>$this->image,'src'=>'/storage/uploads/icons/file.png'];
+            return ['title'=>$fileName,'file_path'=>$this->image,'src'=>'/assets/img/file.png'];
         }
     }
 

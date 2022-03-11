@@ -45,7 +45,8 @@ class MyCart
     }
     public function getCreatedat($cart_id){        
         $json = json_decode($this->session->get($cart_id,[]),true);
-        return $json['created_at'];
+        
+        return isset($json['created_at']) ? $json['created_at'] : date('Y-m-d');
     }
 
     public function setInquiryId($cart_id,$inquiry_id){        

@@ -659,25 +659,36 @@ class CartController extends MainController
     public function createInvoice(Request $request)
     {
         $request_data = $request->all();
-        $is_new_product = 0;
+        $is_new_product = 0;        
         if (!empty($request_data['data']['customer'])) {
-            $id = "sale_user_" . $request_data['data']['customer'];
+            $id = "sale_user_" . $request_data['data']['customer'];        
+            $json['kinjal1']= $this->myCart->getCreatedat($id);
             $cart  = \Cart::session($id);
             if ($cart->isEmpty()) {
                 $this->myCart->clear($id);
-                $this->myCart->setOrderNumber($id, random_int(100000, 999999));
+                $this->myCart->setOrderNumber($id, random_int(100000, 999999));                
             }
+            $json['kinjal2']= $this->myCart->getCreatedat($id);
             $this->myCart->setTo($id, $request_data['data']['customer']);
         }
+        $json['kinjal3']= $this->myCart->getCreatedat($id);
         $this->myCart->setType($id, 'sale');
         if ((!empty(auth()->user()->users_group_id)) || (auth()->user()->users_group_id > 1)) {
             $this->myCart->setFrom($id, auth()->user()->id);
         }
-        $created_at = date("Y-m-d");
-        $this->myCart->setCreatedat($id, $created_at);
+
+        $json['kinjal4']= $this->myCart->getCreatedat($id);              
         $json['cart_title'] = "Sale" . (!empty($this->myCart->getOrderNumber($id)) ? " #" . $this->myCart->getOrderNumber($id) : '');
         $json['cart_content'] = $this->getInquiryToQuoteCart($id, $cart, $is_new_product)->render();
         return response()->json(['status' => 'successful', 'code' => 1, 'data' => $json, 'message' => '']);
+    }
+    public function updateCreatedAt(Request $request){   
+        $requestData = $request->all();
+        if(isset($requestData['created_at'])){
+            $this->myCart->setCreatedat($requestData['id'], $requestData['created_at']);
+        }        
+        echo $requestData['id']."::".$this->myCart->getCreatedat($requestData['id']);
+        exit;
     }
 
     public function setTaxCondition($name, $type = 'tax', $value = '', $attributes = array())
@@ -689,7 +700,6 @@ class CartController extends MainController
             'attributes' => $attributes,
         ));
     }
-    
     public function getProductTaxCondition($product, $id, $tax_group_id = 0)
     {
         $condition = [];

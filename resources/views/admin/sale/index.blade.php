@@ -291,6 +291,10 @@
             $(this).closest('.product-detail').find('.amount').text(amount); */
             updateCart().then(function(){     
                 select2Product();
+                $('.dateimepicker-input').datetimepicker({format:"YYYY-MM-DD"});
+                    $('.dateimepicker-input').on('change.datetimepicker',function(){
+                        UpdateCreatedDateInSession();
+                    });
             });
         });
 
@@ -298,6 +302,10 @@
             if(confirm("Do you want to remove this product from the cart?")){
                 removeCartProduct($(this).data('product')).then(function(){
                     select2Product();
+                    $('.dateimepicker-input').datetimepicker({format:"YYYY-MM-DD"});
+                    $('.dateimepicker-input').on('change.datetimepicker',function(){
+                        UpdateCreatedDateInSession();
+                    });
                 });
 
             }

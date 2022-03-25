@@ -307,6 +307,10 @@
             addProductToCart().then(function(){
                 select2Product();
                 select2Inquiry();
+                $('.dateimepicker-input').datetimepicker({format:"YYYY-MM-DD"});
+                    $('.dateimepicker-input').on('change.datetimepicker',function(){
+                        UpdateCreatedDateInSession();
+                    });
             });
         });
         $("body").on("click","#addNewProductToCart",function(){
@@ -324,6 +328,10 @@
             updateCart().then(function(){     
                 select2Product();
                 select2Inquiry();
+                $('.dateimepicker-input').datetimepicker({format:"YYYY-MM-DD"});
+                    $('.dateimepicker-input').on('change.datetimepicker',function(){
+                        UpdateCreatedDateInSession();
+                    });
             });
         });
 
@@ -332,6 +340,10 @@
                 removeCartProduct($(this).data('product')).then(function(){
                     select2Product();
                     select2Inquiry();
+                    $('.dateimepicker-input').datetimepicker({format:"YYYY-MM-DD"});
+                    $('.dateimepicker-input').on('change.datetimepicker',function(){
+                        UpdateCreatedDateInSession();
+                    });
                 });
 
             }
@@ -442,6 +454,24 @@
             });
     }
 
+    function UpdateCreatedDateInSession(){
+        console.log($("input[name='cart_id']").val());
+        var token = $("meta[name='csrf-token']").attr("content");
+        $.ajax({
+            url: '{{route("cart.created_at.update")}}',
+            type: 'POST',
+            data:{'_token':token,'created_at':$("#datetimepickerM").val(),"id":$("input[name='cart_id']").val()},
+            beforeSend : function(){
+                $('#loader').show();
+            },
+            success: function(res) {                
+            },
+            complete:function(){
+                $('#loader').hide();
+            }
+        });
+    }
+
     function getOrderData(url,data){
         var token = $("meta[name='csrf-token']").attr("content");
         return $.ajax({
@@ -455,6 +485,10 @@
                 $(`#orderModal .modal-body`).html(res.data.cart_content);
                 $('#cartTitle').text(res.data.cart_title);
                 // $('.product-detail input').not('input[type=checkbox]').attr('disabled',true);
+                $('.dateimepicker-input').datetimepicker({format:"YYYY-MM-DD"});
+                    $('.dateimepicker-input').on('change.datetimepicker',function(){
+                        UpdateCreatedDateInSession();
+                    });
             },
             complete:function(){
                 $('#loader').hide();
@@ -552,6 +586,10 @@
             success: function(res) {
                 if(res.code == 1){
                     $('#orderModal .modal-body').html(res.data.cart_content);
+                    $('.dateimepicker-input').datetimepicker({format:"YYYY-MM-DD"});
+                    $('.dateimepicker-input').on('change.datetimepicker',function(){
+                        UpdateCreatedDateInSession();
+                    });
                 }else{
                     Toast.fire({
                             type: 'error',

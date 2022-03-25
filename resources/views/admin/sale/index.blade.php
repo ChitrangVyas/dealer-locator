@@ -81,6 +81,7 @@
 @section('js')
 <script>
     jQuery(document).ready(function() {
+        
         $('#example').DataTable({
             "columns": [{
                     "name": "orders.id"
@@ -146,18 +147,9 @@
             $(`#orderModal .modal-body`).html("");
             getOrderData(view_url,{'order_id':$(this).data('order')}).then(function(res){
                 if($(this).attr('title')=="View"){
-                $('.dateimepicker-input').datetimepicker({
-                    format: 'YYYY-MM-DD HH:mm',
-                    // date: moment(),
-                    icons: {
-                        time: "far fa-clock",
-                    }
-                });
+                $('.dateimepicker-input').not('.hasDatePicker').datepicker({format:"YYYY-MM-DD"});
             }else{
-                $('.dateimepicker-input').datetimepicker({
-                    format: 'YYYY-MM-DD',      
-                                  
-                });
+                $('.dateimepicker-input').not('.hasDatePicker').datepicker({format:"YYYY-MM-DD"});
             }
                               
             select2Product();
@@ -229,12 +221,12 @@
                 //cart.po.create
                 $('#invoiceModal').modal('hide');
                 getOrderData("{{route('cart.invoice.create')}}",{'customer':$(this).val()}).then(function(res){
-                    $('#orderModal').modal('show');
+                    $('#orderModal').modal('show');                                        
                     select2Product();
                 });
             }
         });
-
+        
         $('body').on('click','#imageUpload',function(){
             let formData = new FormData($('#rutika')[0]);
             let url = "{{route('order.po.upload.image')}}";
@@ -284,6 +276,10 @@
         $("body").on("click","#addProductToCart",function(){
             addProductToCart().then(function(){
                 select2Product();
+                $('.dateimepicker-input').datetimepicker({format:"YYYY-MM-DD"});
+                $('.dateimepicker-input').on('change.datetimepicker',function(){
+                    UpdateCreatedDateInSession();
+                });
             });
         });        
         
@@ -295,6 +291,10 @@
             $(this).closest('.product-detail').find('.amount').text(amount); */
             updateCart().then(function(){     
                 select2Product();
+                $('.dateimepicker-input').datetimepicker({format:"YYYY-MM-DD"});
+                    $('.dateimepicker-input').on('change.datetimepicker',function(){
+                        UpdateCreatedDateInSession();
+                    });
             });
         });
 
@@ -302,6 +302,10 @@
             if(confirm("Do you want to remove this product from the cart?")){
                 removeCartProduct($(this).data('product')).then(function(){
                     select2Product();
+                    $('.dateimepicker-input').datetimepicker({format:"YYYY-MM-DD"});
+                    $('.dateimepicker-input').on('change.datetimepicker',function(){
+                        UpdateCreatedDateInSession();
+                    });
                 });
 
             }
@@ -496,7 +500,29 @@
             success: function(res) {
                 $(`#orderModal .modal-body`).html(res.data.cart_content);
                 $('#cartTitle').text(res.data.cart_title);
+                $('.dateimepicker-input').datetimepicker({format:"YYYY-MM-DD"});
+                $('.dateimepicker-input').on('change.datetimepicker',function(){
+                    UpdateCreatedDateInSession();
+                });
+                                        
                 // $('.product-detail input').not('input[type=checkbox]').attr('disabled',true);
+            },
+            complete:function(){
+                $('#loader').hide();
+            }
+        });
+    }
+    function UpdateCreatedDateInSession(){
+        console.log($("input[name='cart_id']").val());
+        var token = $("meta[name='csrf-token']").attr("content");
+        $.ajax({
+            url: '{{route("cart.created_at.update")}}',
+            type: 'POST',
+            data:{'_token':token,'created_at':$("#datetimepickerM").val(),"id":$("input[name='cart_id']").val()},
+            beforeSend : function(){
+                $('#loader').show();
+            },
+            success: function(res) {                
             },
             complete:function(){
                 $('#loader').hide();

@@ -218,6 +218,8 @@ class CartController extends MainController
     public function createQuote(Request $request)
     {
         $request_data = $request->all();
+        $id = "quote_user_" . $request_data['data']['customer'];        
+        $json['created_at'] = $this->myCart->getCreatedat($id);
         $is_new_product = 0;
         if (!empty($request_data['data']['customer'])) {
             $id = "quote_user_" . $request_data['data']['customer'];
@@ -227,9 +229,7 @@ class CartController extends MainController
                 $this->myCart->setOrderNumber($id, random_int(100000, 999999));
             }
             $this->myCart->setTo($id, $request_data['data']['customer']);
-        }
-        $created_at = date("Y-m-d");
-        $this->myCart->setCreatedat($id, $created_at);
+        }        
         $this->myCart->setType($id, 'quote');
         if ((!empty(auth()->user()->users_group_id)) || (auth()->user()->users_group_id > 1)) {
             $this->myCart->setFrom($id, auth()->user()->id);
@@ -547,9 +547,7 @@ class CartController extends MainController
             if ($cart->isEmpty()) {
                 $this->myCart->setOrderNumber($id, random_int(100000, 999999));
                 $this->myCart->setTo($id, $to_user);
-            }
-            $created_at = date("Y-m-d");
-            $this->myCart->setCreatedat($id, $created_at);
+            }            
         }
         $this->myCart->setType($id, 'po');
         if ((!empty(auth()->user()->users_group_id)) || (auth()->user()->users_group_id > 1)) {
@@ -687,6 +685,11 @@ class CartController extends MainController
             $this->myCart->setCreatedat($requestData['id'], $requestData['created_at']);
         }        
         //echo $requestData['id']."::".$this->myCart->getCreatedat($requestData['id']);        
+    }
+    public function getCreatedAt(Request $request){   
+        $requestData = $request->all();
+            
+        echo $requestData['id']."::".$this->myCart->getCreatedat($requestData['id']);        
     }
     
     public function setTaxCondition($name, $type = 'tax', $value = '', $attributes = array())

@@ -608,7 +608,7 @@ class OrderController extends MainController
         unset($cart_data['tax_group']);
         unset($cart_data['inquiries']);
         $cart_data['order_reference'] = (!empty($cart_data['order_reference'])) ? $cart_data['order_reference'] : NULL;        
-        $cart_data['created_at']= $this->myCart->getCreatedat($request_data['cart_id']).date(" H:i:s");
+        $cart_data['created_at']= $this->myCart->getCreatedat($request_data['cart_id'])." ".date("H:i:s");
     
         try {
             $order_data = explode('_', $request_data['cart_id']);

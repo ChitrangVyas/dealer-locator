@@ -147,9 +147,9 @@
             $(`#orderModal .modal-body`).html("");
             getOrderData(view_url,{'order_id':$(this).data('order')}).then(function(res){
                 if($(this).attr('title')=="View"){
-                $('.dateimepicker-input').not('.hasDatePicker').datepicker();
+                $('.dateimepicker-input').not('.hasDatePicker').datepicker({format:"YYYY-MM-DD"});
             }else{
-                $('.dateimepicker-input').not('.hasDatePicker').datepicker();
+                $('.dateimepicker-input').not('.hasDatePicker').datepicker({format:"YYYY-MM-DD"});
             }
                               
             select2Product();

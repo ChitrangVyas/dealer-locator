@@ -140,6 +140,7 @@ Route::group(['prefix'=>'admin','middleware'=>['auth']],function () {
     Route::post('cart/po/create', [App\Http\Controllers\Admin\CartController::class,'createPo'])->name('cart.po.create');
     Route::post('cart/invoice/create', [App\Http\Controllers\Admin\CartController::class,'createInvoice'])->name('cart.invoice.create');
     Route::any('cart/update/create_at', [App\Http\Controllers\Admin\CartController::class,'updateCreatedAt'])->name('cart.created_at.update');
+    Route::any('cart/get/create_at', [App\Http\Controllers\Admin\CartController::class,'getCreatedAt'])->name('cart.created_at.get');
     Route::post('cart/quote/create', [App\Http\Controllers\Admin\CartController::class,'createQuote'])->name('cart.quote.create');
     Route::post('cart/quote/edit', [App\Http\Controllers\Admin\CartController::class,'editQuote'])->name('cart.quote.edit');
     Route::post('cart/sale/create', [App\Http\Controllers\Admin\CartController::class,'createSale'])->name('cart.sale.create');

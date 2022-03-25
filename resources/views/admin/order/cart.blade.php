@@ -25,8 +25,8 @@
                 </div>
                 <div class="col-sm-4 invoice-col">
                     <div class="form-group">
-                        <label for="date">Date:</label>                        
-                        <input type="text" class="mr-3 dateimepicker-input form-control col-md-6" name="created_at" id="datetimepickerM" data-toggle="datetimepicker" data-target="#datetimepicker"  value="{{$myCart->getCreatedat($id)}}"/>
+                        <label for="date">Date:</label>                                                
+                        <input type="text" class="mr-3 dateimepicker-input form-control col-md-6" name="created_at" id="datetimepickerM" data-toggle="datetimepicker" data-target="#datetimepickerM"  value="{{$myCart->getCreatedat($id)}}"/>
                     </div>
                 </div>
                 @notadmin()

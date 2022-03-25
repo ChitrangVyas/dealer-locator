@@ -589,9 +589,13 @@ class OrderController extends MainController
 
     public function storeSale(Request $request)
     {
+        
         $request_data = $request->all();
+        
+        
         $cart = \Cart::Session($request_data['cart_id']);
         $cart_data = $this->myCart->getAll($request_data['cart_id']);
+        
         $tax_data['tax_group'] = (!empty($cart_data['tax_group'])) ? $cart_data['tax_group'] : [];
         $tax_data['total_tax'] = $cart_data['total_tax'];
         $tax_data['product_tax'] = $cart_data['product_tax'];
@@ -603,7 +607,9 @@ class OrderController extends MainController
         unset($cart_data['cart_total']);
         unset($cart_data['tax_group']);
         unset($cart_data['inquiries']);
-        $cart_data['order_reference'] = (!empty($cart_data['order_reference'])) ? $cart_data['order_reference'] : NULL;
+        $cart_data['order_reference'] = (!empty($cart_data['order_reference'])) ? $cart_data['order_reference'] : NULL;        
+        $cart_data['created_at']= $this->myCart->getCreatedat($request_data['cart_id'])." ".date("H:i:s");
+    
         try {
             $order_data = explode('_', $request_data['cart_id']);
             if ($order_data[1] == 'edit') {

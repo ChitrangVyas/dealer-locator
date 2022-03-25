@@ -38,16 +38,15 @@ class MyCart
         
         $this->session->put($cart_id,json_encode($json));        
     }
-    public function setCreatedat($cart_id,$created_at){        
+    public function setCreatedat($cart_id,$created_at){
+        $json = json_decode($this->session->get($cart_id,'{}'),true);     
+        $json['created_at'] = $created_at;       
+        $this->session->put($cart_id,json_encode($json));          
+    }
+    public function getCreatedat($cart_id){                                   
         $json = json_decode($this->session->get($cart_id,'{}'),true);        
-        $json['created_at'] = date('Y-m-d', strtotime($created_at));
-        $this->session->put($cart_id,json_encode($json));        
-    }
-    public function getCreatedat($cart_id){        
-        $json = json_decode($this->session->get($cart_id,[]),true);
-        
         return isset($json['created_at']) ? $json['created_at'] : date('Y-m-d');
-    }
+    }   
 
     public function setInquiryId($cart_id,$inquiry_id){        
         $json = json_decode($this->session->get($cart_id,'{}'),true);

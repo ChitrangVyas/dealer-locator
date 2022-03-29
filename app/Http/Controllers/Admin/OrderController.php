@@ -592,7 +592,7 @@ class OrderController extends MainController
         
         $request_data = $request->all();
         
-        
+        $time = date('H:i:s');
         $cart = \Cart::Session($request_data['cart_id']);
         $cart_data = $this->myCart->getAll($request_data['cart_id']);
         
@@ -608,8 +608,7 @@ class OrderController extends MainController
         unset($cart_data['tax_group']);
         unset($cart_data['inquiries']);
         $cart_data['order_reference'] = (!empty($cart_data['order_reference'])) ? $cart_data['order_reference'] : NULL;        
-        $cart_data['created_at']= $this->myCart->getCreatedat($request_data['cart_id']);
-    
+        $cart_data['created_at']=  date('Y-m-d H:i:s',strtotime($this->myCart->getCreatedat($request_data['cart_id']).$time));
         try {
             $order_data = explode('_', $request_data['cart_id']);
             if ($order_data[1] == 'edit') {
@@ -750,10 +749,10 @@ class OrderController extends MainController
             $where .= (!empty($users)) ? " OR from_user in ($users) )" : ")";
         }
         
-        $where .= (!empty($search)) ? " AND (orders.order_number like '$search%' OR orders.total like '$search%' OR orders.created_at like '$search%' OR (c.name is NOT NULL AND c.name like '$search%') OR (d.name is NOT NULL AND d.name like '$search%'))" : '';
+        $where .= (!empty($search)) ? " AND (orders.order_number like '%$search%' OR orders.total like '%$search%' OR orders.created_at like '%$search%' OR (c.name is NOT NULL AND c.name like '%$search%') OR (d.name is NOT NULL AND d.name like '%$search%'))" : '';
 
         $orders = DB::table('orders')
-            ->select(DB::raw('orders.id,order_number, orders.is_po_recieved, orders.recieved_date, c.id AS to_user, d.id AS from_user, c.name as customer,d.name as added_by, orders.total as amount, orders.created_at as created_date'))
+            ->select(DB::raw('orders.id,order_number, c.id AS to_user, d.id AS from_user, c.name as customer,d.name as added_by, orders.total as amount, orders.created_at as created_date'))
             ->join('order_product AS op', 'orders.id', '=', 'op.order_id', 'left')
             ->join('users AS c', 'orders.to_user', '=', 'c.id', 'left')
             ->join('users AS d', 'orders.from_user', '=', 'd.id', 'left')
@@ -787,7 +786,7 @@ class OrderController extends MainController
             $action_html .= "<span class='ml-2 edit-quote-" . $order->id . "'><a data-url=" . route('cart.quote.edit', $order->id) . " data-order=" . $order->id . " class='btn btn-primary view-order' title='Edit'><i class='fas fa-pen'></i></a></span>";
             $action_html .= "<span class='ml-2'><button type=button data-order=$order->id class='btn btn-danger' onClick=deleteOrder($order->id) title='Delete'><i class='fas fa-trash'></i></button></span>";
         }
-            $data[] = [$order->id, $order->order_number, $order->amount, ucwords($added_by), ucwords($customer), (!empty($order->is_po_recieved)) ? 'Y' : 'N', (!empty($order->recieved_date)) ? $order->recieved_date : 'N/A', $order->created_date, $action_html];
+            $data[] = [$order->id, $order->order_number, $order->amount, ucwords($added_by), ucwords($customer), $order->created_date, $action_html];
         }
         $return_array = array();
         $return_array['draw'] = $request['draw'];

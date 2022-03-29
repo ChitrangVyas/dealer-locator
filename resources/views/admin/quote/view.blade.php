@@ -16,12 +16,12 @@
             
             @if($order->from_user == auth()->user()->id || empty($order->from_user))
             <fieldset class="border">
-                <legend class="w-auto m-2">PO Recieved</legend>
+                <legend class="w-auto m-2">PO Received</legend>
                 <div class="col-sm-12 col-md-12">
                     <!-- text input -->
                     <div class="form-group clearfix">
                         <div class="icheck-primary d-inline">
-                            <input type="checkbox" class="mr-3 product" name="is_po_recieved" {{((!(empty($order)) && (!empty($order->is_po_recieved)))) ? 'checked' : ''}}>
+                            <input type="checkbox" class="mr-3 products" name="is_po_recieved" {{((!(empty($order)) && (!empty($order->is_po_recieved)))) ? 'checked' : ''}}>
                             <label>Recieved</label>
                         </div>
                     </div>

@@ -116,7 +116,7 @@
                 },
                 {
                     "name": "c.name"
-                },                
+                },
                 {
                     "name": "orders.created_at"
                 },
@@ -161,24 +161,25 @@
             $(`#cartTitle`).html("");
             getOrderData(view_url,{'order_id':$(this).data('order')}).then(function(res){
                 if($(this).attr('title')=="View"){
-                $('.dateimepicker-input').datetimepicker({
-                    format: 'YYYY-MM-DD HH:mm',
-                    // date: moment(),
-                    icons: {
-                        time: "far fa-clock",
-                    }
-                });
-            }else{
-                $('.dateimepicker-input').datetimepicker({
-                    format: 'YYYY-MM-DD',      
-                                  
-                });
-            }
-                select2Product();
-                if($('input[name=order_id]').val()){
-                    getOrderImage("{{ route('order.po.image') }}",{'order_id':$('input[name=order_id]').val()}).then(function(res){    
+                    $('.dateimepicker-input').datetimepicker({
+                        format: 'YYYY-MM-DD HH:mm',
+                        // date: moment(),
+                        icons: {
+                            time: "far fa-clock",
+                        }
+                    });
+                }else{
+                    $('.dateimepicker-input').datetimepicker({
+                        format: 'YYYY-MM-DD',
+
                     });
                 }
+                select2Product();
+                //if($('input[name=order_id]').val()){
+                    getOrderImage("{{ route('order.po.image') }}",{'order_id':$('input[name=order_id]').val()}).then(function(res){
+                        console.log('Mehul asdasd');
+                    });
+                //}
             });
         });
 
@@ -238,7 +239,7 @@
                 $('#example').DataTable().ajax.reload(null, false);
             });
         });
-        
+
         $('body').on('change','input[type="file"]',function(e){
             var fileName = e.target.files[0].name;
             $('.custom-file-label').html(fileName);
@@ -266,7 +267,7 @@
                 });
             });
         });
-        
+
         $("body").on("click",".product", function(){
             var selected_product = $('input:checkbox:checked').length;
             if(selected_product < 1){
@@ -280,10 +281,10 @@
             addProductToCart().then(function(){
                 select2Product();
             });
-        });    
-        
+        });
+
         $("body").on("change",".tax, .qty, .price, .discount", function(){
-            updateCart().then(function(){     
+            updateCart().then(function(){
                 select2Product();
                 $('.dateimepicker-input').datetimepicker({format:"YYYY-MM-DD"});
                     $('.dateimepicker-input').on('change.datetimepicker',function(){
@@ -313,12 +314,12 @@
         $('body').on('click','#addCustomer',function(e){
         e.preventDefault();
         e.stopImmediatePropagation();
-        // var data = $('#saveInquiryLog').serialize();        
+        // var data = $('#saveInquiryLog').serialize();
         $.ajax({
             url: "{{ route('customerCreateAjax') }}",
             type: 'GET',
             data: '',
-            success: function (data) {                
+            success: function (data) {
                 $("#modal-lg .modal-body").html(data);
                 $("#modal-lg").modal("show");
             },
@@ -428,8 +429,8 @@
                 error: function (jqXHR, textStatus, errorThrown) {
                     $('.btn-save').attr('disabled',false);
                     var err = JSON.parse(jqXHR.responseText).errors;
-                    $.each(err,function(key,val){                
-                        $(`[name=${key}]`).closest('.form-group').after(`<div class="alert alert-danger mt-2">${val}</div>`);                                        
+                    $.each(err,function(key,val){
+                        $(`[name=${key}]`).closest('.form-group').after(`<div class="alert alert-danger mt-2">${val}</div>`);
                     });
                     Toast.fire({
                         type: 'error',
@@ -448,7 +449,7 @@
             beforeSend : function(){
                 $('#loader').show();
             },
-            success: function(res) {                
+            success: function(res) {
             },
             complete:function(){
                 $('#loader').hide();
@@ -488,9 +489,9 @@
                         });
                         setTimeout(function(){
                             $(`#orderModal`).modal('hide');
-                        },1000);  
+                        },1000);
                     }
-                    
+
                 // $('.product-detail input').not('input[type=checkbox]').attr('disabled',true);
             },
             complete:function(){
@@ -680,7 +681,7 @@
             complete:function(){
                 $('#loader').hide();
             }
-        }); 
+        });
     }
 
     function select2Customer(){

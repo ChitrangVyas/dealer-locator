@@ -229,6 +229,8 @@ class OrderController extends MainController
         $request_data = $request->all();
         // $quote_data = $request->only(['type','order_number','status','from_user','to_user','inquiry_id']);
         $quote_data = $this->myCart->getAll($request_data['cart_id']);
+        $time= date("H:i:s");
+        $quote_data['created_at']=  date('Y-m-d H:i:s',strtotime($this->myCart->getCreatedat($request_data['cart_id']).$time));
         // order_number, inquiry_id, type, to_user,
         $tax_data['total_tax'] = $quote_data['total_tax'];
         $tax_data['product_tax'] = $quote_data['product_tax'];

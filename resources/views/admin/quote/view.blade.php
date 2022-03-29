@@ -68,7 +68,7 @@
             <input type="hidden" name="user_id" value="{{auth()->user()->id}}">
             <input type="hidden" name="order_id" value="{{ $order->id }}">
 
-            @if($order->from_user == auth()->user()->id)
+            @if($order->from_user == auth()->user()->id || $order->from_user == 0 )
             <fieldset class="border">
                 <legend class="w-auto m-2">Payment Status</legend>
                 <div class="col-sm-12 col-md-12">
@@ -97,7 +97,7 @@
                     </div>
                 </div>
             </fieldset>
-            @if(empty(auth()->user()->users_group_id) || (auth()->user()->id == $order->from_user))
+            @if(empty(auth()->user()->users_group_id) || (auth()->user()->id == $order->from_user || $order->from_user == 0 ))
             <fieldset class="border">
                 <legend class="w-auto m-2">Order Status</legend>
                     <div class="col-sm-12 col-md-12">
@@ -158,7 +158,7 @@
                     </div>
             </fieldset>
             
-            @endif
+            <!-- @endif -->
         </form>
     </div>
     @if(empty(auth()->user()->users_group_id) || (auth()->user()->id == $order->from_user))

@@ -137,7 +137,7 @@ class CartController extends MainController
             foreach ($request->input('inquiries') as $inquiry) {
                 $obj = Inquiry::findOrFail($inquiry);
                 if ($obj) {
-                    $inquiryArray[$obj->id] = $obj->customer->name . " " . $obj->created_at->format("Y-m-d");
+                    $inquiryArray[$obj->id] = $obj->customer->name . " " . $obj->created_at->format("Y-m-d H:i:s");
                 }
             }
         }

@@ -143,20 +143,17 @@
         });
         $('body').on('click','.view-order',function(){
             var view_url = $(this).data('url');
+            
             $("#uploadedPo").html("");
             $(`#orderModal .modal-body`).html("");
+            console.log("asdasd");
             getOrderData(view_url,{'order_id':$(this).data('order')}).then(function(res){
                 if($(this).attr('title')=="View"){
-                $('.dateimepicker-input').not('.hasDatePicker').datepicker({format:"YYYY-MM-DD"});
-            }else{
-                $('.dateimepicker-input').not('.hasDatePicker').datepicker({format:"YYYY-MM-DD"});
-            }
-                              
-            select2Product();
-                if($('input[name=order_id]').val()){
-                    getOrderImage("{{ route('order.po.image') }}",{'order_id':$('input[name=order_id]').val()}).then(function(res){    
-                    });
-                }
+                    $('.dateimepicker-input').not('.hasDatePicker').datepicker({format:"YYYY-MM-DD"});
+                }else{
+                    $('.dateimepicker-input').not('.hasDatePicker').datepicker({format:"YYYY-MM-DD"});
+                }                 
+                
             });
         });
         $('body').on('change','#order_status',function(){
@@ -504,8 +501,7 @@
                 $('.dateimepicker-input').on('change.datetimepicker',function(){
                     UpdateCreatedDateInSession();
                 });
-                                        
-                // $('.product-detail input').not('input[type=checkbox]').attr('disabled',true);
+                getOrderImage("{{ route('order.po.image') }}",{'order_id':$('input[name=order_id]').val()});   
             },
             complete:function(){
                 $('#loader').hide();

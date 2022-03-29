@@ -21,7 +21,7 @@
                     <!-- text input -->
                     <div class="form-group clearfix">
                         <div class="icheck-primary d-inline">
-                            <input type="checkbox" class="mr-3 products" name="is_po_recieved" {{((!(empty($order)) && (!empty($order->is_po_recieved)))) ? 'checked' : ''}}>
+                            <input type="checkbox" class="mr-3 products" name="is_po_recieved" required {{((!(empty($order)) && (!empty($order->is_po_recieved)))) ? 'checked' : ''}}>
                             <label>Recieved</label>
                         </div>
                     </div>

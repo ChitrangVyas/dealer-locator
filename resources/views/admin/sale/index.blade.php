@@ -668,7 +668,7 @@
     function select2Customer(){
         var option_group = [
                             @if(auth()->user()->users_group_id==3 || auth()->user()->users_group_id==2 || (empty(auth()->user()->users_group_id) || auth()->user()->users_group_id==1))
-                            //{name:'Customer',table:'users',where:'users_group_id = 4 AND deleted_at is NULL  AND status = 1 AND created_by={{auth()->user()->id}}'},
+                            {name:'Customer',table:'users',where:'users_group_id = 4 AND deleted_at is NULL  AND status = 1 AND created_by={{auth()->user()->id}}'},
                             @endif
                             @if(auth()->user()->users_group_id==2 || (empty(auth()->user()->users_group_id) || auth()->user()->users_group_id==1))
                             {name:'Retailer',table:'users',where:'users_group_id = 3 AND deleted_at is NULL AND status = 1' + "{{(empty(auth()->user()->users_group_id) || auth()->user()->users_group_id==1) ? '':  ' AND created_by='.auth()->user()->id}}"},

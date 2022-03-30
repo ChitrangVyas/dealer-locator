@@ -105,6 +105,7 @@ class InquiryController extends MainController
                 $data['name'] = $inquiry->dealer->name;
                 $data['mobile_number'] = $inquiry->dealer->mobile;
                 $data['inquiry_id'] = $inquiry->id;
+                $data['msg_index'] = 'inquiry_assign';
                 $respnose = $this->sentSMS($data);
                 $sms_res = explode('|',$respnose);
                 if($sms_res[0] == 'ok'){
@@ -119,6 +120,7 @@ class InquiryController extends MainController
                 $data['name'] = $inquiry->retailer->name;
                 $data['mobile_number'] = $inquiry->retailer->mobile;
                 $data['inquiry_id'] = $inquiry->id;
+                $data['msg_index'] = 'inquiry_assign';
                 $respnose = $this->sentSMS($data);
                 $sms_res = explode('|',$respnose);
                 if($sms_res[0] == 'ok'){
@@ -129,7 +131,29 @@ class InquiryController extends MainController
             }
             if(!empty($request_data['send_mail_to_customer']) && (!empty($dealer_id))){
                 try{
-                    Mail::to($inquiry->customer->email)->send(new SendInquiryToCustomer(config('app.name').' - Inquiry',$inquiry));
+                    $data = array();
+                    $data['name'] = $inquiry->customer->name;
+                    $data['mobile_number'] = $inquiry->customer->mobile;
+                    $data['inquiry_id'] = $inquiry->id;
+                    $data['msg_index'] = 'inquiry_customer_assigned';
+                    if(!empty($dealer_id)){
+                        $data['dealer'] = $inquiry->dealer->name ." ". $inquiry->dealer->mobile ;
+                    }else{
+                        $data['dealer'] = "";
+                    }
+                    if(!empty($retailer_id)){
+                        $data['retailer'] = ' and '. $inquiry->retailer->name ." ". $inquiry->retailer->mobile;
+                    }else{
+                        $data['retailer'] = "";
+                    }
+                    $respnose = $this->sentSMS($data);
+                    $sms_res = explode('|',$respnose);
+                    if($sms_res[0] == 'ok'){
+                        Helpers::storeNotification($retailer_id,"Inquiry #$inquiry->id SMS sent to you.",0,1);
+                    }else{
+                       $msg ="Failed to sent SMS".$sms_res[0];
+                    }
+                 Mail::to($inquiry->customer->email)->send(new SendInquiryToCustomer(config('app.name').' - Inquiry',$inquiry));
                 }catch(Exception $e){
                     return redirect(route('inquiry.index'))->with('exception', 'Unable to sent Mail.');
                 }
@@ -513,32 +537,36 @@ class InquiryController extends MainController
         $settings['json_data'] = json_decode($settings['json_data'],true);
         $post_response = '';
         if($settings['json_data']['is_enabled'] == '1'){
-        $searchReplaceArray = array('{name}'=>$data['name'],'{inquiry_no}'=>$data['inquiry_id']);
-        $txt = $this->getMsg('inquiry_assign');
-        $txtMsg = str_replace(array_keys($searchReplaceArray),  array_values($searchReplaceArray),  $txt);
-        $sms_data = array();
-        $sms_data['UserID'] = $settings['json_data']['userId'];
-        $sms_data['Password'] = $settings['json_data']['sms_password'];
-        $sms_data['SenderID'] = $settings['json_data']['sender_id'];
-        $sms_data['SMSType'] = $settings['json_data']['sms_type'];
-        $sms_data['Mobile'] = $data['mobile_number'];
-        $sms_data['MsgText'] = $txtMsg;
-        $sms_data['EntityID'] = $settings['json_data']['entity_id'];
-        $sms_data['TemplateID'] = $settings['json_data']['template_id'];
-        $query_string= "";
-        foreach($sms_data as $k=>$v){
-            $query_string .=$k."=".urlencode($v)."&"; 
+            $txt = $this->getMsg($data['msg_index']);
+            if($data['msg_index'] == 'inquiry_assign'){
+                $searchReplaceArray = array('{name}'=>$data['name'],'{inquiry_no}'=>$data['inquiry_id']);
+            }else{
+                $searchReplaceArray = array('{name}'=>$data['name'],'{inquiry_no}'=>$data['inquiry_id'],'{dealer}'=>$data['dealer'],'{retailer}'=>$data['retailer']);
+            }
+            $txtMsg = str_replace(array_keys($searchReplaceArray),  array_values($searchReplaceArray),  $txt);
+            $sms_data = array();
+            $sms_data['UserID'] = $settings['json_data']['userId'];
+            $sms_data['Password'] = $settings['json_data']['sms_password'];
+            $sms_data['SenderID'] = $settings['json_data']['sender_id'];
+            $sms_data['SMSType'] = $settings['json_data']['sms_type'];
+            $sms_data['Mobile'] = $data['mobile_number'];
+            $sms_data['MsgText'] = $txtMsg;
+            $sms_data['EntityID'] = $settings['json_data']['entity_id'];
+            $sms_data['TemplateID'] = $settings['json_data']['template_id'];
+            $query_string= "";
+            foreach($sms_data as $k=>$v){
+                $query_string .=$k."=".urlencode($v)."&"; 
+            }
+            $url = "http://web.shreesms.net/API/SendSMS.aspx?".$query_string;
+            $ch = curl_init($url);
+                    curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "GET");
+                    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+                    $post_response = curl_exec($ch); 
+            curl_close($ch);
+            
+            
         }
-        $url = "http://web.shreesms.net/API/SendSMS.aspx?".$query_string;
-         $ch = curl_init($url);
-				curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "GET");
-				curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-				$post_response = curl_exec($ch); 
-		curl_close($ch);
-        
-        
-    }
-    return $post_response;
+        return $post_response;
 
     }
 }

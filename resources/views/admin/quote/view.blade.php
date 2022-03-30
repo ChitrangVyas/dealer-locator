@@ -14,7 +14,7 @@
             <input type="hidden" name="uploaded_by" value="{{auth()->user()->id}}">
             <input type="hidden" name="order_id" value="{{ $order->id }}">
             
-            @if($order->from_user == auth()->user()->id || empty($order->from_user))
+            @if(($order->from_user == auth()->user()->id || empty($order->from_user) ))
             <fieldset class="border">
                 <legend class="w-auto m-2">PO Received</legend>
                 <div class="col-sm-12 col-md-12">
@@ -68,7 +68,7 @@
             <input type="hidden" name="user_id" value="{{auth()->user()->id}}">
             <input type="hidden" name="order_id" value="{{ $order->id }}">
 
-            @if($order->from_user == auth()->user()->id || $order->from_user == 0 )
+            @if(($order->from_user == auth()->user()->id || $order->from_user == 0) || $order->to_user == auth()->user()->id )
             <fieldset class="border">
                 <legend class="w-auto m-2">Payment Status</legend>
                 <div class="col-sm-12 col-md-12">
@@ -83,7 +83,8 @@
                     </div>
                 </div>
             </fieldset>
-            
+            @endif
+            @if(($order->from_user == auth()->user()->id || $order->from_user == 0) )
             <fieldset class="border">
                 <legend class="w-auto m-2">Courier Details</legend>
                 <div class="col-sm-12 col-md-12">
@@ -97,6 +98,7 @@
                     </div>
                 </div>
             </fieldset>
+            @endif
             @if(empty(auth()->user()->users_group_id) || (auth()->user()->id == $order->from_user || $order->from_user == 0 ))
             <fieldset class="border">
                 <legend class="w-auto m-2">Order Status</legend>
@@ -125,6 +127,7 @@
                                     </select>
                                 </td>
                             </tr>
+                            @endif
                             @if(!empty($order->getSalesOrderStage()) && ($order->getSalesOrderStage()->stage == 2))
                             <tr>
                                 <td>
@@ -153,14 +156,13 @@
                                 </td>
                             </tr>
                             @endif
-                            @endnotadmin
                         </table>
                     </div>
             </fieldset>
-            
-            <!-- @endif -->
+            @endif
         </form>
     </div>
+    @endif
     @if(empty(auth()->user()->users_group_id) || (auth()->user()->id == $order->from_user))
     <div class="row">
         <form id="uploadPo" class="col-12" enctype="multipart/form-data">
@@ -192,10 +194,8 @@
                     </div>
                 @endif
             </fieldset>
-            @endif
         </form>
     </div>
-    @endif
     @endif
  
 

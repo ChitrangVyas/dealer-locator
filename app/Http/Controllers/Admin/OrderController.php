@@ -1023,7 +1023,9 @@ class OrderController extends MainController
         $orderStatus = OrderStatus::where('order_id', $request_data['order_id'])->where('user_id', (!empty(auth()->user()->users_group_id)) ? auth()->user()->id : NULL);
         if ((!empty($orderStatus->get())) && count($orderStatus->get())) {
             $order = Order::findOrFail($request_data['order_id']);
-            $order->update(['courier_detail'=>$request_data['courier_details']]);
+            if(isset($request_data['courier_details'])){
+                $order->update(['courier_detail'=>$request_data['courier_details']]);
+            }
             try {
                 $is_updated = $orderStatus->update(['status_id' => $request_data['status_id'], 'updated_at' => \Carbon\Carbon::now()]);
             } catch (Exception $e) {

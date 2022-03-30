@@ -19,7 +19,7 @@
         @else
             <input type="hidden" name="users_group_id" value="{{(!empty($user) && $user->users_group_id==4) ? $user->users_group_id : '4'}}">
         @endif
-
+        <input type="checkbox" style="display: none;" name="status" id="status" class="form-control status" checked="checked" value="1">
         <div class="row">
             <!-- <div class="col-sm-12 col-md-12">
                 <div class="form-group">
@@ -67,7 +67,7 @@
                         <!-- text input -->
                 <div class="form-group">
                     <label>Country <span class="required_field">*</span></label>
-                    <select class="form-control country" id='country' name='country_id' tabindex="5">
+                    <select class="form-control country" id='country' name='country_id' tabindex="25">
                         <option value="">Select</option>
                         
                         @if(!empty($allowedcountry))
@@ -107,7 +107,7 @@
                         <!-- text input -->
                         <div class="form-group">
                             <label>State <span class="required_field">*</span></label>
-                            <select class="form-control select2 state" id='state' name='state_id' tabindex="5">
+                            <select class="form-control select2 state" id='state' name='state_id' tabindex="26">
                                 <option value="">Select</option>
                                 @if(!empty($user) && $user->state_id)
                                 <option value="{{$user->state_id}}" selected>{{$user->state->name}}</option>
@@ -130,7 +130,7 @@
                         <!-- text input -->
                         <div class="form-group">
                             <label>City <span class="required_field">*</span></label>
-                            <select class="form-control select2 city" id='city' name='city_id' tabindex="6">
+                            <select class="form-control select2 city" id='city' name='city_id' tabindex="27">
                                 <option value="">Select</option>
                                 @if(!empty($user) && !empty($user->city_id))
                                 <option value="{{$user->city_id}}" selected>{{$user->city->name}}</option>
@@ -155,30 +155,30 @@
                 <!-- text input -->
                 <div class="form-group">
                     <label>Zip code <span class="required_field">*</span></label>
-                    <input type="text" name="zipcode" value="{{ (!empty($user))?$user->zipcode:'' }}" class="form-control" placeholder="Enter zipcode" tabindex="27">
+                    <input type="text" name="zipcode" value="{{ (!empty($user))?$user->zipcode:'' }}" class="form-control" placeholder="Enter zipcode" tabindex="28">
                 </div>
             </div>
             <div class="col-sm-12 col-md-4">
                 <!-- text input -->
                 <div class="form-group">
                     <label>GSTIN</label>
-                    <input type="text" class="form-control" name="gstin" value="{{ old('gstin',(!empty($user))?$user->gstin:'')}}" placeholder="GSTIN" tabindex="28">
+                    <input type="text" class="form-control" name="gstin" value="{{ old('gstin',(!empty($user))?$user->gstin:'')}}" placeholder="GSTIN" tabindex="29">
                     @error('gstin')
                         <div class="alert alert-danger mt-2">{{ $message }}</div>
                     @enderror
                 </div>
             </div>
+
         </div>
         <div class="row">
             <div class="col-sm-12">
-                <button type="submit" class="btn btn-primary" tabindex="29">Submit</button>
+                <button type="submit" class="btn btn-primary" tabindex="30">Submit</button>
             </div>
         </div>
     </form>
     </div>
     <!-- /.card-body -->
 </div>
-
 <script>
 jQuery(document).ready(function(){
     $('.required_field').addClass('text-danger');

@@ -20,8 +20,8 @@ class MainController extends Controller
     public $settingJson = [];
     public $allowedcountry=[];
     public $msg = array(
-        'inquiry_assign'=>'Hello {name} You are assigned a new Inquiry No. {inquiry_no} Please login to your account to view more details. - Kashyap Technology EWTIND',
-        'inquiry_customer_assigned'=>'Hello {name}, your Inquiry No. {inquiry_no} has been assigned to {dealer} {retailer}  - Kashyap Technology EWTIND',
+        'inquiry_assign'=>'Hello {name} You are assigned a new Inquiry No. {inquiry_no} Please login to your account to view more details. - Kashyap Technology',
+        'inquiry_customer_assigned'=>'Hello {name}, your Inquiry No. {inquiry_no} has been assigned to Dealer: {dealer} {retailer}  - Kashyap Technology',
     );
     
     public function __construct() {                

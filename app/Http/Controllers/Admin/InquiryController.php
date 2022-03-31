@@ -137,12 +137,12 @@ class InquiryController extends MainController
                     $data['inquiry_id'] = $inquiry->id;
                     $data['msg_index'] = 'inquiry_customer_assigned';
                     if(!empty($dealer_id)){
-                        $data['dealer'] = $inquiry->dealer->name ." ". $inquiry->dealer->mobile ;
+                        $data['dealer'] = $inquiry->dealer->name.", ". $inquiry->dealer->mobile .", ".$inquiry->dealer->email.", ".$inquiry->dealer->address;
                     }else{
                         $data['dealer'] = "";
                     }
                     if(!empty($retailer_id)){
-                        $data['retailer'] = ' and '. $inquiry->retailer->name ." ". $inquiry->retailer->mobile;
+                        $data['retailer'] = ', Retailer: '. $inquiry->retailer->name .", ". $inquiry->retailer->mobile.", ".$inquiry->retailer->email.", ".$inquiry->retailer->address;
                     }else{
                         $data['retailer'] = "";
                     }
@@ -552,7 +552,7 @@ class InquiryController extends MainController
             $sms_data['Mobile'] = $data['mobile_number'];
             $sms_data['MsgText'] = $txtMsg;
             $sms_data['EntityID'] = $settings['json_data']['entity_id'];
-            $sms_data['TemplateID'] = $settings['json_data']['template_id'];
+            $sms_data['TemplateID'] = $settings['json_data']['template_id'][$data['msg_index']];
             $query_string= "";
             foreach($sms_data as $k=>$v){
                 $query_string .=$k."=".urlencode($v)."&"; 
@@ -563,10 +563,7 @@ class InquiryController extends MainController
                     curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
                     $post_response = curl_exec($ch); 
             curl_close($ch);
-            
-            
         }
         return $post_response;
-
     }
 }

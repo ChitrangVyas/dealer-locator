@@ -80,9 +80,19 @@
             <div class="col-sm-12 col-md-4">
                 <!-- text input -->
                 <div class="form-group">
-                    <label>Template ID</label>
-                    <input type="text" class="form-control" name="template_id" value="{{ old('template_id',(!empty($settings->json_data['template_id']))?$settings->json_data['template_id']:'')}}" placeholder="Template ID" tabindex="8">
-                    @error('template_id')
+                    <label>Inquiry Assigned to Dealer/Retailer Template ID</label>
+                    <input type="text" class="form-control" name="template_id[inquiry_assign]" value="{{ old('template_id[inquiry_assign]',(!empty($settings->json_data['template_id']['inquiry_assign']))?$settings->json_data['template_id']['inquiry_assign']:'')}}" placeholder="Template ID" tabindex="8">
+                    @error('template_id["inquiry_assign"]')
+                        <div class="alert alert-danger mt-2">{{ $message }}</div>
+                    @enderror
+                </div>
+            </div>
+            <div class="col-sm-12 col-md-4">
+                <!-- text input -->
+                <div class="form-group">
+                    <label>Customer Inquiry Template ID</label>
+                    <input type="text" class="form-control" name="template_id[inquiry_customer_assigned]" value="{{ old('template_id[inquiry_customer_assigned]',(!empty($settings->json_data['template_id']['inquiry_customer_assigned']))?$settings->json_data['template_id']['inquiry_customer_assigned']:'')}}" placeholder="Template ID" tabindex="8">
+                    @error('template_id["inquiry_assign"]')
                         <div class="alert alert-danger mt-2">{{ $message }}</div>
                     @enderror
                 </div>

@@ -143,20 +143,17 @@
         });
         $('body').on('click','.view-order',function(){
             var view_url = $(this).data('url');
+            
             $("#uploadedPo").html("");
             $(`#orderModal .modal-body`).html("");
+            console.log("asdasd");
             getOrderData(view_url,{'order_id':$(this).data('order')}).then(function(res){
                 if($(this).attr('title')=="View"){
-                $('.dateimepicker-input').not('.hasDatePicker').datepicker({format:"YYYY-MM-DD"});
-            }else{
-                $('.dateimepicker-input').not('.hasDatePicker').datepicker({format:"YYYY-MM-DD"});
-            }
-                              
-            select2Product();
-                if($('input[name=order_id]').val()){
-                    getOrderImage("{{ route('order.po.image') }}",{'order_id':$('input[name=order_id]').val()}).then(function(res){    
-                    });
-                }
+                    $('.dateimepicker-input').not('.hasDatePicker').datepicker({format:"YYYY-MM-DD"});
+                }else{
+                    $('.dateimepicker-input').not('.hasDatePicker').datepicker({format:"YYYY-MM-DD"});
+                }                 
+                
             });
         });
         $('body').on('change','#order_status',function(){
@@ -267,7 +264,7 @@
         $("body").on("click",".product", function(){
             var selected_product = $('input:checkbox:checked').length;
             if(selected_product < 1){
-                alert("Please select at least one product.");
+                //alert("Please select at least one product.");
                 $(this).prop('checked',true);
             }
             toggleProductDetail($(this));
@@ -504,8 +501,7 @@
                 $('.dateimepicker-input').on('change.datetimepicker',function(){
                     UpdateCreatedDateInSession();
                 });
-                                        
-                // $('.product-detail input').not('input[type=checkbox]').attr('disabled',true);
+                getOrderImage("{{ route('order.po.image') }}",{'order_id':$('input[name=order_id]').val()});   
             },
             complete:function(){
                 $('#loader').hide();
@@ -675,10 +671,10 @@
                             {name:'Customer',table:'users',where:'users_group_id = 4 AND deleted_at is NULL  AND status = 1 AND created_by={{auth()->user()->id}}'},
                             @endif
                             @if(auth()->user()->users_group_id==2 || (empty(auth()->user()->users_group_id) || auth()->user()->users_group_id==1))
-                            {name:'Retailer',table:'users',where:'users_group_id = 3 AND deleted_at is NULL AND status = 1' + "{{(empty(auth()->user()->users_group_id) || auth()->user()->users_group_id==1) ? '':  ' AND created_by='.auth()->user()->id}}"},
+                            {name:'Retailer',table:'users',where:'users_group_id = 3 AND deleted_at is NULL AND status = 1' + "{{(empty(auth()->user()->users_group_id) || auth()->user()->users_group_id==1) ? '':  ' AND created_by='.auth()->user()->id}} OR (parent_id={{auth()->user()->id}} AND created_by=1)"},
                             @endif
                             @if(empty(auth()->user()->users_group_id) || auth()->user()->users_group_id==1)
-                            {name:'Dealer',table:'users',where:'users_group_id = 2 AND deleted_at is NULL AND status = 1'},
+                            {name:'Dealer',table:'users',where:'users_group_id = 2 AND deleted_at is NULL AND status = 1 OR (parent_id={{auth()->user()->id}} AND created_by=1)'},
                             @endif
 
                         ];

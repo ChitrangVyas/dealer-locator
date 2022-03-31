@@ -137,7 +137,7 @@ class CartController extends MainController
             foreach ($request->input('inquiries') as $inquiry) {
                 $obj = Inquiry::findOrFail($inquiry);
                 if ($obj) {
-                    $inquiryArray[$obj->id] = $obj->customer->name . " " . $obj->created_at->format("Y-m-d");
+                    $inquiryArray[$obj->id] = $obj->customer->name . " " . $obj->created_at->format("Y-m-d H:i:s");
                 }
             }
         }
@@ -218,8 +218,9 @@ class CartController extends MainController
     public function createQuote(Request $request)
     {
         $request_data = $request->all();
-        $id = "quote_user_" . $request_data['data']['customer'];        
-        $json['created_at'] = $this->myCart->getCreatedat($id);
+        $id = "quote_user_" . $request_data['data']['customer'];    
+        $time = date("H:i:s");    
+        $json['created_at'] = date('Y-m-d H:i:s',strtotime($this->myCart->getCreatedat($id).$time));
         $is_new_product = 0;
         if (!empty($request_data['data']['customer'])) {
             $id = "quote_user_" . $request_data['data']['customer'];
@@ -647,7 +648,7 @@ class CartController extends MainController
             $this->myCart->setOrderNumber($id, $order->order_number);
             $this->myCart->setOrderReference($id, $order->id);
             $this->myCart->setType($id, 'sale');
-            $this->myCart->setCreatedat($id, $order->created_at);
+            $this->myCart->setCreatedat($id, $order->created_at->format('Y-m-d'));            
         }
         $json['cart_title'] = "Sale" . (!empty($this->myCart->getOrderNumber($id)) ? " #" . $this->myCart->getOrderNumber($id) : '');
         $json['cart_content'] = $this->getInquiryToQuoteCart($id, $cart)->render();

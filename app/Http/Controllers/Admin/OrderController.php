@@ -229,6 +229,8 @@ class OrderController extends MainController
         $request_data = $request->all();
         // $quote_data = $request->only(['type','order_number','status','from_user','to_user','inquiry_id']);
         $quote_data = $this->myCart->getAll($request_data['cart_id']);
+        $time= date("H:i:s");
+        $quote_data['created_at']=  date('Y-m-d H:i:s',strtotime($this->myCart->getCreatedat($request_data['cart_id']).$time));
         // order_number, inquiry_id, type, to_user,
         $tax_data['total_tax'] = $quote_data['total_tax'];
         $tax_data['product_tax'] = $quote_data['product_tax'];
@@ -350,7 +352,6 @@ class OrderController extends MainController
             'amount' => 'required|array|min:1',
             'amount.*' => 'required|numeric|min:1'
         ])->validate();
-
         $request_data = $request->all();
         $cart = \Cart::Session($request_data['cart_id']);
         $cart_data = $this->myCart->getAll($request_data['cart_id']);
@@ -379,6 +380,8 @@ class OrderController extends MainController
         }
         $cart_data['status'] =  'sent';
         $cart_data['order_reference'] = (!empty($cart_data['order_reference'])) ? $cart_data['order_reference'] : NULL;
+        $time = date('H:i:s');
+        $cart_data['created_at']=  date('Y-m-d H:i:s',strtotime($this->myCart->getCreatedat($request_data['cart_id']).$time));
         try {
             if (!empty($cart_data['order_id'])) {
                 $order = Order::find($cart_data['order_id']);
@@ -592,7 +595,7 @@ class OrderController extends MainController
         
         $request_data = $request->all();
         
-        
+        $time = date('H:i:s');
         $cart = \Cart::Session($request_data['cart_id']);
         $cart_data = $this->myCart->getAll($request_data['cart_id']);
         
@@ -608,8 +611,7 @@ class OrderController extends MainController
         unset($cart_data['tax_group']);
         unset($cart_data['inquiries']);
         $cart_data['order_reference'] = (!empty($cart_data['order_reference'])) ? $cart_data['order_reference'] : NULL;        
-        $cart_data['created_at']= $this->myCart->getCreatedat($request_data['cart_id']);
-    
+        $cart_data['created_at']=  date('Y-m-d H:i:s',strtotime($this->myCart->getCreatedat($request_data['cart_id']).$time));
         try {
             $order_data = explode('_', $request_data['cart_id']);
             if ($order_data[1] == 'edit') {
@@ -750,10 +752,10 @@ class OrderController extends MainController
             $where .= (!empty($users)) ? " OR from_user in ($users) )" : ")";
         }
         
-        $where .= (!empty($search)) ? " AND (orders.order_number like '$search%' OR orders.total like '$search%' OR orders.created_at like '$search%' OR (c.name is NOT NULL AND c.name like '$search%') OR (d.name is NOT NULL AND d.name like '$search%'))" : '';
+        $where .= (!empty($search)) ? " AND (orders.order_number like '%$search%' OR orders.total like '%$search%' OR orders.created_at like '%$search%' OR (c.name is NOT NULL AND c.name like '%$search%') OR (d.name is NOT NULL AND d.name like '%$search%'))" : '';
 
         $orders = DB::table('orders')
-            ->select(DB::raw('orders.id,order_number, orders.is_po_recieved, orders.recieved_date, c.id AS to_user, d.id AS from_user, c.name as customer,d.name as added_by, orders.total as amount, orders.created_at as created_date'))
+            ->select(DB::raw('orders.id,order_number, c.id AS to_user, d.id AS from_user, c.name as customer,d.name as added_by, orders.total as amount, orders.created_at as created_date'))
             ->join('order_product AS op', 'orders.id', '=', 'op.order_id', 'left')
             ->join('users AS c', 'orders.to_user', '=', 'c.id', 'left')
             ->join('users AS d', 'orders.from_user', '=', 'd.id', 'left')
@@ -787,7 +789,7 @@ class OrderController extends MainController
             $action_html .= "<span class='ml-2 edit-quote-" . $order->id . "'><a data-url=" . route('cart.quote.edit', $order->id) . " data-order=" . $order->id . " class='btn btn-primary view-order' title='Edit'><i class='fas fa-pen'></i></a></span>";
             $action_html .= "<span class='ml-2'><button type=button data-order=$order->id class='btn btn-danger' onClick=deleteOrder($order->id) title='Delete'><i class='fas fa-trash'></i></button></span>";
         }
-            $data[] = [$order->id, $order->order_number, $order->amount, ucwords($added_by), ucwords($customer), (!empty($order->is_po_recieved)) ? 'Y' : 'N', (!empty($order->recieved_date)) ? $order->recieved_date : 'N/A', $order->created_date, $action_html];
+            $data[] = [$order->id, $order->order_number, $order->amount, ucwords($added_by), ucwords($customer), $order->created_date, $action_html];
         }
         $return_array = array();
         $return_array['draw'] = $request['draw'];
@@ -820,7 +822,7 @@ class OrderController extends MainController
             $where .= (!empty($users)) ? " OR from_user in ($users) )" : ")";            
         }
         // $where .= (!empty($dealer_id))?" AND (dealer_id=$dealer_id OR inquiries.created_by=$dealer_id)":'';
-        $where .= (!empty($search)) ? " AND (orders.order_number like '$search%' OR orders.total like '$search%' OR orders.created_at like '$search%' OR (c.name is NOT NULL AND c.name like '$search%') OR (d.name is NOT NULL AND d.name like '$search%'))" : '';
+        $where .= (!empty($search)) ? " AND (orders.order_number like '%$search%' OR orders.total like '%$search%' OR orders.created_at like '%$search%' OR (c.name is NOT NULL AND c.name like '%$search%') OR (d.name is NOT NULL AND d.name like '%$search%'))" : '';
 
         $where .= $andWhere;
         $orders = DB::table('orders')
@@ -890,7 +892,7 @@ class OrderController extends MainController
             // $where .= (!empty($users)) ? " OR from_user in ($users) )" : ")";
         }
         // $where .= (!empty($dealer_id))?" AND (dealer_id=$dealer_id OR inquiries.created_by=$dealer_id)":'';
-        $where .= (!empty($search)) ? " AND (orders.order_number like '$search%' OR orders.total like '$search%' OR orders.created_at like '$search%' OR (c.name is NOT NULL AND c.name like '$search%'))" : '';
+        $where .= (!empty($search)) ? " AND (orders.order_number like '%$search%' OR orders.total like '%$search%' OR orders.created_at like '%$search%' OR (c.name is NOT NULL AND c.name like '%$search%'))" : '';
         
         $orders = DB::table('orders')
             ->select(DB::raw('orders.id,order_number,c.name as customer,d.name as added_by, orders.total as amount, orders.created_at as created_date'))
@@ -954,7 +956,7 @@ class OrderController extends MainController
             $where .= (!empty($user->id)) ? " AND to_user=$user->id" : '';
         }
         // $where .= (!empty($dealer_id))?" AND (dealer_id=$dealer_id OR inquiries.created_by=$dealer_id)":'';
-        $where .= (!empty($search)) ? " AND (orders.order_number like '$search%' OR orders.total like '$search%' OR orders.created_at like '$search%' OR (c.name is NOT NULL AND c.name like '$search%') OR (d.name is NOT NULL AND d.name like '$search%'))" : '';
+        $where .= (!empty($search)) ? " AND (orders.order_number like '%$search%' OR orders.total like '%$search%' OR orders.created_at like '%$search%' OR (c.name is NOT NULL AND c.name like '%$search%') OR (d.name is NOT NULL AND d.name like '%$search%'))" : '';
         $orders = DB::table('orders')
             ->select(DB::raw('orders.id,order_number,c.name as customer,d.name as added_by, orders.total as amount, orders.created_at as created_date'))
             ->join('order_product AS op', 'orders.id', '=', 'op.order_id', 'left')
@@ -1021,7 +1023,9 @@ class OrderController extends MainController
         $orderStatus = OrderStatus::where('order_id', $request_data['order_id'])->where('user_id', (!empty(auth()->user()->users_group_id)) ? auth()->user()->id : NULL);
         if ((!empty($orderStatus->get())) && count($orderStatus->get())) {
             $order = Order::findOrFail($request_data['order_id']);
-            $order->update(['courier_detail'=>$request_data['courier_details']]);
+            if(isset($request_data['courier_details'])){
+                $order->update(['courier_detail'=>$request_data['courier_details']]);
+            }
             try {
                 $is_updated = $orderStatus->update(['status_id' => $request_data['status_id'], 'updated_at' => \Carbon\Carbon::now()]);
             } catch (Exception $e) {
@@ -1153,7 +1157,7 @@ class OrderController extends MainController
                 $where .= (!empty($users)) ? " OR from_user in ($users) )" : ")";
             }
         }
-        $where .= (!empty($search)) ? " AND (orders.order_number like '$search%' OR orders.total like '$search%' OR orders.created_at like '$search%' OR (c.name is NOT NULL AND c.name like '$search%') OR (d.name is NOT NULL AND d.name like '$search%'))" : '';
+        $where .= (!empty($search)) ? " AND (orders.order_number like '%$search%' OR orders.total like '%$search%' OR orders.created_at like '%$search%' OR (c.name is NOT NULL AND c.name like '%$search%') OR (d.name is NOT NULL AND d.name like '%$search%'))" : '';
         if (!empty($from_date) && !empty($to_date)) {
             $where .= " AND (orders.created_at BETWEEN '$from_date 00:00:00' AND '$to_date 23:59:59')";
         }
@@ -1213,7 +1217,7 @@ class OrderController extends MainController
         } else {
             $where .= (!empty($user->id)) ? " AND (from_user=$user->id OR from_user is NULL)" : '';
         }
-        $where .= (!empty($search)) ? " AND (orders.order_number like '$search%' OR orders.total like '$search%' OR orders.created_at like '$search%' OR (c.name is NOT NULL AND c.name like '$search%') OR (d.name is NOT NULL AND d.name like '$search%'))" : '';
+        $where .= (!empty($search)) ? " AND (orders.order_number like '%$search%' OR orders.total like '%$search%' OR orders.created_at like '%$search%' OR (c.name is NOT NULL AND c.name like '%$search%') OR (d.name is NOT NULL AND d.name like '%$search%'))" : '';
         if (!empty($from_date) && !empty($to_date)) {
             $where .= " AND (orders.created_at BETWEEN '$from_date 00:00:00' AND '$to_date 23:59:59')";
         }

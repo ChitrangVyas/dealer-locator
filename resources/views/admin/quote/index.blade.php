@@ -126,7 +126,7 @@
             ],
             "columnDefs": [
                 {
-                    "targets": [6],
+                    "targets": [3,6],
                     "orderable": false
                 },
                 {

@@ -14,7 +14,7 @@
             <input type="hidden" name="uploaded_by" value="{{auth()->user()->id}}">
             <input type="hidden" name="order_id" value="{{ $order->id }}">
             
-            @if(($order->from_user == auth()->user()->id || empty($order->from_user) ))
+            @if(($order->from_user == auth()->user()->id || ( (is_null(auth()->user()->users_group_id) || auth()->user()->users_group_id==1) && empty($order->from_user)) ))
             <fieldset class="border">
                 <legend class="w-auto m-2">PO Received</legend>
                 <div class="col-sm-12 col-md-12">
@@ -84,7 +84,7 @@
                 </div>
             </fieldset>
             @endif
-            @if(($order->from_user == auth()->user()->id || $order->from_user == 0) )
+            @if(($order->from_user == auth()->user()->id || ( (is_null(auth()->user()->users_group_id) || auth()->user()->users_group_id==1) && empty($order->from_user)) ))
             <fieldset class="border">
                 <legend class="w-auto m-2">Courier Details</legend>
                 <div class="col-sm-12 col-md-12">
@@ -99,7 +99,7 @@
                 </div>
             </fieldset>
             @endif
-            @if(empty(auth()->user()->users_group_id) || (auth()->user()->id == $order->from_user || $order->from_user == 0 ))
+            @if(($order->from_user == auth()->user()->id || ( (is_null(auth()->user()->users_group_id) || auth()->user()->users_group_id==1) && empty($order->from_user)) ))
             <fieldset class="border">
                 <legend class="w-auto m-2">Order Status</legend>
                     <div class="col-sm-12 col-md-12">
@@ -163,7 +163,7 @@
         </form>
     </div>
     @endif
-    @if(empty(auth()->user()->users_group_id) || (auth()->user()->id == $order->from_user))
+    @if(($order->from_user == auth()->user()->id || ( (is_null(auth()->user()->users_group_id) || auth()->user()->users_group_id==1) && empty($order->from_user)) ))
     <div class="row">
         <form id="uploadPo" class="col-12" enctype="multipart/form-data">
             @csrf

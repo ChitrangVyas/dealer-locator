@@ -51,7 +51,7 @@ class LoginController extends MainController
     {
         $user_group = (!empty($request->input('user_group')))?$request->input('user_group'):null;
         if(!empty($user_group)){
-            return array_merge($request->only($this->username(), 'password'), ['users_group_id' => $user_group]);
+            return array_merge($request->only($this->username(), 'password'), ['users_group_id' => $user_group,'status'=>'1']);
         }
         return $request->only($this->username(), 'password');
 

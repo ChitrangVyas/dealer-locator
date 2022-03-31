@@ -690,12 +690,11 @@
             {name:'Customer',table:'users',where:'users_group_id = 4 AND deleted_at is NULL  AND status = 1 AND created_by={{auth()->user()->id}}'},
             @endif
             @if(auth()->user()->users_group_id==2 || (empty(auth()->user()->users_group_id) || auth()->user()->users_group_id==1))
-            {name:'Retailer',table:'users',where:'users_group_id = 3 AND deleted_at is NULL AND status = 1' + "{{(empty(auth()->user()->users_group_id) || auth()->user()->users_group_id==1) ? '':  ' AND created_by='.auth()->user()->id}}"},
+            {name:'Retailer',table:'users',where:'users_group_id = 3 AND deleted_at is NULL AND status = 1' + "{{(empty(auth()->user()->users_group_id) || auth()->user()->users_group_id==1) ? '':  ' AND created_by='.auth()->user()->id}} OR (parent_id={{auth()->user()->id}} AND created_by=1)"},
             @endif
             @if(empty(auth()->user()->users_group_id) || auth()->user()->users_group_id==1)
-            {name:'Dealer',table:'users',where:'users_group_id = 2 AND deleted_at is NULL AND status = 1'},
+            {name:'Dealer',table:'users',where:'users_group_id = 2 AND deleted_at is NULL AND status = 1 OR (parent_id={{auth()->user()->id}} AND created_by=1)'},
             @endif
-
         ];
         $('.customer').select2({
             placeholder: "Select",

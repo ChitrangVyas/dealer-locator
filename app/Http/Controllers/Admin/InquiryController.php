@@ -106,12 +106,7 @@ class InquiryController extends MainController
                 $data['mobile_number'] = $inquiry->dealer->mobile;
                 $data['inquiry_id'] = $inquiry->id;
                 $data['msg_index'] = 'inquiry_assign';
-                try{
-                    $respnose = $this->sentSMS($data);
-                }catch(Exception $e){
-                    return redirect(route('inquiry.create'))->with('exception', $e->getMessage()." in dealer");
-                }
-               
+                $respnose = $this->sentSMS($data);
                 $sms_res = explode('|',$respnose);
                 if($sms_res[0] == 'ok'){
                     Helpers::storeNotification($dealer_id,"Inquiry #$inquiry->id SMS sent to you.",0,1);
@@ -126,12 +121,7 @@ class InquiryController extends MainController
                 $data['mobile_number'] = $inquiry->retailer->mobile;
                 $data['inquiry_id'] = $inquiry->id;
                 $data['msg_index'] = 'inquiry_assign';
-                try{
-                    $respnose = $this->sentSMS($data);
-                }catch(Exception $e){
-                    return redirect(route('inquiry.create'))->with('exception', $e->getMessage()."in retailer");
-                }
-              
+                $respnose = $this->sentSMS($data);
                 $sms_res = explode('|',$respnose);
                 if($sms_res[0] == 'ok'){
                     Helpers::storeNotification($retailer_id,"Inquiry #$inquiry->id SMS sent to you.",0,1);
@@ -570,7 +560,12 @@ class InquiryController extends MainController
         $settings['json_data'] = json_decode($settings['json_data'],true);
         $post_response = '';
         if($settings['json_data']['is_enabled'] == '1'){
-            $txt = $this->getMsg($data['msg_index']);
+            try{
+                $txt = $this->getMsg($data['msg_index']);
+            }catch(Exception $e){
+                return redirect(route('inquiry.create'))->with('exception', $e->getMessage());
+            }
+            //$txt = $this->getMsg($data['msg_index']);
             if($data['msg_index'] == 'inquiry_assign'){
                 $searchReplaceArray = array('{name}'=>$data['name'],'{inquiry_no}'=>$data['inquiry_id']);
             }else{

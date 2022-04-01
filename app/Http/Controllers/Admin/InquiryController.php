@@ -106,7 +106,12 @@ class InquiryController extends MainController
                 $data['mobile_number'] = $inquiry->dealer->mobile;
                 $data['inquiry_id'] = $inquiry->id;
                 $data['msg_index'] = 'inquiry_assign';
-                $respnose = $this->sentSMS($data);
+                try{
+                    $respnose = $this->sentSMS($data);
+                }catch(Exception $e){
+                    return redirect(route('inquiry.create'))->with('exception', $e->getMessage()." in dealer");
+                }
+               
                 $sms_res = explode('|',$respnose);
                 if($sms_res[0] == 'ok'){
                     Helpers::storeNotification($dealer_id,"Inquiry #$inquiry->id SMS sent to you.",0,1);
@@ -121,7 +126,12 @@ class InquiryController extends MainController
                 $data['mobile_number'] = $inquiry->retailer->mobile;
                 $data['inquiry_id'] = $inquiry->id;
                 $data['msg_index'] = 'inquiry_assign';
-                $respnose = $this->sentSMS($data);
+                try{
+                    $respnose = $this->sentSMS($data);
+                }catch(Exception $e){
+                    return redirect(route('inquiry.create'))->with('exception', $e->getMessage()."in retailer");
+                }
+              
                 $sms_res = explode('|',$respnose);
                 if($sms_res[0] == 'ok'){
                     Helpers::storeNotification($retailer_id,"Inquiry #$inquiry->id SMS sent to you.",0,1);
@@ -142,7 +152,7 @@ class InquiryController extends MainController
                         $data['dealer'] = "";
                     }
                     if(!empty($retailer_id)){
-                        $data['retailer'] = ', Retailer: '. $inquiry->retailer->name .", ". $inquiry->retailer->mobile.", ".$inquiry->retailer->email.", ".$inquiry->retailer->address;
+                        $data['retailer'] = 'and Retailer: '. $inquiry->retailer->name .", ". $inquiry->retailer->mobile.", ".$inquiry->retailer->email.", ".$inquiry->retailer->address;
                     }else{
                         $data['retailer'] = "";
                     }
@@ -240,6 +250,7 @@ class InquiryController extends MainController
                 $data['name'] = $inquiry_new->dealer->name;
                 $data['mobile_number'] = $inquiry_new->dealer->mobile;
                 $data['inquiry_id'] = $inquiry_new->id;
+                $data['msg_index'] = 'inquiry_assign';
                 $respnose = $this->sentSMS($data);
                 $sms_res = explode('|',$respnose);
                 if($sms_res[0] == 'ok'){
@@ -250,11 +261,11 @@ class InquiryController extends MainController
             }
             if(!empty($update_data['retailer_id']) && $inquiry->retailer_id != $update_data['retailer_id'] ){
                 Helpers::storeNotification($update_data['retailer_id'],"Inquiry #$inquiry->id has been assined to you.",0,1);
-
                 $data = array();
                 $data['name'] = $inquiry_new->retailer->name;
                 $data['mobile_number'] = $inquiry_new->retailer->mobile;
                 $data['inquiry_id'] = $inquiry_new->id;
+                $data['msg_index'] = 'inquiry_assign';
                 $respnose = $this->sentSMS($data);
                 $sms_res = explode('|',$respnose);
                 if($sms_res[0] == 'ok'){
@@ -263,8 +274,30 @@ class InquiryController extends MainController
                     $msg ="Failed to sent SMS".$sms_res[0];
                 } 
             }
-            if(!empty($request_data['send_mail_to_customer']) && (!empty($dealer_id))){
+            if(!empty($request_data['send_mail_to_customer']) && (!empty($update_data['dealer_id']))){
                 try{
+                    $data = array();
+                    $data['name'] = $inquiry->customer->name;
+                    $data['mobile_number'] = $inquiry->customer->mobile;
+                    $data['inquiry_id'] = $inquiry->id;
+                    $data['msg_index'] = 'inquiry_customer_assigned';
+                    if(!empty($update_data['dealer_id'])){
+                        $data['dealer'] = $inquiry->dealer->name.", ". $inquiry->dealer->mobile .", ".$inquiry->dealer->email.", ".$inquiry->dealer->address;
+                    }else{
+                        $data['dealer'] = "";
+                    }
+                    if(!empty($update_data['retailer_id'])){
+                        $data['retailer'] = 'and Retailer: '. $inquiry->retailer->name .", ". $inquiry->retailer->mobile.", ".$inquiry->retailer->email.", ".$inquiry->retailer->address;
+                    }else{
+                        $data['retailer'] = "";
+                    }
+                    $respnose = $this->sentSMS($data);
+                    $sms_res = explode('|',$respnose);
+                    if($sms_res[0] == 'ok'){
+                        //Helpers::storeNotification($update_data['retailer_id'],"Inquiry #$inquiry->id SMS sent to you.",0,1);
+                    }else{
+                       $msg ="Failed to sent SMS".$sms_res[0];
+                    }
                     Mail::to($inquiry->customer->email)->send(new SendInquiryToCustomer(config('app.name').' - Inquiry',$inquiry));
                 }catch(Exception $e){
                     return redirect(route('inquiry.index'))->with('exception', 'Unable to sent Mail.');

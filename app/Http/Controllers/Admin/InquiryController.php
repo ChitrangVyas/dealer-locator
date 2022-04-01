@@ -106,7 +106,12 @@ class InquiryController extends MainController
                 $data['mobile_number'] = $inquiry->dealer->mobile;
                 $data['inquiry_id'] = $inquiry->id;
                 $data['msg_index'] = 'inquiry_assign';
-                $respnose = $this->sentSMS($data);
+                try{
+                    $respnose = $this->sentSMS($data);
+                }catch(Exception $e){
+                    return redirect(route('inquiry.create'))->with('exception', $e->getMessage()."in dealer");
+                }
+               
                 $sms_res = explode('|',$respnose);
                 if($sms_res[0] == 'ok'){
                     Helpers::storeNotification($dealer_id,"Inquiry #$inquiry->id SMS sent to you.",0,1);
@@ -121,7 +126,11 @@ class InquiryController extends MainController
                 $data['mobile_number'] = $inquiry->retailer->mobile;
                 $data['inquiry_id'] = $inquiry->id;
                 $data['msg_index'] = 'inquiry_assign';
-                $respnose = $this->sentSMS($data);
+                try{
+                    $respnose = $this->sentSMS($data);
+                }catch(Exception $e){
+                    return redirect(route('inquiry.create'))->with('exception', $e->getMessage()." in retailer");
+                }
                 $sms_res = explode('|',$respnose);
                 if($sms_res[0] == 'ok'){
                     Helpers::storeNotification($retailer_id,"Inquiry #$inquiry->id SMS sent to you.",0,1);
@@ -146,7 +155,11 @@ class InquiryController extends MainController
                     }else{
                         $data['retailer'] = "";
                     }
-                    $respnose = $this->sentSMS($data);
+                    try{
+                        $respnose = $this->sentSMS($data);
+                    }catch(Exception $e){
+                        return redirect(route('inquiry.create'))->with('exception', $e->getMessage()." in send_mail_to_customer");
+                    }
                     $sms_res = explode('|',$respnose);
                     if($sms_res[0] == 'ok'){
                         Helpers::storeNotification($retailer_id,"Inquiry #$inquiry->id SMS sent to you.",0,1);
@@ -563,15 +576,24 @@ class InquiryController extends MainController
             try{
                 $txt = $this->getMsg($data['msg_index']);
             }catch(Exception $e){
-                return redirect(route('inquiry.create'))->with('exception', $e->getMessage()." in sms");
+                return redirect(route('inquiry.create'))->with('exception', $e->getMessage()." in get msg");
             }
-            //$txt = $this->getMsg($data['msg_index']);
-            if($data['msg_index'] == 'inquiry_assign'){
-                $searchReplaceArray = array('{name}'=>$data['name'],'{inquiry_no}'=>$data['inquiry_id']);
-            }else{
-                $searchReplaceArray = array('{name}'=>$data['name'],'{inquiry_no}'=>$data['inquiry_id'],'{dealer}'=>$data['dealer'],'{retailer}'=>$data['retailer']);
+            try{
+                if($data['msg_index'] == 'inquiry_assign'){
+                    $searchReplaceArray = array('{name}'=>$data['name'],'{inquiry_no}'=>$data['inquiry_id']);
+                }else{
+                    $searchReplaceArray = array('{name}'=>$data['name'],'{inquiry_no}'=>$data['inquiry_id'],'{dealer}'=>$data['dealer'],'{retailer}'=>$data['retailer']);
+                }
+            }catch(Exception $e){
+                return redirect(route('inquiry.create'))->with('exception', $e->getMessage()." in replace array string");
             }
-            $txtMsg = str_replace(array_keys($searchReplaceArray),  array_values($searchReplaceArray),  $txt);
+            try{
+                $txtMsg = str_replace(array_keys($searchReplaceArray),  array_values($searchReplaceArray),  $txt);
+            }catch(Exception $e){
+                return redirect(route('inquiry.create'))->with('exception', $e->getMessage()." in replace string function");
+            }
+           
+          
             $sms_data = array();
             $sms_data['UserID'] = $settings['json_data']['userId'];
             $sms_data['Password'] = $settings['json_data']['sms_password'];

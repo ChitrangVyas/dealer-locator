@@ -105,7 +105,7 @@ class InquiryController extends MainController
                 $data['name'] = $inquiry->dealer->name;
                 $data['mobile_number'] = $inquiry->dealer->mobile;
                 $data['inquiry_id'] = $inquiry->id;
-                $data['msg_index'] = 'inquiry';
+                $data['msg_index'] = 'inquiry_assign';
                 $respnose = $this->sentSMS($data);
                 $sms_res = explode('|',$respnose);
                 if($sms_res[0] == 'ok'){
@@ -120,7 +120,7 @@ class InquiryController extends MainController
                 $data['name'] = $inquiry->retailer->name;
                 $data['mobile_number'] = $inquiry->retailer->mobile;
                 $data['inquiry_id'] = $inquiry->id;
-                $data['msg_index'] = 'inquiry';
+                $data['msg_index'] = 'inquiry_assign';
                 $respnose = $this->sentSMS($data);
                 $sms_res = explode('|',$respnose);
                 if($sms_res[0] == 'ok'){
@@ -240,7 +240,7 @@ class InquiryController extends MainController
                 $data['name'] = $inquiry_new->dealer->name;
                 $data['mobile_number'] = $inquiry_new->dealer->mobile;
                 $data['inquiry_id'] = $inquiry_new->id;
-                $data['msg_index'] = 'inquiry';
+                $data['msg_index'] = 'inquiry_assign';
                 $respnose = $this->sentSMS($data);
                 $sms_res = explode('|',$respnose);
                 if($sms_res[0] == 'ok'){
@@ -255,7 +255,7 @@ class InquiryController extends MainController
                 $data['name'] = $inquiry_new->retailer->name;
                 $data['mobile_number'] = $inquiry_new->retailer->mobile;
                 $data['inquiry_id'] = $inquiry_new->id;
-                $data['msg_index'] = 'inquiry';
+                $data['msg_index'] = 'inquiry_assign';
                 $respnose = $this->sentSMS($data);
                 $sms_res = explode('|',$respnose);
                 if($sms_res[0] == 'ok'){
@@ -560,25 +560,13 @@ class InquiryController extends MainController
         $settings['json_data'] = json_decode($settings['json_data'],true);
         $post_response = '';
         if($settings['json_data']['is_enabled'] == '1'){
-            try{
-                $txt = $this->getMsg($data['msg_index']);
-            }catch(Exception $e){
-                return redirect(route('inquiry.create'))->with('exception', $e->getMessage()." in get msg");
+            $txt = $this->getMsg($data['msg_index']);           
+            if($data['msg_index'] == 'inquiry_assign'){
+                $searchReplaceArray = array('{name}'=>$data['name'],'{inquiry_no}'=>$data['inquiry_id']);
+            }else{
+                $searchReplaceArray = array('{name}'=>$data['name'],'{inquiry_no}'=>$data['inquiry_id'],'{dealer}'=>$data['dealer'],'{retailer}'=>$data['retailer']);
             }
-            try{
-                if($data['msg_index'] == 'inquiry'){
-                    $searchReplaceArray = array('{name}'=>$data['name'],'{inquiry_no}'=>$data['inquiry_id']);
-                }else{
-                    $searchReplaceArray = array('{name}'=>$data['name'],'{inquiry_no}'=>$data['inquiry_id'],'{dealer}'=>$data['dealer'],'{retailer}'=>$data['retailer']);
-                }
-            }catch(Exception $e){
-                return redirect(route('inquiry.create'))->with('exception', $e->getMessage()." in replace array string");
-            }
-            try{
-                $txtMsg = str_replace(array_keys($searchReplaceArray),  array_values($searchReplaceArray),  $txt);
-            }catch(Exception $e){
-                return redirect(route('inquiry.create'))->with('exception', $e->getMessage()." in replace string function");
-            }
+            $txtMsg = str_replace(array_keys($searchReplaceArray),  array_values($searchReplaceArray),  $txt);
             $sms_data = array();
             $sms_data['UserID'] = $settings['json_data']['userId'];
             $sms_data['Password'] = $settings['json_data']['sms_password'];

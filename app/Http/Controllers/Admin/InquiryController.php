@@ -106,12 +106,7 @@ class InquiryController extends MainController
                 $data['mobile_number'] = $inquiry->dealer->mobile;
                 $data['inquiry_id'] = $inquiry->id;
                 $data['msg_index'] = 'inquiry_assign';
-                try{
-                    $respnose = $this->sentSMS($data);
-                }catch(Exception $e){
-                    return redirect(route('inquiry.create'))->with('exception', $e->getMessage()."in dealer");
-                }
-               
+                $respnose = $this->sentSMS($data);
                 $sms_res = explode('|',$respnose);
                 if($sms_res[0] == 'ok'){
                     Helpers::storeNotification($dealer_id,"Inquiry #$inquiry->id SMS sent to you.",0,1);
@@ -126,11 +121,7 @@ class InquiryController extends MainController
                 $data['mobile_number'] = $inquiry->retailer->mobile;
                 $data['inquiry_id'] = $inquiry->id;
                 $data['msg_index'] = 'inquiry_assign';
-                try{
-                    $respnose = $this->sentSMS($data);
-                }catch(Exception $e){
-                    return redirect(route('inquiry.create'))->with('exception', $e->getMessage()." in retailer");
-                }
+                $respnose = $this->sentSMS($data);
                 $sms_res = explode('|',$respnose);
                 if($sms_res[0] == 'ok'){
                     Helpers::storeNotification($retailer_id,"Inquiry #$inquiry->id SMS sent to you.",0,1);
@@ -155,11 +146,7 @@ class InquiryController extends MainController
                     }else{
                         $data['retailer'] = "";
                     }
-                    try{
-                        $respnose = $this->sentSMS($data);
-                    }catch(Exception $e){
-                        return redirect(route('inquiry.create'))->with('exception', $e->getMessage()." in send_mail_to_customer");
-                    }
+                    $respnose = $this->sentSMS($data);
                     $sms_res = explode('|',$respnose);
                     if($sms_res[0] == 'ok'){
                         Helpers::storeNotification($retailer_id,"Inquiry #$inquiry->id SMS sent to you.",0,1);
@@ -592,8 +579,6 @@ class InquiryController extends MainController
             }catch(Exception $e){
                 return redirect(route('inquiry.create'))->with('exception', $e->getMessage()." in replace string function");
             }
-           
-          
             $sms_data = array();
             $sms_data['UserID'] = $settings['json_data']['userId'];
             $sms_data['Password'] = $settings['json_data']['sms_password'];

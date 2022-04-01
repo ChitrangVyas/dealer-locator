@@ -106,12 +106,7 @@ class InquiryController extends MainController
                 $data['mobile_number'] = $inquiry->dealer->mobile;
                 $data['inquiry_id'] = $inquiry->id;
                 $data['msg_index'] = 'inquiry';
-                try{
-                    $respnose = $this->sentSMS($data);
-                }catch(Exception $e){
-                    return redirect(route('inquiry.create'))->with('exception', $e->getMessage()." in dealer");
-                }
-               
+                $respnose = $this->sentSMS($data);
                 $sms_res = explode('|',$respnose);
                 if($sms_res[0] == 'ok'){
                     Helpers::storeNotification($dealer_id,"Inquiry #$inquiry->id SMS sent to you.",0,1);

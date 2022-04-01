@@ -105,8 +105,13 @@ class InquiryController extends MainController
                 $data['name'] = $inquiry->dealer->name;
                 $data['mobile_number'] = $inquiry->dealer->mobile;
                 $data['inquiry_id'] = $inquiry->id;
-                $data['msg_index'] = 'inquiry_assign';
-                $respnose = $this->sentSMS($data);
+                $data['msg_index'] = 'inquiry';
+                try{
+                    $respnose = $this->sentSMS($data);
+                }catch(Exception $e){
+                    return redirect(route('inquiry.create'))->with('exception', $e->getMessage()." in dealer");
+                }
+               
                 $sms_res = explode('|',$respnose);
                 if($sms_res[0] == 'ok'){
                     Helpers::storeNotification($dealer_id,"Inquiry #$inquiry->id SMS sent to you.",0,1);
@@ -120,7 +125,7 @@ class InquiryController extends MainController
                 $data['name'] = $inquiry->retailer->name;
                 $data['mobile_number'] = $inquiry->retailer->mobile;
                 $data['inquiry_id'] = $inquiry->id;
-                $data['msg_index'] = 'inquiry_assign';
+                $data['msg_index'] = 'inquiry';
                 $respnose = $this->sentSMS($data);
                 $sms_res = explode('|',$respnose);
                 if($sms_res[0] == 'ok'){
@@ -240,7 +245,7 @@ class InquiryController extends MainController
                 $data['name'] = $inquiry_new->dealer->name;
                 $data['mobile_number'] = $inquiry_new->dealer->mobile;
                 $data['inquiry_id'] = $inquiry_new->id;
-                $data['msg_index'] = 'inquiry_assign';
+                $data['msg_index'] = 'inquiry';
                 $respnose = $this->sentSMS($data);
                 $sms_res = explode('|',$respnose);
                 if($sms_res[0] == 'ok'){
@@ -255,7 +260,7 @@ class InquiryController extends MainController
                 $data['name'] = $inquiry_new->retailer->name;
                 $data['mobile_number'] = $inquiry_new->retailer->mobile;
                 $data['inquiry_id'] = $inquiry_new->id;
-                $data['msg_index'] = 'inquiry_assign';
+                $data['msg_index'] = 'inquiry';
                 $respnose = $this->sentSMS($data);
                 $sms_res = explode('|',$respnose);
                 if($sms_res[0] == 'ok'){
@@ -566,7 +571,7 @@ class InquiryController extends MainController
                 return redirect(route('inquiry.create'))->with('exception', $e->getMessage()." in get msg");
             }
             try{
-                if($data['msg_index'] == 'inquiry_assign'){
+                if($data['msg_index'] == 'inquiry'){
                     $searchReplaceArray = array('{name}'=>$data['name'],'{inquiry_no}'=>$data['inquiry_id']);
                 }else{
                     $searchReplaceArray = array('{name}'=>$data['name'],'{inquiry_no}'=>$data['inquiry_id'],'{dealer}'=>$data['dealer'],'{retailer}'=>$data['retailer']);

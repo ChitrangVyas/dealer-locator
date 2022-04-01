@@ -64,7 +64,7 @@ class CommonController extends MainController
                     ];
                 }
             }
-            $data = $options_group;
+            
         }else{
             $obj = DB::table($table)
                         ->selectRaw($fields)
@@ -76,9 +76,11 @@ class CommonController extends MainController
                     $obj->join($join['join_table'], $join['to_column'], '=', $join['from_column'],$type);
                 }
             }
+            if(!empty($request_data['groupBy'])){
+                $obj->groupBy($request_data['groupBy']);                
+            }
             $data = $obj->get();
-        }
-         
+        }        
         echo json_encode($data);
         }
     }

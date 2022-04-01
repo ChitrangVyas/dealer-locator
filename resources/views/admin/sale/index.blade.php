@@ -162,8 +162,7 @@
             });
         });
 
-        $('body').on('change','#order_stage',function(){
-            saveFormData("{{route('sale.stage.update')}}",$('#invoice').serialize(),'orderModal').then(function(res){
+        $('body').on('change','#order_stage',function(){saleIndex).serialize(),'orderModal').then(function(res){
                 $('#example').DataTable().ajax.reload(null, false);
             });
         });

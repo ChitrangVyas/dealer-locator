@@ -563,7 +563,7 @@ class InquiryController extends MainController
             try{
                 $txt = $this->getMsg($data['msg_index']);
             }catch(Exception $e){
-                return redirect(route('inquiry.create'))->with('exception', $e->getMessage());
+                return redirect(route('inquiry.create'))->with('exception', $e->getMessage()." in sms");
             }
             //$txt = $this->getMsg($data['msg_index']);
             if($data['msg_index'] == 'inquiry_assign'){

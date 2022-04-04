@@ -22,7 +22,7 @@ class Inquiry extends Model
     protected $guarded = [];
     
     public function customer(){
-        return $this->belongsTo(User::class,'customer_id');
+        return $this->belongsTo(User::class,'customer_id')->withTrashed();
     }        
 
     public function dealer(){

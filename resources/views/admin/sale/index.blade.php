@@ -162,11 +162,11 @@
             });
         });
 
-        $('body').on('change','#order_stage',function(){
-            saveFormData("{{route('sale.stage.update')}}",$('#invoice').serialize(),'orderModal').then(function(res){
-                $('#example').DataTable().ajax.reload(null, false);
-            });
-        });
+        // $('body').on('change','#order_stage',function(){
+        //     saleIndex).serialize(),'orderModal').then(function(res){
+        //         $('#example').DataTable().ajax.reload(null, false);
+        //     });
+        // });
 
         $('body').on('click','#newinvoice',function(e){
             var create_quote_url = $(this).data('create-quote-url');
@@ -667,17 +667,19 @@
     }
     function select2Customer(){
         var option_group = [
-                            @if(auth()->user()->users_group_id==3 || auth()->user()->users_group_id==2 || (empty(auth()->user()->users_group_id) || auth()->user()->users_group_id==1))
-                            {name:'Customer',table:'users',where:'users_group_id = 4 AND deleted_at is NULL  AND status = 1 AND created_by={{auth()->user()->id}}'},
-                            @endif
-                            @if(auth()->user()->users_group_id==2 || (empty(auth()->user()->users_group_id) || auth()->user()->users_group_id==1))
-                            {name:'Retailer',table:'users',where:'users_group_id = 3 AND deleted_at is NULL AND status = 1' + "{{(empty(auth()->user()->users_group_id) || auth()->user()->users_group_id==1) ? '':  ' AND created_by='.auth()->user()->id}} OR (parent_id={{auth()->user()->id}} AND created_by=1)"},
-                            @endif
-                            @if(empty(auth()->user()->users_group_id) || auth()->user()->users_group_id==1)
-                            {name:'Dealer',table:'users',where:'users_group_id = 2 AND deleted_at is NULL AND status = 1 OR (parent_id={{auth()->user()->id}} AND created_by=1)'},
-                            @endif
-
-                        ];
+            @if(auth()->user()->users_group_id==3 || auth()->user()->users_group_id==2 || (empty(auth()->user()->users_group_id) || auth()->user()->users_group_id==1))
+            {name:'Customer',table:'users',groupBy:'users.name',fields:'users.id, users.name as text',joins:[{'join_table':'inquiries','to_column':'customer_id','from_column':'users.id','type':'left'}],where:'users.users_group_id = 4 AND users.deleted_at is NULL  AND users.status = 1 AND (users.created_by={{auth()->user()->id}} OR inquiries.dealer_id={{auth()->user()->id}} OR inquiries.retailer_id={{auth()->user()->id}})'},
+            @endif
+            @if(auth()->user()->users_group_id==2)
+            {name:'Retailer',table:'users',groupBy:'users.name',fields:'users.id, users.name as text',joins:[{'join_table':'inquiries','to_column':'customer_id','from_column':'users.id','type':'left'}],where:'users.users_group_id = 3 AND users.deleted_at is NULL AND users.status = 1 AND (users.parent_id={{auth()->user()->id }} OR users.created_by={{auth()->user()->id}})'},
+            @endif
+            @if(empty(auth()->user()->users_group_id) || auth()->user()->users_group_id==1)
+            {name:'Retailer',table:'users',groupBy:'users.name',fields:'users.id, users.name as text',joins:[{'join_table':'inquiries','to_column':'customer_id','from_column':'users.id','type':'left'}],where:'users.users_group_id = 3 AND users.deleted_at is NULL AND users.status = 1 AND users.created_by={{auth()->user()->id}}'},
+            @endif
+            @if(empty(auth()->user()->users_group_id) || auth()->user()->users_group_id==1)
+            {name:'Dealer',table:'users',groupBy:'users.name',fields:'users.id, users.name as text',joins:[{'join_table':'inquiries','to_column':'customer_id','from_column':'users.id','type':'left'}],where:'users.users_group_id = 2 AND users.deleted_at is NULL AND users.status = 1 AND users.created_by={{auth()->user()->id}}'},
+            @endif
+        ];
         $('.customer').select2({
             placeholder: "Select",
             allowClear: true,
@@ -690,8 +692,8 @@
                     return {
                         q: params.term, // search term
                         table:'users',
-                        where: 'users_group_id = 4 AND deleted_at is NULL AND created_by={{auth()->user()->id}}',
-                        option_group:option_group
+                        where: 'users.users_group_id = 4 AND users.deleted_at is NULL AND users.created_by={{auth()->user()->id}}',
+                        option_group:option_group,
                     };
                 },
                 processResults: function (data) {

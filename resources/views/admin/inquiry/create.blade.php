@@ -333,11 +333,11 @@ jQuery(document).ready(function(){
                     q: params.term, // search term
                     table:'users',
                     fields: "users.id, CONCAT(`users`.`name`, ' - ', `zipcode`,' - ',`cities`.`name`) as text",
-                    // where: ` OR zipcode like '%${params.term}%' OR cities.name like '%${params.term}%' AND (users_group_id=4 OR users_group_id=5)`,
-                    whereOr: ` OR (zipcode like '%${params.term}%' OR cities.name like '%${params.term}%')`,
-                    groupBy: "users.name",
-                    whereAnd: `AND users.deleted_at IS NULL AND (users_group_id=4 OR users_group_id=5) AND users.created_by=`+"{{auth()->user()->id}} OR (dealer_id={{auth()->user()->id}} OR retailer_id={{auth()->user()->id}}) AND users.status = 1",
-                    joins:[{'join_table':'cities','to_column':'city_id','from_column':'cities.id','type':'left'},{'join_table':'inquiries','to_column':'customer_id','from_column':'users.id','type':'left'}]
+                    whereOr:` OR (users.name like '%${params.term}%' OR zipcode like '%${params.term}%' OR cities.name like '%${params.term}%')`,
+                    groupBy: `users.name`,
+                    whereAnd: " AND users.deleted_at IS NULL AND users.users_group_id = 4 AND users.status = 1 AND (users.created_by={{auth()->user()->id}} OR inquiries.dealer_id={{auth()->user()->id}} OR inquiries.retailer_id={{auth()->user()->id}}) ",
+                    joins:[{'join_table':'cities','to_column':'city_id','from_column':'cities.id','type':'left'},
+                           {'join_table':'inquiries','to_column':'customer_id','from_column':'users.id','type':'left'}]
                 };
 
             },

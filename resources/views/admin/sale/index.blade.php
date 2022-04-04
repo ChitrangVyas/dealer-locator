@@ -668,16 +668,16 @@
     function select2Customer(){
         var option_group = [
             @if(auth()->user()->users_group_id==3 || auth()->user()->users_group_id==2 || (empty(auth()->user()->users_group_id) || auth()->user()->users_group_id==1))
-            {name:'Customer',table:'users',fields:'users.id, users.name as text',joins:[{'join_table':'inquiries','to_column':'customer_id','from_column':'users.id','type':'left'}],where:'users.users_group_id = 4 AND users.deleted_at is NULL  AND users.status = 1 AND (users.created_by={{auth()->user()->id}} OR inquiries.dealer_id={{auth()->user()->id}} OR inquiries.retailer_id={{auth()->user()->id}})'},
+            {name:'Customer',table:'users',groupBy:'users.name',fields:'users.id, users.name as text',joins:[{'join_table':'inquiries','to_column':'customer_id','from_column':'users.id','type':'left'}],where:'users.users_group_id = 4 AND users.deleted_at is NULL  AND users.status = 1 AND (users.created_by={{auth()->user()->id}} OR inquiries.dealer_id={{auth()->user()->id}} OR inquiries.retailer_id={{auth()->user()->id}})'},
             @endif
             @if(auth()->user()->users_group_id==2)
-            {name:'Retailer',table:'users',fields:'users.id, users.name as text',joins:[{'join_table':'inquiries','to_column':'customer_id','from_column':'users.id','type':'left'}],where:'users.users_group_id = 3 AND users.deleted_at is NULL AND users.status = 1 AND (users.parent_id={{auth()->user()->id }} OR users.created_by={{auth()->user()->id}})'},
+            {name:'Retailer',table:'users',groupBy:'users.name',fields:'users.id, users.name as text',joins:[{'join_table':'inquiries','to_column':'customer_id','from_column':'users.id','type':'left'}],where:'users.users_group_id = 3 AND users.deleted_at is NULL AND users.status = 1 AND (users.parent_id={{auth()->user()->id }} OR users.created_by={{auth()->user()->id}})'},
             @endif
             @if(empty(auth()->user()->users_group_id) || auth()->user()->users_group_id==1)
-            {name:'Retailer',table:'users',fields:'users.id, users.name as text',joins:[{'join_table':'inquiries','to_column':'customer_id','from_column':'users.id','type':'left'}],where:'users.users_group_id = 3 AND users.deleted_at is NULL AND users.status = 1 AND users.created_by={{auth()->user()->id}}'},
+            {name:'Retailer',table:'users',groupBy:'users.name',fields:'users.id, users.name as text',joins:[{'join_table':'inquiries','to_column':'customer_id','from_column':'users.id','type':'left'}],where:'users.users_group_id = 3 AND users.deleted_at is NULL AND users.status = 1 AND users.created_by={{auth()->user()->id}}'},
             @endif
             @if(empty(auth()->user()->users_group_id) || auth()->user()->users_group_id==1)
-            {name:'Dealer',table:'users',fields:'users.id, users.name as text',joins:[{'join_table':'inquiries','to_column':'customer_id','from_column':'users.id','type':'left'}],where:'users.users_group_id = 2 AND users.deleted_at is NULL AND users.status = 1 AND users.created_by={{auth()->user()->id}}'},
+            {name:'Dealer',table:'users',groupBy:'users.name',fields:'users.id, users.name as text',joins:[{'join_table':'inquiries','to_column':'customer_id','from_column':'users.id','type':'left'}],where:'users.users_group_id = 2 AND users.deleted_at is NULL AND users.status = 1 AND users.created_by={{auth()->user()->id}}'},
             @endif
         ];
         $('.customer').select2({

@@ -54,6 +54,9 @@ class CommonController extends MainController
                             $obj->join($join['join_table'], $join['to_column'], '=', $join['from_column'],$type);
                         }
                     }
+                    if(!empty($optionGroup['groupBy'])){
+                        $obj->groupBy($optionGroup['groupBy']);                
+                    }
                     $resultset = $obj->get();
                     if(count($resultset)){
                     $options_group[] = 
@@ -64,7 +67,6 @@ class CommonController extends MainController
                         ];
                     }
                 }
-
                 echo json_encode($options_group);
             }else{
                 $obj = DB::table($table)

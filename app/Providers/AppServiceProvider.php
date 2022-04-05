@@ -75,5 +75,12 @@ class AppServiceProvider extends ServiceProvider
            return Helpers::number_format($amt);
         });
 
+        Str::macro('dateTime_format', function ($date){
+            return Helpers::dateTime_format($date);
+        });
+        
+        Str::macro('dateOnly_format', function ($date){
+            return Helpers::dateOnly_format($date);
+        });
     }
 }

@@ -102,12 +102,30 @@
                 <!-- text input -->
                 <div class="form-group col-sm-12 col-md-12">
                     <label>Currency Format</label>                  
-                    <select class="form-control select2" id='number_format' name='number_format' tabindex="5">
+                    <select class="form-control" id='number_format' name='number_format' tabindex="5">
                         <option value="" {{(!empty($settings) && empty($settings->json_data['number_format']))?'selected':''}}>Select</option>
                         <option value="1" {{(!empty($settings) && !empty($settings->json_data['number_format']) && (1==$settings->json_data['number_format']))?'selected':''}}>123,456.99</option>
                         <option value="2" {{(!empty($settings) && !empty($settings->json_data['number_format']) && (2==$settings->json_data['number_format']))?'selected':''}}>123.456,99</option>
                     </select>
                     @error('number_format')
+                        <div class="alert alert-danger mt-2">{{ $message }}</div>
+                    @enderror
+                </div>
+            </div>
+            <div class="col-sm-12 col-md-6">
+                <!-- text input -->
+                <div class="form-group col-sm-12 col-md-12">
+                    <label>Date Format</label>                  
+                    <select class="form-control " id='date_format' name='date_format' tabindex="6">
+                        <option value="" {{(!empty($settings) && empty($settings->json_data['date_format']))?'selected':''}}>Select</option>
+                        <option value="1" {{(!empty($settings) && !empty($settings->json_data['date_format']) && (1==$settings->json_data['date_format']))?'selected':''}}>{{ date('d-m-Y H:i:s')}}</option>
+                        <option value="2" {{(!empty($settings) && !empty($settings->json_data['date_format']) && (2==$settings->json_data['date_format']))?'selected':''}}>{{ date('m-d-Y H:i:s')}}</option>
+                        <option value="3" {{(!empty($settings) && !empty($settings->json_data['date_format']) && (3==$settings->json_data['date_format']))?'selected':''}}>{{ date('Y-m-d H:i:s')}}</option>
+                        <option value="4" {{(!empty($settings) && !empty($settings->json_data['date_format']) && (4==$settings->json_data['date_format']))?'selected':''}}>{{ date('d-M-Y H:i:s')}}</option>
+                        <option value="5" {{(!empty($settings) && !empty($settings->json_data['date_format']) && (5==$settings->json_data['date_format']))?'selected':''}}>{{ date('M-d-Y H:i:s')}}</option>
+                        <option value="5" {{(!empty($settings) && !empty($settings->json_data['date_format']) && (5==$settings->json_data['date_format']))?'selected':''}}>{{ date('Y-M-d H:i:s')}}</option>
+                    </select>
+                    @error('date_format')
                         <div class="alert alert-danger mt-2">{{ $message }}</div>
                     @enderror
                 </div>

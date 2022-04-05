@@ -14,7 +14,7 @@
             <small class="badge badge-primary">{{$inquiry->getInquirystatusName()}}</small>
         </a>
         <span class="badge badge-secondary float-right"><i class="far fa-clock mr-1"></i>{{date('h:i A',strtotime($inquiry->created_at))}}</span>
-            <span class="badge badge-secondary float-right"><i class="far fa-calendar-alt mr-1"></i>{{date('d/m/Y',strtotime($inquiry->created_at))}}</span>
+            <span class="badge badge-secondary float-right"><i class="far fa-calendar-alt mr-1"></i>{{Str::dateOnly_format($inquiry->created_at)}}</span>
     </li>
     @endforeach
     @else

@@ -378,7 +378,7 @@ text-align: center;
                 <table role="presentation" border="0" cellpadding="0" cellspacing="0">
                   <tr>
                     <td class="col-sm-4 invoice-col" colspan="2">
-                      <p><strong>Date:</strong>{{date('d/m/Y',strtotime($order->created_at))}}</p>
+                      <p><strong>Date:</strong>{{Str::dateOnly_format($order->created_at)}}</p>
                       <p><strong>Order Number:</strong>{{$order->order_number}}</p>
                     </td>
                   </tr>

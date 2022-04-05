@@ -110,4 +110,44 @@ class Helpers {
             return $amt;
         }
     }
+    public static function dateTime_format($date){
+        $date_format = Session::get('date_format');
+        if(!empty($date_format)){
+            if($date_format == 1){
+                return date('d-m-Y H:i:s',strtotime($date));
+            }elseif($date_format == 2){
+                return date('m-d-Y H:i:s',strtotime($date));
+            }elseif($date_format == 3){
+                return date('Y-m-d H:i:s',strtotime($date));
+            }elseif($date_format == 4){
+                return date('d-M-Y H:i:s',strtotime($date));
+            }elseif($date_format == 5){
+                return date('M-d-Y H:i:s',strtotime($date));
+            }elseif($date_format == 6){
+                return date('Y-M-d H:i:s',strtotime($date));
+            }
+        }else{
+            return $date;
+        }
+    }
+    public static function dateOnly_format($date){
+        $date_format = Session::get('date_format');
+        if(!empty($date_format)){
+            if($date_format == 1){
+                return date('d-m-Y',strtotime($date));
+            }elseif($date_format == 2){
+                return date('m-d-Y',strtotime($date));
+            }elseif($date_format == 3){
+                return date('y-m-d',strtotime($date));
+            }elseif($date_format == 4){
+                return date('d-M-Y',strtotime($date));
+            }elseif($date_format == 5){
+                return date('M-d-Y',strtotime($date));
+            }elseif($date_format == 6){
+                return date('Y-M-d',strtotime($date));
+            }
+        }else{
+            return $date;
+        }
+    }
 }

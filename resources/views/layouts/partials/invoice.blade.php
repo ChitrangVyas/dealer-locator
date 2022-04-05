@@ -57,7 +57,7 @@
     <!-- /.col -->
     <div class="col-sm-4 invoice-col">
         <div class="invoice_date" style="float: right;">
-        <b class="">Date: {{date('d/m/Y',strtotime($order->created_at))}}</b>
+        <b class="">Date: {{Str::dateOnly_format($order->created_at)}}</b>
         @if ($order->type == 'sale' || $order->type == 'quote')
         <br><b>{{ucfirst($order->type)}} #{{$order->order_number}}</b>
         <br>
@@ -65,7 +65,7 @@
                 
         @php $inquiries = $order->getInquiries(); @endphp
         @if(count($inquiries))
-        <br><b class="">Inquiries : @foreach($inquiries as $inquiry) {{$inquiry->name}} - {{ date('Y-m-d',strtotime($inquiry->created_at))}}<br/> @endforeach</b>
+        <br><b class="">Inquiries : @foreach($inquiries as $inquiry) {{$inquiry->name}} - {{ Str::dateOnly_format($inquiry->created_at)}}<br/> @endforeach</b>
         @endif
         </div>
     </div>

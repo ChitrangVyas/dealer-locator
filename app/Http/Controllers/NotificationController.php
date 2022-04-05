@@ -7,6 +7,7 @@ use App\Http\Helpers;
 use App\Models\Notification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Symfony\Component\Console\Helper\HelperSet;
 use View;
 
 class NotificationController extends MainController
@@ -123,7 +124,7 @@ class NotificationController extends MainController
         $data = [];
         foreach ($notifications as $notification) {
             // $action_html = "<span><a href=".route('staff.edit',$user->id)." class='btn btn-primary'>Edit</a></span>";
-            $data[] = [$notification->id, $notification->message, $notification->created_at];
+            $data[] = [$notification->id, $notification->message, Helpers::dateTime_format($notification->created_at)];
         }
         $return_array = array();
         $return_array['draw'] = $request['draw'];

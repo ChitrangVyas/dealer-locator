@@ -334,7 +334,6 @@ class InquiryController extends MainController
 
     public function updateInquiry(Request $request){
         Validator::make($request->all(), [
-            // 'retailer' => 'required',
             'id' => 'required',
         ])->validate();
         if($request->ajax()){
@@ -350,7 +349,20 @@ class InquiryController extends MainController
                     $data['name'] = $inquiry_new->retailer->name;
                     $data['mobile_number'] = $inquiry_new->retailer->mobile;
                     $data['inquiry_id'] = $inquiry_new->id;
+                    $data['msg_index'] = 'inquiry_assign';
                     $respnose = $this->sentSMS($data);
+                    if(!empty($request->input('send_to_customer'))){
+                        $customer_data = User::findOrFail($inquiry_new->customer_id);
+                        $r_data['msg_index'] = 'inquiry_customer_assigned';
+                        $r_data['name']=$customer_data->name;
+                        $r_data['mobile_number']=$customer_data->mobile;
+                        $r_data['inquiry_id'] = $inquiry_new->id;
+                        $r_data['user_type']= "Retailer";
+                        $r_data['fullname']= $inquiry_new->retailer->name;
+                        $r_data['mobile']= $inquiry_new->retailer->mobile;
+                        $r_data['email'] = $inquiry_new->retailer->email;
+                        $response = $this->sentSMS($r_data);
+                    }
                     $sms_res = explode('|',$respnose);
                     if($sms_res[0] == 'ok'){
                         Helpers::storeNotification($update_data['retailer_id'],"Inquiry #$inquiry->id SMS sent to you.",0,1);

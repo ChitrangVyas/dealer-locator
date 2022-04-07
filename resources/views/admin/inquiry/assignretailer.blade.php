@@ -19,6 +19,10 @@
                 <div class="alert alert-danger mt-2">{{ $message }}</div>
                 @enderror
             </div>
+            <div class="form-group">
+                <input type="checkbox" name="send_to_customer" id="send_to_customer">
+                <label>Send retailer details to customer?</label> 
+            </div>
         </div>
     </div>
     <div class="row">

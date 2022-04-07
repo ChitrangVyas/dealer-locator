@@ -136,18 +136,22 @@ class InquiryController extends MainController
                     $data['mobile_number'] = $inquiry->customer->mobile;
                     $data['inquiry_id'] = $inquiry->id;
                     $data['msg_index'] = 'inquiry_customer_assigned';
+                    $response='';
                     if(!empty($dealer_id)){
-                        $data['dealer'] = $inquiry->dealer->name.", ". $inquiry->dealer->mobile .", ".$inquiry->dealer->email.", ".$inquiry->dealer->address;
-                    }else{
-                        $data['dealer'] = "";
+                        $data['user_type']= "Dealer";
+                        $data['fullname']= $inquiry->dealer->name;
+                        $data['mobile']= $inquiry->dealer->mobile;
+                        $data['email'] = $inquiry->dealer->email;
+                        $response = $this->sentSMS($data);
                     }
                     if(!empty($retailer_id)){
-                        $data['retailer'] = 'and Retailer: '. $inquiry->retailer->name .", ". $inquiry->retailer->mobile.", ".$inquiry->retailer->email.", ".$inquiry->retailer->address;
-                    }else{
-                        $data['retailer'] = "";
+                        $data['user_type']= "Retailer";
+                        $data['fullname']= $inquiry->retailer->name;
+                        $data['mobile']= $inquiry->retailer->mobile;
+                        $data['email'] = $inquiry->retailer->email;
+                        $response = $this->sentSMS($data);
                     }
-                    $respnose = $this->sentSMS($data);
-                    $sms_res = explode('|',$respnose);
+                    $sms_res = explode('|',$response);
                     if($sms_res[0] == 'ok'){
                         Helpers::storeNotification($retailer_id,"Inquiry #$inquiry->id SMS sent to you.",0,1);
                     }else{
@@ -272,17 +276,20 @@ class InquiryController extends MainController
                     $data['inquiry_id'] = $inquiry->id;
                     $data['msg_index'] = 'inquiry_customer_assigned';
                     if(!empty($update_data['dealer_id'])){
-                        $data['dealer'] = $inquiry->dealer->name.", ". $inquiry->dealer->mobile .", ".$inquiry->dealer->email.", ".$inquiry->dealer->address;
-                    }else{
-                        $data['dealer'] = "";
+                        $data['user_type']= "Dealer";
+                        $data['fullname']= $inquiry->dealer->name;
+                        $data['mobile']= $inquiry->dealer->mobile;
+                        $data['email'] = $inquiry->dealer->email;
+                        $response = $this->sentSMS($data);
                     }
                     if(!empty($update_data['retailer_id'])){
-                        $data['retailer'] = 'and Retailer: '. $inquiry->retailer->name .", ". $inquiry->retailer->mobile.", ".$inquiry->retailer->email.", ".$inquiry->retailer->address;
-                    }else{
-                        $data['retailer'] = "";
+                        $data['user_type']= "Retailer";
+                        $data['fullname']= $inquiry->retailer->name;
+                        $data['mobile']= $inquiry->retailer->mobile;
+                        $data['email'] = $inquiry->retailer->email;
+                        $response = $this->sentSMS($data);
                     }
-                    $respnose = $this->sentSMS($data);
-                    $sms_res = explode('|',$respnose);
+                    $sms_res = explode('|',$response);
                     if($sms_res[0] == 'ok'){
                         //Helpers::storeNotification($update_data['retailer_id'],"Inquiry #$inquiry->id SMS sent to you.",0,1);
                     }else{
@@ -564,7 +571,7 @@ class InquiryController extends MainController
             if($data['msg_index'] == 'inquiry_assign'){
                 $searchReplaceArray = array('{name}'=>$data['name'],'{inquiry_no}'=>$data['inquiry_id']);
             }else{
-                $searchReplaceArray = array('{name}'=>$data['name'],'{inquiry_no}'=>$data['inquiry_id'],'{dealer}'=>$data['dealer'],'{retailer}'=>$data['retailer']);
+                $searchReplaceArray = array('{name}'=>$data['name'],'{inquiry_no}'=>$data['inquiry_id'],'{user_type}'=>$data['user_type'],'{fullname}'=>$data['fullname'],'{mobile}'=>$data['mobile'],'{email}'=>$data['email']);
             }
             $txtMsg = str_replace(array_keys($searchReplaceArray),  array_values($searchReplaceArray),  $txt);
             $sms_data = array();

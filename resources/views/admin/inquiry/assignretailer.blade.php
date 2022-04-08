@@ -12,12 +12,16 @@
                 <select class="form-control select2 retailer" id='retailer' name='retailer'>
                     <option value="">Select</option>
                     @foreach ($retailers as $retailer)
-                    <option value="{{$retailer->id}}">{{$retailer->name .' - ' .$retailer->zipcode.' - '. $retailer->city->name}}</option>
+                    <option value="{{$retailer->id}}" @if(!empty($inquiry) && !empty($inquiry->retailer_id == $retailer->id)) selected   @endif()>{{$retailer->name .' - ' .$retailer->zipcode.' - '. $retailer->city->name}}</option>                    
                     @endforeach
                 </select>
                 @error('retailer')
                 <div class="alert alert-danger mt-2">{{ $message }}</div>
                 @enderror
+            </div>
+            <div class="form-group">
+                <input type="checkbox" name="send_to_customer" id="send_to_customer">
+                <label>Send retailer details to customer?</label> 
             </div>
         </div>
     </div>

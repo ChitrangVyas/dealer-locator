@@ -328,13 +328,14 @@ class InquiryController extends MainController
 
     public function assignToRetailer(Request $request)
     {
+        $request_data = $request->all();
+        $inquiries = Inquiry::findOrFail($request_data['data']['inquiry_id']);
         $retailers = User::where('users_group_id',3)->where('parent_id',auth()->user()->id)->where('status' , '1')->get();
-        return view('admin.inquiry.assignretailer',['retailers'=>$retailers]);
+        return view('admin.inquiry.assignretailer',['retailers'=>$retailers,'inquiry'=>$inquiries]);
     }
 
     public function updateInquiry(Request $request){
         Validator::make($request->all(), [
-            // 'retailer' => 'required',
             'id' => 'required',
         ])->validate();
         if($request->ajax()){
@@ -350,8 +351,28 @@ class InquiryController extends MainController
                     $data['name'] = $inquiry_new->retailer->name;
                     $data['mobile_number'] = $inquiry_new->retailer->mobile;
                     $data['inquiry_id'] = $inquiry_new->id;
+                    $data['msg_index'] = 'inquiry_assign';
                     $respnose = $this->sentSMS($data);
                     $sms_res = explode('|',$respnose);
+                    if($sms_res[0] == 'ok'){
+                        Helpers::storeNotification($update_data['retailer_id'],"Inquiry #$inquiry->id SMS sent to you.",0,1);
+                    }else{
+                        $msg ="Failed to sent SMS".$sms_res[0];
+                    }
+                }
+                if(!empty($update_data['retailer_id']) && !empty($request->input('send_to_customer'))){
+                    $inquiry_new = Inquiry::findOrFail($request->input('id'));
+                    $customer_data = User::findOrFail($inquiry_new->customer_id);
+                    $r_data['msg_index'] = 'inquiry_customer_assigned';
+                    $r_data['name']=$customer_data->name;
+                    $r_data['mobile_number']=$customer_data->mobile;
+                    $r_data['inquiry_id'] = $inquiry_new->id;
+                    $r_data['user_type']= "Retailer";
+                    $r_data['fullname']= $inquiry_new->retailer->name;
+                    $r_data['mobile']= $inquiry_new->retailer->mobile;
+                    $r_data['email'] = $inquiry_new->retailer->email;
+                    $response = $this->sentSMS($r_data);
+                    $sms_res = explode('|',$response);
                     if($sms_res[0] == 'ok'){
                         Helpers::storeNotification($update_data['retailer_id'],"Inquiry #$inquiry->id SMS sent to you.",0,1);
                     }else{

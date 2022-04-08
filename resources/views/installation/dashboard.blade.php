@@ -40,7 +40,7 @@
                 </tr>
             </thead>
             <tbody>
-            <form id="uploadImage" class="col-12" method="POST" action="{{route('installation.image.upload')}}" enctype="multipart/form-data">
+            <form id="uploadImage" class="col-12" enctype="multipart/form-data">
             @csrf
                 @foreach ($order->orderProduct as $orderProduct)
                 <tr>
@@ -52,7 +52,7 @@
                         <div class="input-group col-12">
                             <div class="custom-file">
                                 <!-- <input type="hidden" name="images[]" id="uploadedImage" value="" /> -->
-                                <input type="file" class="custom-file-input order-image-{{$orderProduct->product->id}}"  name="image" id="exampleInputFile" />
+                                <input type="file" class="custom-file-input order-image-{{$orderProduct->product->id}}"  name="image_{{$orderProduct->product->id}}" id="exampleInputFile" />
                                 <label class="custom-file-label" for="exampleInputFile">Choose file</label>
                             </div>
                             <div class="input-group-append">
@@ -84,6 +84,13 @@
                     </td>
                 </tr>
                 @endforeach
+                <tr>
+                    <td colspan="2">
+                        <label for="">Notes</label>
+                        <textarea class="form-control" name="installation_details" id="installation_details">{{$order->installation_note}}</textarea>                    
+                        <a id="submitDetails" class="btn btn-primary mt-4" >Add note</a>
+                    </td>
+                </tr>
             </form>
             </tbody>
         </table>
@@ -98,9 +105,20 @@
             let url = "{{route('installation.image.upload')}}";
             let formData = new FormData($('#uploadImage')[0]);
             let order_product = $(this).data('order-product');
-            let file = $('input[type=file]')[0].files[0];
+            let file = $('input[name="image_'+order_product+'"]')[0].files[0];
             formData.append('product_id',$(this).data('order-product'));
             formData.append('image', file, file.name);
+            saveFormData(url,formData).then(function(res){
+                if(res.code ==1){
+                    window.location.reload();
+                }
+            });
+        });
+        
+        $('body').on('click','#submitDetails',function(){
+            let url = "{{route('installation.add.note')}}";
+            let formData = new FormData($('#uploadImage')[0]);
+            formData.append('installation_note',$('#installation_details').val());
             saveFormData(url,formData).then(function(res){
                 if(res.code ==1){
                     window.location.reload();

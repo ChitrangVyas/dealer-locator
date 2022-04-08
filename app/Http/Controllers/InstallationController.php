@@ -98,6 +98,19 @@ class InstallationController extends MainController
         return response()->json(['code'=>0,'status'=>'error','message'=>'Something goes wrong.']);
     }
 
+    public function addInstallationNote(Request $request){
+        $request_data = $request->all();       
+        if(!empty($request_data['installation_details'])){
+            $order = Order::findOrFail(\Session::get('installation_user'));
+            $order->update(['installation_note'=>$request_data['installation_details']]);
+            if(!empty($order)){
+                return response()->json(['code'=>1,'status'=>'success' ,'message'=>'Note updated Successfully.']);
+            }else{
+                return response()->json(['code'=>0,'status'=>'error','message'=>'Unable to update Note.']);
+            }
+        }
+    }
+
     public function removeInstallationImage(Request $request){
         try{
             $orderImage = OrderImage::findOrFail($request->input('order_image_id',''));

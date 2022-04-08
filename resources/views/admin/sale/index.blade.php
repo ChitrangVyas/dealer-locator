@@ -162,11 +162,11 @@
             });
         });
 
-        // $('body').on('change','#order_stage',function(){
-        //     saleIndex).serialize(),'orderModal').then(function(res){
-        //         $('#example').DataTable().ajax.reload(null, false);
-        //     });
-        // });
+        $('body').on('change','#order_stage',function(){
+            saveFormData("{{route('sale.stage.update')}}",$('#invoice').serialize(),'orderModal').then(function(res){
+                $('#example').DataTable().ajax.reload(null, false);
+            });
+        });
 
         $('body').on('click','#newinvoice',function(e){
             var create_quote_url = $(this).data('create-quote-url');

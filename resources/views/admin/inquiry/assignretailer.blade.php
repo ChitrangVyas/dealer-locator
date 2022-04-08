@@ -12,7 +12,7 @@
                 <select class="form-control select2 retailer" id='retailer' name='retailer'>
                     <option value="">Select</option>
                     @foreach ($retailers as $retailer)
-                    <option value="{{$retailer->id}}">{{$retailer->name .' - ' .$retailer->zipcode.' - '. $retailer->city->name}}</option>
+                    <option value="{{$retailer->id}}" @if(!empty($inquiry) && !empty($inquiry->retailer_id == $retailer->id)) selected   @endif()>{{$retailer->name .' - ' .$retailer->zipcode.' - '. $retailer->city->name}}</option>                    
                     @endforeach
                 </select>
                 @error('retailer')

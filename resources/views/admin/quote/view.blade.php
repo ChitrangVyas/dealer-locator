@@ -150,6 +150,16 @@
                                     </div>
                                 </td>
                             </tr>
+                            @if(!empty($order->installation_note))
+                            <tr>
+                                <td>
+                                    <label for="link">Installation Notes</label>
+                                </td>
+                                <td>
+                                    <p>{{$order->installation_note}}</p>
+                                </td>  
+                            </tr> 
+                            @endif 
                             <tr>
                                 <td colspan="2">
                                     <button type="button" id="btnUpdate" class="btn btn-primary btn-sm">Update Password</button>

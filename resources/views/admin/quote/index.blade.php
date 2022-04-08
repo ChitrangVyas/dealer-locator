@@ -177,7 +177,7 @@
                 select2Product();
                 //if($('input[name=order_id]').val()){
                     getOrderImage("{{ route('order.po.image') }}",{'order_id':$('input[name=order_id]').val()}).then(function(res){
-                        console.log('Mehul asdasd');
+                       
                     });
                 //}
             });

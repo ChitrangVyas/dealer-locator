@@ -39,6 +39,7 @@ Route::group(['prefix'=>'installation'],function () {
     Route::post('login', [App\Http\Controllers\InstallationController::class, 'login'])->name('installation.order.login');
     Route::get('/dashboard', [App\Http\Controllers\InstallationController::class, 'dashboard'])->name('installation.order.dashboard');
     Route::post('image/upload', [App\Http\Controllers\InstallationController::class, 'uploadInstallationImage'])->name('installation.image.upload');
+    Route::post('add/note', [App\Http\Controllers\InstallationController::class, 'addInstallationNote'])->name('installation.add.note');
     Route::post('image/delete', [App\Http\Controllers\InstallationController::class, 'removeInstallationImage'])->name('installation.image.delete');
     //
 });

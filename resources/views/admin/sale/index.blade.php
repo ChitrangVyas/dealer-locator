@@ -224,23 +224,30 @@
         });
         
         $('body').on('click','#imageUpload',function(){
-            let formData = new FormData($('#rutika')[0]);
-            let url = "{{route('order.po.upload.image')}}";
-            let file = $('input[type=file]')[0].files[0];
-            formData.append('file', file, file.name);
-            saveFormDataForFile(url,formData).then(function(res){
-                let images = [];
-                if($('#uploadedImage').val() != "" && $('#uploadedImage').val().length !== 0){
-                    images.push($('#uploadedImage').val());
-                }
-                images.push(res.fileName);
-                $('#uploadedImage').val(images);
-                $('#exampleInputFile').val("");
-                $('.custom-file-label').html("");
-                getOrderImage("{{ route('order.po.image') }}",{'order_id':$('input[name=order_id]').val()}).then(function(res){
+            var avatar = $('input[type=file]').val();
+            var extension = avatar.split('.').pop().toUpperCase();
+            if ((avatar.length < 1) || (extension!="PNG" && extension!="JPG" && extension!="GIF" && extension!="JPEG" && extension!="WEBP")){
+                alert("Only images are allowed to upload.");
+            }
+            else {
+                let formData = new FormData($('#rutika')[0]);
+                let url = "{{route('order.po.upload.image')}}";
+                let file = $('input[type=file]')[0].files[0];
+                formData.append('file', file, file.name);
+                saveFormDataForFile(url,formData).then(function(res){
+                    let images = [];
+                    if($('#uploadedImage').val() != "" && $('#uploadedImage').val().length !== 0){
+                        images.push($('#uploadedImage').val());
+                    }
+                    images.push(res.fileName);
+                    $('#uploadedImage').val(images);
+                    $('#exampleInputFile').val("");
+                    $('.custom-file-label').html("");
+                    getOrderImage("{{ route('order.po.image') }}",{'order_id':$('input[name=order_id]').val()}).then(function(res){
 
-                });
-            });
+                    });
+                }); 
+            }
         });
 
         $('body').on('click','.delete_po_image',function(){
@@ -264,19 +271,26 @@
         $('body').on('submit','#rutika',function(e){
             e.preventDefault();
             e.stopImmediatePropagation();
-            let url = "{{route('order.po.recieved')}}";
-            // let formData = new FormData($(this)[0]);
-            let formData = new FormData($('#rutika')[0]);                        
-            let file = $('#rutika input[type=file]')[0].files[0];
-            if(file != '' && file != undefined && file.length != 0){
-                formData.append('file', file, file.name);
+            var avatar = $('input[type=file]').val();
+            var extension = avatar.split('.').pop().toUpperCase();
+            if ((avatar.length < 1) || (extension!="PNG" && extension!="JPG" && extension!="GIF" && extension!="JPEG" && extension!="WEBP")){
+                alert("Only images are allowed to upload.");
             }
-            saveFormDataForFile(url,formData).then(function(res){
-                if(res.code == 1){
-                  $(`#orderModal`).modal('hide');
+            else {
+                let url = "{{route('order.po.recieved')}}";
+                // let formData = new FormData($(this)[0]);
+                let formData = new FormData($('#rutika')[0]);                        
+                let file = $('#rutika input[type=file]')[0].files[0];
+                if(file != '' && file != undefined && file.length != 0){
+                    formData.append('file', file, file.name);
                 }
-                $('#example').DataTable().ajax.reload(null, false);
-            });
+                saveFormDataForFile(url,formData).then(function(res){
+                    if(res.code == 1){
+                    $(`#orderModal`).modal('hide');
+                    }
+                    $('#example').DataTable().ajax.reload(null, false);
+                });
+            }
         });
         $("body").on("click",".product", function(){
             var selected_product = $('input:checkbox:checked').length;

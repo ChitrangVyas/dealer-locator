@@ -231,7 +231,25 @@
             saveFormDataForFile(url,formData).then(function(res){
                 let images = [];
                 if($('#uploadedImage').val() != "" && $('#uploadedImage').val().length !== 0){
+                    images.push($('#uploadedImage').val());
+                }
+                images.push(res.fileName);
+                $('#uploadedImage').val(images);
+                $('#exampleInputFile').val("");
+                $('.custom-file-label').html("");
+                getOrderImage("{{ route('order.po.image') }}",{'order_id':$('input[name=order_id]').val()}).then(function(res){
 
+                });
+            });
+        });
+
+        $('body').on('click','.delete_po_image',function(){
+            let id = $(this).data('id');
+            console.log("jogi")
+            let url = "{{route('order.po.delete.image')}}";
+            deletePOImage(url,id).then(function(res){
+                let images = [];
+                if($('#uploadedImage').val() != "" && $('#uploadedImage').val().length !== 0){
                     images.push($('#uploadedImage').val());
                 }
                 images.push(res.fileName);
@@ -532,6 +550,25 @@
             type: 'POST',
             dataType: 'JSON',
             data:{data,'_token':token},
+            beforeSend : function(){
+                $('#loader').show();
+            },
+            success: function(res) {
+                $(`#orderModal #uploadedPo`).html(res.data.image_content);
+                // $('.product-detail input').not('input[type=checkbox]').attr('disabled',true);
+            },
+            complete:function(){
+                $('#loader').hide();
+            }
+        });
+    }
+    function deletePOImage(url,id){
+        var token = $("meta[name='csrf-token']").attr("content");
+        return $.ajax({
+            url: url,
+            type: 'DELETE',
+            dataType: 'JSON',
+            data:{'id':id,'_token':token},
             beforeSend : function(){
                 $('#loader').show();
             },

@@ -509,6 +509,22 @@ class OrderController extends MainController
             return response()->json(['status' => 'error', 'code' => 0, 'message' => 'Unable to upload image.']);
         }
     }
+    public function deletePoImage(Request $request){
+        $request_data = $request->all();
+        $orderImage = OrderImage::findOrFail($request_data['id']);
+        if($orderImage){
+            $file = explode("storage/uploads/po/", $orderImage->image);
+            $filepath = storage_path() . "/app/public/uploads/po/" . $file[1];
+            if (file_exists($filepath) && unlink($filepath)) {
+                DB:: delete('delete from order_image where id = ?',[$request_data['id']]);
+                return response()->json(['data'=>'Image is successfully deleted'], 200);
+            }else{
+                return response()->json(['data'=>'Image is not deleted'],500);
+            }
+        }else{
+            return response()->json(['data'=>'Image is not deleted'],500);
+        }
+    } 
 
     public function storeImage($request)
     {

@@ -8,7 +8,8 @@
         title="{!! $orderImage->getSrc()['title'] !!}"
     />
     <span>{!! $orderImage->getSrc()['title'] !!} </span>
-    </a>
+    </a> 
+   <i class="fa fa-trash text-danger ml-2 delete_po_image" style="cursor:pointer" data-id="{{$orderImage['id']}}"></i>
     @endif
 </div>                
 @endforeach

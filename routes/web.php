@@ -118,6 +118,7 @@ Route::group(['prefix'=>'admin','middleware'=>['auth']],function () {
     Route::post('order/po/', [App\Http\Controllers\Admin\OrderController::class,'storePo'])->name('order.po.store');
     Route::post('order/po/recieved', [App\Http\Controllers\Admin\OrderController::class,'poRecived'])->name('order.po.recieved');
     Route::post('order/po/upload/image', [App\Http\Controllers\Admin\OrderController::class,'uploadPoImage'])->name('order.po.upload.image');
+    Route::delete('order/po/delete/image', [App\Http\Controllers\Admin\OrderController::class,'deletePoImage'])->name('order.po.delete.image');
     Route::post('order/po/image', [App\Http\Controllers\Admin\OrderController::class,'getPoImage'])->name('order.po.image');
     Route::post('order/delete', [App\Http\Controllers\Admin\OrderController::class,'deleteOrder'])->name('order.delete');
 

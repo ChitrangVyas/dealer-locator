@@ -224,41 +224,86 @@
         });
         
         $('body').on('click','#imageUpload',function(){
-            let formData = new FormData($('#rutika')[0]);
-            let url = "{{route('order.po.upload.image')}}";
-            let file = $('input[type=file]')[0].files[0];
-            formData.append('file', file, file.name);
-            saveFormDataForFile(url,formData).then(function(res){
-                let images = [];
-                if($('#uploadedImage').val() != "" && $('#uploadedImage').val().length !== 0){
-
-                    images.push($('#uploadedImage').val());
+            var avatar = $('input[type=file]').val();
+            var extension = avatar.split('.').pop().toUpperCase();
+            let valid = true;
+            if(avatar!=""){
+                if(extension=="PNG" || extension=="JPG" || extension=="GIF" || extension=="JPEG" || extension=="WEBP"){
+                    valid = true;
+                }else{
+                    alert("Only images are allowed to upload.");
+                    valid = false;
                 }
-                images.push(res.fileName);
-                $('#uploadedImage').val(images);
-                $('#exampleInputFile').val("");
-                $('.custom-file-label').html("");
-                getOrderImage("{{ route('order.po.image') }}",{'order_id':$('input[name=order_id]').val()}).then(function(res){
+            }
+            if(valid){
+                let formData = new FormData($('#rutika')[0]);
+                let url = "{{route('order.po.upload.image')}}";
+                let file = $('input[type=file]')[0].files[0];
+                formData.append('file', file, file.name);
+                saveFormDataForFile(url,formData).then(function(res){
+                    let images = [];
+                    if($('#uploadedImage').val() != "" && $('#uploadedImage').val().length !== 0){
+                        images.push($('#uploadedImage').val());
+                    }
+                    images.push(res.fileName);
+                    $('#uploadedImage').val(images);
+                    $('#exampleInputFile').val("");
+                    $('.custom-file-label').html("");
+                    getOrderImage("{{ route('order.po.image') }}",{'order_id':$('input[name=order_id]').val()}).then(function(res){
 
+                    });
+                }); 
+            }
+        });
+
+        $('body').on('click','.delete_po_image',function(){
+            let id = $(this).data('id');
+            let data = confirm("Are you sure? you wants to delete this Image?");
+            if (data) {
+                let url = "{{route('order.po.delete.image')}}";
+                deletePOImage(url,id).then(function(res){
+                    let images = [];
+                    if($('#uploadedImage').val() != "" && $('#uploadedImage').val().length !== 0){
+                        images.push($('#uploadedImage').val());
+                    }
+                    images.push(res.fileName);
+                    $('#uploadedImage').val(images);
+                    $('#exampleInputFile').val("");
+                    $('.custom-file-label').html("");
+                    getOrderImage("{{ route('order.po.image') }}",{'order_id':$('input[name=order_id]').val()}).then(function(res){
+
+                    });
                 });
-            });
+            }
         });
         $('body').on('submit','#rutika',function(e){
             e.preventDefault();
             e.stopImmediatePropagation();
-            let url = "{{route('order.po.recieved')}}";
-            // let formData = new FormData($(this)[0]);
-            let formData = new FormData($('#rutika')[0]);                        
-            let file = $('#rutika input[type=file]')[0].files[0];
-            if(file != '' && file != undefined && file.length != 0){
-                formData.append('file', file, file.name);
-            }
-            saveFormDataForFile(url,formData).then(function(res){
-                if(res.code == 1){
-                  $(`#orderModal`).modal('hide');
+            var avatar = $('input[type=file]').val();
+            var extension = avatar.split('.').pop().toUpperCase();
+            let valid = true;
+            if(avatar!=""){
+                if(extension=="PNG" || extension=="JPG" || extension=="GIF" || extension=="JPEG" || extension=="WEBP"){
+                    valid = true;
+                }else{
+                    alert("Only images are allowed to upload.");
+                    valid = false;
                 }
-                $('#example').DataTable().ajax.reload(null, false);
-            });
+            }
+            if(valid){
+                let url = "{{route('order.po.recieved')}}";
+                let formData = new FormData($('#rutika')[0]);                        
+                let file = $('#rutika input[type=file]')[0].files[0];
+                if(file != '' && file != undefined && file.length != 0){
+                    formData.append('file', file, file.name);
+                }
+                saveFormDataForFile(url,formData).then(function(res){
+                    if(res.code == 1){
+                    $(`#orderModal`).modal('hide');
+                    }
+                    $('#example').DataTable().ajax.reload(null, false);
+                });
+            }
         });
         $("body").on("click",".product", function(){
             var selected_product = $('input:checkbox:checked').length;
@@ -532,6 +577,25 @@
             type: 'POST',
             dataType: 'JSON',
             data:{data,'_token':token},
+            beforeSend : function(){
+                $('#loader').show();
+            },
+            success: function(res) {
+                $(`#orderModal #uploadedPo`).html(res.data.image_content);
+                // $('.product-detail input').not('input[type=checkbox]').attr('disabled',true);
+            },
+            complete:function(){
+                $('#loader').hide();
+            }
+        });
+    }
+    function deletePOImage(url,id){
+        var token = $("meta[name='csrf-token']").attr("content");
+        return $.ajax({
+            url: url,
+            type: 'DELETE',
+            dataType: 'JSON',
+            data:{'id':id,'_token':token},
             beforeSend : function(){
                 $('#loader').show();
             },

@@ -224,10 +224,10 @@
         });
         
         $('body').on('click','#imageUpload',function(){
-            var avatar = $('input[type=file]').val();
-            var extension = avatar.split('.').pop().toUpperCase();
-            let valid = true;
+            var avatar = $('#exampleInputFile').val(); 
+            let valid = false;
             if(avatar!=""){
+                var extension = avatar.split('.').pop().toUpperCase();
                 if(extension=="PNG" || extension=="JPG" || extension=="GIF" || extension=="JPEG" || extension=="WEBP"){
                     valid = true;
                 }else{
@@ -279,10 +279,10 @@
         $('body').on('submit','#rutika',function(e){
             e.preventDefault();
             e.stopImmediatePropagation();
-            var avatar = $('input[type=file]').val();
-            var extension = avatar.split('.').pop().toUpperCase();
+            var avatar = $('input[type=file]').val();           
             let valid = true;
             if(avatar!=""){
+                var extension = avatar.split('.').pop().toUpperCase();
                 if(extension=="PNG" || extension=="JPG" || extension=="GIF" || extension=="JPEG" || extension=="WEBP"){
                     valid = true;
                 }else{

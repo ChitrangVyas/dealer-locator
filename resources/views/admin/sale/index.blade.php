@@ -228,10 +228,11 @@
             let valid = false;
             if(avatar!=""){
                 var extension = avatar.split('.').pop().toUpperCase();
-                if(extension=="PNG" || extension=="JPG" || extension=="GIF" || extension=="JPEG" || extension=="WEBP"){
+                var file_extension = ['PDF', 'DOC', 'DOCX', 'RTF', 'TXT', 'XLSX', 'PNG', 'JPEG', 'GIF', 'JPG', 'BMP', 'WEBP'];
+                if(jQuery.inArray(extension,file_extension) != -1){
                     valid = true;
                 }else{
-                    alert("Only images are allowed to upload.");
+                    alert("Only documents and images are allowed to upload.");
                     valid = false;
                 }
             }
@@ -282,11 +283,12 @@
             var avatar = $('input[type=file]').val();           
             let valid = true;
             if(avatar!=""){
-                var extension = avatar.split('.').pop().toUpperCase();
-                if(extension=="PNG" || extension=="JPG" || extension=="GIF" || extension=="JPEG" || extension=="WEBP"){
+                var extension = avatar.split('.').pop().toUpperCase(); 
+                var file_extension = ['PDF', 'DOC', 'DOCX', 'RTF', 'TXT', 'XLSX', 'PNG', 'JPEG', 'GIF', 'JPG', 'BMP', 'WEBP'];
+                if(jQuery.inArray(extension,file_extension) != -1){
                     valid = true;
                 }else{
-                    alert("Only images are allowed to upload.");
+                    alert("Only documents and images are allowed to upload.");
                     valid = false;
                 }
             }

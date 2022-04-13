@@ -35,7 +35,7 @@
                 </div>
                 <div class="col-sm-12 col-md-12">
                     <div class="form-group col-md-6">
-                        <label for="exampleInputFile">Image</label>
+                        <label for="exampleInputFile">Upload Document</label>
                         <div class="input-group">
                             <div class="custom-file">
                                 <input type="hidden" name="images[]" id="uploadedImage" value="" />

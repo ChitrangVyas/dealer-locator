@@ -228,7 +228,7 @@
             let valid = false;
             if(avatar!=""){
                 var extension = avatar.split('.').pop().toUpperCase();
-                var file_extension = ['PDF', 'DOC', 'DOCX', 'RTF', 'TXT', 'XLSX', 'PNG', 'JPEG', 'GIF', 'JPG', 'BMP', 'WEBP'];
+                var file_extension = ['PDF', 'DOC', 'DOCX', 'RTF', 'TXT', 'XLS','XLSX', 'PNG', 'JPEG', 'GIF', 'JPG', 'BMP', 'WEBP', 'ODS', 'ODT'];
                 if(jQuery.inArray(extension,file_extension) != -1){
                     valid = true;
                 }else{
@@ -284,7 +284,7 @@
             let valid = true;
             if(avatar!=""){
                 var extension = avatar.split('.').pop().toUpperCase(); 
-                var file_extension = ['PDF', 'DOC', 'DOCX', 'RTF', 'TXT', 'XLSX', 'PNG', 'JPEG', 'GIF', 'JPG', 'BMP', 'WEBP'];
+                var file_extension = ['PDF', 'DOC', 'DOCX', 'RTF', 'TXT', 'XLS','XLSX', 'PNG', 'JPEG', 'GIF', 'JPG', 'BMP', 'WEBP', 'ODS', 'ODT'];
                 if(jQuery.inArray(extension,file_extension) != -1){
                     valid = true;
                 }else{

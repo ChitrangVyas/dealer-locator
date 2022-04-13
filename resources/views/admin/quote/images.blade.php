@@ -10,6 +10,9 @@
     <span>{!! $orderImage->getSrc()['title'] !!} </span>
     </a> 
    <i class="fa fa-trash text-danger ml-2 delete_po_image" style="cursor:pointer" data-id="{{$orderImage['id']}}"></i>
+   @else
+    <a href="{!! url($orderImage->image) !!}" target="_blnk">{{$orderImage->image}}</a>
+    <i class="fa fa-trash text-danger ml-2 delete_po_image" style="cursor:pointer" data-id="{{$orderImage['id']}}"></i>
     @endif
 </div>                
 @endforeach

@@ -28,7 +28,10 @@ class DatabaseSeeder extends Seeder
             CategorySeeder::class,
             ProductSeeder::class,
             ProductCategorySeeder::class,
-            InventorySeeder::class
+            InventorySeeder::class,
+            InquirySourceSeeder::class,
+            InquirySeeder::class,
+            
         ]);
     }
 }

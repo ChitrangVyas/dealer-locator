@@ -15,10 +15,10 @@ class BrandSeeder extends Seeder
     {
        $brands = array([
            'id' => '1',
-           'name' => 'KASHYAP',
-           'description' => 'kashyap anti-scale',
-           'short_description' => 'kashyap anti-scale',
-           'logo' => '/storage/uploads/1632990098_1632989283_logo2.png',
+           'name' => 'Brand 1',
+           'description' => 'Brand 1',
+           'short_description' => 'Brand 1',
+           'logo' => '/storage/uploads/brand.png',
            'manufacturer_id' => '1',
            'status' => '1',
            'created_at' => date('Y-m-d H:i:s'),

@@ -14,10 +14,10 @@ class ManufactureSeeder extends Seeder
     public function run()
     {
         $manufacturer = array([
-            'name' => 'Kashyap Technology',
-            'email' => 'kashyap@kashyap.com',
-            'mobile' => '9898989898',
-            'logo' => '/storage/uploads/1632989406_logo2.png',
+            'name' => 'Manufacturer 1',
+            'email' => 'manufacturer1@gmail.com',
+            'mobile' => '9824655419',
+            'logo' => '/storage/uploads/manufacturer.png',
             'country_id' => '101',
             'state_id' => '12',
             'city_id' => '783',

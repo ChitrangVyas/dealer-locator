@@ -17,11 +17,11 @@ class UserGroupSeeder extends Seeder
         //
         DB::table('users_group')->delete();
         $user_group = array(
-            array('id'=>1,'name'=>'staff','created_at' => date('Y-m-d H:i:s'),'updated_at' => date('Y-m-d H:i:s')),
-            array('id'=>2,'name'=>'dealer','created_at' => date('Y-m-d H:i:s'),'updated_at' => date('Y-m-d H:i:s')),
-            array('id'=>3,'name'=>'retailer','created_at' => date('Y-m-d H:i:s'),'updated_at' => date('Y-m-d H:i:s')),
-            array('id'=>4,'name'=>'customer','created_at' => date('Y-m-d H:i:s'),'updated_at' => date('Y-m-d H:i:s')),
-            array('id'=>5,'name'=>'vendor','created_at' => date('Y-m-d H:i:s'),'updated_at' => date('Y-m-d H:i:s')),
+            array('id'=>1,'name'=>'Staff','created_at' => date('Y-m-d H:i:s'),'updated_at' => date('Y-m-d H:i:s')),
+            array('id'=>2,'name'=>'Dealer','created_at' => date('Y-m-d H:i:s'),'updated_at' => date('Y-m-d H:i:s')),
+            array('id'=>3,'name'=>'Retailer','created_at' => date('Y-m-d H:i:s'),'updated_at' => date('Y-m-d H:i:s')),
+            array('id'=>4,'name'=>'Customer','created_at' => date('Y-m-d H:i:s'),'updated_at' => date('Y-m-d H:i:s')),
+            array('id'=>5,'name'=>'Vendor','created_at' => date('Y-m-d H:i:s'),'updated_at' => date('Y-m-d H:i:s')),
         );
         DB::table('users_group')->insert($user_group);
     }

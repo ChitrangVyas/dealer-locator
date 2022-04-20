@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Currency;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -31,7 +32,7 @@ class DatabaseSeeder extends Seeder
             InventorySeeder::class,
             InquirySourceSeeder::class,
             InquirySeeder::class,
-            
+            currencyTableSeeder::class 
         ]);
     }
 }

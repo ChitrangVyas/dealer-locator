@@ -100,28 +100,28 @@
                     
                     </td>
                     <td class="text-center">{{ (!empty($orderProduct->product->hsn_sac)) ? $orderProduct->product->hsn_sac : '-' }}</td>
-                    <td>{{ number_format($orderProduct->amount,2)}}</td>
+                    <td>{!! $currency->symbol !!} {{ number_format($orderProduct->amount,2)}}</td>
                     <td>{{$orderProduct->qty}}</td>
                     <td>{{$orderProduct->discount}}</td>
-                    <td>{{ number_format($orderProduct->getsubTotal(),2) }}</td>
+                    <td>{!! $currency->symbol !!} {{ number_format($orderProduct->getsubTotal(),2) }}</td>
                 </tr>
                 @endforeach
                 <tr>
                     <td colspan="4"></td>
                     <td><strong>Sub Total</strong></td>
-                    <td>{{ number_format($order->getSubTotal()['sub_total'],2) }}</td>
+                    <td>{!! $currency->symbol !!} {{ number_format($order->getSubTotal()['sub_total'],2) }}</td>
                 </tr>
                 @foreach ($order->getTotalTax() as $tax)
                 <tr>
                     <td colspan="4"></td>
                     <td><strong>{{$tax->name}}</strong></td>
-                    <td>{{ number_format($tax->total_tax,2) }}</td>
+                    <td>{!! $currency->symbol !!} {{ number_format($tax->total_tax,2) }}</td>
                 </tr>    
                 @endforeach
                 <tr>
                     <td colspan="4"></td>
                     <td><strong>Total</strong></td>
-                    <td>{{ number_format($order->total,2) }}</td>
+                    <td>{!! $currency->symbol !!} {{ number_format($order->total,2) }}</td>
                 </tr>
             </tbody>
         </table>

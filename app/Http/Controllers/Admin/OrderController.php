@@ -798,14 +798,15 @@ class OrderController extends MainController
             $action_html = "<span><a data-url=" . route('quote.show', $order->id) . " data-order=" . $order->id . " class='btn btn-primary view-order' data-toggle='modal' data-target='#orderModal' title='View'><i class='far fa-eye' title='View'></i></a></span>";
             
             if( ( ($user->users_group_id == '1' ||  is_null($user->users_group_id) ) && $order->from_user == null) || $user->id == $order->from_user){
-            // $action_html .= "<span class='ml-3 create-po-".$order->id."'><a data-url=".route('cart.po.create')." data-order=".$order->id." class='btn btn-success view-order'>Generate PO</a></span>";
-            if (empty($is_sale_generated) && (auth()->user()->id == $order->from_user || (empty($user->users_group_id) && empty($order->from_user)))) {
-                $action_html .= "<span class='ml-2 create-sale-" . $order->id . "'><a data-url=" . route('cart.sale.create') . " data-order=" . $order->id . " class='btn btn-default view-order' data-toggle='modal' data-target='#orderModal' title='Generate Order'><i class='fas fa-shopping-cart'></i></a></span>";
+                // $action_html .= "<span class='ml-3 create-po-".$order->id."'><a data-url=".route('cart.po.create')." data-order=".$order->id." class='btn btn-success view-order'>Generate PO</a></span>";
+                if (empty($is_sale_generated) && (auth()->user()->id == $order->from_user || (empty($user->users_group_id) && empty($order->from_user)))) {
+                    $action_html .= "<span class='ml-2 create-sale-" . $order->id . "'><a data-url=" . route('cart.sale.create') . " data-order=" . $order->id . " class='btn btn-default view-order' data-toggle='modal' data-target='#orderModal' title='Generate Order'><i class='fas fa-shopping-cart'></i></a></span>";
+                }
+                $action_html .= "<span class='ml-2 edit-quote-" . $order->id . "'><a data-url=" . route('cart.quote.edit', $order->id) . " data-order=" . $order->id . " class='btn btn-primary view-order' title='Edit'><i class='fas fa-pen'></i></a></span>";
+                $action_html .= "<span class='ml-2'><button type=button data-order=$order->id class='btn btn-danger' onClick=deleteOrder($order->id) title='Delete'><i class='fas fa-trash'></i></button></span>";
             }
-            $action_html .= "<span class='ml-2 edit-quote-" . $order->id . "'><a data-url=" . route('cart.quote.edit', $order->id) . " data-order=" . $order->id . " class='btn btn-primary view-order' title='Edit'><i class='fas fa-pen'></i></a></span>";
-            $action_html .= "<span class='ml-2'><button type=button data-order=$order->id class='btn btn-danger' onClick=deleteOrder($order->id) title='Delete'><i class='fas fa-trash'></i></button></span>";
-        }
-            $data[] = [$order->id, $order->order_number, $order->amount, ucwords($added_by), ucwords($customer), $order->created_date, $action_html];
+            $amount = $this->currency->symbol." ".$order->amount;
+            $data[] = [$order->id, $order->order_number,$amount, ucwords($added_by), ucwords($customer), $order->created_date, $action_html];
         }
         $return_array = array();
         $return_array['draw'] = $request['draw'];
@@ -943,7 +944,8 @@ class OrderController extends MainController
             
 
             // $action_html .= "<span class='ml-3'><button type=submit data-user=$order->id class='btn btn-danger' onClick=deleteOrder($order->id)>Delete</button></span>";
-            $data[] = [$order->id, $order->order_number, $order->amount, ucwords($customer), $order_status, $order->created_date, $action_html];
+            $amount = $this->currency->symbol." ".$order->amount;
+            $data[] = [$order->id, $order->order_number, $amount, ucwords($customer), $order_status, $order->created_date, $action_html];
         }
         $return_array = array();
         $return_array['draw'] = $request['draw'];
@@ -1200,7 +1202,8 @@ class OrderController extends MainController
             foreach ($orders as $order) {
                 $customer = (!empty($order->customer)) ? $order->customer : $this->settingJson['name'];
                 $added_by  = (!empty($order->added_by)) ? $order->added_by : $this->settingJson['name'];
-                $data[] = [$order->id, $order->order_number, $order->amount, ucwords($added_by), ucwords($customer), $order->created_date];
+                $amount  = $this->currency->symbol." ".$order->amount;
+                $data[] = [$order->id, $order->order_number, $amount, ucwords($added_by), ucwords($customer), $order->created_date];
             }
             $return_array = array();
             $return_array['draw'] = $request['draw'];
@@ -1273,7 +1276,8 @@ class OrderController extends MainController
                 }
                 $customer = (!empty($order->customer)) ? $order->customer : $this->settingJson['name'];
                 $added_by  = (!empty($order->added_by)) ? $order->added_by : $this->settingJson['name'];
-                $data[] = [$order->id, $order->order_number, $order->amount, ucwords($added_by), ucwords($customer), $order_status, $order_data->getSalesStage(!empty($order->stage) ? $order->stage : 0), $order->created_date];
+                $amount  = $this->currency->symbol." ".$order->amount;
+                $data[] = [$order->id, $order->order_number, $amount, ucwords($added_by), ucwords($customer), $order_status, $order_data->getSalesStage(!empty($order->stage) ? $order->stage : 0), $order->created_date];
             }
             $return_array = array();
             $return_array['draw'] = $request['draw'];

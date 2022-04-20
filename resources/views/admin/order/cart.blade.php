@@ -164,7 +164,7 @@
             </div> -->
             <div class="col-sm-12 col-md-1">
                 <div class="form-group">
-                    <span class="col-4 right amount d-inline" id="amount-{{$product->id}}">{{Str::currency($myCart->getSubtotalWithDiscuount($product,$id,$cart))}}</span>
+                    <span class="col-4 right amount d-inline" id="amount-{{$product->id}}">{!! $currency->symbol !!} {{Str::currency($myCart->getSubtotalWithDiscuount($product,$id,$cart))}}</span>
                 </div>
             </div>
             <div class="col-sm-12 col-md-1">
@@ -184,7 +184,7 @@
             </div>
             <div class="col-sm-12 col-md-1 mt-2">
                 <div class="form-group">
-                    <span class="col-4 right tax-total d-inline" id="total_{{$tax}}">{{Str::currency($total)}}</span>
+                    <span class="col-4 right tax-total d-inline" id="total_{{$tax}}">{!! $currency->symbol !!} {{Str::currency($total)}}</span>
                 </div>
             </div>
         </div>
@@ -198,7 +198,7 @@
             </div>
             <div class="col-sm-12 col-md-1 mt-2">
                 <div class="form-group">
-                    <span class="col-4 right total d-inline" id="total">{{Str::currency((float)$myCart->getCartTotal($id))}}</span>
+                    <span class="col-4 right total d-inline" id="total">{!! $currency->symbol !!} {{Str::currency((float)$myCart->getCartTotal($id))}}</span>
                 </div>
             </div>
         </div>

@@ -50,7 +50,7 @@
             </div>
             <div class="col-sm-12 col-md-6">
                 <!-- file input -->
-                <div class="form-group col-sm-12 col-md-10">
+                <div class="form-group col-sm-12 col-md-12">
                 <label>Icon Logo</label>
                 <div class="input-group">
                     <div class="custom-file">
@@ -68,9 +68,9 @@
                 </div>
                 @endif
             </div>
-            <div class="col-sm-12 col-md-12">
+            <div class="col-sm-12 col-md-6">
                 <!-- text input -->
-                <div class="form-group col-md-6">
+                <div class="form-group col-md-12">
                     <label>Timezone</label>
                     <select class="form-control select2 timezone" id='timezone' name='timezone' tabindex="3">
                         <option value="">Select</option>
@@ -79,6 +79,21 @@
                         @endforeach
                     </select>
                     @error('timezone')
+                        <div class="alert alert-danger mt-2">{{ $message }}</div>
+                    @enderror
+                </div>
+            </div>
+            <div class="col-sm-12 col-md-6">
+                <!-- text input -->
+                <div class="form-group col-sm-12 col-md-12">
+                    <label>Currency</label>
+                    <select class="form-control select2 timezone" id='currency' name='currency' tabindex="4">
+                        <option value="">Select</option>
+                        @foreach ($currency_list as $currency)
+                            <option value="{{$currency['id']}}" {{(!empty($settings) && !empty($settings->json_data['currency']) && ($currency['id']==$settings->json_data['currency']))?'selected':''}} >{{$currency['name']}}</option>
+                        @endforeach
+                    </select>
+                    @error('currency')
                         <div class="alert alert-danger mt-2">{{ $message }}</div>
                     @enderror
                 </div>

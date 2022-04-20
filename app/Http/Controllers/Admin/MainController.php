@@ -7,6 +7,7 @@ use App\Models\City;
 use App\Models\Settings;
 use App\Models\State;
 use App\Models\Country;
+use App\Models\Currency;
 use Illuminate\Http\Request;
 use App\Models\User;
 
@@ -19,6 +20,7 @@ class MainController extends Controller
     public $allowed_country = [101];
     public $settingJson = [];
     public $allowedcountry=[];
+    public $currency= false;
     public $msg = array(
         'inquiry_assign'=>'Hello {name} You are assigned a new Inquiry No. {inquiry_no} Please login to your account to view more details. - Kashyap Technology EWTIND',
         'inquiry_customer_assigned'=>'Hello {name},\nyour Inquiry No. {inquiry_no} has been assigned.\n{user_type} : {fullname},\nM: {mobile}\nEmail : {email}\nKashyap Technology\nEWTIND',
@@ -51,6 +53,11 @@ class MainController extends Controller
                 if(!empty($this->settingJson['icon_logo'])){
                     config(['icon.logo' => $this->settingJson['icon_logo']]);
                 }
+                if(!empty($this->settingJson['currency'])){
+                    $this->currency=Currency::find($this->settingJson['currency']);                    
+                }else{
+                    $this->currency=Currency::find(1);
+                }
                 $state = State::find($this->settingJson['state']);
                 $city = City::find($this->settingJson['city']);
                 $country = Country::find($this->settingJson['country']);
@@ -80,7 +87,8 @@ class MainController extends Controller
         
         View::share('country',$this->country);
         View::share('allowedcountry',$allowedcountry);        
-        View::share('setting',$this->settingJson);        
+        View::share('setting',$this->settingJson);  
+        View::share('currency',$this->currency);
         
     }
 
@@ -105,6 +113,16 @@ class MainController extends Controller
     }
     public function getMsg($key){
         return $this->msg[$key];
+    }
+    public function currency_list()
+    {
+        $currency_list = array();
+        $currency_data = DB::select('select * from currencies'); 
+        foreach ($currency_data as $key => $currency) {
+            $currency_list[$key]['id'] = $currency->id;
+            $currency_list[$key]['name'] = $currency->name;
+        }
+        return $currency_list;
     }
 
 }

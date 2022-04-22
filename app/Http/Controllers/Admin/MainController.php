@@ -117,7 +117,7 @@ class MainController extends Controller
     public function currency_list()
     {
         $currency_list = array();
-        $currency_data = DB::select('select * from currencies'); 
+        $currency_data = DB::select('select * from currencies where status = 1'); 
         foreach ($currency_data as $key => $currency) {
             $currency_list[$key]['id'] = $currency->id;
             $currency_list[$key]['name'] = $currency->name;

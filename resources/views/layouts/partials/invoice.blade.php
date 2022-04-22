@@ -77,7 +77,7 @@
         <table class="table table-striped">
             <thead>
                 <tr>
-                    <th style="width: 60%;">Product</th>
+                    <th style="width: 50%;">Product</th>
                     <th class="text-center">HSN/SAC</th>
                     <th>Price</th>
                     <th>Qty</th>
@@ -88,7 +88,7 @@
             <tbody>
                 @foreach ($order->orderProduct as $orderProduct)
                 <tr>
-                    <td style="width: 60%;">{{(!empty($orderProduct->product_name))?$orderProduct->product_name:$orderProduct->product->name}}
+                    <td style="width: 50%;">{{(!empty($orderProduct->product_name))?$orderProduct->product_name:$orderProduct->product->name}}
                     <div class="row col-6">
                         <div class="col-12">
                             <small>{{(!empty($orderProduct->product->max_pipe_size_and_water_flow))? 'Max pipe size & water flow: ':'-'}} {{(!empty($orderProduct->product->max_pipe_size_and_water_flow))?$orderProduct->product->max_pipe_size_and_water_flow:'-'}}</small>
@@ -100,28 +100,28 @@
                     
                     </td>
                     <td class="text-center">{{ (!empty($orderProduct->product->hsn_sac)) ? $orderProduct->product->hsn_sac : '-' }}</td>
-                    <td>{!! $currency->symbol !!} {{ number_format($orderProduct->amount,2)}}</td>
+                    <td><span class="symbol-icon">{!! $currency->symbol !!}</span> {{ number_format($orderProduct->amount,2)}}</td>
                     <td>{{$orderProduct->qty}}</td>
                     <td>{{$orderProduct->discount}}</td>
-                    <td>{!! $currency->symbol !!} {{ number_format($orderProduct->getsubTotal(),2) }}</td>
+                    <td><span class="symbol-icon">{!! $currency->symbol !!}</span> {{ number_format($orderProduct->getsubTotal(),2) }}</td>
                 </tr>
                 @endforeach
                 <tr>
                     <td colspan="4"></td>
                     <td><strong>Sub Total</strong></td>
-                    <td>{!! $currency->symbol !!} {{ number_format($order->getSubTotal()['sub_total'],2) }}</td>
+                    <td><span class="symbol-icon">{!! $currency->symbol !!}</span><span>{{ number_format($order->getSubTotal()['sub_total'],2) }}</span></td>
                 </tr>
                 @foreach ($order->getTotalTax() as $tax)
                 <tr>
                     <td colspan="4"></td>
                     <td><strong>{{$tax->name}}</strong></td>
-                    <td>{!! $currency->symbol !!} {{ number_format($tax->total_tax,2) }}</td>
+                    <td><span class="symbol-icon">{!! $currency->symbol !!}</span> {{ number_format($tax->total_tax,2) }}</td>
                 </tr>    
                 @endforeach
                 <tr>
                     <td colspan="4"></td>
                     <td><strong>Total</strong></td>
-                    <td>{!! $currency->symbol !!} {{ number_format($order->total,2) }}</td>
+                    <td><span class="symbol-icon">{!! $currency->symbol !!}</span> {{ number_format($order->total,2) }}</td>
                 </tr>
             </tbody>
         </table>

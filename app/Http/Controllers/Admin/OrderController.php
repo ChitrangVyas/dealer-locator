@@ -1237,7 +1237,7 @@ class OrderController extends MainController
         if (!empty($from_date) && !empty($to_date)) {
             $where .= " AND (orders.created_at BETWEEN '$from_date 00:00:00' AND '$to_date 23:59:59')";
         }
-        if ($order_stage != " ") {
+        if ($order_stage != "") {
             $where .= " AND (os.stage='$order_stage')";
         }
         if (!empty($payment_status)) {

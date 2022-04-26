@@ -25,6 +25,7 @@
                                     <th>Email</th>
                                     <th>Phone</th>
                                     <th>Source</th>
+                                    <th>Added By</th>
                                     <th>Dealer</th>
                                     <th>Retailer</th>
                                     <th>Status</th>
@@ -162,6 +163,9 @@
                     "name": "customer_mobile"
                 },
                 {
+                    "name": "added_by"
+                },
+                {
                     "name": "dealer"
                 },
                 {
@@ -175,15 +179,15 @@
                 },
             ],
             "columnDefs": [{
-                    "targets": [4],
-                    "orderable": false
-                },
-                {
-                    "targets": [7],
+                    "targets": [5],
                     "orderable": false
                 },
                 {
                     "targets": [8],
+                    "orderable": false
+                },
+                {
+                    "targets": [9],
                     "orderable": false
                 },
                 {
@@ -199,14 +203,14 @@
                 let is_admin = "{{((empty(auth()->user()->users_group_id)) || auth()->user()->users_group_id == 1 ||auth()->user()->users_group_id == 2 )? true : false }}";
                 let is_dealer = "{{auth()->user()->users_group_id == 2}}";
                 if(is_admin){
-                    table.column(5).visible();
+                    table.column(6).visible();
                 }else{
-                    table.column(5).visible(false);
+                    table.column(6).visible(false);
                 }
                 if(is_dealer){
-                    table.column(4).visible(false);
+                    table.column(5).visible(false);
                 }else{
-                    table.column(4).visible();
+                    table.column(5).visible();
                 }
                 
             }

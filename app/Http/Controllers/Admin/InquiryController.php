@@ -476,6 +476,7 @@ class InquiryController extends MainController
             $retailer = (!empty($inquiry->retailer))?$inquiry->retailer:'N/A';
             $action_html = "";
             $inquiryObj = Inquiry::find($inquiry->id);
+            $indiVidual=  User::where('id','=',$inquiry->created_by)->first();
             $inquiry_status = (!empty($inquiryObj->status) && $inquiryObj->status !=0 )?$inquiryObj->getInquirystatusName():'N/A';
             $status_html = "<button type='button' class='btn btn-info change-status btn-sm' data-inquiry=$inquiry->id data-change-status-url='".route('inqiury.status')."'>".$inquiry_status."</button>";
             $action_html .= "<span><button type='button' id='addLog' class='btn btn-default' data-inquiry=$inquiry->id data-view-url='".route('inquiry-log.show',$inquiry->id)."' data-add-url='".route('inquiry-log.create')."' data-task-url='".route('createReminder')."' data-toggle='modal' data-target='#modal-lg' title='View Log'><i class='fas fa-clipboard-list' title='View Log'></i></button></span>";
@@ -492,7 +493,7 @@ class InquiryController extends MainController
                 $action_html .= "<span class='ml-2'><button type=submit data-user=$inquiry->id class='btn btn-danger' onClick=deleteUser($inquiry->id)><i class='fas fa-trash' title='Delete'></i></button></span>";
             }
             // $action_html .= "<span class='ml-3'><a href=# class='btn btn-primary'>View</a></span>";
-            $data[] = [$inquiry->id,ucwords($inquiry->customer),$inquiry->customer_email,$inquiry->customer_mobile,$inquiry->source,$inquiry->added_by,$dealer,$retailer,$status_html,$action_html];
+            $data[] = [$inquiry->id,ucwords($inquiry->customer),$inquiry->customer_email,$indiVidual->getMobileWithCountryCode(),$inquiry->source,$inquiry->added_by,$dealer,$retailer,$status_html,$action_html];
         }
         $return_array = array();
         $return_array['draw'] = $request['draw'];
@@ -557,6 +558,7 @@ class InquiryController extends MainController
                 $retailer = (!empty($inquiry->retailer))?$inquiry->retailer:'N/A';
                 $action_html = "";
                 $inquiryObj = Inquiry::find($inquiry->id);
+                $indiVidual=  User::where('id','=',$user->id)->first();
                 $inquiry_status = (!empty($inquiryObj->status) && $inquiryObj->status !=0 )?$inquiryObj->getInquirystatusName():'N/A';
                 $status_html = $inquiry_status;
                 $action_html .= "<span><button type='button' id='addLog' class='btn btn-default' data-inquiry=$inquiry->id data-view-url='".route('inquiry-log.show',$inquiry->id)."' data-add-url='".route('inquiry-log.create')."' data-task-url='".route('createReminder')."' data-toggle='modal' data-target='#modal-lg' title='View Log'><i class='fas fa-clipboard-list' title='View Log'></i></button></span>";
@@ -573,7 +575,7 @@ class InquiryController extends MainController
                     $action_html .= "<span class='ml-2'><button type=submit data-user=$inquiry->id class='btn btn-danger' onClick=deleteUser($inquiry->id)><i class='fas fa-trash' title='Delete'></i></button></span>";
                 }
                 // $action_html .= "<span class='ml-3'><a href=# class='btn btn-primary'>View</a></span>";
-                $data[] = [$inquiry->id,$inquiry->product,ucwords($inquiry->customer),$inquiry->customer_email,$inquiry->customer_mobile,$inquiry->source,$dealer,$retailer,$status_html,$action_html];
+                $data[] = [$inquiry->id,$inquiry->product,ucwords($inquiry->customer),$inquiry->customer_email,$indiVidual->getMobileWithCountryCode(),$inquiry->source,$dealer,$retailer,$status_html,$action_html];
             }
             $return_array = array();
             $return_array['draw'] = $request['draw'];

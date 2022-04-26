@@ -231,6 +231,7 @@ class DealerUserController extends MainController
         foreach($users as $user){
             $city = (!empty($user->city))?$user->city:'';
             $state = (!empty($user->state))?$user->state:'';
+            $indiVidual=  User::where('id','=',$user->id)->first();
             $action_html = "<span><a href=".route('dealer.edit',$user->id)." class='btn btn-primary'><i class='fas fa-pen' title='Edit'></i></a></span>";
             $child_user =  Helpers::getChildUserCount($user->id);
             $status = (!empty($user->status)) ? 'checked': '';
@@ -242,7 +243,7 @@ class DealerUserController extends MainController
                 $action_html .= "<span class='ml-3'><span class='badge badge-info' title='Retailers'>$child_user</span> |  <span class='badge badge-info' title='Inquiries'>$total_assigned_inquiries</span></span>";
             }
             $action_html .="<span class='ml-3'><a data-url=".route('dealer.showProduct',$user->id)." data-product=".$user->id." class='btn btn-primary view-product' data-toggle='modal' data-target='#productModal' title='View'><i class='fa fa-rupee-sign' title='View'></i></a></span>";
-            $data[] = [$user->id,$user->name,$user->email,$user->mobile,$city,$state,$status_html,$action_html];
+            $data[] = [$user->id,$user->name,$user->email,$indiVidual->getMobileWithCountryCode(),$city,$state,$status_html,$action_html];
         }
         $return_array = array();
         $return_array['draw'] = $request['draw'];

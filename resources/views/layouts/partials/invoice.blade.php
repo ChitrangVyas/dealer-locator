@@ -12,7 +12,7 @@
                 {{ucwords($order->addedBy->country->name)}}<br>
                 @endif
                 @if(!empty($order->addedBy->mobile))
-                Phone: {{$order->addedBy->mobile}}<br>
+                Phone: {{$order->addedBy->getMobileWithCountryCode()}}<br>
                 @endif
                 Email: {{$order->addedBy->email}}<br>
                 GSTIN: {{ ((!empty($to_user->gstin))?$to_user->gstin:' N/A ') }}
@@ -38,7 +38,7 @@
             {{ucwords($order->customer->city->name)}},<br>
             {{ucwords($order->customer->state->name)}} - {{$order->customer->zipcode}},<br>
             {{ucwords($order->customer->country->name)}}<br>
-            Phone: {{$order->customer->mobile}}<br>
+            Phone: {{$order->customer->getMobileWithCountryCode()}}<br>
             Email: {{$order->customer->email}}<br>
             GSTIN: {{ ((!empty($to_user->gstin))?$to_user->gstin:' N/A ') }}
         @else

@@ -126,6 +126,10 @@
             ],
             "columnDefs": [
                 {
+                    "targets": [ 2 ],
+                    "className": "text-right",
+                },
+                {
                     "targets": [3,6],
                     "orderable": false
                 },

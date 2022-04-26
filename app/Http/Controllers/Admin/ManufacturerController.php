@@ -155,6 +155,7 @@ class ManufacturerController extends MainController
         $total_users = Manufacturer::where('deleted_at','=',Null)->count();
         $data = [];
         foreach($manufacturers as $manufacturer){
+            $indiVidual=  Manufacturer::where('id','=',$manufacturer->id)->first();
             $brand_count = Helpers::getCountData('brands',['manufacturer_id'=>$manufacturer->id]);
             $manufacturer_logo_html = (!empty($manufacturer->logo))?"<img class='img logo' src=".url($manufacturer->logo)." width=50 />":'Image not found';
             $status = (!empty($manufacturer->status)) ? 'checked': '';
@@ -165,7 +166,7 @@ class ManufacturerController extends MainController
             }else{
                 $action_html .= "<span class='ml-3'><span class='badge badge-info' title='Brand'>$brand_count</span></span>";
             }
-            $data[] = [$manufacturer->id,$manufacturer->name,$manufacturer->email,$manufacturer->mobile,$manufacturer_logo_html,$status_html,$action_html];
+            $data[] = [$manufacturer->id,$manufacturer->name,$manufacturer->email,$indiVidual->getMobileWithCountryCode(),$manufacturer_logo_html,$status_html,$action_html];
         }
         $return_array = array();
         $return_array['draw'] = $request['draw'];

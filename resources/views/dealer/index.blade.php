@@ -76,6 +76,10 @@
                 "orderable": false
             },
             {
+                "targets":[ 3 ],
+                "className": "text-center",
+            },
+            {
                 "targets": [ 7 ],
                 "orderable": false
             },

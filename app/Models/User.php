@@ -66,7 +66,12 @@ class User extends Authenticatable
             return "Vendor";
         }
     } */
-
+    public function getMobileWithCountryCode(){
+        if(!empty($this->mobile))
+            return $this->country->phonecode." ".$this->mobile;
+        else
+            return "";
+    }
     public function parentUser(){
         $this->parent_id;
     }

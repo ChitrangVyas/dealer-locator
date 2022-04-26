@@ -21,6 +21,7 @@
                                 <tr>
                                     <th>ID</th>
                                     <th>Name</th>
+                                    <th>Manufacturer</th>
                                     <th>Brand</th>
                                     <th>Image</th>
                                     <th>Inventory</th>
@@ -65,6 +66,7 @@
             "columns": [
                 { "name": "products.id" },
                 { "name": "products.name" },
+                { "name": "manufacturer.name" },
                 { "name": "brands.name" },
                 { "name": "image" },
                 { "name": "inventory" },
@@ -73,15 +75,15 @@
             ],
             "columnDefs": [
             {
-                "targets": [ 3 ],
-                "orderable": false
-            },
-            {
-                "targets": [ 5 ],
+                "targets": [ 4 ],
                 "orderable": false
             },
             {
                 "targets": [ 6 ],
+                "orderable": false
+            },
+            {
+                "targets": [ 7 ],
                 "orderable": false
             },
             {
@@ -96,9 +98,9 @@
             "fnDrawCallback":function() {
                 let is_admin = "{{((empty(auth()->user()->users_group_id)) || auth()->user()->users_group_id == 1)? true : false }}";
                 if(is_admin){
-                    table.column(6).visible();
+                    table.column(7).visible();
                 }else{
-                    table.column(6).visible(false);
+                    table.column(7).visible(false);
                 }
                 $("input[data-bootstrap-switch]").each(function(){
                     $(this).bootstrapSwitch();

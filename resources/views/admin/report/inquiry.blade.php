@@ -84,7 +84,12 @@
                     "name": "status",sWidth: '10%'
                 },
             ],
-            "columnDefs": [{
+            "columnDefs": [
+                {
+                    "targets":[ 4 ],
+                    "className": "text-center",
+                },
+                {
                     "targets": [5],
                     "orderable": false
                 },

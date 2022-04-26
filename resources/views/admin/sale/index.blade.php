@@ -107,6 +107,10 @@
             ],
             "columnDefs": [
                 {
+                    "targets": [2],
+                    "className": "text-right",
+                },
+                {
                     "targets": [4],
                     "orderable": false
                 },

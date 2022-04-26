@@ -235,6 +235,7 @@ class RetailerUserController extends MainController
         foreach($users as $user){
             $city = (!empty($user->city))?$user->city:'';
             $state = (!empty($user->state))?$user->state:'';
+            $indiVidual=  User::where('id','=',$user->id)->first();
             $total_assigned_inquiries =  Helpers::getAssignedRetailerInquiryCount($user->id);
             $status = (!empty($user->status)) ? 'checked': '';
             $status_html = '<input type="checkbox" name="status" id="status" class="form-control change-status" data-id="'.$user->id.'" data-bootstrap-switch  data-on-text="Enable" data-off-text="Disable" data-off-color="danger" data-on-color="success" '.$status.'>';
@@ -245,7 +246,7 @@ class RetailerUserController extends MainController
                 $action_html .= "<span class='ml-3'><span class='badge badge-info' title='Inquires'>$total_assigned_inquiries</span></span>";
             }
             $action_html .="<span class='ml-3'><a data-url=".route('dealer.showProduct',$user->id)." data-product=".$user->id." class='btn btn-primary view-product' data-toggle='modal' data-target='#productModal' title='View'><i class='fa fa-rupee-sign' title='View'></i></a></span>";
-            $data[] = [$user->id,$user->name,$user->email,$user->mobile,$city,$state,$status_html,$action_html];
+            $data[] = [$user->id,$user->name,$user->email,$indiVidual->getMobileWithCountryCode(),$city,$state,$status_html,$action_html];
         }
         $return_array = array();
         $return_array['draw'] = $request['draw'];

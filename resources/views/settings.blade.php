@@ -123,7 +123,7 @@
                         <option value="3" {{(!empty($settings) && !empty($settings->json_data['date_format']) && (3==$settings->json_data['date_format']))?'selected':''}}>{{ date('Y-m-d H:i:s')}}</option>
                         <option value="4" {{(!empty($settings) && !empty($settings->json_data['date_format']) && (4==$settings->json_data['date_format']))?'selected':''}}>{{ date('d-M-Y H:i:s')}}</option>
                         <option value="5" {{(!empty($settings) && !empty($settings->json_data['date_format']) && (5==$settings->json_data['date_format']))?'selected':''}}>{{ date('M-d-Y H:i:s')}}</option>
-                        <option value="5" {{(!empty($settings) && !empty($settings->json_data['date_format']) && (5==$settings->json_data['date_format']))?'selected':''}}>{{ date('Y-M-d H:i:s')}}</option>
+                        <option value="6" {{(!empty($settings) && !empty($settings->json_data['date_format']) && (6==$settings->json_data['date_format']))?'selected':''}}>{{ date('Y-M-d H:i:s')}}</option>
                     </select>
                     @error('date_format')
                         <div class="alert alert-danger mt-2">{{ $message }}</div>

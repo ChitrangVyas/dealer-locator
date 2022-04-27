@@ -450,19 +450,19 @@ text-align: center;
                             <tr>
                                 <td style="text-align: left;">{{$orderProduct->product_name}}</td>
                                 <td style="text-align: center;">{{ (!empty($orderProduct->product->hsn_sac)) ? $orderProduct->product->hsn_sac : '-' }}</td>
-                                <td>{{Str::currency($orderProduct->amount)}}</td>
+                                <td><span class="symbol-icon">{!! $currency->symbol !!}</span>{{Str::number_format($orderProduct->amount)}}</td>
                                 <td>{{$orderProduct->qty}}</td>
-                                <td>{{Str::currency($orderProduct->getSubTotal())}}</td>
+                                <td><span class="symbol-icon">{!! $currency->symbol !!}</span>{{Str::number_format($orderProduct->getSubTotal())}}</td>
                             </tr>
                         @endforeach
                           <tr>
                             <td colspan="4" style="text-align: right;"><strong>Sub Total</strong></td>
-                            <td>{{ number_format($order->getSubTotal()['sub_total'],2) }}</td>
+                            <td><span class="symbol-icon">{!! $currency->symbol !!}</span>{{ Str::number_format($order->getSubTotal()['sub_total']) }}</td>
                         </tr>
                         @foreach ($order->getTotalTax() as $tax)
                         <tr>
                             <td colspan="4" style="text-align: right;"><strong>{{$tax->name}}</strong></td>
-                            <td>{{ number_format($tax->total_tax,2) }}</td>
+                            <td><span class="symbol-icon">{!! $currency->symbol !!}</span>{{ Str::number_format($tax->total_tax) }}</td>
                         </tr>    
                         @endforeach
                         <tr>
@@ -470,7 +470,7 @@ text-align: center;
                                 <strong>Total</strong>
                             </td>
                             <td>
-                                <strong>{{Str::currency($order->total)}}</strong>
+                                <strong><span class="symbol-icon">{!! $currency->symbol !!}</span>{{Str::number_format($order->total)}}</strong>
                             </td>
                         </tr>
                       </table>

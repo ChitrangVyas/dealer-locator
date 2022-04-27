@@ -4,9 +4,11 @@ namespace App\Http;
 
 use App\Models\Inquiry;
 use App\Models\Notification;
+use App\Models\Settings;
 use App\Models\User;
 use Exception;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Session;
 
 class Helpers {
     public static function storeNotification($user_id='',$message='',$is_read=0,$icon_id=0){
@@ -95,5 +97,17 @@ class Helpers {
                 return DB::table($table)->where($where)->count();
             }
             return (DB::table($table)->whereRaw($where)->count());
+    }
+    public static function number_format($amt){
+        $number_format = Session::get('number_format');
+        if(!empty($number_format)){
+            if($number_format == 1){
+                return number_format($amt,2,'.',',');
+            }else if($number_format == 2){
+                return number_format($amt,2,',','.');
+            }
+        }else{
+            return $amt;
+        }
     }
 }

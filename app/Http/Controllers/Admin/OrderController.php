@@ -803,7 +803,7 @@ class OrderController extends MainController
                 $action_html .= "<span class='ml-2 edit-quote-" . $order->id . "'><a data-url=" . route('cart.quote.edit', $order->id) . " data-order=" . $order->id . " class='btn btn-primary view-order' title='Edit'><i class='fas fa-pen'></i></a></span>";
                 $action_html .= "<span class='ml-2'><button type=button data-order=$order->id class='btn btn-danger' onClick=deleteOrder($order->id) title='Delete'><i class='fas fa-trash'></i></button></span>";
             }
-            $amount = "<span class='symbol-icon'>".$this->currency->symbol."</span>".number_format($order->amount,2);
+            $amount = "<span class='symbol-icon'>".$this->currency->symbol."</span>".Helpers::number_format($order->amount);
             $data[] = [$order->id, $order->order_number,$amount, ucwords($added_by), ucwords($customer),  date('d-m-Y H:i:s',strtotime($order->created_date)), $action_html];
         }
         $return_array = array();
@@ -868,7 +868,7 @@ class OrderController extends MainController
                 $action_html .= "<span class='ml-3 edit-po edit-po-" . $order->id . "' data-po=" . $order->id . " ><a data-url=" . route('po.show', $order->id) . " class='btn btn-primary' title='Edit'><i class='fas fa-pen'></i></a></span>";
                 $action_html .= "<span class='ml-2'><button type=button data-order=$order->id class='btn btn-danger' onClick=deleteOrder($order->id) title='Delete'><i class='fas fa-trash'></i></button></span>";
             }
-            $amount = "<span class='symbol-icon'>".$this->currency->symbol."</span>".number_format($order->amount,2);
+            $amount = "<span class='symbol-icon'>".$this->currency->symbol."</span>".Helpers::number_format($order->amount,2);
             $data[] = [$order->id, $order->order_number, $amount, ucwords($added_by), ucwords($customer),  date('d-m-Y H:i:s',strtotime($order->created_date)), $action_html];
         }
 
@@ -939,7 +939,7 @@ class OrderController extends MainController
             
 
             // $action_html .= "<span class='ml-3'><button type=submit data-user=$order->id class='btn btn-danger' onClick=deleteOrder($order->id)>Delete</button></span>";
-            $amount ="<span class='symbol-icon'>".$this->currency->symbol."</span>".number_format($order->amount,2);
+            $amount ="<span class='symbol-icon'>".$this->currency->symbol."</span>".Helpers::number_format($order->amount);
             $data[] = [$order->id, $order->order_number, $amount, ucwords($customer), $order_status, date('d-m-Y H:i:s',strtotime($order->created_date)), $action_html];
         }
         $return_array = array();
@@ -1197,7 +1197,7 @@ class OrderController extends MainController
             foreach ($orders as $order) {
                 $customer = (!empty($order->customer)) ? $order->customer : $this->settingJson['name'];
                 $added_by  = (!empty($order->added_by)) ? $order->added_by : $this->settingJson['name'];
-                $amount  = "<span class='symbol-icon'>".$this->currency->symbol."</span>".number_format($order->amount,2);
+                $amount  = "<span class='symbol-icon'>".$this->currency->symbol."</span>".Helpers::number_format($order->amount,2);
                 $data[] = [$order->id, $order->order_number, $amount, ucwords($added_by), ucwords($customer),  date('d-m-Y H:i:s',strtotime($order->created_date))];
             }
             $return_array = array();
@@ -1271,7 +1271,7 @@ class OrderController extends MainController
                 }
                 $customer = (!empty($order->customer)) ? $order->customer : $this->settingJson['name'];
                 $added_by  = (!empty($order->added_by)) ? $order->added_by : $this->settingJson['name'];
-                $amount  = "<span class='symbol-icon'>".$this->currency->symbol."</span>".number_format($order->amount,2);
+                $amount  = "<span class='symbol-icon'>".$this->currency->symbol."</span>".Helpers::number_format($order->amount,2);
                 $data[] = [$order->id, $order->order_number, $amount, ucwords($added_by), ucwords($customer), $order_status, $order_data->getSalesStage(!empty($order->stage) ? $order->stage : 0),  date('d-m-Y H:i:s',strtotime($order->created_date))];
             }
             $return_array = array();

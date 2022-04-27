@@ -61,8 +61,17 @@ class MainController extends Controller
                 }
 
                 // here we set session 
-                Session::put('number_format', $this->settingJson['number_format']);
-                Session::put('date_format', $this->settingJson['date_format']);
+                if(!empty($this->settingJson['number_format'])){
+                    Session::put('number_format', $this->settingJson['number_format']);
+                }else{
+                    Session::put('number_format',1);
+                }
+
+                if(!empty($this->settingJson['date_format'])){
+                    Session::put('date_format', $this->settingJson['date_format']);
+                }else{
+                    Session::put('date_format', 1);
+                }
                 
                 $state = State::find($this->settingJson['state']);
                 $city = City::find($this->settingJson['city']);

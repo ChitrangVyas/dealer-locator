@@ -54,7 +54,12 @@
                 <!-- text input -->
                 <div class="form-group">
                     <label>Mobile <span class="required_field">*</span></label>
-                    <input type="text" name="mobile" value="{{old('mobile', (!empty($user))?$user->mobile:'') }}" class="form-control" placeholder="Mobile" tabindex="4">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" id="countryCode"></span>
+                        </div>
+                        <input type="text" name="mobile" value="{{old('mobile', (!empty($user))?$user->mobile:'') }}" class="form-control" placeholder="Mobile" tabindex="4">
+                    </div>
                     @error('mobile')
                         <div class="alert alert-danger mt-2">{{ $message }}</div>
                     @enderror
@@ -229,7 +234,27 @@
 @section('js')
 <script>
 jQuery(document).ready(function(){
-
+    $('.country').on('change',function(){
+       if($('#country').val() != ''){
+            $.ajax({
+                url: "{{route('get_value')}}",
+                type: 'POST',
+                data: {
+                    table: 'countries',
+                    fields: 'phonecode',
+                    where: `id=${$('#country').val()}`
+                },
+                success: function(res) {
+                    $.each(JSON.parse(res), function(key, val) {
+                        $(`#countryCode`).html(val.phonecode);
+                    })
+                }
+            });
+        }
+        else{
+            $(`#countryCode`).html('');
+        }
+    });
     $('.state').select2();
     $('.country').on('change', function() {
         $(`.state`).empty().append(new Option()).trigger('change');

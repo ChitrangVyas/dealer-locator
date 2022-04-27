@@ -57,7 +57,7 @@
     <!-- /.col -->
     <div class="col-sm-4 invoice-col">
         <div class="invoice_date" style="float: right;">
-        <b class="">Date: {{date('d/m/Y',strtotime($order->created_at))}}</b>
+        <b class="">Date: {{Str::dateOnly_format($order->created_at)}}</b>
         @if ($order->type == 'sale' || $order->type == 'quote')
         <br><b>{{ucfirst($order->type)}} #{{$order->order_number}}</b>
         <br>
@@ -65,7 +65,7 @@
                 
         @php $inquiries = $order->getInquiries(); @endphp
         @if(count($inquiries))
-        <br><b class="">Inquiries : @foreach($inquiries as $inquiry) {{$inquiry->name}} - {{ date('Y-m-d',strtotime($inquiry->created_at))}}<br/> @endforeach</b>
+        <br><b class="">Inquiries : @foreach($inquiries as $inquiry) {{$inquiry->name}} - {{ Str::dateOnly_format($inquiry->created_at)}}<br/> @endforeach</b>
         @endif
         </div>
     </div>
@@ -100,28 +100,28 @@
                     
                     </td>
                     <td class="text-center">{{ (!empty($orderProduct->product->hsn_sac)) ? $orderProduct->product->hsn_sac : '-' }}</td>
-                    <td><span class="symbol-icon">{!! $currency->symbol !!}</span> {{ number_format($orderProduct->amount,2)}}</td>
+                    <td><span class="symbol-icon">{!! $currency->symbol !!}</span> {{ Str::number_format($orderProduct->amount)}}</td>
                     <td>{{$orderProduct->qty}}</td>
                     <td>{{$orderProduct->discount}}</td>
-                    <td><span class="symbol-icon">{!! $currency->symbol !!}</span> {{ number_format($orderProduct->getsubTotal(),2) }}</td>
+                    <td><span class="symbol-icon">{!! $currency->symbol !!}</span> {{ Str::number_format($orderProduct->getsubTotal()) }}</td>
                 </tr>
                 @endforeach
                 <tr>
                     <td colspan="4"></td>
                     <td><strong>Sub Total</strong></td>
-                    <td><span class="symbol-icon">{!! $currency->symbol !!}</span><span>{{ number_format($order->getSubTotal()['sub_total'],2) }}</span></td>
+                    <td><span class="symbol-icon">{!! $currency->symbol !!}</span><span>{{ Str::number_format($order->getSubTotal()['sub_total']) }}</span></td>
                 </tr>
                 @foreach ($order->getTotalTax() as $tax)
                 <tr>
                     <td colspan="4"></td>
                     <td><strong>{{$tax->name}}</strong></td>
-                    <td><span class="symbol-icon">{!! $currency->symbol !!}</span> {{ number_format($tax->total_tax,2) }}</td>
+                    <td><span class="symbol-icon">{!! $currency->symbol !!}</span> {{ Str::number_format($tax->total_tax) }}</td>
                 </tr>    
                 @endforeach
                 <tr>
                     <td colspan="4"></td>
                     <td><strong>Total</strong></td>
-                    <td><span class="symbol-icon">{!! $currency->symbol !!}</span> {{ number_format($order->total,2) }}</td>
+                    <td><span class="symbol-icon">{!! $currency->symbol !!}</span> {{ Str::number_format($order->total) }}</td>
                 </tr>
             </tbody>
         </table>

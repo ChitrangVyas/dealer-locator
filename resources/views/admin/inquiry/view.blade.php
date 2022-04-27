@@ -58,7 +58,7 @@
                                 </tr>
                                 <tr>
                                     <td><strong>Created At</strong></td>
-                                    <td>{{$inquiry->created_at}}</td>
+                                    <td>{{Str::dateTime_format($inquiry->created_at)}}</td>
                                 </tr>
                                 <tr>
                                     <td><strong>Updated At</strong></td>

@@ -18,7 +18,7 @@
                         {{ucwords((!empty($to_user->address))?$to_user->address:$setting['address'])}},<br>
                         {{ucwords((!empty($to_user->city))?$to_user->city->name:$setting['city_name'])}},<br>
                         {{ucwords((!empty($to_user->state))?$to_user->state->name:$setting['state_name'])}} - {{(!empty($to_user->zipcode))?$to_user->zipcode:$setting['zipcode']}}<br>
-                        Phone: {{(!empty($to_user->mobile))?$to_user->mobile:$setting['mobile']}}<br>
+                        Phone: {{(!empty($to_user->mobile))?$to_user->getMobileWithCountryCode():$setting['mobile']}}<br>
                         Email: {{ (!empty($to_user->email))?$to_user->email:$setting['email']}}<br>
                         GSTIN: {{ (!empty($to_user))?((!empty($to_user->gstin))?$to_user->gstin:' N/A '):((!empty($setting['gstin']))?$setting['gstin'] : ' N/A ') }}
                     </address>

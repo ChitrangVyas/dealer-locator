@@ -10,10 +10,11 @@ use App\Models\Country;
 use App\Models\Currency;
 use Illuminate\Http\Request;
 use App\Models\User;
-
 use View;
 use Route;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Session;
+
 class MainController extends Controller
 {
     public $country = 101;
@@ -58,10 +59,14 @@ class MainController extends Controller
                 }else{
                     $this->currency=Currency::find(1);
                 }
+
+                // here we set session 
+                Session::put('number_format', $this->settingJson['number_format']);
+                Session::put('date_format', $this->settingJson['date_format']);
+                
                 $state = State::find($this->settingJson['state']);
                 $city = City::find($this->settingJson['city']);
                 $country = Country::find($this->settingJson['country']);
-                
                 $this->settingJson['state_name']=(!empty($state))?$state->name:'';
                 $this->settingJson['city_name']=(!empty($city))?$city->name:'';
                 $this->settingJson['country_name']=(!empty($country))?$country->name:'';

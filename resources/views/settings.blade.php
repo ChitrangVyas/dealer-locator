@@ -98,6 +98,38 @@
                     @enderror
                 </div>
             </div>
+            <div class="col-sm-12 col-md-6">
+                <!-- text input -->
+                <div class="form-group col-sm-12 col-md-12">
+                    <label>Currency Format</label>                  
+                    <select class="form-control" id='number_format' name='number_format' tabindex="5">
+                        <option value="" {{(!empty($settings) && empty($settings->json_data['number_format']))?'selected':''}}>Select</option>
+                        <option value="1" {{(!empty($settings) && !empty($settings->json_data['number_format']) && (1==$settings->json_data['number_format']))?'selected':''}}>123,456.99</option>
+                        <option value="2" {{(!empty($settings) && !empty($settings->json_data['number_format']) && (2==$settings->json_data['number_format']))?'selected':''}}>123.456,99</option>
+                    </select>
+                    @error('number_format')
+                        <div class="alert alert-danger mt-2">{{ $message }}</div>
+                    @enderror
+                </div>
+            </div>
+            <div class="col-sm-12 col-md-6">
+                <!-- text input -->
+                <div class="form-group col-sm-12 col-md-12">
+                    <label>Date Format</label>                  
+                    <select class="form-control " id='date_format' name='date_format' tabindex="6">
+                        <option value="" {{(!empty($settings) && empty($settings->json_data['date_format']))?'selected':''}}>Select</option>
+                        <option value="1" {{(!empty($settings) && !empty($settings->json_data['date_format']) && (1==$settings->json_data['date_format']))?'selected':''}}>{{ date('d-m-Y H:i:s')}}</option>
+                        <option value="2" {{(!empty($settings) && !empty($settings->json_data['date_format']) && (2==$settings->json_data['date_format']))?'selected':''}}>{{ date('m-d-Y H:i:s')}}</option>
+                        <option value="3" {{(!empty($settings) && !empty($settings->json_data['date_format']) && (3==$settings->json_data['date_format']))?'selected':''}}>{{ date('Y-m-d H:i:s')}}</option>
+                        <option value="4" {{(!empty($settings) && !empty($settings->json_data['date_format']) && (4==$settings->json_data['date_format']))?'selected':''}}>{{ date('d-M-Y H:i:s')}}</option>
+                        <option value="5" {{(!empty($settings) && !empty($settings->json_data['date_format']) && (5==$settings->json_data['date_format']))?'selected':''}}>{{ date('M-d-Y H:i:s')}}</option>
+                        <option value="6" {{(!empty($settings) && !empty($settings->json_data['date_format']) && (6==$settings->json_data['date_format']))?'selected':''}}>{{ date('Y-M-d H:i:s')}}</option>
+                    </select>
+                    @error('date_format')
+                        <div class="alert alert-danger mt-2">{{ $message }}</div>
+                    @enderror
+                </div>
+            </div>
         </div>
         <div class="row">
             <div class="col-sm-12 col-md-12 border-bottom mt-2 mb-2">
@@ -109,7 +141,7 @@
                 <!-- text input -->
                 <div class="form-group">
                     <label>Name</label>
-                    <input type="text" class="form-control" name="name" value="{{ old('name',(!empty($settings->json_data['name']))?$settings->json_data['name']:'')}}" placeholder="Name" tabindex="4">
+                    <input type="text" class="form-control" name="name" value="{{ old('name',(!empty($settings->json_data['name']))?$settings->json_data['name']:'')}}" placeholder="Name" tabindex="6">
                     @error('name')
                         <div class="alert alert-danger mt-2">{{ $message }}</div>
                     @enderror
@@ -119,7 +151,7 @@
                 <!-- text input -->
                 <div class="form-group">
                     <label>Email </label>
-                    <input type="text" class="form-control" name="email" value="{{ old('email',(!empty($settings) && !empty($settings->json_data['email']))?$settings->json_data['email']:'') }}" placeholder="Email" autocomplete="false" tabindex="5"> 
+                    <input type="text" class="form-control" name="email" value="{{ old('email',(!empty($settings) && !empty($settings->json_data['email']))?$settings->json_data['email']:'') }}" placeholder="Email" autocomplete="false" tabindex="7"> 
                     @error('email')
                         <div class="alert alert-danger mt-2">{{ $message }}</div>
                     @enderror
@@ -129,7 +161,7 @@
                 <!-- text input -->
                 <div class="form-group">
                     <label>Mobile</label>
-                    <input type="text" name="mobile" value="{{ old('mobile',(!empty($settings) && !empty($settings->json_data['mobile']))?$settings->json_data['mobile']:'') }}" class="form-control" placeholder="Mobile" tabindex="6">
+                    <input type="text" name="mobile" value="{{ old('mobile',(!empty($settings) && !empty($settings->json_data['mobile']))?$settings->json_data['mobile']:'') }}" class="form-control" placeholder="Mobile" tabindex="8">
                     @error('mobile')
                         <div class="alert alert-danger mt-2">{{ $message }}</div>
                     @enderror
@@ -139,7 +171,7 @@
                 <!-- text input -->
                 <div class="form-group">
                     <label>Address</label>
-                    <textarea class="form-control" name="address" rows="1" placeholder="Address" tabindex="7">{{ old('address',(!empty($settings) && !empty($settings->json_data['address']))?$settings->json_data['address']:'') }}</textarea>
+                    <textarea class="form-control" name="address" rows="1" placeholder="Address" tabindex="9">{{ old('address',(!empty($settings) && !empty($settings->json_data['address']))?$settings->json_data['address']:'') }}</textarea>
                     @error('address')
                         <div class="alert alert-danger mt-2">{{ $message }}</div>
                     @enderror
@@ -149,7 +181,7 @@
                 <!-- text input -->
                 <div class="form-group">
                     <label>Country</label>
-                    <select class="form-control select2 country" id='country' name='country' tabindex="8">
+                    <select class="form-control select2 country" id='country' name='country' tabindex="10">
                         <option value="">Select</option>
                         @if(!empty($settings) && (!empty($settings->json_data['country'])))
                             @php 
@@ -173,7 +205,7 @@
                 <!-- text input -->
                 <div class="form-group">
                     <label>State</label>
-                    <select class="form-control select2 state" id='state' name='state' tabindex="9">
+                    <select class="form-control select2 state" id='state' name='state' tabindex="11">
                         <option value="">Select</option>
                         @if(!empty($settings) && (!empty($settings->json_data['state'])))
                             @php 
@@ -197,7 +229,7 @@
                 <!-- text input -->
                 <div class="form-group">
                     <label>City</label>
-                    <select class="form-control select2 city" id='city' name='city' tabindex="10">
+                    <select class="form-control select2 city" id='city' name='city' tabindex="12">
                         <option value="">Select</option>
                         @if(!empty($settings) && (!empty($settings->json_data['city'])))
                             @php 
@@ -223,7 +255,7 @@
                 <!-- text input -->
                 <div class="form-group">
                     <label>Zip code</label>
-                    <input type="text" name="zipcode" value="{{ old('zipcode',(!empty($settings) && !empty($settings->json_data['zipcode']))?$settings->json_data['zipcode']:'') }}" class="form-control" placeholder="Enter zipcode" tabindex="11">
+                    <input type="text" name="zipcode" value="{{ old('zipcode',(!empty($settings) && !empty($settings->json_data['zipcode']))?$settings->json_data['zipcode']:'') }}" class="form-control" placeholder="Enter zipcode" tabindex="13">
                     @error('zipcode')
                         <div class="alert alert-danger mt-2">{{ $message }}</div>
                     @enderror
@@ -233,7 +265,7 @@
                 <!-- text input -->
                 <div class="form-group">
                     <label>GSTIN</label>
-                    <input type="text" class="form-control" name="gstin" value="{{ old('gstin',(!empty($settings) && (!empty($settings->json_data['gstin'])))?$settings->json_data['gstin']:'')}}" placeholder="GSTIN" tabindex="8">
+                    <input type="text" class="form-control" name="gstin" value="{{ old('gstin',(!empty($settings) && (!empty($settings->json_data['gstin'])))?$settings->json_data['gstin']:'')}}" placeholder="GSTIN" tabindex="14">
                     @error('gstin')
                         <div class="alert alert-danger mt-2">{{ $message }}</div>
                     @enderror
@@ -243,7 +275,7 @@
                 <!-- text input -->
                 <div class="form-group">
                     <label>Allowed countries to sale</label>
-                    <select class="form-control select2 allowedcountry" id='allowed_countries' name='allowed_countries[]' tabindex="8" multiple="multiple">
+                    <select class="form-control select2 allowedcountry" id='allowed_countries' name='allowed_countries[]' tabindex="15" multiple="multiple">
                         <option value="">Select</option>
                         @if(!empty($settings) && (!empty($settings->json_data['allowed_countries'])))
                         @foreach($settings->json_data['allowed_countries'] as $allowedcountrys)     

@@ -54,7 +54,12 @@
                 <!-- text input -->
                 <div class="form-group">
                     <label>Mobile <span class="required_field">*</span></label>
-                    <input type="text" name="mobile" value="{{ old('mobile',(!empty($user))?$user->mobile:'') }}" class="form-control" placeholder="Mobile" tabindex="4">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" id="countryCode"></span>
+                        </div>
+                        <input type="text" name="mobile" value="{{ old('mobile',(!empty($user))?$user->mobile:'') }}" class="form-control" placeholder="Mobile" tabindex="4" aria-label="Username" aria-describedby="basic-addon1">
+                    </div>
                     @error('mobile')
                         <div class="alert alert-danger mt-2">{{ $message }}</div>
                     @enderror
@@ -167,7 +172,7 @@
                         <div class="alert alert-danger mt-2">{{ $message }}</div>
                     @enderror
                 </div>
-            </div>
+            </div>countryCode
             <div class="col-sm-12 col-md-4">
                 <!-- text input -->
                 <div class="form-group">
@@ -205,31 +210,29 @@
 <script>
 jQuery(document).ready(function(){
 
-    // $('.country').select2({
-    //     placeholder: "Select",
-    //     allowClear: true,
-    //     minimumInputLength: 2,
-    //     ajax: {
-    //         url: "{{route('get_value')}}",
-    //         type: 'POST',
-    //         dataType: 'json',
-    //         data: function(params) {
-    //             return {
-    //                 q: params.term, // search term
-    //                 table: 'countries',
-                    
-                    
-    //             };
-    //         },
-    //         processResults: function(data) {
-    //             return {
-    //                 results: data
-    //             };
-    //         }
-    //     }
-    // }).on('select2:clear',function(){
-    //     select2state();
-    // });
+   $('.country').on('change',function(){
+       if($('#country').val() != ''){
+            $.ajax({
+                url: "{{route('get_value')}}",
+                type: 'POST',
+                data: {
+                    table: 'countries',
+                    fields: 'phonecode',
+                    where: `id=${$('#country').val()}`
+                },
+                success: function(res) {
+                    $.each(JSON.parse(res), function(key, val) {
+                        $(`#countryCode`).html(val.phonecode);
+                    })
+                }
+            });
+        }
+        else{
+            $(`#countryCode`).html('');
+        }
+       
+    });
+    
     select2state();
     $('.country').on('change', function() {
         $(`.state`).empty().append(new Option()).trigger('change');
@@ -282,30 +285,6 @@ jQuery(document).ready(function(){
             });
         }
     }
-    // $('.state').select2({
-    //     placeholder: "Select",
-    //     allowClear: true,
-    //     minimumInputLength: 2,
-    //     ajax: {
-    //         url: "{{route('get_value')}}",
-    //         type: 'POST',
-    //         dataType: 'json',
-    //         data: function (params) {
-    //             return {
-    //                 q: params.term, // search term
-    //                 table:'states',
-    //                 where: "country_id={{$country}}"
-    //             };
-    //         },
-    //         processResults: function (data) {
-    //             return {
-    //                 results: data
-    //             };
-    //         }
-    //     }
-    // }).on('select2:clear',function(){
-    //     select2city();
-    // });
     $('.city').select2();
     $('.state').on('change', function() {
         $(`.city`).empty().append(new Option()).trigger('change');
@@ -321,8 +300,7 @@ jQuery(document).ready(function(){
     }
 
     function select2city(){
-        if ($('.state').val()) {
-            
+        if ($('.state').val()) {            
             $('.city').select2({
                 placeholder: "Select",
                 allowClear: true,

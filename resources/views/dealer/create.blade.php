@@ -233,28 +233,36 @@
 @section('plugins.summernote', true)
 @section('js')
 <script>
+    function phonecode(){
+    console.log("Triger has been executed");
+    if($('#country').val() != ''){
+        $.ajax({
+            url: "{{route('get_value')}}",
+            type: 'POST',
+            data: {
+                table: 'countries',
+                fields: 'phonecode',
+                where: `id=${$('#country').val()}`
+            },
+            success: function(res) {
+                $.each(JSON.parse(res), function(key, val) {
+                    $(`#countryCode`).html(val.phonecode);
+                })
+            } 
+        });
+    }
+    else{
+        $(`#countryCode`).html('');
+    }
+}
+$("document").ready(function(){
+    setTimeout(function(){
+        $('.country').trigger('change');
+    }, 500);
+    
+});
 jQuery(document).ready(function(){
-    $('.country').on('change',function(){
-       if($('#country').val() != ''){
-            $.ajax({
-                url: "{{route('get_value')}}",
-                type: 'POST',
-                data: {
-                    table: 'countries',
-                    fields: 'phonecode',
-                    where: `id=${$('#country').val()}`
-                },
-                success: function(res) {
-                    $.each(JSON.parse(res), function(key, val) {
-                        $(`#countryCode`).html(val.phonecode);
-                    })
-                }
-            });
-        }
-        else{
-            $(`#countryCode`).html('');
-        }
-    });
+
     $('.state').select2();
     $('.country').on('change', function() {
         $(`.state`).empty().append(new Option()).trigger('change');
@@ -268,6 +276,7 @@ jQuery(document).ready(function(){
                 allowClear: true,
             });
         select2state();
+        phonecode();
     });
     $('.summernote').summernote({
             height: 200,

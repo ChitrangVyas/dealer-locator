@@ -13,7 +13,7 @@
             </div>
             <div class="col-sm-12 col-md-3">
                 <!-- text input -->
-                <div class="form-group">
+                <div class="form-group text-center">
                     <label>MRP</label>
                    
                 </div>
@@ -26,7 +26,7 @@
             </div>
             <div class="col-sm-12 col-md-3">
                 <!-- text input -->
-                <div class="form-group">                   
+                <div class="form-group text-center">                   
                 <label>Final Amount</label>    
                 </div>
             </div>
@@ -39,10 +39,11 @@
                     <input type="text" class="form-control"  name="product_id[{{ $product->id }}]" value="{{ $product->name }}"  readonly>
                 </div>
             </div>
-            <div class="col-sm-12 col-md-3">
+            <div class="col-sm-12 col-md-3 pr-5">
                 <!-- text input -->
-                <div class="form-group">                    
-                    <input type="text" class="form-control" id="price_{{ $product->id }}" name="price[{{ $product->id }}]" value="{{ $product->price }}" readonly >
+                <div class="form-group text-right mr-5">                    
+                    <input type="hidden" class="form-control" id="price_{{ $product->id }}" name="price[{{ $product->id }}]" value="{{ $product->price }}" readonly >
+                    <span><span class="symbol-icon">{!! $currency->symbol !!}</span>{{ Str::number_format($product->price)}}</span>
                 </div>
             </div>
             
@@ -52,10 +53,10 @@
                     <input type="text" class="form-control" data-productid="{{ $product->id }}" id="discount_percentage_{{ $product->id }}" name="discount_percentage[{{ $product->id }}]" value="{{ !empty($product->discount_percentage)?$product->discount_percentage:'' }}">
                 </div>
             </div>
-            <div class="col-sm-12 col-md-3">
+            <div class="col-sm-12 col-md-3 pr-5">
                 <!-- text input -->
-                <div class="form-group">                   
-                    <input type="text" class="form-control" id="final_amount_{{ $product->id }}" name="final_amount[{{ $product->id }}]" value="{{ !empty($product->discount_percentage)?($product->price - (($product->price*$product->discount_percentage)/100)):'' }}" readonly>
+                <div class="form-group text-right mr-5">                   
+                    <input type="text" class="form-control text-right" id="final_amount_{{ $product->id }}" name="final_amount[{{ $product->id }}]" value="{{ !empty($product->discount_percentage)?($product->price - (($product->price*$product->discount_percentage)/100)):'' }}" readonly>
                 </div>
             </div>
             @endforeach

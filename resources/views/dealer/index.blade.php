@@ -163,6 +163,7 @@
         if(discount != ""){
             var final_amount = price - ((price*discount)/100);
             $("#final_amount_"+product_id).val(final_amount);
+            $("#_final_amount_"+product_id).html(final_amount);
         }
     });
     

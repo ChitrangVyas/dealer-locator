@@ -242,7 +242,7 @@ class DealerUserController extends MainController
             }else{
                 $action_html .= "<span class='ml-3'><span class='badge badge-info' title='Retailers'>$child_user</span> |  <span class='badge badge-info' title='Inquiries'>$total_assigned_inquiries</span></span>";
             }
-            $action_html .="<span class='ml-3'><a data-url=".route('dealer.showProduct',$user->id)." data-product=".$user->id." class='btn btn-primary view-product' data-toggle='modal' data-target='#productModal' title='View'><i class='fa fa-rupee-sign' title='View'></i></a></span>";
+            $action_html .="<span class='ml-3'><a data-url=".route('dealer.showProduct',$user->id)." data-product=".$user->id." class='btn btn-primary currency-btn view-product' data-toggle='modal' data-target='#productModal' title='View'><b>".$this->currency->symbol."</b></a></span>";
             $data[] = [$user->id,$user->name,$user->email,$indiVidual->getMobileWithCountryCode(),$city,$state,$status_html,$action_html];
         }
         $return_array = array();

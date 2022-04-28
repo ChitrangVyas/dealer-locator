@@ -101,7 +101,7 @@
             <div class="col-sm-12 col-md-6">
                 <!-- text input -->
                 <div class="form-group col-sm-12 col-md-12">
-                    <label>Currency Format</label>                  
+                    <label>Number Format</label>                  
                     <select class="form-control" id='number_format' name='number_format' tabindex="5">
                         <option value="" {{(!empty($settings) && empty($settings->json_data['number_format']))?'selected':''}}>Select</option>
                         <option value="1" {{(!empty($settings) && !empty($settings->json_data['number_format']) && (1==$settings->json_data['number_format']))?'selected':''}}>123,456.99</option>

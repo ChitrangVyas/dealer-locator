@@ -71,7 +71,7 @@
             <div class="col-sm-12 col-md-4">
                 <!-- text input -->
                 <div class="form-group">
-                    <label>Address</label>
+                    <label>Address <span class="required_field">*</span></label>
                     <textarea class="form-control" name="address" rows="1" placeholder="Address" tabindex="5">{{ old('address',(!empty($manufacturer))?$manufacturer->address:'') }}</textarea>
                     @error('address')
                         <div class="alert alert-danger mt-2">{{ $message }}</div>
@@ -121,7 +121,7 @@
             <div class="col-sm-12 col-md-4">
                 <!-- text input -->
                 <div class="form-group">
-                    <label>State</label>
+                    <label>State <span class="required_field">*</span></label>
                     <select class="form-control select2 state" id='state' name='state_id' tabindex="6">
                         <option value="">Select</option>
                         @if(!empty($manufacturer) && $manufacturer->state_id)
@@ -144,7 +144,7 @@
             <div class="col-sm-12 col-md-4">
                 <!-- text input -->
                 <div class="form-group">
-                    <label>City</label>
+                    <label>City <span class="required_field">*</span></label>
                     <select class="form-control select2 city" id='city' name='city_id' tabindex="7">
                         <option value="">Select</option>
                         @if(!empty($manufacturer) && !empty($manufacturer->city_id))
@@ -169,7 +169,7 @@
             <div class="col-sm-12 col-md-4">
                 <!-- text input -->
                 <div class="form-group">
-                    <label>Zip code</label>
+                    <label>Zip code <span class="required_field">*</span></label>
                     <input type="text" name="zipcode" value="{{ old('zipcode',(!empty($manufacturer))?$manufacturer->zipcode:'')}}" class="form-control" placeholder="Enter zipcode" tabindex="8">
                     @error('zipcode')
                         <div class="alert alert-danger mt-2">{{ $message }}</div>

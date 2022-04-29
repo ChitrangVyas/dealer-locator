@@ -39,8 +39,8 @@ class ManufacturerCreateRequest extends FormRequest
             ],
             'name' => 'required|string|max:100',
             'mobile'=>'required|digits_between:10,12',
-            'zipcode' => 'present|nullable|min:5|max:7',
-            // 'address' => 'required',
+            'zipcode' => 'required|present|nullable|min:5|max:7',
+            'address' => 'required',
             'country_id'=>'required|after_or_equal:1',
             'state_id' => [
                 'required',
@@ -54,9 +54,9 @@ class ManufacturerCreateRequest extends FormRequest
                     return $query->where('state_id', $this->input('state_id'));
                 }),
             ],
-            // 'state_id' => 'required|after_or_equal:1',
-            // 'city_id' => 'required|after_or_equal:1',
-            // 'zipcode' => 'required|min:5|max:7',
+            'state_id' => 'required|after_or_equal:1',
+            'city_id' => 'required|after_or_equal:1',
+            'zipcode' => 'required|min:5|max:7',
             'logo' => 'required|mimes:png,jpeg,jpg,svg,webp|max:2048'
         ];
     }

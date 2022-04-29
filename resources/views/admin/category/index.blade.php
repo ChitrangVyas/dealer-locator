@@ -41,15 +41,15 @@
         $('#example').DataTable({
             "columns": [
                 { "name": "id" },
-                { "name": "name" },
-                { "name": "image" },
+                { "name": "name" },              
                 { "name": "parent_category" },
+                { "name": "image" },
                 { "name": "status" },
                 { "name": "action" }
             ],
             "columnDefs": [
-                {
-                "targets": [ 3 ],
+            {
+                "targets": [ 2,3 ],
                 "orderable": false
             },
             {

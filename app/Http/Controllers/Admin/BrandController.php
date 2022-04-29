@@ -159,12 +159,12 @@ class BrandController extends MainController
         $start =  $request['start'];
         $length=  $request['length'];
         $search = $request['search']['value'];
-        $where = '';
-        $where .= (!empty($search)) ? " AND (name like '$search%' OR email like '$search%')":'';
+        $where = 'brands.deleted_at is NULL';
+        $where .= (!empty($search)) ? " AND (brands.name like '%$search%' OR manufacturers.name like '%$search%')":'';
         $brands = DB::table('brands')
         ->leftJoin('manufacturers','brands.manufacturer_id','=','manufacturers.id')
         ->selectRaw('brands.id,brands.name,manufacturers.name as mname,brands.logo,brands.status')
-        ->where('brands.deleted_at', NULL)
+        ->whereRaw($where)
         ->offset($start)
         ->limit($length)
         ->orderBy($request['columns'][$request['order'][0]['column']]['name'],$request['order'][0]['dir'])

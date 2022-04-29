@@ -146,7 +146,7 @@ class CustomerUserController extends MainController
         $length=  $request['length'];
         $search = $request['search']['value'];
         $where = 'users_group_id IN (4) AND (users.created_by='.$user->id." OR dealer_id=$user->id OR retailer_id=$user->id)";
-        $where .= (!empty($search)) ? " AND (users.name like '$search%' OR email like '$search%' OR mobile like '$search%' OR cities.name like '$search%' OR states.name like '$search%' OR users_group.name like '$search%')":'';
+        $where .= (!empty($search)) ? " AND (users.name like '%$search%' OR email like '%$search%' OR mobile like '%$search%' OR cities.name like '%$search%' OR states.name like '%$search%' OR users_group.name like '%$search%')":'';
         $users = DB::table('users')
         ->selectRaw('DISTINCT(users.id),users_group.name as contact_type,users.name,email,mobile,cities.name as city, states.name as state,users.created_by,users.status')
         ->join('users_group','users.users_group_id','=','users_group.id','left')

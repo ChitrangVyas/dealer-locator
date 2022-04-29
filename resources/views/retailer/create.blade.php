@@ -339,6 +339,7 @@ jQuery(document).ready(function(){
                 allowClear: true,
             });
         select2state();
+        phonecode();
     });
     if ($('#country').val() || $('#state').val()) {
         select2state();
@@ -379,31 +380,6 @@ jQuery(document).ready(function(){
         }
     }
 
-
-    // $('.state').select2({
-    //     placeholder: "Select",
-    //     allowClear: true,
-    //     minimumInputLength: 2,
-    //     ajax: {
-    //         url: "{{route('get_value')}}",
-    //         type: 'POST',
-    //         dataType: 'json',
-    //         data: function (params) {
-    //             return {
-    //                 q: params.term, // search term
-    //                 table:'states',
-    //                 where: "country_id={{$country}}"
-    //             };
-    //         },
-    //         processResults: function (data) {
-    //             return {
-    //                 results: data
-    //             };
-    //         }
-    //     }
-    // }).on('select2:clear',function(){
-    //     select2city();
-    // });
     $('.city').select2({});
     $('.state').on('change', function() {
         $(`.city`).empty().append(new Option()).trigger('change');

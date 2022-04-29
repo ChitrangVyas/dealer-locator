@@ -192,7 +192,7 @@ class TaxGroupController extends MainController
         $length=  $request['length'];
         $search = $request['search']['value'];
         $where = '';
-        $where .= (!empty($search)) ? " (name like '$search%')":'';
+        $where .= (!empty($search)) ? " (name like '%$search%')":'';
         $query = DB::table('tax_groups')
                 ->selectRaw('id,name,status,is_default');
         if(!empty($where)){

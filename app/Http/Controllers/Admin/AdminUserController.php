@@ -162,7 +162,7 @@ class AdminUserController extends MainController
         $length=  $request['length'];
         $search = $request['search']['value'];
         $where = 'users_group_id = 1';
-        $where .= (!empty($search)) ? " AND (users.name like '$search%' OR email like '$search%' OR mobile like '$search%' OR cities.name like '$search%' OR states.name like '$search%')":'';
+        $where .= (!empty($search)) ? " AND (users.name like '%$search%' OR email like '%$search%' OR mobile like '%$search%' OR cities.name like '%$search%' OR states.name like '%$search%')":'';
         $users = DB::table('users')
         ->selectRaw('users.id,users.name,email,mobile,cities.name as city, states.name as state,users.status')
         ->join('cities','users.city_id','=','cities.id')

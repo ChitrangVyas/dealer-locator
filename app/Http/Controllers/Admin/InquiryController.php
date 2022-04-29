@@ -454,7 +454,7 @@ class InquiryController extends MainController
         $where .= (!empty($dealer_id))?" AND (dealer_id=$dealer_id OR inquiries.created_by=$dealer_id)":'';
         $where .= (!empty($retailer_id))?" AND (retailer_id=$retailer_id OR inquiries.created_by=$retailer_id)":'';
         $total_where = $where;
-        $where .= (!empty($search)) ? " AND (c.name like '$search%' OR p.name like '$search%' OR source like '%$search%' OR (d.name is NOT NULL AND d.name like '$search%'))":'';
+        $where .= (!empty($search)) ? " AND (c.name like '%$search%' OR p.name like '%$search%' OR source like '%$search%' OR (d.name is NOT NULL AND d.name like '%$search%'))":'';
         $inquiries = DB::table('inquiries')
         ->select(DB::raw('inquiries.id, inquiries.status, inquiries.created_by,cr.name as added_by,source,c.name as customer,c.email AS customer_email,c.mobile AS customer_mobile,d.name as dealer, r.name as retailer,group_concat(p.name SEPARATOR "<br>") as product'))
         ->join('inquiries_products','inquiries.id','=','inquiries_products.inquiry_id','left')
@@ -528,7 +528,7 @@ class InquiryController extends MainController
         $where .= (!empty($dealer_id))?" AND (dealer_id=$dealer_id OR inquiries.created_by=$dealer_id)":'';
         $where .= (!empty($retailer_id))?" AND (retailer_id=$retailer_id OR inquiries.created_by=$retailer_id)":'';
         $total_where = $where;
-        $where .= (!empty($search)) ? " AND (c.name like '$search%' OR c.email like '$search%' OR c.mobile like '$search%' OR p.name like '$search%' OR source like '%$search%' OR (d.name like '$search%' OR  r.name like '$search%'))":'';
+        $where .= (!empty($search)) ? " AND (c.name like '%$search%' OR c.email like '%$search%' OR c.mobile like '%$search%' OR p.name like '%$search%' OR source like '%$search%' OR (d.name like '%$search%' OR  r.name like '%$search%'))":'';
         if(!empty($from_date) && !empty($to_date)){
             $where .= " AND (inquiries.created_at BETWEEN '$from_date 00:00:00' AND '$to_date 23:59:59')";
         }

@@ -152,7 +152,7 @@ class CategoryController extends MainController
         $length=  $request['length'];
         $search = $request['search']['value'];
         $where = 'categories.deleted_at is NULL';
-        $where .= (!empty($search)) ? " AND (name like '$search%' OR parent_category like '$search%')":'';
+        $where .= (!empty($search)) ? " AND (name like '%$search%' OR parent_category like '%$search%')":'';
         $categories = DB::table('categories')
         ->selectRaw('categories.id,categories.name,categories.parent_category,categories.image,categories.status')
         ->whereRaw($where)

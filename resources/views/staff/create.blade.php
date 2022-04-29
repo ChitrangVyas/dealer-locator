@@ -251,6 +251,7 @@ jQuery(document).ready(function(){
                 allowClear: true,
             });
         select2state();
+        phonecode();
     });
     if ($('#country').val() || $('#state').val()) {
         select2state();

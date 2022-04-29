@@ -142,7 +142,7 @@ class VendorController extends MainController
         $length=  $request['length'];
         $search = $request['search']['value'];
         $where = 'users_group_id = 5 AND created_by='.auth()->user()->id;
-        $where .= (!empty($search)) ? " AND (users.name like '$search%' OR email like '$search%' OR mobile like '$search%' OR cities.name like '$search%' OR states.name like '$search%' OR users_group.name like '$search%')":'';
+        $where .= (!empty($search)) ? " AND (users.name like '%$search%' OR email like '%$search%' OR mobile like '%$search%' OR cities.name like '%$search%' OR states.name like '%$search%' OR users_group.name like '%$search%')":'';
         $users = DB::table('users')
         ->selectRaw('users_group.name as contact_type,users.id,users.name,email,mobile,cities.name as city, states.name as state,users.status')
         ->join('users_group','users.users_group_id','=','users_group.id','left')

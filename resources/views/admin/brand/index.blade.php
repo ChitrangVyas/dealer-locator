@@ -49,9 +49,10 @@
             ],
             "columnDefs": [
             {
-                "targets": [ 4 ],
+                "targets": [ 3,4 ],
                 "orderable": false
             },
+
             {
                 "targets": [ 5 ],
                 "orderable": false

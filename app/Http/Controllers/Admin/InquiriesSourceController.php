@@ -134,7 +134,7 @@ class InquiriesSourceController extends MainController
         $length=  $request['length'];
         $search = $request['search']['value'];
         $where = 'deleted_at is NULL';
-        $where .= (!empty($search)) ? " AND ( source like '$search%')":'';
+        $where .= (!empty($search)) ? " AND ( source like '%$search%')":'';
         $inquiries = DB::table('inquiries_source')
         ->selectRaw('id,source')
         ->whereRaw($where)

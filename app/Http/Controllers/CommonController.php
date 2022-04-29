@@ -34,7 +34,7 @@ class CommonController extends MainController
             $where .= (!empty($request_data['whereAnd']))?" $request_data[whereAnd] ":'';
             $query = "select $fields from $table";
             if(!empty($where)){
-                $query .= " where $where";
+                $query .= " where $where  order by name asc";
             }
             DB::enableQueryLog(); 
             if(!empty($request_data['option_group'])){

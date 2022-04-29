@@ -105,7 +105,7 @@ class NotificationController extends MainController
         } else {
             $where = 'user_id IS NULL';
         }
-        $where .= (!empty($search)) ? " AND (message like '$search%' OR created_at like '%$search%')" : '';
+        $where .= (!empty($search)) ? " AND (message like '%$search%' OR created_at like '%$search%')" : '';
         $notifications = DB::table('notifications')
             ->selectRaw('id,message,created_at')
             ->whereRaw($where)

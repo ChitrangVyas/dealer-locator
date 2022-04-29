@@ -130,7 +130,7 @@ class TaxController extends MainController
         $length=  $request['length'];
         $search = $request['search']['value'];
         $where = '';
-        $where .= (!empty($search)) ? " (name like '$search%')":'';
+        $where .= (!empty($search)) ? " (name like '%$search%')":'';
         $query = DB::table('taxes')
                 ->selectRaw('id,name,status');
         if(!empty($where)){

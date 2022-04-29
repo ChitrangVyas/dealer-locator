@@ -54,7 +54,7 @@
                 "className": "text-center",
             },
             {
-                "targets": [ 5 ],
+                "targets": [ 4,5 ],
                 "orderable": false
             },
             {

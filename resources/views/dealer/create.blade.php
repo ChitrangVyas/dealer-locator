@@ -257,7 +257,7 @@
 }
 $("document").ready(function(){
     setTimeout(function(){
-        $('.country').trigger('change');
+        phonecode();
     }, 500);
     
 });
@@ -275,8 +275,7 @@ jQuery(document).ready(function(){
                 placeholder: "Select",
                 allowClear: true,
             });
-        select2state();
-        phonecode();
+        select2state();      
     });
     $('.summernote').summernote({
             height: 200,

@@ -283,7 +283,7 @@ function phonecode(){
 }
 $("document").ready(function(){
     setTimeout(function(){
-        $('.country').trigger('change');
+        phonecode();
     }, 500);
     
 });
@@ -339,7 +339,6 @@ jQuery(document).ready(function(){
                 allowClear: true,
             });
         select2state();
-        phonecode();
     });
     if ($('#country').val() || $('#state').val()) {
         select2state();

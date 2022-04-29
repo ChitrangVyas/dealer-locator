@@ -134,6 +134,8 @@
                             <option value="{{$data->id}}" selected>{{$data->name}}</option>
                         @endif
                     </select>
+                    @if(old('state_id'))
+                    @endif
                     <label><span class="text-red"><strong>Note:</strong> Please select the country before select the state.</span></label>
                     <input type="hidden" id="state_id" value="{{old('state_id')}}">
                     @error('state_id')

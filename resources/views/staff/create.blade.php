@@ -133,6 +133,7 @@
                         @endif
                     </select>
                     <label><span class="text-red"><strong>Note:</strong> Please select the country before select the state.</span></label>
+                    <input type="hidden" id="state_id" value="{{old('state')}}">
                     @error('state')
                         <div class="alert alert-danger mt-2">{{ $message }}</div>
                     @enderror
@@ -157,10 +158,10 @@
                         @endif
                     </select>
                     <label><span class="text-red"><strong>Note:</strong> Please select the state before select the city.</span></label>
+                    <input type="hidden" id="city_id" value="{{old('city')}}">
                     @error('city')
                         <div class="alert alert-danger mt-2">{{ $message }}</div>
-                    @enderror
-                    
+                    @enderror                    
                 </div>
             </div>
             <div class="col-sm-12 col-md-4">
@@ -210,7 +211,6 @@
 <script>
     
 function phonecode(){
-    console.log("Triger has been executed");
     if($('#country').val() != ''){
         $.ajax({
             url: "{{route('get_value')}}",
@@ -233,15 +233,11 @@ function phonecode(){
 }
 $("document").ready(function(){
     setTimeout(function(){
-        $('.country').trigger('change');
+        phonecode();
     }, 500);
     
 });
 jQuery(document).ready(function(){
-   
-    
-    
-    
     select2state();
     $('.country').on('change', function() {
         $(`.state`).empty().append(new Option()).trigger('change');
@@ -255,7 +251,6 @@ jQuery(document).ready(function(){
                 allowClear: true,
             });
         select2state();
-        phonecode();
     });
     if ($('#country').val() || $('#state').val()) {
         select2state();

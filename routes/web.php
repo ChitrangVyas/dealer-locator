@@ -180,7 +180,7 @@ Route::group(['prefix'=>'admin','middleware'=>['auth']],function () {
 Route::get('/logout', function(){
     Auth::logout();
     // redirect to homepage
-    return redirect('/');
+    return redirect('/admin');
 })->name('Logout');
 
 Route::get('/dealer/login',[App\Http\Controllers\Admin\DealerUserController::class,'login'])->name('dealer.login');

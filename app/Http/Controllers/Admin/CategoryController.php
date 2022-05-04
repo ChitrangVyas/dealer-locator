@@ -159,7 +159,7 @@ class CategoryController extends MainController
         ->whereRaw($where)
         ->offset($start)
         ->limit($length)
-        ->orderBy('categories.id')
+        ->orderBy($request['columns'][$request['order'][0]['column']]['name'],$request['order'][0]['dir'])
         ->get();
         $total_users = Category::where('deleted_at','=',Null)->count();
         $data = [];

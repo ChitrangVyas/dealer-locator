@@ -65,14 +65,14 @@
                 { "name": "name" },
                 { "name": "email" },
                 { "name": "mobile" },
-                { "name": "states.name" },
                 { "name": "cities.name" },
+                { "name": "states.name" },
                 { "name": "status" },
                 { "name": "action" }
             ],
             "columnDefs": [
             {
-                "targets": [ 3,4,5,6,7 ],
+                "targets": [ 3,6,7 ],
                 "orderable": false
             },
             {

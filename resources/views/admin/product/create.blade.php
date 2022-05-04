@@ -197,9 +197,7 @@
             tags: true,
             tokenSeparators: [","],
         });
-        jQuery(document).ready(function() {
-            $("#brand_id").select2();
-        });
+        $("#brand_id").select2();
         $('.summernote').summernote({
             height: 200,
             toolbar: [

@@ -26,7 +26,7 @@
                                 </tr>
                                 <tr>
                                     <td><strong>Customer Phone</strong></td>
-                                    <td>{{$inquiry->customer->getMobileWithCountryCode}}</td>
+                                    <td>{{$inquiry->customer->getMobileWithCountryCode()}}</td>
                                 </tr>
                                 <tr>
                                     <td><strong>Source</strong></td>

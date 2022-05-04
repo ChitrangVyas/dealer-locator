@@ -150,7 +150,8 @@
     jQuery(document).ready(function() {
         var table =  $('#example').DataTable({
             "bAutoWidth": false,
-            "columns": [{
+            "columns": [
+                {
                     "name": "inquiries.id"
                 },
                 {
@@ -163,13 +164,16 @@
                     "name": "customer_mobile"
                 },
                 {
-                    "name": "added_by"
+                    "name": "inquiries_source.source"
                 },
                 {
-                    "name": "dealer"
+                    "name": "cr.name"
                 },
                 {
-                    "name": "retailer"
+                    "name": "d.name"
+                },
+                {
+                    "name": "r.name"
                 },
                 {
                     "name": "status",sWidth: '10%'
@@ -184,15 +188,7 @@
                     "className": "text-center",
                 },
                 {
-                    "targets": [5],
-                    "orderable": false
-                },
-                {
-                    "targets": [8],
-                    "orderable": false
-                },
-                {
-                    "targets": [9],
+                    "targets": [8,9],
                     "orderable": false
                 },
                 {

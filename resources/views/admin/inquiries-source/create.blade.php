@@ -33,7 +33,7 @@
                         <!-- text input -->
                         <div class="form-group">
                             <label class="col-12">Status</label>
-                            <input type="checkbox" name="status" id="status" class="form-control status" data-bootstrap-switch  data-on-text="Enable" data-off-text="Disable" data-off-color="danger" data-on-color="success" {{((!isset($inquiries_source)) || (!empty($inquiries_source->status)))? "checked" :"" }} tabindex="2">
+                            <input type="checkbox" value="1" name="status" id="status" class="form-control status" data-bootstrap-switch  data-on-text="Enable" data-off-text="Disable" data-off-color="danger" data-on-color="success" {{((!isset($inquiries_source)) || (!empty($inquiries_source->status) && $inquiries_source->status == 1))? "checked" :"" }} tabindex="2">
                             @error('status')
                             <div class="alert alert-danger mt-2">{{ $message }}</div>
                             @enderror

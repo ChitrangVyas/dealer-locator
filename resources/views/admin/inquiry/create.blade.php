@@ -49,7 +49,6 @@
                             @endif
                         </select>
                         <span class="input-group-append">
-                            <!-- <button type="button" id="addCustomer" class="btn btn-primary btn-flat addCustomer">Add</button> -->
                             <button id="addCustomer" class="btn btn-primary btn-flat addCustomer" data-toggle='modal' data-target='#modal-lg'>Add</button>
                         </span>
                     </div>

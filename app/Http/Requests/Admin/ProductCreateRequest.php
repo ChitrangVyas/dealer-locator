@@ -29,7 +29,8 @@ class ProductCreateRequest extends FormRequest
             'description' => 'required|min:10',
             'inventory' =>'required',
             'low_stock' => 'required',
-            // 'category' => 'required'
+            //'category' => 'required',
+            'price' => 'required',
             'image' => 'mimes:jpeg,png,jpg,gif',
         ];
     }

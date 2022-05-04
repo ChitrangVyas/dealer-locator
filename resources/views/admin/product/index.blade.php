@@ -66,7 +66,7 @@
             "columns": [
                 { "name": "products.id" },
                 { "name": "products.name" },
-                { "name": "manufacturer.name" },
+                { "name": "manufacturers.name" },
                 { "name": "brands.name" },
                 { "name": "image" },
                 { "name": "inventory" },

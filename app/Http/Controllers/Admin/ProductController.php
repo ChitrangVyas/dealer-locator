@@ -229,7 +229,7 @@ class ProductController extends MainController
         $length=  $request['length'];
         $search = $request['search']['value'];
         $where = 'products.deleted_at is NULL';
-        $where .= (!empty($search)) ? " AND (products.name like '%$search%' OR brands.name like '%$search%'  OR manufacturers.name like '%$search%')":'';
+        $where .= (!empty($search)) ? " AND (products.name like '%$search%' OR brands.name like '%$search%' OR manufacturers.name like '%$search%' OR inventory.qty like '%$search%')":'';
         $query = DB::table('products')
         ->leftJoin('brands','products.brand_id','=','brands.id')
         ->leftJoin('manufacturers','brands.manufacturer_id','=','manufacturers.id')

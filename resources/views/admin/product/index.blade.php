@@ -69,21 +69,13 @@
                 { "name": "manufacturers.name" },
                 { "name": "brands.name" },
                 { "name": "image" },
-                { "name": "inventory" },
+                { "name": "inventory.qty" },
                 { "name": "products.status" },
                 { "name": "action" }
             ],
             "columnDefs": [
             {
-                "targets": [ 4 ],
-                "orderable": false
-            },
-            {
-                "targets": [ 6 ],
-                "orderable": false
-            },
-            {
-                "targets": [ 7 ],
+                "targets": [ 4,6,7 ],
                 "orderable": false
             },
             {

@@ -21,7 +21,7 @@
                                         <th>Name</th>
                                         <th>Email</th>
                                         <th>Mobile</th>
-                                        <th data-name="">City</th>
+                                        <th>City</th>
                                         <th>State</th>
                                         <th>Status</th>
                                         <th>Action</th>
@@ -57,7 +57,7 @@
                 "className": "text-center",
             },
             {
-                "targets": [ 6 ],
+                "targets": [ 3,6 ],
                 "orderable": false
             },
             {

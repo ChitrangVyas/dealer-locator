@@ -18,15 +18,10 @@
                             <thead>
                                 <tr>
                                     <th>ID</th>
-                                    <!-- <th>Inquiry</th> -->
                                     <th>Order Number</th>
-                                    <!-- <th>Product</th> -->
-                                    <!-- <th>Qty</th> -->
                                     <th>Amount</th>
                                     <th>Added By</th>
                                     <th>Customer</th>
-                                    <!-- <th>PO Recieved</th>
-                                    <th>PO Recieved Date</th> -->
                                     <th>Created Date</th>
                                     <th width="20%">Action</th>
                                 </tr>
@@ -130,7 +125,7 @@
                     "className": "text-right",
                 },
                 {
-                    "targets": [3,6],
+                    "targets": [6],
                     "orderable": false
                 },
                 {

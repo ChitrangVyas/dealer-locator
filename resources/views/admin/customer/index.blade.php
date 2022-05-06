@@ -59,21 +59,14 @@
                 "className": "text-center",
             },
             {
-                "targets": [ 7 ],
+                "targets": [ 4,7,8 ],
                 "orderable": false
             },
             {
-                "targets": [ 8 ],
-                "orderable": false
-            },
-            {
-                "targets": [ 0 ],
+                "targets": [ 0,1 ],
                 "visible": false
             },
-            {
-                "targets": [ 1 ],
-                "visible": false
-            },
+           
         ],
         aaSorting: [[0, 'desc']],
             "processing": true,

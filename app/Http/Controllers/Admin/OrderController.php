@@ -773,7 +773,7 @@ class OrderController extends MainController
             ->join('users AS c', 'orders.to_user', '=', 'c.id', 'left')
             ->join('users AS d', 'orders.from_user', '=', 'd.id', 'left')
             ->whereRaw($where)
-            ->orderBy('orders.created_at','desc');
+            ->orderBy($request['columns'][$request['order'][0]['column']]['name'], $request['order'][0]['dir']);
 
             // echo $orders->whereRaw($where)->groupby('orders.id')->toSql();
             // exit; 
@@ -911,7 +911,7 @@ class OrderController extends MainController
             ->join('users AS c', 'orders.to_user', '=', 'c.id', 'left')
             ->join('users AS d', 'orders.from_user', '=', 'd.id', 'left')
             ->whereRaw($where)
-            ->orderBy('orders.created_at','desc');
+            ->orderBy($request['columns'][$request['order'][0]['column']]['name'], $request['order'][0]['dir']);
         
         $total_order = $orders->whereRaw($where)->groupby('orders.id')->get()->count();
 

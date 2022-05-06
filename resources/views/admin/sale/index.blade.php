@@ -111,11 +111,7 @@
                     "className": "text-right",
                 },
                 {
-                    "targets": [4],
-                    "orderable": false
-                },
-                {
-                    "targets": [6],
+                    "targets": [4,6],
                     "orderable": false
                 },
                 {

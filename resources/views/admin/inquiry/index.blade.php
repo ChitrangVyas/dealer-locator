@@ -188,7 +188,7 @@
                     "className": "text-center",
                 },
                 {
-                    "targets": [8,9],
+                    "targets": [3,8,9],
                     "orderable": false
                 },
                 {

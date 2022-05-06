@@ -72,7 +72,7 @@
                     "name": "c.email"
                 },
                 {
-                    "name": "c.phone"
+                    "name": "c.mobile"
                 },
                 {
                     "name": "d.name"
@@ -90,11 +90,7 @@
                     "className": "text-center",
                 },
                 {
-                    "targets": [5],
-                    "orderable": false
-                },
-                {
-                    "targets": [7],
+                    "targets": [4],
                     "orderable": false
                 },
                 {

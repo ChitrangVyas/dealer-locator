@@ -42,7 +42,6 @@ class MainController extends Controller
             $this->country = (!empty($this->settingJson['country'])) ? $this->settingJson['country'] : 101;
             $this->allowed_country = (!empty($this->settingJson['allowed_countries'])) ? $this->settingJson['allowed_countries'] : [101];
             if(!empty($this->settingJson)){
-              
                 if(!empty($this->settingJson['timezone'])){
                     config(['app.timezone' => $this->settingJson['timezone']]);
                 }
@@ -66,11 +65,12 @@ class MainController extends Controller
                 }else{
                     Session::put('number_format',1);
                 }
-
                 if(!empty($this->settingJson['date_format'])){
                     Session::put('date_format', $this->settingJson['date_format']);
+                    Session::put('datetime_like_format', $this->dateTimeLikeFormat(Session::get('date_format')));
                 }else{
                     Session::put('date_format', 1);
+                    Session::put('datetime_like_format', $this->dateTimeLikeFormat(0));
                 }
                 
                 $state = State::find($this->settingJson['state']);
@@ -137,6 +137,31 @@ class MainController extends Controller
             $currency_list[$key]['name'] = $currency->name;
         }
         return $currency_list;
+    }
+    public function dateTimeLikeFormat($current_date_format_no)
+    {
+        switch ($current_date_format_no) {
+            case "1":
+                return "%d-%m-%Y %h:%i:%s";
+                break;
+            case "2":
+                return "%m-%d-%Y %h:%i:%s";
+                break;
+            case "3":
+                return "%Y-%m-%d %h:%i:%s";
+                break;
+            case "4":
+                return "%d-%M-%Y %h:%i:%s";
+                break;
+            case "5":
+                return "%M-%d-%Y %h:%i:%s";
+                break;
+            case "6":
+                return "%Y-%M-%d %h:%i:%s";
+                break;
+            default:
+                return "%Y-%m-%d %h:%i:%s";
+        }
     }
 
 }

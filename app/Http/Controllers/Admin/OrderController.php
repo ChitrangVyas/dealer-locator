@@ -24,6 +24,7 @@ use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Str;
 use View;
 use App\Models\User;
+use Illuminate\Support\Facades\Session;
 
 class OrderController extends MainController
 {
@@ -1170,9 +1171,19 @@ class OrderController extends MainController
                 $where .= (!empty($users)) ? " OR from_user in ($users) )" : ")";
             }
         }
-        $where .= (!empty($search)) ? " AND (orders.order_number like '%$search%' OR orders.total like '%$search%' OR orders.created_at like '%$search%' OR (c.name is NOT NULL AND c.name like '%$search%') OR (d.name is NOT NULL AND d.name like '%$search%'))" : '';
+        $datetime_like_format = Session::get('datetime_like_format');
+        if(!empty($datetime_like_format)){
+            $datetime_like_format = $datetime_like_format;
+        }else{
+            $datetime_like_format = '%Y-%m-%d %h:%i:%s';
+        }
+        $where .= (!empty($search)) ? " AND (orders.order_number like '%$search%' OR orders.total like '%$search%' OR DATE_FORMAT(orders.created_at, '$datetime_like_format') like '%$search%' OR (c.name is NOT NULL AND c.name like '%$search%') OR (d.name is NOT NULL AND d.name like '%$search%'))" : '';
         if (!empty($from_date) && !empty($to_date)) {
             $where .= " AND (orders.created_at BETWEEN '$from_date 00:00:00' AND '$to_date 23:59:59')";
+        }else if (!empty($from_date) && empty($to_date)) {
+            $where .= " AND (orders.created_at >= '$from_date 00:00:00')";
+        }else if (empty($from_date) && !empty($to_date)) {
+            $where .= " AND (orders.created_at <= '$to_date 23:59:59')";
         }
         $orders = DB::table('orders')
             ->select(DB::raw('orders.id, orders.for_manufacturer, order_number,orders.to_user,c.name as customer,d.name as added_by, orders.total as amount, orders.created_at as created_date'))
@@ -1196,9 +1207,8 @@ class OrderController extends MainController
             $data = [];
             foreach ($orders as $order) {
                 $customer = (!empty($order->customer)) ? $order->customer : $this->settingJson['name'];
-                $added_by  = (!empty($order->added_by)) ? $order->added_by : $this->settingJson['name'];
                 $amount  = "<span class='symbol-icon'>".$this->currency->symbol."</span>".Helpers::number_format($order->amount,2);
-                $data[] = [$order->id, $order->order_number, $amount, ucwords($added_by), ucwords($customer), Helpers::dateTime_format($order->created_date)];
+                $data[] = [$order->id, $order->order_number, $amount, ucwords($customer), Helpers::dateTime_format($order->created_date)];
             }
             $return_array = array();
             $return_array['draw'] = $request['draw'];
@@ -1231,9 +1241,21 @@ class OrderController extends MainController
         } else {
             $where .= (!empty($user->id)) ? " AND (from_user=$user->id OR from_user is NULL)" : '';
         }
-        $where .= (!empty($search)) ? " AND (orders.order_number like '%$search%' OR orders.total like '%$search%' OR orders.created_at like '%$search%' OR (c.name is NOT NULL AND c.name like '%$search%') OR (d.name is NOT NULL AND d.name like '%$search%'))" : '';
+        
+        $datetime_like_format = Session::get('datetime_like_format');
+        if(!empty($datetime_like_format)){
+            $datetime_like_format = $datetime_like_format;
+        }else{
+            $datetime_like_format = '%Y-%m-%d %h:%i:%s';
+        }
+        
+        $where .= (!empty($search)) ? " AND (orders.order_number like '%$search%' OR orders.total like '%$search%' OR DATE_FORMAT(orders.created_at, '$datetime_like_format') like '%$search%' OR (c.name is NOT NULL AND c.name like '%$search%') OR (d.name is NOT NULL AND d.name like '%$search%'))" : '';
         if (!empty($from_date) && !empty($to_date)) {
             $where .= " AND (orders.created_at BETWEEN '$from_date 00:00:00' AND '$to_date 23:59:59')";
+        }else if (!empty($from_date) && empty($to_date)) {
+            $where .= " AND (orders.created_at >= '$from_date 00:00:00')";
+        }else if (empty($from_date) && !empty($to_date)) {
+            $where .= " AND (orders.created_at <= '$to_date 23:59:59')";
         }
         if ($order_stage != " ") {
             $where .= " AND (os.stage='$order_stage')";
@@ -1270,9 +1292,8 @@ class OrderController extends MainController
                     $order_status = $order_data->getInvoiceStatus($order->status_id);
                 }
                 $customer = (!empty($order->customer)) ? $order->customer : $this->settingJson['name'];
-                $added_by  = (!empty($order->added_by)) ? $order->added_by : $this->settingJson['name'];
                 $amount  = "<span class='symbol-icon'>".$this->currency->symbol."</span>".Helpers::number_format($order->amount,2);
-                $data[] = [$order->id, $order->order_number, $amount, ucwords($added_by), ucwords($customer), $order_status, $order_data->getSalesStage(!empty($order->stage) ? $order->stage : 0),  Helpers::dateTime_format($order->created_date)];
+                $data[] = [$order->id, $order->order_number, $amount, ucwords($customer), $order_status, $order_data->getSalesStage(!empty($order->stage) ? $order->stage : 0),  Helpers::dateTime_format($order->created_date)];
             }
             $return_array = array();
             $return_array['draw'] = $request['draw'];

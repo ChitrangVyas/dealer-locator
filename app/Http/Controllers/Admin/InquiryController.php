@@ -528,9 +528,13 @@ class InquiryController extends MainController
         $where .= (!empty($dealer_id))?" AND (dealer_id=$dealer_id OR inquiries.created_by=$dealer_id)":'';
         $where .= (!empty($retailer_id))?" AND (retailer_id=$retailer_id OR inquiries.created_by=$retailer_id)":'';
         $total_where = $where;
-        $where .= (!empty($search)) ? " AND (c.name like '%$search%' OR c.email like '%$search%' OR c.mobile like '%$search%' OR p.name like '%$search%' OR source like '%$search%' OR (d.name like '%$search%' OR  r.name like '%$search%'))":'';
+        $where .= (!empty($search)) ? " AND (c.mobile like '%$search%' OR c.name like '%$search%' OR c.email like '%$search%' OR c.mobile like '%$search%' OR p.name like '%$search%' OR source like '%$search%' OR (d.name like '%$search%' OR  r.name like '%$search%'))":'';
         if(!empty($from_date) && !empty($to_date)){
             $where .= " AND (inquiries.created_at BETWEEN '$from_date 00:00:00' AND '$to_date 23:59:59')";
+        }else if(!empty($from_date) && empty($to_date)){
+            $where .= " AND (inquiries.created_at >= '$from_date 00:00:00')";
+        }else if(empty($from_date) && !empty($to_date)){
+            $where .= " AND (inquiries.created_at <= '$to_date 23:59:59')";
         }
         $inquiries = DB::table('inquiries')
         ->join('inquiries_products','inquiries.id','=','inquiries_products.inquiry_id','left')
@@ -548,7 +552,7 @@ class InquiryController extends MainController
             ->whereRaw($where)->groupby('inquiries.id')->get();
             return Excel::download(new InquiryExport($inquiries),'Inquiries.xlsx');
         }else{
-            $inquiries = $inquiries->select(DB::raw('inquiries.id, inquiries.status, inquiries.created_by,source,c.name as customer,c.email AS customer_email,c.mobile AS customer_mobile,d.name as dealer, r.name as retailer,group_concat(p.name SEPARATOR "<br>") as product'))
+            $inquiries = $inquiries->select(DB::raw('inquiries.id,inquiries.customer_id,inquiries.status, inquiries.created_by,source,c.name as customer,c.email AS customer_email,c.mobile AS customer_mobile,d.name as dealer, r.name as retailer,group_concat(p.name SEPARATOR "<br>") as product'))
             ->whereRaw($where)->offset($start)
             ->limit($length)->orderBy($request['columns'][$request['order'][0]['column']]['name'],$request['order'][0]['dir'])
             ->groupby('inquiries.id')->get();
@@ -558,7 +562,7 @@ class InquiryController extends MainController
                 $retailer = (!empty($inquiry->retailer))?$inquiry->retailer:'N/A';
                 $action_html = "";
                 $inquiryObj = Inquiry::find($inquiry->id);
-                $indiVidual=  User::where('id','=',$inquiry->id)->first();
+                $indiVidual=  User::where('id','=',$inquiry->customer_id)->first();
                 $inquiry_status = (!empty($inquiryObj->status) && $inquiryObj->status !=0 )?$inquiryObj->getInquirystatusName():'N/A';
                 $status_html = $inquiry_status;
                 $action_html .= "<span><button type='button' id='addLog' class='btn btn-default' data-inquiry=$inquiry->id data-view-url='".route('inquiry-log.show',$inquiry->id)."' data-add-url='".route('inquiry-log.create')."' data-task-url='".route('createReminder')."' data-toggle='modal' data-target='#modal-lg' title='View Log'><i class='fas fa-clipboard-list' title='View Log'></i></button></span>";
@@ -575,7 +579,7 @@ class InquiryController extends MainController
                     $action_html .= "<span class='ml-2'><button type=submit data-user=$inquiry->id class='btn btn-danger' onClick=deleteUser($inquiry->id)><i class='fas fa-trash' title='Delete'></i></button></span>";
                 }
                 // $action_html .= "<span class='ml-3'><a href=# class='btn btn-primary'>View</a></span>";
-                $data[] = [$inquiry->id,$inquiry->product,ucwords($inquiry->customer),$inquiry->customer_email,$indiVidual->getMobileWithCountryCode(),$inquiry->source,$dealer,$retailer,$status_html,$action_html];
+                $data[] = [$inquiry->id,$inquiry->product,ucwords($inquiry->customer),$inquiry->customer_email,(!empty($indiVidual))?$indiVidual->getMobileWithCountryCode():'',$inquiry->source,$dealer,$retailer,$status_html,$action_html];
             }
             $return_array = array();
             $return_array['draw'] = $request['draw'];

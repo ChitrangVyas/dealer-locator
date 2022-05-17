@@ -40,7 +40,6 @@
                                     <th>ID</th>
                                     <th>Order Number</th>
                                     <th>Total</th>
-                                    <th>From</th>
                                     <th>To</th>
                                     <th>Created Date</th>
                                 </tr>
@@ -68,9 +67,6 @@
                 },
                 {
                     "name": "orders.total"
-                },
-                {
-                    "name": "d.name"
                 },
                 {
                     "name": "c.name"

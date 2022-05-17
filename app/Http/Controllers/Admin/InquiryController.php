@@ -531,6 +531,10 @@ class InquiryController extends MainController
         $where .= (!empty($search)) ? " AND (c.name like '%$search%' OR c.email like '%$search%' OR c.mobile like '%$search%' OR p.name like '%$search%' OR source like '%$search%' OR (d.name like '%$search%' OR  r.name like '%$search%'))":'';
         if(!empty($from_date) && !empty($to_date)){
             $where .= " AND (inquiries.created_at BETWEEN '$from_date 00:00:00' AND '$to_date 23:59:59')";
+        }else if(!empty($from_date) && empty($to_date)){
+            $where .= " AND (inquiries.created_at >= '$from_date 00:00:00')";
+        }else if(empty($from_date) && !empty($to_date)){
+            $where .= " AND (inquiries.created_at <= '$to_date 23:59:59')";
         }
         $inquiries = DB::table('inquiries')
         ->join('inquiries_products','inquiries.id','=','inquiries_products.inquiry_id','left')

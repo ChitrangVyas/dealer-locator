@@ -1175,7 +1175,7 @@ class OrderController extends MainController
         if(!empty($datetime_like_format)){
             $datetime_like_format = $datetime_like_format;
         }else{
-            $datetime_like_format = '%Y-%m-%d %h:%i:%s';
+            $datetime_like_format = '%Y-%m-%d %H:%i:%s';
         }
         $where .= (!empty($search)) ? " AND (orders.order_number like '%$search%' OR orders.total like '%$search%' OR DATE_FORMAT(orders.created_at, '$datetime_like_format') like '%$search%' OR (c.name is NOT NULL AND c.name like '%$search%') OR (d.name is NOT NULL AND d.name like '%$search%'))" : '';
         if (!empty($from_date) && !empty($to_date)) {
@@ -1246,7 +1246,7 @@ class OrderController extends MainController
         if(!empty($datetime_like_format)){
             $datetime_like_format = $datetime_like_format;
         }else{
-            $datetime_like_format = '%Y-%m-%d %h:%i:%s';
+            $datetime_like_format = '%Y-%m-%d %H:%i:%s';
         }
         
         $where .= (!empty($search)) ? " AND (orders.order_number like '%$search%' OR orders.total like '%$search%' OR DATE_FORMAT(orders.created_at, '$datetime_like_format') like '%$search%' OR (c.name is NOT NULL AND c.name like '%$search%') OR (d.name is NOT NULL AND d.name like '%$search%'))" : '';

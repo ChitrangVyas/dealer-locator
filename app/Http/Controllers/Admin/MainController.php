@@ -142,25 +142,25 @@ class MainController extends Controller
     {
         switch ($current_date_format_no) {
             case "1":
-                return "%d-%m-%Y %h:%i:%s";
+                return "%d-%m-%Y %H:%i:%s";
                 break;
             case "2":
-                return "%m-%d-%Y %h:%i:%s";
+                return "%m-%d-%Y %H:%i:%s";
                 break;
             case "3":
-                return "%Y-%m-%d %h:%i:%s";
+                return "%Y-%m-%d %H:%i:%s";
                 break;
             case "4":
-                return "%d-%M-%Y %h:%i:%s";
+                return "%d-%M-%Y %H:%i:%s";
                 break;
             case "5":
-                return "%M-%d-%Y %h:%i:%s";
+                return "%M-%d-%Y %H:%i:%s";
                 break;
             case "6":
-                return "%Y-%M-%d %h:%i:%s";
+                return "%Y-%M-%d %H:%i:%s";
                 break;
             default:
-                return "%Y-%m-%d %h:%i:%s";
+                return "%Y-%m-%d %H:%i:%s";
         }
     }
 

@@ -20,39 +20,41 @@
                             <div class="col-8">
                                 <form action="{{route('inquirylistajax')}}" class="d-inline" id="filterForm" method="post">
                                     @csrf
-                                    <div class="form-group row">
-                                        <label class="col-1">Users</label>
-                                        <div class="col-4">
-                                            <div class="form-check">
-                                                <input class="form-check-input radio_user" type="radio" name="radio_user" id="radio_user1" value="Own" checked>
-                                                <label class="form-check-label" for="radio_user1">Own</label>
+                                    <div class="row">
+                                        <div class="col-5">
+                                            <div class="form-group row">
+                                                <label class="">Users &nbsp;</label>
+                                                <div class="form-check">
+                                                    <input class="form-check-input radio_user" type="radio" name="radio_user" id="radio_user1" value="Own" checked>
+                                                    <label class="form-check-label" for="radio_user1">Own &nbsp;</label>
+                                                </div>
+                                                @if((auth()->user()->users_group_id =='1' ) || (auth()->user()->users_group_id == NULL))
+                                                    <div class="form-check">
+                                                        <input class="form-check-input radio_user" type="radio" name="radio_user" id="radio_user2" value="Dealers">
+                                                        <label class="form-check-label" for="radio_user2">Dealers &nbsp;</label>
+                                                    </div>
+                                                    <div class="form-check">
+                                                        <input class="form-check-input radio_user" type="radio" name="radio_user" id="radio_user3" value="Retailers">
+                                                        <label class="form-check-label" for="radio_user3">Retailers &nbsp;</label>
+                                                    </div>
+                                                @endif
+                                                @if(auth()->user()->users_group_id =='2')
+                                                    <div class="form-check">
+                                                        <input class="form-check-input radio_user" type="radio" name="radio_user" id="radio_user2" value="DAssigned">
+                                                        <label class="form-check-label" for="radio_user2">Assigned &nbsp;</label>
+                                                    </div>
+                                                    <div class="form-check">
+                                                        <input class="form-check-input radio_user" type="radio" name="radio_user" id="radio_user3" value="DRetailers">
+                                                        <label class="form-check-label" for="radio_user3">Retailers &nbsp;</label>
+                                                    </div>
+                                                @endif
+                                                @if(auth()->user()->users_group_id =='3')
+                                                    <div class="form-check">
+                                                        <input class="form-check-input radio_user" type="radio" name="radio_user" id="radio_user2" value="RAssigned">
+                                                        <label class="form-check-label" for="radio_user2">Assigned &nbsp;</label>
+                                                    </div>
+                                                @endif
                                             </div>
-                                            @if((auth()->user()->users_group_id =='1' ) || (auth()->user()->users_group_id == NULL))
-                                                <div class="form-check">
-                                                    <input class="form-check-input radio_user" type="radio" name="radio_user" id="radio_user2" value="Dealers">
-                                                    <label class="form-check-label" for="radio_user2">Dealers</label>
-                                                </div>
-                                                <div class="form-check">
-                                                    <input class="form-check-input radio_user" type="radio" name="radio_user" id="radio_user3" value="Retailers">
-                                                    <label class="form-check-label" for="radio_user3">Retailers</label>
-                                                </div>
-                                            @endif
-                                            @if(auth()->user()->users_group_id =='2')
-                                                <div class="form-check">
-                                                    <input class="form-check-input radio_user" type="radio" name="radio_user" id="radio_user2" value="DAssigned">
-                                                    <label class="form-check-label" for="radio_user2">Assigned</label>
-                                                </div>
-                                                <div class="form-check">
-                                                    <input class="form-check-input radio_user" type="radio" name="radio_user" id="radio_user3" value="DRetailers">
-                                                    <label class="form-check-label" for="radio_user3">Retailers</label>
-                                                </div>
-                                            @endif
-                                            @if(auth()->user()->users_group_id =='3')
-                                                <div class="form-check">
-                                                    <input class="form-check-input radio_user" type="radio" name="radio_user" id="radio_user2" value="RAssigned">
-                                                    <label class="form-check-label" for="radio_user2">Assigned</label>
-                                                </div>
-                                            @endif
                                             <!-- text input -->
                                             <div class="form-group" id="divDealerSelection">
                                                 <label>Dealer</label>
@@ -77,7 +79,7 @@
 
                                         </div>
                                         <div class="col-7">
-                                            <button type="button" class="d-inline btn btn-primary btn-sm form-control-sm col-1" id="filter" value="">Filter</button>    
+                                            <button type="button" class="d-inline btn btn-primary btn-sm form-control-sm" id="filter" value="">Filter</button>    
                                         </div>
                                     </div>
                                     <!-- <input type="text" class="d-inline form-control form-control-sm col-2 datetimepicker-input from_date" id="from_date" name="from_date" data-toggle="datetimepicker" data-target="#from_date" autocomplete="off" value="" placeholder="From" required/>

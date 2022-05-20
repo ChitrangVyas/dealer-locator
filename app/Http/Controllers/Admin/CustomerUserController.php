@@ -145,25 +145,67 @@ class CustomerUserController extends MainController
         $start =  $request['start'];
         $length=  $request['length'];
         $search = $request['search']['value'];
-        $where = 'users_group_id IN (4) AND (users.created_by='.$user->id." OR dealer_id=$user->id OR retailer_id=$user->id)";
-        $where .= (!empty($search)) ? " AND (users.name like '%$search%' OR email like '%$search%' OR mobile like '%$search%' OR cities.name like '%$search%' OR states.name like '%$search%' OR users_group.name like '%$search%')":'';
+        
+        $radio_user = $request->input('radio_user','');
+        $dealer =  $request->input('dealer','');
+        $retailer =  $request->input('retailer','');
+
+        if(!empty($radio_user)){
+            $where = 'users.deleted_at IS NULL AND users.users_group_id = 4';
+            if($radio_user == "Own"){
+                if((!empty($user->userGroup) && $user->userGroup->id == '1') || $user->users_group_id == null){
+                    $where .= " AND (cr.users_group_id = 1 OR cr.users_group_id IS NULL)"; //Admin 
+                }else{
+                    $where .= " AND (users.created_by=$user->id OR inquiries.dealer_id=$user->id OR inquiries.retailer_id=$user->id)"; //Dealers
+                }
+            }elseif($radio_user == "Dealers"){
+                if(!empty($dealer)){
+                    $where .= " AND users.created_by=$dealer"; //Admin
+                }else{
+                    $where .= " AND ugcr.id=2"; //Admin
+                }
+            }elseif($radio_user == "Retailers"){
+                if(!empty($retailer)){
+                    $where .= " AND users.created_by=$retailer"; //Admin
+                }else{
+                    $where .= " AND ugcr.id=3"; //Admin
+                }
+            }elseif($radio_user == "DRetailers"){
+                if(!empty($retailer)){
+                    $where .= " AND cr.parent_id = $user->id AND users.created_by=$retailer"; //Dealers
+                }else{
+                    $where .= " AND cr.parent_id = $user->id AND ugcr.id=3"; //Dealers
+                }
+            }
+        }else{
+            $where = 'users.deleted_at IS NULL AND users.users_group_id IN (4) AND (users.created_by='.$user->id." OR inquiries.dealer_id=$user->id OR inquiries.retailer_id=$user->id)";
+        }
+        $where .= (!empty($search)) ? " AND (users.name like '%$search%' OR users.email like '%$search%' OR users.mobile like '%$search%' OR cities.name like '%$search%' OR states.name like '%$search%' OR users_group.name like '%$search%')":'';
         $users = DB::table('users')
-        ->selectRaw('DISTINCT(users.id),users_group.name as contact_type,users.name,email,mobile,cities.name as city, states.name as state,users.created_by,users.status')
+        ->selectRaw('DISTINCT(users.id),users_group.name as contact_type,users.name,users.email,users.mobile,cities.name as city, states.name as state,users.created_by,users.status')
         ->join('users_group','users.users_group_id','=','users_group.id','left')
         ->join('inquiries','inquiries.customer_id','=','users.id','left')
         ->join('cities','users.city_id','=','cities.id','left')
         ->join('states','users.state_id','=','states.id','left')
-        ->whereRaw($where)
-        ->where('users.deleted_at', NULL)
-        ->offset($start)
-        ->limit($length)
+        ->join('users AS cr','users.created_by','=','cr.id','left')
+        ->join('users_group AS ugcr','ugcr.id','=','cr.users_group_id','left')
+        ->whereRaw($where);
+        //echo $users->toSql();exit;
+        $userCount = clone $users;
+        $total_users = $userCount->get()->count();
+
+        $users = $users->offset($start)->limit($length)
         ->orderBy($request['columns'][$request['order'][0]['column']]['name'],$request['order'][0]['dir'])
-        ->get(); 
+        ->groupBy('users.id')->get();
+        
         // $total_users = User::whereIN('users_group_id',['4'])->where('created_by',auth()->user()->id)->count();
-        $total_users = User::whereIN('users_group_id',['4'])->where(function($query) use($user) {
-            return $query->orWhere('users.created_by',$user->id)->orWhere('dealer_id',$user->id)->orWhere('retailer_id',$user->id);
-        })->join('inquiries','inquiries.customer_id','=','users.id','left')->distinct()->count('users.id');
+        
+        // $total_users = User::whereIN('users_group_id',['4'])->where(function($query) use($user) {
+        //     return $query->orWhere('users.created_by',$user->id)->orWhere('dealer_id',$user->id)->orWhere('retailer_id',$user->id);
+        // })->join('inquiries','inquiries.customer_id','=','users.id','left')->distinct()->count('users.id');
+
         // dd(DB::getQueryLog());
+
         $data = [];
         foreach($users as $user){
             $city = (!empty($user->city))?$user->city:'N/A';

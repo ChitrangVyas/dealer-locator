@@ -23,6 +23,7 @@
                                     <!-- <th>Product</th> -->
                                     <!-- <th>Qty</th> -->
                                     <th>Total</th>
+                                    <th>From</th>
                                     <th>To</th>
                                     <th>Status</th>
                                     <th>Created Date</th>
@@ -93,6 +94,9 @@
                     "name": "orders.total"
                 },
                 {
+                    "name": "d.name"
+                },
+                {
                     "name": "c.name"
                 },
                 {
@@ -111,7 +115,7 @@
                     "className": "text-right",
                 },
                 {
-                    "targets": [4,6],
+                    "targets": [-1],
                     "orderable": false
                 },
                 {

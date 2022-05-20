@@ -454,27 +454,30 @@ class InquiryController extends MainController
         $where = 'inquiries.deleted_at is NULL';
         if(!empty($radio_user)){
             if($radio_user == "Own"){
-                if((!empty($user->userGroup)) && ($user->userGroup->id == '1' || $user->users_group_id == null)){
+                if((!empty($user->userGroup) && $user->userGroup->id == '1') || $user->users_group_id == null){
                     $where .= " AND (cr.users_group_id = 1 OR cr.users_group_id IS NULL)"; //Admin
                 }else{
-                    $where .= " AND inquiries.created_by=$user->id";
+                    $where .= " AND inquiries.created_by=$user->id"; //Dealers OR Retailer
                 }
             }elseif($radio_user == "Dealers"){
-                $where .= " AND d.users_group_id = 2 AND inquiries.created_by=d.id"; //Admin
                 if(!empty($dealer)){
                     $where .= " AND d.users_group_id = 2 AND inquiries.created_by=$dealer"; //Admin
+                }else{
+                    $where .= " AND d.users_group_id = 2 AND inquiries.created_by=d.id"; //Admin
                 }
             }elseif($radio_user == "Retailers"){
-                $where .= " AND r.users_group_id = 3 AND inquiries.created_by=r.id"; //Admin
                 if(!empty($retailer)){
                     $where .= " AND r.users_group_id = 3 AND inquiries.created_by=$retailer"; //Admin
+                }else{
+                    $where .= " AND r.users_group_id = 3 AND inquiries.created_by=r.id"; //Admin
                 }
             }elseif($radio_user == "DAssigned"){
                 $where .= " AND d.users_group_id = 2 AND inquiries.dealer_id=$user->id AND inquiries.created_by!=$user->id"; //Dealers
             }elseif($radio_user == "DRetailers"){
-                $where .= " AND r.parent_id = $user->id AND r.users_group_id = 3 AND inquiries.created_by=r.id"; //Dealers
                 if(!empty($retailer)){
                     $where .= " AND r.parent_id = $user->id AND r.users_group_id = 3 AND inquiries.created_by=$retailer"; //Dealers
+                }else{
+                    $where .= " AND r.parent_id = $user->id AND r.users_group_id = 3 AND inquiries.created_by=r.id"; //Dealers
                 }
             }elseif($radio_user == "RAssigned"){
                 $where .= " AND r.users_group_id = 3 AND inquiries.retailer_id=$user->id AND inquiries.created_by!=$user->id"; //Retailers
@@ -486,7 +489,7 @@ class InquiryController extends MainController
         $where .= (!empty($search)) ? " AND (c.name like '%$search%' OR p.name like '%$search%' OR c.email like '%$search%' OR source like '%$search%' OR (d.name is NOT NULL AND d.name like '%$search%') OR (r.name is NOT NULL AND r.name like '%$search%'))":'';
         
         $inquiries = DB::table('inquiries')
-        ->select(DB::raw('inquiries.id, inquiries.customer_id, inquiries.status, inquiries.created_by,cr.name as added_by,source,c.name as customer,c.email AS customer_email,c.mobile AS customer_mobile,d.name as dealer, r.name as retailer,group_concat(p.name SEPARATOR "<br>") as product'))
+        ->select(DB::raw('DISTINCT(inquiries.id), inquiries.customer_id, inquiries.status, inquiries.created_by,cr.name as added_by,source,c.name as customer,c.email AS customer_email,c.mobile AS customer_mobile,d.name as dealer, r.name as retailer,group_concat(p.name SEPARATOR "<br>") as product'))
         ->join('inquiries_products','inquiries.id','=','inquiries_products.inquiry_id','left')
         ->join('inquiries_source','inquiries.inquiries_source_id','=','inquiries_source.id','left')
         ->join('users AS c','inquiries.customer_id','=','c.id','left')
@@ -498,8 +501,9 @@ class InquiryController extends MainController
         //echo $inquiries->toSql();exit;
         $total_inquiries = $inquiries->count();
         $inquiries = $inquiries->offset($start)
-        ->limit($length)->orderBy($request['columns'][$request['order'][0]['column']]['name'],$request['order'][0]['dir'])
-        ->groupby('inquiries.id')->get();
+        ->limit($length)
+        ->orderBy($request['columns'][$request['order'][0]['column']]['name'],$request['order'][0]['dir'])
+        ->groupBy('inquiries.id')->get();
         
         $data = [];
         foreach($inquiries as $inquiry){

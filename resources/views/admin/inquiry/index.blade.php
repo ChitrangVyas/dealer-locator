@@ -17,78 +17,79 @@
                     </div> -->
                     <div class="card-header">
                         <div class="row">
-                                <div class="col-8">
-                                    <form action="{{route('inquirylistajax')}}" class="d-inline" id="filterForm" method="post">
-                                        @csrf
-                                        <div class="form-group row">
-                                            <label class="col-1">Users</label>
-                                            <div class="col-4">
-                                                <label class="form-check-label">
-                                                <input class="radio-inline radio_user" type="radio" name="radio_user" id="radio_user1" value="Own" checked>
-                                                Own</label>
-
-                                                @if((auth()->user()->users_group_id =='1' ) || (auth()->user()->users_group_id == NULL))
-                                                <label class="form-check-label">
-                                                <input class="radio-inline radio_user" type="radio" name="radio_user" id="radio_user2" value="Dealers">
-                                                Dealers</label>
-                                                <label class="form-check-label">
-                                                <input class="radio-inline radio_user" type="radio" name="radio_user" id="radio_user3" value="Retailers">
-                                                Retailers</label>
-                                                @endif
-
-                                                @if(auth()->user()->users_group_id =='2')
-                                                <label class="form-check-label">
-                                                <input class="radio-inline radio_user" type="radio" name="radio_user" id="radio_user2" value="DAssigned">
-                                                Assigned</label>
-                                                <label class="form-check-label">
-                                                <input class="radio-inline radio_user" type="radio" name="radio_user" id="radio_user3" value="DRetailers">
-                                                Retailers</label>
-                                                @endif
-                                                
-                                                @if(auth()->user()->users_group_id =='3')
-                                                <label class="form-check-label">
-                                                <input class="radio-inline radio_user" type="radio" name="radio_user" id="radio_user2" value="RAssigned">
-                                                Assigned</label>
-                                                @endif
-
-                                                <!-- text input -->
-                                                <div class="form-group" id="divDealerSelection">
-                                                    <label>Dealer</label>
-                                                    <select class="form-control select2 dealer" id='dealer' name='dealer' tabindex="4">
-                                                        <option value="">Select</option>
-                                                        @if(!empty($inquiry) && !empty($inquiry->dealer_id))
-                                                            <option value="{{$inquiry->dealer_id}}" selected>{{$inquiry->dealer->name.' - ' .$inquiry->dealer->zipcode.' - '. $inquiry->dealer->city->name}}</option>
-                                                        @endif
-                                                    </select>
-                                                </div>
-
-                                                <!-- text input -->
-                                                <div class="form-group" id="divRetailerSelection">
-                                                    <label>Retailer</label>
-                                                    <select class="form-control select2 retailer" id='retailer' name='retailer' tabindex="5">
-                                                        <option value="">Select</option>
-                                                        @if(!empty($inquiry) && !empty($inquiry->retailer_id))
-                                                            <option value="{{$inquiry->retailer_id}}" selected>{{ $inquiry->retailer->name.' - ' .$inquiry->retailer->zipcode.' - '. $inquiry->retailer->city->name }}</option>
-                                                            <input type="hidden" id="selected_retailer" value="{{$inquiry->retailer_id}}">
-                                                        @endif
-                                                    </select>
-                                                </div>
-
+                            <div class="col-8">
+                                <form action="{{route('inquirylistajax')}}" class="d-inline" id="filterForm" method="post">
+                                    @csrf
+                                    <div class="form-group row">
+                                        <label class="col-1">Users</label>
+                                        <div class="col-4">
+                                            <div class="form-check">
+                                                <input class="form-check-input radio_user" type="radio" name="radio_user" id="radio_user1" value="Own" checked>
+                                                <label class="form-check-label" for="radio_user1">Own</label>
                                             </div>
-                                            <div class="col-7">
-                                                <button type="button" class="d-inline btn btn-primary btn-sm form-control-sm col-1" id="filter" value="">Filter</button>    
+                                            @if((auth()->user()->users_group_id =='1' ) || (auth()->user()->users_group_id == NULL))
+                                                <div class="form-check">
+                                                    <input class="form-check-input radio_user" type="radio" name="radio_user" id="radio_user2" value="Dealers">
+                                                    <label class="form-check-label" for="radio_user2">Dealers</label>
+                                                </div>
+                                                <div class="form-check">
+                                                    <input class="form-check-input radio_user" type="radio" name="radio_user" id="radio_user3" value="Retailers">
+                                                    <label class="form-check-label" for="radio_user3">Retailers</label>
+                                                </div>
+                                            @endif
+                                            @if(auth()->user()->users_group_id =='2')
+                                                <div class="form-check">
+                                                    <input class="form-check-input radio_user" type="radio" name="radio_user" id="radio_user2" value="DAssigned">
+                                                    <label class="form-check-label" for="radio_user2">Assigned</label>
+                                                </div>
+                                                <div class="form-check">
+                                                    <input class="form-check-input radio_user" type="radio" name="radio_user" id="radio_user3" value="DRetailers">
+                                                    <label class="form-check-label" for="radio_user3">Retailers</label>
+                                                </div>
+                                            @endif
+                                            @if(auth()->user()->users_group_id =='3')
+                                                <div class="form-check">
+                                                    <input class="form-check-input radio_user" type="radio" name="radio_user" id="radio_user2" value="RAssigned">
+                                                    <label class="form-check-label" for="radio_user2">Assigned</label>
+                                                </div>
+                                            @endif
+                                            <!-- text input -->
+                                            <div class="form-group" id="divDealerSelection">
+                                                <label>Dealer</label>
+                                                <select class="form-control select2 dealer" id='dealer' name='dealer' tabindex="4">
+                                                    <option value="">Select</option>
+                                                    @if(!empty($inquiry) && !empty($inquiry->dealer_id))
+                                                        <option value="{{$inquiry->dealer_id}}" selected>{{$inquiry->dealer->name.' - ' .$inquiry->dealer->zipcode.' - '. $inquiry->dealer->city->name}}</option>
+                                                    @endif
+                                                </select>
                                             </div>
+                                            <!-- text input -->
+                                            <div class="form-group" id="divRetailerSelection">
+                                                <label>Retailer</label>
+                                                <select class="form-control select2 retailer" id='retailer' name='retailer' tabindex="5">
+                                                    <option value="">Select</option>
+                                                    @if(!empty($inquiry) && !empty($inquiry->retailer_id))
+                                                        <option value="{{$inquiry->retailer_id}}" selected>{{ $inquiry->retailer->name.' - ' .$inquiry->retailer->zipcode.' - '. $inquiry->retailer->city->name }}</option>
+                                                        <input type="hidden" id="selected_retailer" value="{{$inquiry->retailer_id}}">
+                                                    @endif
+                                                </select>
+                                            </div>
+
                                         </div>
-                                        <!-- <input type="text" class="d-inline form-control form-control-sm col-2 datetimepicker-input from_date" id="from_date" name="from_date" data-toggle="datetimepicker" data-target="#from_date" autocomplete="off" value="" placeholder="From" required/>
-                                        <input type="text" class="d-inline form-control form-control-sm col-2 datetimepicker-input to_date" id="to_date" name="to_date" data-toggle="datetimepicker" data-target="#to_date" autocomplete="off" value="" placeholder="To" required/> -->
-                                    </form>
-                                </div>
-                                <div class="col-4">
-                                    @admin()
-                                    <div class="float-right"><a href="{{route('inquiries-source.index')}}" class="btn btn-primary btn-md ml-2">Inquiry Source</a></div>
-                                    @endadmin
-                                    <div class="float-right"><a href="{{route('inquiry.create')}}" class="btn btn-primary btn-md">Add Inquiry</a></div>
-                                </div>
+                                        <div class="col-7">
+                                            <button type="button" class="d-inline btn btn-primary btn-sm form-control-sm col-1" id="filter" value="">Filter</button>    
+                                        </div>
+                                    </div>
+                                    <!-- <input type="text" class="d-inline form-control form-control-sm col-2 datetimepicker-input from_date" id="from_date" name="from_date" data-toggle="datetimepicker" data-target="#from_date" autocomplete="off" value="" placeholder="From" required/>
+                                    <input type="text" class="d-inline form-control form-control-sm col-2 datetimepicker-input to_date" id="to_date" name="to_date" data-toggle="datetimepicker" data-target="#to_date" autocomplete="off" value="" placeholder="To" required/> -->
+                                </form>
+                            </div>
+                            <div class="col-4">
+                                @admin()
+                                <div class="float-right"><a href="{{route('inquiries-source.index')}}" class="btn btn-primary btn-md ml-2">Inquiry Source</a></div>
+                                @endadmin
+                                <div class="float-right"><a href="{{route('inquiry.create')}}" class="btn btn-primary btn-md">Add Inquiry</a></div>
+                            </div>
                         </div>
                     </div>
                     <!-- /.card-header -->

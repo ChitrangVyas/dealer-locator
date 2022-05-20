@@ -930,7 +930,7 @@ class OrderController extends MainController
                 $order_status = $order_data->getInvoiceStatus(($order_data->getUserOrderStatus())->status_id);
             }
             $customer = (!empty($order->customer)) ? $order->customer : $this->settingJson['name'];
-            //$added_by  = (!empty($order->added_by))?$order->added_by:$this->settingJson['name'];
+            $added_by  = (!empty($order->added_by))?$order->added_by:$this->settingJson['name'];
             $action_html = "<span><a data-url=" . route('sale.show', $order->id) . " data-order=" . $order->id . " class='btn btn-primary view-order' data-toggle='modal' data-target='#orderModal' title='View'><i class='far fa-eye' title='View'></i></a></span>";
             // $action_html .= "<span class='ml-3 create-po-".$order->id."'><a data-url=".route('cart.po.create')." data-order=".$order->id." class='btn btn-success view-quote' data-toggle='modal' data-target='#orderModal'>Generate PO</a></span>";
             
@@ -941,7 +941,7 @@ class OrderController extends MainController
 
             // $action_html .= "<span class='ml-3'><button type=submit data-user=$order->id class='btn btn-danger' onClick=deleteOrder($order->id)>Delete</button></span>";
             $amount ="<span class='symbol-icon'>".$this->currency->symbol."</span>".Helpers::number_format($order->amount);
-            $data[] = [$order->id, $order->order_number, $amount, ucwords($customer), $order_status, Helpers::dateTime_format($order->created_date), $action_html];
+            $data[] = [$order->id, $order->order_number, $amount, ucwords($added_by), ucwords($customer), $order_status, Helpers::dateTime_format($order->created_date), $action_html];
         }
         $return_array = array();
         $return_array['draw'] = $request['draw'];

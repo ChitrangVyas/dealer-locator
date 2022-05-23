@@ -81,7 +81,7 @@
                     <th class="text-center">HSN/SAC</th>
                     <th class="text-right">Price</th>
                     <th class="text-center">Qty</th>
-                    <th>Discount</th>
+                    <th class="text-right">Discount</th>
                     <th class="text-right">Amount</th>
                 </tr>
             </thead>
@@ -102,7 +102,7 @@
                     <td class="text-center">{{ (!empty($orderProduct->product->hsn_sac)) ? $orderProduct->product->hsn_sac : '-' }}</td>
                     <td class="text-right"><span class="symbol-icon">{!! $currency->symbol !!}</span> {{ Str::number_format($orderProduct->amount)}}</td>
                     <td class="text-center">{{$orderProduct->qty}}</td>
-                    <td>{{$orderProduct->discount}}</td>
+                    <td class="text-right">{{$orderProduct->discount}}</td>
                     <td class="text-right"><span class="symbol-icon">{!! $currency->symbol !!}</span> {{ Str::number_format($orderProduct->getsubTotal()) }}</td>
                 </tr>
                 @endforeach

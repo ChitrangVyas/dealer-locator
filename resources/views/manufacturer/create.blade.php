@@ -42,7 +42,12 @@
                 <!-- text input -->
                 <div class="form-group">
                     <label>Mobile <span class="required_field">*</span></label>
-                    <input type="text" name="mobile" value="{{old('mobile', (!empty($manufacturer))?$manufacturer->mobile:'') }}" class="form-control" placeholder="Mobile" tabindex="3">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" id="countryCode"></span>
+                        </div>
+                        <input type="text" name="mobile" value="{{old('mobile', (!empty($manufacturer))?$manufacturer->mobile:'') }}" class="form-control" placeholder="Mobile" tabindex="3">
+                    </div>
                     @error('mobile')
                         <div class="alert alert-danger mt-2">{{ $message }}</div>
                     @enderror
@@ -71,7 +76,7 @@
             <div class="col-sm-12 col-md-4">
                 <!-- text input -->
                 <div class="form-group">
-                    <label>Address</label>
+                    <label>Address <span class="required_field">*</span></label>
                     <textarea class="form-control" name="address" rows="1" placeholder="Address" tabindex="5">{{ old('address',(!empty($manufacturer))?$manufacturer->address:'') }}</textarea>
                     @error('address')
                         <div class="alert alert-danger mt-2">{{ $message }}</div>
@@ -83,8 +88,7 @@
                 <div class="form-group">
                     <label>Country <span class="required_field">*</span></label>
                     <select class="form-control country" id='country' name='country_id' tabindex="5">
-                        <option value="">Select</option>
-                        
+                        <option value="">Select</option>                        
                         @if(!empty($allowedcountry))
                          @php
                          $selectcountry=''
@@ -121,7 +125,7 @@
             <div class="col-sm-12 col-md-4">
                 <!-- text input -->
                 <div class="form-group">
-                    <label>State</label>
+                    <label>State <span class="required_field">*</span></label>
                     <select class="form-control select2 state" id='state' name='state_id' tabindex="6">
                         <option value="">Select</option>
                         @if(!empty($manufacturer) && $manufacturer->state_id)
@@ -134,6 +138,8 @@
                             <option value="{{$data->id}}" selected>{{$data->name}}</option>
                         @endif
                     </select>
+                    @if(old('state_id'))
+                    @endif
                     <label><span class="text-red"><strong>Note:</strong> Please select the country before select the state.</span></label>
                     <input type="hidden" id="state_id" value="{{old('state_id')}}">
                     @error('state_id')
@@ -144,7 +150,7 @@
             <div class="col-sm-12 col-md-4">
                 <!-- text input -->
                 <div class="form-group">
-                    <label>City</label>
+                    <label>City <span class="required_field">*</span></label>
                     <select class="form-control select2 city" id='city' name='city_id' tabindex="7">
                         <option value="">Select</option>
                         @if(!empty($manufacturer) && !empty($manufacturer->city_id))
@@ -169,7 +175,7 @@
             <div class="col-sm-12 col-md-4">
                 <!-- text input -->
                 <div class="form-group">
-                    <label>Zip code</label>
+                    <label>Zip code <span class="required_field">*</span></label>
                     <input type="text" name="zipcode" value="{{ old('zipcode',(!empty($manufacturer))?$manufacturer->zipcode:'')}}" class="form-control" placeholder="Enter zipcode" tabindex="8">
                     @error('zipcode')
                         <div class="alert alert-danger mt-2">{{ $message }}</div>
@@ -201,6 +207,34 @@
 @section('plugins.BootstrapSwitch', true)
 @section('js')
 <script>
+
+function phonecode(){
+    if($('#country').val() != ''){
+        $.ajax({
+            url: "{{route('get_value')}}",
+            type: 'POST',
+            data: {
+                table: 'countries',
+                fields: 'phonecode',
+                where: `id=${$('#country').val()}`
+            },
+            success: function(res) {
+                $.each(JSON.parse(res), function(key, val) {
+                    $(`#countryCode`).html(val.phonecode);
+                })
+            } 
+        });
+    }
+    else{
+        $(`#countryCode`).html('');
+    }
+}
+$("document").ready(function(){
+    setTimeout(function(){
+        phonecode();
+    }, 500);
+});
+
 jQuery(document).ready(function(){
 
     $('.state').select2();
@@ -216,35 +250,11 @@ jQuery(document).ready(function(){
                 allowClear: true,
             });
         select2state();
+        phonecode();
     });
     if ($('#country').val() || $('#state').val()) {
         select2state();
     }
-
-    // $('.state').select2({
-    //     placeholder: "Select",
-    //     allowClear: true,
-    //     minimumInputLength: 2,
-    //     ajax: {
-    //         url: "{{route('get_value')}}",
-    //         type: 'POST',
-    //         dataType: 'json',
-    //         data: function (params) {
-    //             return {
-    //                 q: params.term, // search term
-    //                 table:'states',
-    //                 where: "country_id={{$country}}"
-    //             };
-    //         },
-    //         processResults: function (data) {
-    //             return {
-    //                 results: data
-    //             };
-    //         }
-    //     }
-    // }).on('select2:clear',function(){
-    //     checkState();
-    // });
 
     function select2state(){
         if ($('.country').val()) {
@@ -294,10 +304,7 @@ jQuery(document).ready(function(){
     if ($('#state').val() || $('#city').val()) {
         select2city();
     }
-    /* if ($('#state').val() || $('#city').val()) {
-        getStateCity('states',` id=${$('#state').val()}`,'state');
-        getStateCity('cities', ` id=${$('#city').val()}`,'city');
-    } */
+   
     function select2city(){
         if ($('.state').val()) {
            

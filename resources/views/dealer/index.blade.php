@@ -21,7 +21,7 @@
                                         <th>Name</th>
                                         <th>Email</th>
                                         <th>Mobile</th>
-                                        <th data-name="">City</th>
+                                        <th>City</th>
                                         <th>State</th>
                                         <th>Status</th>
                                         <th>Action</th>
@@ -65,19 +65,19 @@
                 { "name": "name" },
                 { "name": "email" },
                 { "name": "mobile" },
-                { "name": "states.name" },
                 { "name": "cities.name" },
+                { "name": "states.name" },
                 { "name": "status" },
                 { "name": "action" }
             ],
             "columnDefs": [
             {
-                "targets": [ 6 ],
+                "targets": [ 3,6,7 ],
                 "orderable": false
             },
             {
-                "targets": [ 7 ],
-                "orderable": false
+                "targets":[ 3 ],
+                "className": "text-center",
             },
             {
                 "targets": [ 0 ],
@@ -159,6 +159,7 @@
         if(discount != ""){
             var final_amount = price - ((price*discount)/100);
             $("#final_amount_"+product_id).val(final_amount);
+            $("#_final_amount_"+product_id).html(final_amount);
         }
     });
     

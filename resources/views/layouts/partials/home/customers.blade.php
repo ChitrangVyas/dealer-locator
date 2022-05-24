@@ -2,6 +2,6 @@
 <tr>
     <td>{{$customer->name}}</td>
     <td>{{$customer->email}}</td>
-    <td>{{$customer->mobile}}</td>
+    <td>{{Str::getMobileWithCountryCode($customer->mobile,$customer->country_id)}}</td>
 </tr>
 @endforeach

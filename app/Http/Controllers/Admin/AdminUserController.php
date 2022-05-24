@@ -162,7 +162,7 @@ class AdminUserController extends MainController
         $length=  $request['length'];
         $search = $request['search']['value'];
         $where = 'users_group_id = 1';
-        $where .= (!empty($search)) ? " AND (users.name like '$search%' OR email like '$search%' OR mobile like '$search%' OR cities.name like '$search%' OR states.name like '$search%')":'';
+        $where .= (!empty($search)) ? " AND (users.name like '%$search%' OR email like '%$search%' OR mobile like '%$search%' OR cities.name like '%$search%' OR states.name like '%$search%')":'';
         $users = DB::table('users')
         ->selectRaw('users.id,users.name,email,mobile,cities.name as city, states.name as state,users.status')
         ->join('cities','users.city_id','=','cities.id')
@@ -178,12 +178,13 @@ class AdminUserController extends MainController
         $data = [];
         foreach($users as $user){
             $city = (!empty($user->city))?$user->city:'';
+            $indiVidual=  User::where('id','=',$user->id)->first();
             $state = (!empty($user->state))?$user->state:'';
             $status = (!empty($user->status)) ? 'checked': '';
             $status_html = '<input type="checkbox" name="status" id="status" class="form-control change-status" data-id="'.$user->id.'" data-bootstrap-switch  data-on-text="Enable" data-off-text="Disable" data-off-color="danger" data-on-color="success" '.$status.'>';
             $action_html = "<span><a href=".route('staff.edit',$user->id)." class='btn btn-primary'><i class='fas fa-pen' title='Edit'></i></a></span>";
             $action_html .= "<span class='ml-3'><button type=submit data-user=$user->id class='btn btn-danger' onClick=deleteUser($user->id)><i class='fas fa-trash' title='Delete'></i></button></span>";
-            $data[] = [$user->id,$user->name,$user->email,$user->mobile,$city,$state,$status_html,$action_html];
+            $data[] = [$user->id,$user->name,$user->email,$indiVidual->getMobileWithCountryCode(),$city,$state,$status_html,$action_html];
         }
         $return_array = array();
         $return_array['draw'] = $request['draw'];

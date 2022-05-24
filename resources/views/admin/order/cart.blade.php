@@ -18,7 +18,7 @@
                         {{ucwords((!empty($to_user->address))?$to_user->address:$setting['address'])}},<br>
                         {{ucwords((!empty($to_user->city))?$to_user->city->name:$setting['city_name'])}},<br>
                         {{ucwords((!empty($to_user->state))?$to_user->state->name:$setting['state_name'])}} - {{(!empty($to_user->zipcode))?$to_user->zipcode:$setting['zipcode']}}<br>
-                        Phone: {{(!empty($to_user->mobile))?$to_user->mobile:$setting['mobile']}}<br>
+                        Phone: {{(!empty($to_user->mobile))?$to_user->getMobileWithCountryCode():$setting['mobile']}}<br>
                         Email: {{ (!empty($to_user->email))?$to_user->email:$setting['email']}}<br>
                         GSTIN: {{ (!empty($to_user))?((!empty($to_user->gstin))?$to_user->gstin:' N/A '):((!empty($setting['gstin']))?$setting['gstin'] : ' N/A ') }}
                     </address>
@@ -162,13 +162,9 @@
                     <input type="number" class="form-control discount d-inline" id="price-{{$product->id}}" value="{{  $myCart->getDiscountPerProductPercentage($product->id,$id,$cart) }}" name="discount[{{$product->id}}]" min="1" required />
                 </div>
             </div> -->
-            <div class="col-sm-12 col-md-1">
+            <div class="col-sm-12 col-md-2">
                 <div class="form-group">
-                    <span class="col-4 right amount d-inline" id="amount-{{$product->id}}">{{Str::currency($myCart->getSubtotalWithDiscuount($product,$id,$cart))}}</span>
-                </div>
-            </div>
-            <div class="col-sm-12 col-md-1">
-                <div class="form-group">
+                    <span class="col-4 right amount d-inline" id="amount-{{$product->id}}"><span class="symbol-icon"><span class="symbol-icon">{!! $currency->symbol !!}</span></span> {{Str::currency($myCart->getSubtotalWithDiscuount($product,$id,$cart))}}</span>
                     <span class="col-4 right delete d-inline btn btn-danger" data-product="{{$product->id}}" id="delete-{{$product->id}}"><i class="fas fa-trash"></i></span>
                 </div>
             </div>
@@ -182,9 +178,9 @@
                     <label for="tax">{{$tax}}</label>
                 </div>
             </div>
-            <div class="col-sm-12 col-md-1 mt-2">
+            <div class="col-sm-12 col-md-2 mt-2">
                 <div class="form-group">
-                    <span class="col-4 right tax-total d-inline" id="total_{{$tax}}">{{Str::currency($total)}}</span>
+                    <span class="col-4 right tax-total d-inline" id="total_{{$tax}}"><span class="symbol-icon">{!! $currency->symbol !!}</span> {{Str::currency($total)}}</span>
                 </div>
             </div>
         </div>
@@ -196,9 +192,9 @@
                     <label for="total">Total</label>
                 </div>
             </div>
-            <div class="col-sm-12 col-md-1 mt-2">
+            <div class="col-sm-12 col-md-2 mt-2">
                 <div class="form-group">
-                    <span class="col-4 right total d-inline" id="total">{{Str::currency((float)$myCart->getCartTotal($id))}}</span>
+                    <span class="col-4 right total d-inline" id="total"><span class="symbol-icon">{!! $currency->symbol !!}</span> {{Str::currency((float)$myCart->getCartTotal($id))}}</span>
                 </div>
             </div>
         </div>

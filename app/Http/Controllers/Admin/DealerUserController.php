@@ -214,7 +214,7 @@ class DealerUserController extends MainController
         $length=  $request['length'];
         $search = $request['search']['value'];
         $where = 'users_group_id = 2';
-        $where .= (!empty($search)) ? " AND (users.name like '$search%' OR email like '$search%' OR mobile like '$search%' OR cities.name like '$search%' OR states.name like '$search%')":'';
+        $where .= (!empty($search)) ? " AND (users.name like '%$search%' OR email like '%$search%' OR mobile like '%$search%' OR cities.name like '%$search%' OR states.name like '%$search%')":'';
         $users = DB::table('users')
         ->selectRaw('users.id,users.name,email,mobile,cities.name as city, states.name as state,users.status')
         ->join('cities','users.city_id','=','cities.id')
@@ -231,6 +231,7 @@ class DealerUserController extends MainController
         foreach($users as $user){
             $city = (!empty($user->city))?$user->city:'';
             $state = (!empty($user->state))?$user->state:'';
+            $indiVidual=  User::where('id','=',$user->id)->first();
             $action_html = "<span><a href=".route('dealer.edit',$user->id)." class='btn btn-primary'><i class='fas fa-pen' title='Edit'></i></a></span>";
             $child_user =  Helpers::getChildUserCount($user->id);
             $status = (!empty($user->status)) ? 'checked': '';
@@ -241,8 +242,8 @@ class DealerUserController extends MainController
             }else{
                 $action_html .= "<span class='ml-3'><span class='badge badge-info' title='Retailers'>$child_user</span> |  <span class='badge badge-info' title='Inquiries'>$total_assigned_inquiries</span></span>";
             }
-            $action_html .="<span class='ml-3'><a data-url=".route('dealer.showProduct',$user->id)." data-product=".$user->id." class='btn btn-primary view-product' data-toggle='modal' data-target='#productModal' title='View'><i class='fa fa-rupee-sign' title='View'></i></a></span>";
-            $data[] = [$user->id,$user->name,$user->email,$user->mobile,$city,$state,$status_html,$action_html];
+            $action_html .="<span class='ml-3'><a data-url=".route('dealer.showProduct',$user->id)." data-product=".$user->id." class='btn btn-primary currency-btn view-product' data-toggle='modal' data-target='#productModal' title='View'><b>".$this->currency->symbol."</b></a></span>";
+            $data[] = [$user->id,$user->name,$user->email,$indiVidual->getMobileWithCountryCode(),$city,$state,$status_html,$action_html];
         }
         $return_array = array();
         $return_array['draw'] = $request['draw'];

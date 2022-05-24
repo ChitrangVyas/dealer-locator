@@ -44,7 +44,7 @@ class SettingsController extends MainController
             //     $settings['json_data']['city_name'] = $this->getCity($settings['json_data']['city'])->name;
             // }
         }
-        return view('settings',['timezone_list'=>$this->timezone_list(),'settings'=>$settings]);
+        return view('settings',['timezone_list'=>$this->timezone_list(),'settings'=>$settings,'currency_list'=>$this->currency_list()]);
     }
 
     /**

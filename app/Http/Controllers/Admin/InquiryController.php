@@ -436,7 +436,6 @@ class InquiryController extends MainController
         }
     }
 
-
     public function listAjaxData(Request $request){
         $user =  auth()->user();
         $dealer_id = '';
@@ -446,28 +445,65 @@ class InquiryController extends MainController
         }else if((!empty($user->userGroup)) && $user->userGroup->id == '3'){
             $retailer_id = $user->id;
         }
-
+        $radio_user = $request->input('radio_user','');
+        $dealer =  $request->input('dealer','');
+        $retailer =  $request->input('retailer','');
         $start =  $request['start'];
         $length=  $request['length'];
         $search = $request['search']['value'];
         $where = 'inquiries.deleted_at is NULL';
-        $where .= (!empty($dealer_id))?" AND (dealer_id=$dealer_id OR inquiries.created_by=$dealer_id)":'';
-        $where .= (!empty($retailer_id))?" AND (retailer_id=$retailer_id OR inquiries.created_by=$retailer_id)":'';
+        if(!empty($radio_user)){
+            if($radio_user == "Own"){
+                if((!empty($user->userGroup) && $user->userGroup->id == '1') || $user->users_group_id == null){
+                    $where .= " AND (cr.users_group_id = 1 OR cr.users_group_id IS NULL)"; //Admin
+                }else{
+                    $where .= " AND inquiries.created_by=$user->id"; //Dealers OR Retailer
+                }
+            }elseif($radio_user == "Dealers"){
+                if(!empty($dealer)){
+                    $where .= " AND d.users_group_id = 2 AND inquiries.created_by=$dealer"; //Admin
+                }else{
+                    $where .= " AND d.users_group_id = 2 AND inquiries.created_by=d.id"; //Admin
+                }
+            }elseif($radio_user == "Retailers"){
+                if(!empty($retailer)){
+                    $where .= " AND r.users_group_id = 3 AND inquiries.created_by=$retailer"; //Admin
+                }else{
+                    $where .= " AND r.users_group_id = 3 AND inquiries.created_by=r.id"; //Admin
+                }
+            }elseif($radio_user == "DAssigned"){
+                $where .= " AND d.users_group_id = 2 AND inquiries.dealer_id=$user->id AND inquiries.created_by!=$user->id"; //Dealers
+            }elseif($radio_user == "DRetailers"){
+                if(!empty($retailer)){
+                    $where .= " AND r.parent_id = $user->id AND r.users_group_id = 3 AND inquiries.created_by=$retailer"; //Dealers
+                }else{
+                    $where .= " AND r.parent_id = $user->id AND r.users_group_id = 3 AND inquiries.created_by=r.id"; //Dealers
+                }
+            }elseif($radio_user == "RAssigned"){
+                $where .= " AND r.users_group_id = 3 AND inquiries.retailer_id=$user->id AND inquiries.created_by!=$user->id"; //Retailers
+            }
+        }
+        //$where .= (!empty($dealer_id))?" AND (dealer_id=$dealer_id OR inquiries.created_by=$dealer_id)":'';
+        //$where .= (!empty($retailer_id))?" AND (retailer_id=$retailer_id OR inquiries.created_by=$retailer_id)":'';
         $total_where = $where;
-        $where .= (!empty($search)) ? " AND (c.name like '$search%' OR p.name like '$search%' OR source like '%$search%' OR (d.name is NOT NULL AND d.name like '$search%'))":'';
+        $where .= (!empty($search)) ? " AND (c.name like '%$search%' OR p.name like '%$search%' OR c.email like '%$search%' OR source like '%$search%' OR (d.name is NOT NULL AND d.name like '%$search%') OR (r.name is NOT NULL AND r.name like '%$search%'))":'';
+        
         $inquiries = DB::table('inquiries')
-        ->select(DB::raw('inquiries.id, inquiries.status, inquiries.created_by,source,c.name as customer,c.email AS customer_email,c.mobile AS customer_mobile,d.name as dealer, r.name as retailer,group_concat(p.name SEPARATOR "<br>") as product'))
+        ->select(DB::raw('DISTINCT(inquiries.id), inquiries.customer_id, inquiries.status, inquiries.created_by,cr.name as added_by,source,c.name as customer,c.email AS customer_email,c.mobile AS customer_mobile,d.name as dealer, r.name as retailer,group_concat(p.name SEPARATOR "<br>") as product'))
         ->join('inquiries_products','inquiries.id','=','inquiries_products.inquiry_id','left')
         ->join('inquiries_source','inquiries.inquiries_source_id','=','inquiries_source.id','left')
         ->join('users AS c','inquiries.customer_id','=','c.id','left')
         ->join('products AS p','inquiries_products.product_id','=','p.id','left')
         ->join('users AS d','inquiries.dealer_id','=','d.id','left')
         ->join('users AS r','inquiries.retailer_id','=','r.id','left')
+        ->join('users AS cr','inquiries.created_by','=','cr.id','left')
         ->whereRaw($where);
+        //echo $inquiries->toSql();exit;
         $total_inquiries = $inquiries->count();
         $inquiries = $inquiries->offset($start)
-        ->limit($length)->orderBy($request['columns'][$request['order'][0]['column']]['name'],$request['order'][0]['dir'])
-        ->groupby('inquiries.id')->get();
+        ->limit($length)
+        ->orderBy($request['columns'][$request['order'][0]['column']]['name'],$request['order'][0]['dir'])
+        ->groupBy('inquiries.id')->get();
         
         $data = [];
         foreach($inquiries as $inquiry){
@@ -475,6 +511,7 @@ class InquiryController extends MainController
             $retailer = (!empty($inquiry->retailer))?$inquiry->retailer:'N/A';
             $action_html = "";
             $inquiryObj = Inquiry::find($inquiry->id);
+            $indiVidual=  User::where('id','=',$inquiry->customer_id)->first();
             $inquiry_status = (!empty($inquiryObj->status) && $inquiryObj->status !=0 )?$inquiryObj->getInquirystatusName():'N/A';
             $status_html = "<button type='button' class='btn btn-info change-status btn-sm' data-inquiry=$inquiry->id data-change-status-url='".route('inqiury.status')."'>".$inquiry_status."</button>";
             $action_html .= "<span><button type='button' id='addLog' class='btn btn-default' data-inquiry=$inquiry->id data-view-url='".route('inquiry-log.show',$inquiry->id)."' data-add-url='".route('inquiry-log.create')."' data-task-url='".route('createReminder')."' data-toggle='modal' data-target='#modal-lg' title='View Log'><i class='fas fa-clipboard-list' title='View Log'></i></button></span>";
@@ -491,7 +528,7 @@ class InquiryController extends MainController
                 $action_html .= "<span class='ml-2'><button type=submit data-user=$inquiry->id class='btn btn-danger' onClick=deleteUser($inquiry->id)><i class='fas fa-trash' title='Delete'></i></button></span>";
             }
             // $action_html .= "<span class='ml-3'><a href=# class='btn btn-primary'>View</a></span>";
-            $data[] = [$inquiry->id,ucwords($inquiry->customer),$inquiry->customer_email,$inquiry->customer_mobile,$inquiry->source,$dealer,$retailer,$status_html,$action_html];
+            $data[] = [$inquiry->id,ucwords($inquiry->customer),$inquiry->customer_email,$indiVidual->getMobileWithCountryCode(),$inquiry->source,$inquiry->added_by,$dealer,$retailer,$status_html,$action_html];
         }
         $return_array = array();
         $return_array['draw'] = $request['draw'];
@@ -526,9 +563,13 @@ class InquiryController extends MainController
         $where .= (!empty($dealer_id))?" AND (dealer_id=$dealer_id OR inquiries.created_by=$dealer_id)":'';
         $where .= (!empty($retailer_id))?" AND (retailer_id=$retailer_id OR inquiries.created_by=$retailer_id)":'';
         $total_where = $where;
-        $where .= (!empty($search)) ? " AND (c.name like '$search%' OR c.email like '$search%' OR c.mobile like '$search%' OR p.name like '$search%' OR source like '%$search%' OR (d.name like '$search%' OR  r.name like '$search%'))":'';
+        $where .= (!empty($search)) ? " AND (c.mobile like '%$search%' OR c.name like '%$search%' OR c.email like '%$search%' OR c.mobile like '%$search%' OR p.name like '%$search%' OR source like '%$search%' OR (d.name like '%$search%' OR  r.name like '%$search%'))":'';
         if(!empty($from_date) && !empty($to_date)){
             $where .= " AND (inquiries.created_at BETWEEN '$from_date 00:00:00' AND '$to_date 23:59:59')";
+        }else if(!empty($from_date) && empty($to_date)){
+            $where .= " AND (inquiries.created_at >= '$from_date 00:00:00')";
+        }else if(empty($from_date) && !empty($to_date)){
+            $where .= " AND (inquiries.created_at <= '$to_date 23:59:59')";
         }
         $inquiries = DB::table('inquiries')
         ->join('inquiries_products','inquiries.id','=','inquiries_products.inquiry_id','left')
@@ -546,7 +587,7 @@ class InquiryController extends MainController
             ->whereRaw($where)->groupby('inquiries.id')->get();
             return Excel::download(new InquiryExport($inquiries),'Inquiries.xlsx');
         }else{
-            $inquiries = $inquiries->select(DB::raw('inquiries.id, inquiries.status, inquiries.created_by,source,c.name as customer,c.email AS customer_email,c.mobile AS customer_mobile,d.name as dealer, r.name as retailer,group_concat(p.name SEPARATOR "<br>") as product'))
+            $inquiries = $inquiries->select(DB::raw('inquiries.id,inquiries.customer_id,inquiries.status, inquiries.created_by,source,c.name as customer,c.email AS customer_email,c.mobile AS customer_mobile,d.name as dealer, r.name as retailer,group_concat(p.name SEPARATOR "<br>") as product'))
             ->whereRaw($where)->offset($start)
             ->limit($length)->orderBy($request['columns'][$request['order'][0]['column']]['name'],$request['order'][0]['dir'])
             ->groupby('inquiries.id')->get();
@@ -556,6 +597,7 @@ class InquiryController extends MainController
                 $retailer = (!empty($inquiry->retailer))?$inquiry->retailer:'N/A';
                 $action_html = "";
                 $inquiryObj = Inquiry::find($inquiry->id);
+                $indiVidual=  User::where('id','=',$inquiry->customer_id)->first();
                 $inquiry_status = (!empty($inquiryObj->status) && $inquiryObj->status !=0 )?$inquiryObj->getInquirystatusName():'N/A';
                 $status_html = $inquiry_status;
                 $action_html .= "<span><button type='button' id='addLog' class='btn btn-default' data-inquiry=$inquiry->id data-view-url='".route('inquiry-log.show',$inquiry->id)."' data-add-url='".route('inquiry-log.create')."' data-task-url='".route('createReminder')."' data-toggle='modal' data-target='#modal-lg' title='View Log'><i class='fas fa-clipboard-list' title='View Log'></i></button></span>";
@@ -572,7 +614,7 @@ class InquiryController extends MainController
                     $action_html .= "<span class='ml-2'><button type=submit data-user=$inquiry->id class='btn btn-danger' onClick=deleteUser($inquiry->id)><i class='fas fa-trash' title='Delete'></i></button></span>";
                 }
                 // $action_html .= "<span class='ml-3'><a href=# class='btn btn-primary'>View</a></span>";
-                $data[] = [$inquiry->id,$inquiry->product,ucwords($inquiry->customer),$inquiry->customer_email,$inquiry->customer_mobile,$inquiry->source,$dealer,$retailer,$status_html,$action_html];
+                $data[] = [$inquiry->id,$inquiry->product,ucwords($inquiry->customer),$inquiry->customer_email,(!empty($indiVidual))?$indiVidual->getMobileWithCountryCode():'',$inquiry->source,$dealer,$retailer,$status_html,$action_html];
             }
             $return_array = array();
             $return_array['draw'] = $request['draw'];

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Http\Helpers;
 use App\Http\MyCart;
 use App\Models\Inquiry;
 use App\Models\Manufacturer;

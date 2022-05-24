@@ -7,18 +7,21 @@ use App\Models\City;
 use App\Models\Settings;
 use App\Models\State;
 use App\Models\Country;
+use App\Models\Currency;
 use Illuminate\Http\Request;
 use App\Models\User;
-
 use View;
 use Route;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Session;
+
 class MainController extends Controller
 {
     public $country = 101;
     public $allowed_country = [101];
     public $settingJson = [];
     public $allowedcountry=[];
+    public $currency= false;
     public $msg = array(
         'inquiry_assign'=>'Hello {name} You are assigned a new Inquiry No. {inquiry_no} Please login to your account to view more details. - Kashyap Technology EWTIND',
         'inquiry_customer_assigned'=>'Hello {name},\nyour Inquiry No. {inquiry_no} has been assigned.\n{user_type} : {fullname},\nM: {mobile}\nEmail : {email}\nKashyap Technology\nEWTIND',
@@ -39,7 +42,6 @@ class MainController extends Controller
             $this->country = (!empty($this->settingJson['country'])) ? $this->settingJson['country'] : 101;
             $this->allowed_country = (!empty($this->settingJson['allowed_countries'])) ? $this->settingJson['allowed_countries'] : [101];
             if(!empty($this->settingJson)){
-              
                 if(!empty($this->settingJson['timezone'])){
                     config(['app.timezone' => $this->settingJson['timezone']]);
                 }
@@ -51,10 +53,29 @@ class MainController extends Controller
                 if(!empty($this->settingJson['icon_logo'])){
                     config(['icon.logo' => $this->settingJson['icon_logo']]);
                 }
+                if(!empty($this->settingJson['currency'])){
+                    $this->currency=Currency::find($this->settingJson['currency']);                    
+                }else{
+                    $this->currency=Currency::find(1);
+                }
+
+                // here we set session 
+                if(!empty($this->settingJson['number_format'])){
+                    Session::put('number_format', $this->settingJson['number_format']);
+                }else{
+                    Session::put('number_format',1);
+                }
+                if(!empty($this->settingJson['date_format'])){
+                    Session::put('date_format', $this->settingJson['date_format']);
+                    Session::put('datetime_like_format', $this->dateTimeLikeFormat(Session::get('date_format')));
+                }else{
+                    Session::put('date_format', 1);
+                    Session::put('datetime_like_format', $this->dateTimeLikeFormat(0));
+                }
+                
                 $state = State::find($this->settingJson['state']);
                 $city = City::find($this->settingJson['city']);
                 $country = Country::find($this->settingJson['country']);
-                
                 $this->settingJson['state_name']=(!empty($state))?$state->name:'';
                 $this->settingJson['city_name']=(!empty($city))?$city->name:'';
                 $this->settingJson['country_name']=(!empty($country))?$country->name:'';
@@ -80,7 +101,8 @@ class MainController extends Controller
         
         View::share('country',$this->country);
         View::share('allowedcountry',$allowedcountry);        
-        View::share('setting',$this->settingJson);        
+        View::share('setting',$this->settingJson);  
+        View::share('currency',$this->currency);
         
     }
 
@@ -105,6 +127,41 @@ class MainController extends Controller
     }
     public function getMsg($key){
         return $this->msg[$key];
+    }
+    public function currency_list()
+    {
+        $currency_list = array();
+        $currency_data = DB::select('select * from currencies where status = 1'); 
+        foreach ($currency_data as $key => $currency) {
+            $currency_list[$key]['id'] = $currency->id;
+            $currency_list[$key]['name'] = $currency->name;
+        }
+        return $currency_list;
+    }
+    public function dateTimeLikeFormat($current_date_format_no)
+    {
+        switch ($current_date_format_no) {
+            case "1":
+                return "%d-%m-%Y %H:%i:%s";
+                break;
+            case "2":
+                return "%m-%d-%Y %H:%i:%s";
+                break;
+            case "3":
+                return "%Y-%m-%d %H:%i:%s";
+                break;
+            case "4":
+                return "%d-%M-%Y %H:%i:%s";
+                break;
+            case "5":
+                return "%M-%d-%Y %H:%i:%s";
+                break;
+            case "6":
+                return "%Y-%M-%d %H:%i:%s";
+                break;
+            default:
+                return "%Y-%m-%d %H:%i:%s";
+        }
     }
 
 }

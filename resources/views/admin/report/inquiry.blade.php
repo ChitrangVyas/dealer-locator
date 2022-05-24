@@ -72,7 +72,7 @@
                     "name": "c.email"
                 },
                 {
-                    "name": "c.phone"
+                    "name": "c.mobile"
                 },
                 {
                     "name": "d.name"
@@ -84,12 +84,13 @@
                     "name": "status",sWidth: '10%'
                 },
             ],
-            "columnDefs": [{
-                    "targets": [5],
-                    "orderable": false
+            "columnDefs": [
+                {
+                    "targets":[ 4 ],
+                    "className": "text-center",
                 },
                 {
-                    "targets": [7],
+                    "targets": [4],
                     "orderable": false
                 },
                 {

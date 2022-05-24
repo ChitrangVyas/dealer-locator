@@ -8,13 +8,93 @@
         <div class="row">
             <div class="col-lg-12">
                 <div class="card">
-                    <div class="card-header">
+                    <!-- <div class="card-header">
                         <h2 class="card-title">{{ucwords($title)}}</h3>
                             @admin()
                             <div class="float-right"><a href="{{route('inquiries-source.index')}}" class="btn btn-primary btn-md ml-2">Inquiry Source</a></div>
                             @endadmin
                             <div class="float-right"><a href="{{route('inquiry.create')}}" class="btn btn-primary btn-md">Add Inquiry</a></div>
+                    </div> -->
+                    <div class="card-header">
+                        <div class="row">
+                            <div class="col-8">
+                                <form action="{{route('inquirylistajax')}}" class="d-inline" id="filterForm" method="post">
+                                    @csrf
+                                    <div class="row">
+                                        <div class="col-5">
+                                            <div class="form-group row">
+                                                <label class="">Users &nbsp;</label>
+                                                <div class="form-check">
+                                                    <input class="form-check-input radio_user" type="radio" name="radio_user" id="radio_user1" value="Own" checked>
+                                                    <label class="form-check-label" for="radio_user1">Own &nbsp;</label>
+                                                </div>
+                                                @if((auth()->user()->users_group_id =='1' ) || (auth()->user()->users_group_id == NULL))
+                                                    <div class="form-check">
+                                                        <input class="form-check-input radio_user" type="radio" name="radio_user" id="radio_user2" value="Dealers">
+                                                        <label class="form-check-label" for="radio_user2">Dealers &nbsp;</label>
+                                                    </div>
+                                                    <div class="form-check">
+                                                        <input class="form-check-input radio_user" type="radio" name="radio_user" id="radio_user3" value="Retailers">
+                                                        <label class="form-check-label" for="radio_user3">Retailers &nbsp;</label>
+                                                    </div>
+                                                @endif
+                                                @if(auth()->user()->users_group_id =='2')
+                                                    <div class="form-check">
+                                                        <input class="form-check-input radio_user" type="radio" name="radio_user" id="radio_user2" value="DAssigned">
+                                                        <label class="form-check-label" for="radio_user2">Assigned &nbsp;</label>
+                                                    </div>
+                                                    <div class="form-check">
+                                                        <input class="form-check-input radio_user" type="radio" name="radio_user" id="radio_user3" value="DRetailers">
+                                                        <label class="form-check-label" for="radio_user3">Retailers &nbsp;</label>
+                                                    </div>
+                                                @endif
+                                                @if(auth()->user()->users_group_id =='3')
+                                                    <div class="form-check">
+                                                        <input class="form-check-input radio_user" type="radio" name="radio_user" id="radio_user2" value="RAssigned">
+                                                        <label class="form-check-label" for="radio_user2">Assigned &nbsp;</label>
+                                                    </div>
+                                                @endif
+                                            </div>
+                                            <!-- text input -->
+                                            <div class="form-group" id="divDealerSelection">
+                                                <label>Dealer</label>
+                                                <select class="form-control select2 dealer" id='dealer' name='dealer' tabindex="4">
+                                                    <option value="">Select</option>
+                                                    @if(!empty($inquiry) && !empty($inquiry->dealer_id))
+                                                        <option value="{{$inquiry->dealer_id}}" selected>{{$inquiry->dealer->name.' - ' .$inquiry->dealer->zipcode.' - '. $inquiry->dealer->city->name}}</option>
+                                                    @endif
+                                                </select>
+                                            </div>
+                                            <!-- text input -->
+                                            <div class="form-group" id="divRetailerSelection">
+                                                <label>Retailer</label>
+                                                <select class="form-control select2 retailer" id='retailer' name='retailer' tabindex="5">
+                                                    <option value="">Select</option>
+                                                    @if(!empty($inquiry) && !empty($inquiry->retailer_id))
+                                                        <option value="{{$inquiry->retailer_id}}" selected>{{ $inquiry->retailer->name.' - ' .$inquiry->retailer->zipcode.' - '. $inquiry->retailer->city->name }}</option>
+                                                        <input type="hidden" id="selected_retailer" value="{{$inquiry->retailer_id}}">
+                                                    @endif
+                                                </select>
+                                            </div>
+
+                                        </div>
+                                        <div class="col-7">
+                                            <button type="button" class="d-inline btn btn-primary btn-sm form-control-sm" id="filter" value="">Filter</button>    
+                                        </div>
+                                    </div>
+                                    <!-- <input type="text" class="d-inline form-control form-control-sm col-2 datetimepicker-input from_date" id="from_date" name="from_date" data-toggle="datetimepicker" data-target="#from_date" autocomplete="off" value="" placeholder="From" required/>
+                                    <input type="text" class="d-inline form-control form-control-sm col-2 datetimepicker-input to_date" id="to_date" name="to_date" data-toggle="datetimepicker" data-target="#to_date" autocomplete="off" value="" placeholder="To" required/> -->
+                                </form>
+                            </div>
+                            <div class="col-4">
+                                @admin()
+                                <div class="float-right"><a href="{{route('inquiries-source.index')}}" class="btn btn-primary btn-md ml-2">Inquiry Source</a></div>
+                                @endadmin
+                                <div class="float-right"><a href="{{route('inquiry.create')}}" class="btn btn-primary btn-md">Add Inquiry</a></div>
+                            </div>
+                        </div>
                     </div>
+                    <!-- /.card-header -->
                     <!-- /.card-header -->
                     <div class="card-body">
                         <table id="example" class="table table-bordered table-striped" style="width:100%">
@@ -25,6 +105,7 @@
                                     <th>Email</th>
                                     <th>Phone</th>
                                     <th>Source</th>
+                                    <th>Added By</th>
                                     <th>Dealer</th>
                                     <th>Retailer</th>
                                     <th>Status</th>
@@ -146,10 +227,17 @@
 @section('plugins.Sweetalert2', true)
 @section('js')
 <script>
+    $(window).on('load', function() {
+        $("#divDealerSelection").hide();
+        $("#divRetailerSelection").hide();
+    });
+</script>
+<script>
     jQuery(document).ready(function() {
         var table =  $('#example').DataTable({
             "bAutoWidth": false,
-            "columns": [{
+            "columns": [
+                {
                     "name": "inquiries.id"
                 },
                 {
@@ -162,10 +250,16 @@
                     "name": "customer_mobile"
                 },
                 {
-                    "name": "dealer"
+                    "name": "inquiries_source.source"
                 },
                 {
-                    "name": "retailer"
+                    "name": "cr.name"
+                },
+                {
+                    "name": "d.name"
+                },
+                {
+                    "name": "r.name"
                 },
                 {
                     "name": "status",sWidth: '10%'
@@ -174,16 +268,13 @@
                     "name": "action"
                 },
             ],
-            "columnDefs": [{
-                    "targets": [4],
-                    "orderable": false
+            "columnDefs": [
+                {
+                    "targets":[ 3 ],
+                    "className": "text-center",
                 },
                 {
-                    "targets": [7],
-                    "orderable": false
-                },
-                {
-                    "targets": [8],
+                    "targets": [3,8,9],
                     "orderable": false
                 },
                 {
@@ -194,21 +285,104 @@
             order: [[0, 'desc']],
             "processing": true,
             "serverSide": true,
-            "ajax": dataTableRequest("{{ route('inquirylistajax') }}"),
+            "ajax":{
+                "url": "{{route('inquirylistajax')}}",
+                "type": "POST",
+                "data": function ( d ) {
+                    d._token = $("meta[name='csrf-token']").attr("content");
+                    d.radio_user = $('input[name="radio_user"]:checked').val();
+                    d.dealer = $('#dealer').val();
+                    d.retailer = $('#retailer').val();
+                }
+            },
             "fnDrawCallback":function() {
                 let is_admin = "{{((empty(auth()->user()->users_group_id)) || auth()->user()->users_group_id == 1 ||auth()->user()->users_group_id == 2 )? true : false }}";
                 let is_dealer = "{{auth()->user()->users_group_id == 2}}";
                 if(is_admin){
-                    table.column(5).visible();
+                    table.column(6).visible();
                 }else{
-                    table.column(5).visible(false);
+                    table.column(6).visible(false);
                 }
                 if(is_dealer){
-                    table.column(4).visible(false);
+                    table.column(5).visible(false);
                 }else{
-                    table.column(4).visible();
+                    table.column(5).visible();
                 }
                 
+            }
+        });
+        $('input[type=radio][name=radio_user]').change(function() {
+            $('#dealer').val(null).trigger('change');
+            $('#retailer').val(null).trigger('change');
+            $("#divDealerSelection").hide();
+            $("#divRetailerSelection").hide();
+            if (this.value == 'Dealers') {
+                $("#divDealerSelection").show();
+            }
+            else if (this.value == 'Retailers' || this.value == 'DRetailers') {
+                $("#divRetailerSelection").show();
+            }
+        });
+        $('body').on('click',"#filter",function(){
+            $('#example').DataTable().ajax.reload();
+        });
+        $('.dealer').select2({
+            placeholder: "Select",
+            minimumInputLength: 2,
+            allowClear: true,
+            ajax: {
+                url: "{{route('get_value')}}",
+                type: 'POST',
+                dataType: 'json',
+                data: function (params) {
+                    return {
+                        q: params.term, // search term
+                        table:'users',
+                        fields: "users.id, CONCAT(`users`.`name`, ' - ', `zipcode`,' - ',`cities`.`name`) as text",
+                        where:`(users.users_group_id = 2) AND users.deleted_at IS NULL AND users.status = 1`,
+                        joins:[{'join_table':'cities','to_column':'users.city_id','from_column':'cities.id','type':'left'}]
+                    };
+                },
+                processResults: function (data) {
+                    return {
+                        results: data
+                    };
+                }
+            }
+        });
+        $('.retailer').select2({
+            placeholder: "Select",
+            minimumInputLength: 2,
+            allowClear: true,
+            ajax: {
+                url: "{{route('get_value')}}",
+                type: 'POST',
+                dataType: 'json',
+                data: function (params) {
+                    var is_dealer = "{{auth()->user()->users_group_id == 2}}";
+                    if(is_dealer){
+                        return {
+                            q: params.term, // search term
+                            table:'users',
+                            fields: "users.id, CONCAT(`users`.`name`, ' - ', `zipcode`,' - ',`cities`.`name`) as text",
+                            where:`(users.users_group_id = 3) AND users.parent_id = {{auth()->user()->id}} AND users.deleted_at IS NULL AND users.status = 1`,
+                            joins:[{'join_table':'cities','to_column':'users.city_id','from_column':'cities.id','type':'left'}]
+                        };
+                    } else {
+                        return {
+                            q: params.term, // search term
+                            table:'users',
+                            fields: "users.id, CONCAT(`users`.`name`, ' - ', `zipcode`,' - ',`cities`.`name`) as text",
+                            where:`(users.users_group_id = 3) AND users.deleted_at IS NULL AND users.status = 1`,
+                            joins:[{'join_table':'cities','to_column':'users.city_id','from_column':'cities.id','type':'left'}]
+                        };
+                    }
+                },
+                processResults: function (data) {
+                    return {
+                        results: data
+                    };
+                }
             }
         });
         $('.datetimepicker-input').datetimepicker({
@@ -686,5 +860,51 @@
             }
         }
     }
+    // ratiler
+    function getRetailers(param){
+        return $.ajax({
+             headers: { 'X-CSRF-Token' : $('meta[name=_token]').attr('content') },
+             url: "{{ route('get_value') }}",
+             type: 'POST',          
+             data: {
+                     // q: param, // search term
+                     table:'users',
+                     fields: "users.id, CONCAT(`users`.`name`, ' - ', `zipcode`,' - ',`cities`.`name`) as text",
+                     where:` (users_group_id = 3) AND (parent_id = ${param}) AND deleted_at IS NULL AND status = 1`,
+                     joins:[{'join_table':'cities','to_column':'city_id','from_column':'cities.id','type':'left'}]
+             },            
+             success: function (data) { 
+                 data = JSON.parse(data);
+                 var newOption = new Option();
+                 let selected_reatiler = $('#retailer').val();
+                 $('#retailer').empty();
+                 var selected_option = '';
+                 newOption = new Option('Select','' , false, false);
+                 $('#retailer').append(newOption).trigger('change');
+                 if($('#parent_user').val()){
+                     selected_option = $('#selected_retailer').val();
+                 }else if($('#dealer').val()){
+                     selected_option = selected_reatiler;
+                 }
+                 var selected = false;
+                 $.each(data,function(key,val){
+                     selected = (selected_option == val.id)? true : false ;
+                     newOption = new Option(val.text, val.id, selected, selected);
+                     $('#retailer').append(newOption);
+                  });
+                  $('#retailer').select2().trigger('change');
+             },
+             error: function (jqXHR, textStatus, errorThrown) {
+                 var err = JSON.parse(jqXHR.responseText).errors;
+                 $.each(err,function(key,val){                
+                     $(`[name=${key}]`).closest('.form-group').after(`<div class="alert alert-danger mt-2">${val}</div>`);                                        
+                 });
+                     /* Toast.fire({
+                         type: 'error',
+                         title: JSON.parse(jqXHR.responseText).message
+                     }); */
+             }
+         });
+     }
 </script>
 @endsection

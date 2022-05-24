@@ -11,7 +11,8 @@ class InquiriesSource extends Model
     use SoftDeletes;
     protected $table = 'inquiries_source';
     protected $fillable = [
-        'source'        
+        'source',
+        'status'        
     ];
 
     function inquiry(){

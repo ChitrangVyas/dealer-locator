@@ -50,7 +50,11 @@
             ],
             "columnDefs": [
             {
-                "targets": [ 5 ],
+                "targets":[ 3 ],
+                "className": "text-center",
+            },
+            {
+                "targets": [ 3,4,5 ],
                 "orderable": false
             },
             {

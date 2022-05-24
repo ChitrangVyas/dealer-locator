@@ -50,12 +50,12 @@ class InquiriesSourceController extends MainController
      */
     public function store(InquiriesSourceCreateRequest $request)
     {
-        //
+        
         $request_data = $request->all();
         try{
             $inquiry = InquiriesSource::create([
                 'source' => $request_data['source'],
-                'status' => (!empty($request_data['status']))?'1':'0',
+                'status' => (!isset($request_data['status']) || $request_data['status'] ==0)?'0':'1',
             ]);
         }catch(Exception $e){
             print_r([
@@ -134,7 +134,7 @@ class InquiriesSourceController extends MainController
         $length=  $request['length'];
         $search = $request['search']['value'];
         $where = 'deleted_at is NULL';
-        $where .= (!empty($search)) ? " AND ( source like '$search%')":'';
+        $where .= (!empty($search)) ? " AND ( source like '%$search%')":'';
         $inquiries = DB::table('inquiries_source')
         ->selectRaw('id,source')
         ->whereRaw($where)

@@ -1,7 +1,7 @@
 <?php
 
 namespace Database\Seeders;
-
+use App\Models\Settings;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
@@ -14,22 +14,6 @@ class SMSSettingsSeeder extends Seeder
      */
     public function run()
     {
-        $json_data = array(
-            "api_key"=>"",
-            "sender_id"=>"",
-            "sms_type"=>"",
-            "entity_id"=>"",
-            "template_id"=>""
-        );
-
-        $sms_settings = array(
-            'slug'=>'sms-settings',
-            'json_data'=>json_encode($json_data),
-            'created_at' => date('Y-m-d H:i:s'),
-            'updated_at' => date('Y-m-d H:i:s')
-        );
-        DB::table('settings')->where('slug','sms-settings')->delete();
-        DB::table('settings')->insert($sms_settings);
-        DB::table('settings')->where('id','1')->update(['slug'=>'settings']);
+       Settings::create(array('id' => '2','slug' => 'sms-settings','json_data' => '{"is_enabled":"0","userId":"","sms_password":"","sender_id":"","sms_type":"2","entity_id":"","template_id":{"inquiry_assign":"","inquiry_customer_assigned":""}}','created_at' => '2022-02-25 11:26:34','updated_at' => '2022-04-07 13:19:52'));
     }
 }

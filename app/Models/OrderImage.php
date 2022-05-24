@@ -16,8 +16,8 @@ class OrderImage extends Model
 
     public function getSrc(){
         // $icon =
-        $allowed_images = ['webp','jpg','png','jpeg'];
-        $allowed_docs = ['pdf','doc','docx','xls','xlsx','txt'];
+        $allowed_images = ['webp','jpg','png','jpeg','bmp'];
+        $allowed_docs = ['pdf','doc','docx','xls','xlsx','txt','ods','odt','rtf'];
         $file_extention = \File::extension($this->image);
         $fileName = basename(url($this->image));
         if(in_array($file_extention,$allowed_images)){

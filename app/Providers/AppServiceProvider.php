@@ -2,6 +2,9 @@
 
 namespace App\Providers;
 
+use App\Http\Helpers;
+use App\Models\Country;
+use App\Models\Settings;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
@@ -59,5 +62,25 @@ class AppServiceProvider extends ServiceProvider
             return number_format($price, 2, '.', ',');
         });
 
+        Str::macro('getMobileWithCountryCode', function ($mobile,$country){
+            $country_data = Country::findorFail($country);
+            if(!empty($mobile)){
+                return  $country_data->phonecode." ".$mobile;
+            }
+            else{
+                return $mobile;
+            }
+        });
+        Str::macro('number_format', function ($amt){
+           return Helpers::number_format($amt);
+        });
+
+        Str::macro('dateTime_format', function ($date){
+            return Helpers::dateTime_format($date);
+        });
+        
+        Str::macro('dateOnly_format', function ($date){
+            return Helpers::dateOnly_format($date);
+        });
     }
 }

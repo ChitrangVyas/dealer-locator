@@ -80,7 +80,12 @@
                 <!-- text input -->
                 <div class="form-group">
                     <label>Mobile <span class="required_field">*</span></label>
-                    <input type="text" name="mobile" value="{{ old('mobile',(!empty($user))?$user->mobile:'') }}" class="form-control" placeholder="Mobile" tabindex="5">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" id="countryCode"></span>
+                        </div>
+                        <input type="text" name="mobile" value="{{ old('mobile',(!empty($user))?$user->mobile:'') }}" class="form-control" placeholder="Mobile" tabindex="5">
+                    </div>
                     @error('mobile')
                         <div class="alert alert-danger mt-2">{{ $message }}</div>
                     @enderror
@@ -254,7 +259,36 @@
 @section('plugins.summernote', true)
 @section('js')
 <script>
+function phonecode(){
+    console.log("Triger has been executed");
+    if($('#country').val() != ''){
+        $.ajax({
+            url: "{{route('get_value')}}",
+            type: 'POST',
+            data: {
+                table: 'countries',
+                fields: 'phonecode',
+                where: `id=${$('#country').val()}`
+            },
+            success: function(res) {
+                $.each(JSON.parse(res), function(key, val) {
+                    $(`#countryCode`).html(val.phonecode);
+                })
+            } 
+        });
+    }
+    else{
+        $(`#countryCode`).html('');
+    }
+}
+$("document").ready(function(){
+    setTimeout(function(){
+        phonecode();
+    }, 500);
+    
+});
 jQuery(document).ready(function(){
+   
     $('.dealer').select2({
         placeholder: "Select",
         allowClear: true,
@@ -305,6 +339,7 @@ jQuery(document).ready(function(){
                 allowClear: true,
             });
         select2state();
+        phonecode();
     });
     if ($('#country').val() || $('#state').val()) {
         select2state();
@@ -345,31 +380,6 @@ jQuery(document).ready(function(){
         }
     }
 
-
-    // $('.state').select2({
-    //     placeholder: "Select",
-    //     allowClear: true,
-    //     minimumInputLength: 2,
-    //     ajax: {
-    //         url: "{{route('get_value')}}",
-    //         type: 'POST',
-    //         dataType: 'json',
-    //         data: function (params) {
-    //             return {
-    //                 q: params.term, // search term
-    //                 table:'states',
-    //                 where: "country_id={{$country}}"
-    //             };
-    //         },
-    //         processResults: function (data) {
-    //             return {
-    //                 results: data
-    //             };
-    //         }
-    //     }
-    // }).on('select2:clear',function(){
-    //     select2city();
-    // });
     $('.city').select2({});
     $('.state').on('change', function() {
         $(`.city`).empty().append(new Option()).trigger('change');

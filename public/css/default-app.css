@@ -68174,3 +68174,8 @@ readers do not read off random characters that represent icons */
     transform: rotate(360deg);
   }
 }
+
+.symbol-icon{
+  font-size: 18px;
+  padding-right: 1px;
+}

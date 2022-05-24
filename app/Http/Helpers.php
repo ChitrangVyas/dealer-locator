@@ -4,9 +4,11 @@ namespace App\Http;
 
 use App\Models\Inquiry;
 use App\Models\Notification;
+use App\Models\Settings;
 use App\Models\User;
 use Exception;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Session;
 
 class Helpers {
     public static function storeNotification($user_id='',$message='',$is_read=0,$icon_id=0){
@@ -95,5 +97,57 @@ class Helpers {
                 return DB::table($table)->where($where)->count();
             }
             return (DB::table($table)->whereRaw($where)->count());
+    }
+    public static function number_format($amt){
+        $number_format = Session::get('number_format');
+        if(!empty($number_format)){
+            if($number_format == 1){
+                return number_format($amt,2,'.',',');
+            }else if($number_format == 2){
+                return number_format($amt,2,',','.');
+            }
+        }else{
+            return $amt;
+        }
+    }
+    public static function dateTime_format($date){
+        $date_format = Session::get('date_format');
+        if(!empty($date_format)){
+            if($date_format == 1){
+                return date('d-m-Y H:i:s',strtotime($date));
+            }elseif($date_format == 2){
+                return date('m-d-Y H:i:s',strtotime($date));
+            }elseif($date_format == 3){
+                return date('Y-m-d H:i:s',strtotime($date));
+            }elseif($date_format == 4){
+                return date('d-M-Y H:i:s',strtotime($date));
+            }elseif($date_format == 5){
+                return date('M-d-Y H:i:s',strtotime($date));
+            }elseif($date_format == 6){
+                return date('Y-M-d H:i:s',strtotime($date));
+            }
+        }else{
+            return $date;
+        }
+    }
+    public static function dateOnly_format($date){
+        $date_format = Session::get('date_format');
+        if(!empty($date_format)){
+            if($date_format == 1){
+                return date('d-m-Y',strtotime($date));
+            }elseif($date_format == 2){
+                return date('m-d-Y',strtotime($date));
+            }elseif($date_format == 3){
+                return date('y-m-d',strtotime($date));
+            }elseif($date_format == 4){
+                return date('d-M-Y',strtotime($date));
+            }elseif($date_format == 5){
+                return date('M-d-Y',strtotime($date));
+            }elseif($date_format == 6){
+                return date('Y-M-d',strtotime($date));
+            }
+        }else{
+            return $date;
+        }
     }
 }

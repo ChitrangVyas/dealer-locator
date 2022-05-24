@@ -29,6 +29,7 @@ class ProductUpdateRequest extends FormRequest
             'description' => 'required|min:10',
             'inventory' =>'required',
             'low_stock' => 'required',
+            'price' => 'required',
             'image' => 'mimes:jpeg,png,jpg,gif',
             // 'category' => 'required'
         ];

@@ -40,20 +40,20 @@
     jQuery(document).ready(function(){
         $('#example').DataTable({
             "columns": [
-                { "name": "id" },
-                { "name": "name" },
+                { "name": "categories.id" },
+                { "name": "categories.name" },              
+                { "name": "parent_category.name" },
                 { "name": "image" },
-                { "name": "parent_category" },
                 { "name": "status" },
                 { "name": "action" }
             ],
             "columnDefs": [
-                {
+            {
                 "targets": [ 3 ],
                 "orderable": false
             },
             {
-                "targets": [ 4 ],
+                "targets": [ 4,5 ],
                 "orderable": false
             },
             {

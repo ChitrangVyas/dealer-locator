@@ -229,9 +229,10 @@ class ProductController extends MainController
         $length=  $request['length'];
         $search = $request['search']['value'];
         $where = 'products.deleted_at is NULL';
-        $where .= (!empty($search)) ? " AND (products.name like '$search%' OR brands.name like '$search%')":'';
-        $query = DB::table('products');
-        $query->leftJoin('brands','products.brand_id','=','brands.id')
+        $where .= (!empty($search)) ? " AND (products.name like '%$search%' OR brands.name like '%$search%' OR manufacturers.name like '%$search%' OR inventory.qty like '%$search%')":'';
+        $query = DB::table('products')
+        ->leftJoin('brands','products.brand_id','=','brands.id')
+        ->leftJoin('manufacturers','brands.manufacturer_id','=','manufacturers.id')
         ->leftJoin('inventory',function($query) use($user){
             $query->on('products.id','=','inventory.product_id');
             if((empty($user->users_group_id)) || ($user->users_group_id == 1)){
@@ -240,7 +241,7 @@ class ProductController extends MainController
                 $query->where('user_id',$user->id);
             }
         })
-        ->selectRaw('products.id,products.name,brands.name as brand_name,products.image,inventory.qty AS inventory,products.status');
+        ->selectRaw('products.id,products.name,manufacturers.name as manufacturer_name,brands.name as brand_name,products.image,inventory.qty AS inventory,products.status');
         $query->whereRaw($where)
         ->offset($start)
         ->limit($length)
@@ -265,7 +266,7 @@ class ProductController extends MainController
                 $inventory_html = "<span class='ml-3'><button data-product=$product->id class='btn btn-link add-stock'>$inventory</button></span>";
                 // $inventory_html = "<button class=btn btn-default add-stock data-product=".$product->id.">".(empty($product->inventory))?'II':$product->inventory."</button>";
             }
-            $data[] = [$product->id,$product->name,$product->brand_name,$product_image_html,$inventory_html,$status_html,$action_html];
+            $data[] = [$product->id,$product->name,$product->manufacturer_name,$product->brand_name,$product_image_html,$inventory_html,$status_html,$action_html];
         }
         $return_array = array();
         $return_array['draw'] = $request['draw'];
@@ -289,7 +290,7 @@ class ProductController extends MainController
         $from_date = $request->input('from_date','');
         $to_date = $request->input('to_date','');
         $where = 'products.deleted_at is NULL';
-        $where .= (!empty($search)) ? " AND (products.name like '$search%' OR brands.name like '$search%')":'';
+        $where .= (!empty($search)) ? " AND (products.name like '%$search%' OR brands.name like '%$search%')":'';
         $query = DB::table('products');
         $query->leftJoin('brands','products.brand_id','=','brands.id')
         ->leftJoin('inventory',function($query) use($user){
@@ -346,7 +347,7 @@ class ProductController extends MainController
         $length=  $request->input('length','');
         $search = $request->input('search.value','');
         $where = 'products.deleted_at is NULL';
-        $where .= (!empty($search)) ? " AND (products.name like '$search%' OR brands.name like '$search%')":'';
+        $where .= (!empty($search)) ? " AND (products.name like '%$search%' OR brands.name like '%$search%')":'';
         $query = DB::table('products');
         $query->leftJoin('brands','products.brand_id','=','brands.id')
         ->leftJoin('inventory',function($query) use($user){

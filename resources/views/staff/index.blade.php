@@ -45,20 +45,20 @@
                 { "name": "id" },
                 { "name": "name" },
                 { "name": "email" },
-                { "name": "mobile" },
-                { "name": "states.name" },
+                { "name": "mobile" },               
                 { "name": "cities.name" },
+                { "name": "states.name" },
                 { "name": "status" },
                 { "name": "action" }
             ],
             "columnDefs": [
             {
-                "targets": [ 6 ],
+                "targets": [ 3,6,7 ],
                 "orderable": false
             },
             {
-                "targets": [ 7 ],
-                "orderable": false
+                "targets":[ 3 ],
+                "className": "text-center",
             },
             {
                 "targets": [ 0 ],

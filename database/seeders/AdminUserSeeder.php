@@ -36,7 +36,7 @@ class AdminUserSeeder extends Seeder
         ],
         [
             'name' => "Staff",
-            'email' => "staff@mail.com",
+            'email' => "staff@gmail.com",
             'password' => Hash::make('woodbird9'),
             'users_group_id'=>1,
             'parent_id'=>NULL,
@@ -50,11 +50,10 @@ class AdminUserSeeder extends Seeder
             'remember_token' => NULL,
             'created_at' => date('Y-m-d H:i:s'),
             'updated_at' => date('Y-m-d H:i:s'),
-        ],
-        ,
+        ],        
         [
             'name' => "Staff 1",
-            'email' => "staff1@mail.com",
+            'email' => "staff1@gmail.com",
             'password' => Hash::make('woodbird9'),
             'users_group_id'=>1,
             'parent_id'=>NULL,

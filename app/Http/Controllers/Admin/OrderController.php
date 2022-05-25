@@ -867,21 +867,21 @@ class OrderController extends MainController
                 }
             }elseif($radio_user == "Dealers"){
                 if(!empty($dealer)){
-                    $where .= " AND d.users_group_id = 2 AND from_user=$dealer AND for_manufacturer is NULL"; //Admin
+                    $where .= " AND d.users_group_id = 2 AND from_user=$dealer AND for_manufacturer > 0"; //Admin
                 }else{
-                    $where .= " AND d.users_group_id = 2 AND from_user=d.id AND for_manufacturer is NULL"; //Admin
+                    $where .= " AND d.users_group_id = 2 AND from_user=d.id AND for_manufacturer > 0"; //Admin
                 }
             }elseif($radio_user == "Retailers"){
                 if(!empty($retailer)){
-                    $where .= " AND d.users_group_id = 3 AND from_user=$retailer AND for_manufacturer is NULL"; //Admin
+                    $where .= " AND d.users_group_id = 3 AND from_user=$retailer AND for_manufacturer > 0"; //Admin
                 }else{
-                    $where .= " AND d.users_group_id = 3 AND from_user=d.id AND for_manufacturer is NULL"; //Admin
+                    $where .= " AND d.users_group_id = 3 AND from_user=d.id AND for_manufacturer > 0"; //Admin
                 }
             }elseif($radio_user == "DRetailers"){
                 if(!empty($retailer)){
-                    $where .= " AND d.parent_id = $user->id AND d.users_group_id = 3 AND from_user=$retailer AND for_manufacturer is NULL"; //Dealers
+                    $where .= " AND d.parent_id = $user->id AND d.users_group_id = 3 AND from_user=$retailer AND for_manufacturer > 0"; //Dealers
                 }else{
-                    $where .= " AND d.parent_id = $user->id AND d.users_group_id = 3 AND from_user=d.id AND for_manufacturer is NULL"; //Dealers
+                    $where .= " AND d.parent_id = $user->id AND d.users_group_id = 3 AND from_user=d.id AND for_manufacturer > 0"; //Dealers
                 }
             }
         }

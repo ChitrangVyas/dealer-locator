@@ -107,10 +107,9 @@ class DealerUserController extends MainController
         ->leftjoin("product_discounts",function($join) use ($request){
             $join->on("product_discounts.product_id","=","products.id")
                 ->on("product_discounts.seller_id","=",DB::raw(!empty(auth()->user()->parent_id)?auth()->user()->id:0))
-                ->on("product_discounts.buyer_id","=",DB::raw($request->get('data')['user_id']));
-
-        },'left')
-        ->where('product_discounts.deleted_at', NULL)
+                ->on("product_discounts.buyer_id","=",DB::raw($request->get('data')['user_id']))
+                ->where('product_discounts.deleted_at', NULL);            
+        },'left')        
         ->get();   
         $json['cart_content'] = view('dealer.show',['users'=>$users,'products'=>$products])->render();
         return response()->json(['status' => 'successful','code'=>1, 'data'=>$json, 'message'=>'']);

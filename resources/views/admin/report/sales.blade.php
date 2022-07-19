@@ -45,6 +45,15 @@
                                             <input type="text" class="form-control form-control-sm  datetimepicker-input to_date" id="to_date" name="to_date" data-toggle="datetimepicker" data-target="#to_date" autocomplete="off" value="" placeholder="To" required/>
                                         </div>
                                         <div class="col-2">
+                                            <label for="orderProduct">Order Product</label>
+                                            <select class="form-control" id="orderProduct">
+                                                <option value="">Select</option>
+                                                @foreach ($products as $product)
+                                                    <option value="{{ $product->id }}">{{ $product->name }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                        <div class="col-2 my-auto">
                                             <label></label>
                                             <button type="button" class=" btn btn-primary btn-md form-control-md " id="filter" value="">Filter</button>
                                         </div>
@@ -53,7 +62,7 @@
                             </div>
                             <div class="col-2">
                                     <button type="button" class="btn btn-primary btn-md form-control-md  float-right" id="export" value="">Export</button>
-                            </div>                            
+                            </div>
                         </div>
                     </div>
                     <!-- /.card-header -->
@@ -131,6 +140,7 @@
                     d.order_stage = $("#order_stage").val();
                     d.order_status = $("#order_status").val();
                     d.dealer = $("#dealer").val();
+                    d.product = $('#orderProduct').val();
                 }
             }
         });

@@ -15,6 +15,7 @@ use App\Models\OrderInquiries;
 use App\Models\OrderProductTax;
 use App\Models\OrderStage;
 use App\Models\OrderStatus;
+use App\Models\Product;
 use App\Models\Settings;
 use Exception;
 use Illuminate\Http\Request;
@@ -118,7 +119,7 @@ class OrderController extends MainController
         $orders = Order::where('type', 'po')->where(function ($query) use ($user) {
             if ((!empty($user->userGroup)) && $user->userGroup->id == '2') {
                 return $query->where('from_user', $user->id);
-            } 
+            }
             if ((!empty($user->userGroup)) && $user->userGroup->id == '3') {
                 return $query->where('from_user', $user->id);
             } else if (empty($user->userGroup) || $user->userGroup->id == '1') {
@@ -522,7 +523,7 @@ class OrderController extends MainController
         }else{
             return response()->json(['data'=>'Image is not deleted'],500);
         }
-    } 
+    }
 
     public function storeImage($request)
     {
@@ -606,13 +607,13 @@ class OrderController extends MainController
 
     public function storeSale(Request $request)
     {
-        
+
         $request_data = $request->all();
-        
+
         $time = date('H:i:s');
         $cart = \Cart::Session($request_data['cart_id']);
         $cart_data = $this->myCart->getAll($request_data['cart_id']);
-        
+
         $tax_data['tax_group'] = (!empty($cart_data['tax_group'])) ? $cart_data['tax_group'] : [];
         $tax_data['total_tax'] = $cart_data['total_tax'];
         $tax_data['product_tax'] = $cart_data['product_tax'];
@@ -624,7 +625,7 @@ class OrderController extends MainController
         unset($cart_data['cart_total']);
         unset($cart_data['tax_group']);
         unset($cart_data['inquiries']);
-        $cart_data['order_reference'] = (!empty($cart_data['order_reference'])) ? $cart_data['order_reference'] : NULL;        
+        $cart_data['order_reference'] = (!empty($cart_data['order_reference'])) ? $cart_data['order_reference'] : NULL;
         $cart_data['created_at']=  date('Y-m-d H:i:s',strtotime($this->myCart->getCreatedat($request_data['cart_id']).$time));
         try {
             $order_data = explode('_', $request_data['cart_id']);
@@ -666,8 +667,8 @@ class OrderController extends MainController
                     }
                 }
                 return response()->json(['status' => 'successful', 'data' => ['quote' => $cart_data['order_reference']], 'code' => 1, 'message' => 'Order Successfully updated.']);
-            } else {                
-                $order = Order::create($cart_data);                
+            } else {
+                $order = Order::create($cart_data);
                 if (!empty($order)) {
                     if (!empty($order->customer) && ($order->customer->users_group_id == 2 || ($order->customer->users_group_id == 3))) {
                         Helpers::storeNotification($order->customer->id, "Order #$order->order_number has been created for you.", 0, 3);
@@ -746,17 +747,17 @@ class OrderController extends MainController
         $start =  $request['start'];
         $length =  $request['length'];
         $search = $request['search']['value'];
-        
+
         $radio_user = $request->input('radio_user','');
         $dealer =  $request->input('dealer','');
         $retailer =  $request->input('retailer','');
 
         $where = 'orders.type = "quote" AND orders.deleted_at is NULL';
-        
+
         if(!empty($radio_user)){
             if($radio_user == "Own"){
                 if((!empty($user->userGroup) && $user->userGroup->id == '1') || $user->users_group_id == null){
-                    $where .= " AND (from_user=$user->id OR from_user IS NULL)"; //Admin 
+                    $where .= " AND (from_user=$user->id OR from_user IS NULL)"; //Admin
                 }else{
                     $where .= " AND from_user=$user->id"; //Dealers
                 }
@@ -790,7 +791,7 @@ class OrderController extends MainController
         // }
         // else if ((!empty($user->userGroup)) && $user->userGroup->id == '3') {
         //     $where .= (!empty($user->id)) ? " AND from_user=$user->id" : '';
-        // } 
+        // }
         // else if ((!empty($user->userGroup)) && $user->userGroup->id == '1'){
         //     $where .= (!empty($user->id)) ? " AND (from_user=$user->id OR from_user IS NULL" : '';
         //     $where .= (!empty($users)) ? " OR from_user in ($users) )" : ")";
@@ -806,10 +807,10 @@ class OrderController extends MainController
             ->orderBy($request['columns'][$request['order'][0]['column']]['name'], $request['order'][0]['dir']);
 
             // echo $orders->whereRaw($where)->groupby('orders.id')->toSql();
-            // exit; 
+            // exit;
         $total_order = $orders->whereRaw($where)->groupby('orders.id')->get()->count();
 
-        
+
         $orders = $orders->offset($start)
             ->limit($length)
             ->orderBy($request['columns'][$request['order'][0]['column']]['name'], $request['order'][0]['dir'])
@@ -818,13 +819,13 @@ class OrderController extends MainController
 
         $data = [];
 
-        foreach ($orders as $order) {   
+        foreach ($orders as $order) {
             $is_sale_generated = Order::where('type', 'sale')->where('order_reference', $order->id)->where('deleted_at', NULL)->count();
             $customer = (!empty($order->customer)) ? $order->customer : $this->settingJson['name'];
             $added_by  = (!empty($order->added_by)) ? $order->added_by : $this->settingJson['name'];
 
             $action_html = "<span><a data-url=" . route('quote.show', $order->id) . " data-order=" . $order->id . " class='btn btn-primary view-order' data-toggle='modal' data-target='#orderModal' title='View'><i class='far fa-eye' title='View'></i></a></span>";
-            
+
             if( ( ($user->users_group_id == '1' ||  is_null($user->users_group_id) ) && $order->from_user == null) || $user->id == $order->from_user){
                 // $action_html .= "<span class='ml-3 create-po-".$order->id."'><a data-url=".route('cart.po.create')." data-order=".$order->id." class='btn btn-success view-order'>Generate PO</a></span>";
                 if (empty($is_sale_generated) && (auth()->user()->id == $order->from_user || (empty($user->users_group_id) && empty($order->from_user)))) {
@@ -857,11 +858,11 @@ class OrderController extends MainController
         $retailer =  $request->input('retailer','');
 
         $where = 'orders.type = "po" AND orders.deleted_at is NULL';
-        
+
         if(!empty($radio_user)){
             if($radio_user == "Own"){
                 if((!empty($user->userGroup) && $user->userGroup->id == '1') || $user->users_group_id == null){
-                    $where .= " AND (from_user=$user->id OR from_user IS NULL)"; //Admin 
+                    $where .= " AND (from_user=$user->id OR from_user IS NULL)"; //Admin
                 }else{
                     $where .= " AND from_user=$user->id"; //Dealers
                 }
@@ -892,17 +893,17 @@ class OrderController extends MainController
         // if ((!empty($user->userGroup)) && $user->userGroup->id == '2') {
         //     $users = implode(',',User::where('parent_id',$user->id)->get()->pluck('id')->toArray());
         //     $where .= (!empty($user->id)) ? " AND (from_user=$user->id OR to_user=$user->id" : '';
-        //     $where .= (!empty($users)) ? " OR from_user in ($users) )" : ")";          
+        //     $where .= (!empty($users)) ? " OR from_user in ($users) )" : ")";
         //     $andWhere= " AND (c.users_group_id!=5 OR orders.from_user=".$user->id.")";
         // }
         // else if ((!empty($user->userGroup)) && $user->userGroup->id == '3') {
         //     $where .= (!empty($user->id)) ? " AND from_user=$user->id" : '';
-        // } 
+        // }
         // else if (empty($user->userGroup) || $user->userGroup->id == '1') {
         //     $where .= (!empty($user->id)) ? " AND (for_manufacturer = '1' OR for_manufacturer = '0' OR for_manufacturer = null OR from_user=$user->id OR from_user IS NULL OR c.users_group_id!=5 OR orders.from_user IS NULL" : '';
-        //     $where .= (!empty($users)) ? " OR from_user in ($users) )" : ")";            
+        //     $where .= (!empty($users)) ? " OR from_user in ($users) )" : ")";
         // }
-        
+
         $where .= (!empty($search)) ? " AND (orders.order_number like '%$search%' OR orders.total like '%$search%' OR orders.created_at like '%$search%' OR (c.name is NOT NULL AND c.name like '%$search%') OR (d.name is NOT NULL AND d.name like '%$search%'))" : '';
 
         //$where .= $andWhere;
@@ -911,8 +912,8 @@ class OrderController extends MainController
             ->join('order_product AS op', 'orders.id', '=', 'op.order_id', 'left')
             ->join('users AS c', 'orders.to_user', '=', 'c.id', 'left')
             ->join('users AS d', 'orders.from_user', '=', 'd.id', 'left')
-            ->whereRaw($where);            
-            
+            ->whereRaw($where);
+
         $total_order = $orders->groupby('orders.id')->get()->count();
         $orders = $orders->offset($start)
             ->limit($length)
@@ -954,17 +955,17 @@ class OrderController extends MainController
         $start =  @$request['start'];
         $length =  @$request['length'];
         $search = @$request['search']['value'];
-        
+
         $radio_user = $request->input('radio_user','');
         $dealer =  $request->input('dealer','');
         $retailer =  $request->input('retailer','');
-        
+
         $where = 'orders.type = "sale" AND orders.deleted_at is NULL';
-        
+
         if(!empty($radio_user)){
             if($radio_user == "Own"){
                 if((!empty($user->userGroup) && $user->userGroup->id == '1') || $user->users_group_id == null){
-                    $where .= " AND (from_user=$user->id OR from_user IS NULL)"; //Admin 
+                    $where .= " AND (from_user=$user->id OR from_user IS NULL)"; //Admin
                 }else{
                     $where .= " AND from_user=$user->id"; //Dealers
                 }
@@ -995,15 +996,15 @@ class OrderController extends MainController
         // if ((!empty($user->userGroup)) && $user->userGroup->id == '2') { //Dealer
         //     $users = implode(',',User::where('parent_id',$user->id)->get()->pluck('id')->toArray());
         //     $where .= (!empty($user->id)) ? " AND (from_user=$user->id OR (to_user=$user->id AND from_user <> NULL) " : '';
-        //     $where .= (!empty($users)) ? " OR from_user in ($users) )" : ")";              
+        //     $where .= (!empty($users)) ? " OR from_user in ($users) )" : ")";
         // }else if ((!empty($user->userGroup)) && $user->userGroup->id == '3') {
         //     $where .= (!empty($user->id)) ? " AND from_user=$user->id" : '';
         // }else if ((!empty($user->userGroup)) && $user->userGroup->id == '1') {
         //     $where .= (!empty($user->id)) ? " AND (from_user=$user->id OR from_user is NULL)" : '';
         // }
-        
+
         $where .= (!empty($search)) ? " AND (orders.order_number like '%$search%' OR orders.total like '%$search%' OR orders.created_at like '%$search%' OR (c.name is NOT NULL AND c.name like '%$search%'))" : '';
-        
+
         $orders = DB::table('orders')
             ->select(DB::raw('orders.id,order_number,c.name as customer,d.name as added_by, orders.total as amount, orders.created_at as created_date'))
             ->join('order_product AS op', 'orders.id', '=', 'op.order_id', 'left')
@@ -1011,7 +1012,7 @@ class OrderController extends MainController
             ->join('users AS d', 'orders.from_user', '=', 'd.id', 'left')
             ->whereRaw($where)
             ->orderBy($request['columns'][$request['order'][0]['column']]['name'], $request['order'][0]['dir']);
-        
+
         $total_order = $orders->whereRaw($where)->groupby('orders.id')->get()->count();
 
         $orders = $orders->offset($start)
@@ -1232,7 +1233,8 @@ class OrderController extends MainController
     {
         View::share('title', 'Orders Report');
         View::share('elementActive', 'sales_report');
-        return view('admin.report.sales');
+        $products = Product::withTrashed()->get();
+        return view('admin.report.sales',compact('products'));
     }
 
     public function poReportListAjaxData(Request $request)
@@ -1326,6 +1328,7 @@ class OrderController extends MainController
         $to_date = $request->input('to_date', '');
         $order_stage = $request->input('order_stage', '');
         $payment_status = $request->input('order_status', '');
+        $order_product = $request->input('product', '');
         $where = 'orders.type = "sale" AND orders.deleted_at is NULL';
         if ((!empty($user->userGroup)) && $user->userGroup->id == '2') {
             // $users = implode(',',User::where('parent_id',$user->id)->get()->pluck('id')->toArray());
@@ -1337,14 +1340,14 @@ class OrderController extends MainController
         } else {
             $where .= (!empty($user->id)) ? " AND (from_user=$user->id OR from_user is NULL)" : '';
         }
-        
+
         $datetime_like_format = Session::get('datetime_like_format');
         if(!empty($datetime_like_format)){
             $datetime_like_format = $datetime_like_format;
         }else{
             $datetime_like_format = '%Y-%m-%d %H:%i:%s';
         }
-        
+
         $where .= (!empty($search)) ? " AND (orders.order_number like '%$search%' OR orders.total like '%$search%' OR DATE_FORMAT(orders.created_at, '$datetime_like_format') like '%$search%' OR (c.name is NOT NULL AND c.name like '%$search%') OR (d.name is NOT NULL AND d.name like '%$search%'))" : '';
         if (!empty($from_date) && !empty($to_date)) {
             $where .= " AND (orders.created_at BETWEEN '$from_date 00:00:00' AND '$to_date 23:59:59')";
@@ -1359,6 +1362,10 @@ class OrderController extends MainController
         if (!empty($payment_status)) {
             $where .= " AND (sa.status_id='$payment_status')";
         }
+        if(!empty($order_product)){
+            $where .= " AND (op.product_id='$order_product')";
+        }
+
         $orders = DB::table('orders')
             ->select(DB::raw('orders.id,os.stage,sa.status_id, orders.for_manufacturer, order_number,orders.to_user,c.name as customer,d.name as added_by, orders.total as amount, orders.created_at as created_date'))
             ->join('order_product AS op', 'orders.id', '=', 'op.order_id', 'left')

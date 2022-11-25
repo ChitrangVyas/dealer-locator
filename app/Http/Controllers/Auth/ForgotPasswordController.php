@@ -38,7 +38,7 @@ class ForgotPasswordController extends MainController
 
     protected function credentials(Request $request)
     {
-        
+
         $user_group = (!empty($request->input('user_group')))?$request->input('user_group'):null;
         if(!empty($user_group)){
             return array_merge($request->only('email'), ['users_group_id' => (int)$user_group]);
@@ -53,7 +53,9 @@ class ForgotPasswordController extends MainController
 
         $data = $this->credentials($request);
 
-        $user = User::where($data)->first();
+        $user = User::where($data)->where(function($q){
+            $q->where('users_group_id',"<>",4)->orWhereNull('users_group_id');
+        })->first();
         $message = '';
         if(!empty($user)){
             $token = Str::random(64);

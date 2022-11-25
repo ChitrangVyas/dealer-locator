@@ -8,12 +8,12 @@
     <h3 class="card-title">{{$action_title}} {{$title}}</h3>
     </div>
     <!-- /.card-header -->
-    <div class="card-body">     
+    <div class="card-body">
         @if(!empty($user))
-            <form method="POST" action="{{ route('retailer.update',$user->id) }}" enctype="multipart/form-data">
+            <form method="POST" action="{{ route('retailer.update',$user->id) }}" enctype="multipart/form-data" autocomplete="off">
             @method('PUT')
         @else
-            <form method="POST" action="{{ route('retailer.index') }}" enctype="multipart/form-data">
+            <form method="POST" action="{{ route('retailer.index') }}" enctype="multipart/form-data" autocomplete="off">
         @endif
         @csrf
         <input type="hidden" name="id" value="{{ (!empty($user))?$user->id:'' }}">
@@ -30,10 +30,10 @@
                         @if(!empty($user) && !empty($user->parent_id))
                             <option value="{{$user->parent_id}}" selected>{{$user->user->name}}</option>
                         @endif
-                        @if(old('dealer'))     
-                            @php 
+                        @if(old('dealer'))
+                            @php
                                 $data = $select2Old->getSelect2Data('users',old('dealer'))
-                            @endphp                   
+                            @endphp
                             <option value="{{$data->id}}" selected>{{$data->name}}</option>
                         @endif
                     </select>
@@ -70,7 +70,7 @@
                 <!-- text input -->
                 <div class="form-group">
                     <label>Password <span class="required_field">*</span></label>
-                    <input type="password" name="password" value="{{old('password')}}" class="form-control" placeholder="Password" tabindex="4">
+                    <input type="password" name="password" value="{{old('password')}}" class="form-control" placeholder="Password" autocomplete="new-password" tabindex="4">
                     @error('password')
                         <div class="alert alert-danger mt-2">{{ $message }}</div>
                     @enderror
@@ -107,33 +107,33 @@
                     <label>Country <span class="required_field">*</span></label>
                     <select class="form-control country" id='country' name='country_id' tabindex="5">
                         <option value="">Select</option>
-                        
+
                         @if(!empty($allowedcountry))
                          @php
                          $selectcountry=''
                          @endphp
                             @foreach($allowedcountry as $acountry)
                             @if(!empty($user) && $user->country_id)
-                               @php 
-                               
+                               @php
+
                                 $selectcountry=($user->country_id == $acountry->id)? 'selected' : ''
-                                
+
                                 @endphp
                             @endif
                             @if(old('country_id'))
-                                @php 
-                               
+                                @php
+
                                 $selectcountry=(old('country_id') == $acountry->id)? 'selected' : ''
-                                
+
                                 @endphp
                             @endif
-                            
+
 
                                 <option value="{{$acountry->id}}"  {{$selectcountry}}>{{$acountry->name}}</option>
-                               
+
                                 @endforeach
                         @endif
-                       
+
                     </select>
                     <input type="hidden" id="country_id" value="{{old('country_id')}}">
                     @error('country_id')
@@ -150,10 +150,10 @@
                         @if(!empty($user) && $user->state_id)
                             <option value="{{$user->state_id}}" selected>{{$user->state->name}}</option>
                         @endif
-                        @if(old('state'))     
-                            @php 
+                        @if(old('state'))
+                            @php
                                 $data = $select2Old->getSelect2Data('states',old('state'))
-                            @endphp                   
+                            @endphp
                             <option value="{{$data->id}}" selected>{{$data->name}}</option>
                         @endif
                     </select>
@@ -173,13 +173,13 @@
                         @if(!empty($user) && !empty($user->city_id))
                             <option value="{{$user->city_id}}" selected>{{$user->city->name}}</option>
                         @endif
-                        @if(old('city'))     
-                            @php 
+                        @if(old('city'))
+                            @php
                                 $data = $select2Old->getSelect2Data('cities',old('city'),' state_id='. old('state'))
-                            @endphp          
+                            @endphp
                             @if (!empty($data))
                                 <option value="{{$data->id}}" selected>{{$data->name}}</option>
-                            @endif         
+                            @endif
                         @endif
                     </select>
                     <label><span class="text-red"><strong>Note:</strong> Please select the state before select the city.</span></label>
@@ -223,16 +223,16 @@
                     <div class="user_logo">
                         <img class='img logo mt-3 mb-4' src="{{ url($user->logo) }}" width=100 />
                     </div>
-                    @endif                   
+                    @endif
                 </div>
-            </div>  
+            </div>
             <div class="col-sm-12 col-md-12">
                 <!-- text input -->
                 <div class="form-group summernote-container">
                     <label>Footer Text</label>
-                    <textarea name="footer_text" class="form-control summernote" tabindex="5">{{ old('footer_text',(!empty($user))?$user->footer_text:'') }}</textarea>                    
+                    <textarea name="footer_text" class="form-control summernote" tabindex="5">{{ old('footer_text',(!empty($user))?$user->footer_text:'') }}</textarea>
                 </div>
-            </div> 
+            </div>
             <div class="col-sm-12 col-md-6">
                 <!-- text input -->
                 <div class="form-group">
@@ -274,7 +274,7 @@ function phonecode(){
                 $.each(JSON.parse(res), function(key, val) {
                     $(`#countryCode`).html(val.phonecode);
                 })
-            } 
+            }
         });
     }
     else{
@@ -285,10 +285,10 @@ $("document").ready(function(){
     setTimeout(function(){
         phonecode();
     }, 500);
-    
+
 });
 jQuery(document).ready(function(){
-   
+
     $('.dealer').select2({
         placeholder: "Select",
         allowClear: true,
@@ -347,7 +347,7 @@ jQuery(document).ready(function(){
 
     function select2state(){
         if ($('.country').val()) {
-            
+
             $('.state').select2({
                 placeholder: "Select",
                 allowClear: true,
@@ -395,7 +395,7 @@ jQuery(document).ready(function(){
 
     function select2city(){
         if ($('.state').val()) {
-           
+
             $('.city').select2({
                 placeholder: "Select",
                 allowClear: true,

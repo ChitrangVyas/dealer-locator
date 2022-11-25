@@ -8,7 +8,7 @@
     <h3 class="card-title">{{$action_title}} Staff</h3>
     </div>
     <!-- /.card-header -->
-    <div class="card-body">     
+    <div class="card-body">
         @if(!empty($user))
             <form method="POST" action="{{ route('staff.update',$user->id) }}" autocomplete="off">
             @method('PUT')
@@ -34,7 +34,7 @@
                 <!-- text input -->
                 <div class="form-group">
                     <label>Email <span class="required_field">*</span></label>
-                    <input type="email" class="form-control" name="email" value="{{ old('email',(!empty($user))?$user->email:'') }}" placeholder="Email" autocomplete="off" tabindex="2"> 
+                    <input type="email" class="form-control" name="email" value="{{ old('email',(!empty($user))?$user->email:'') }}" placeholder="Email" autocomplete="off" tabindex="2">
                     @error('email')
                         <div class="alert alert-danger mt-2">{{ $message }}</div>
                     @enderror
@@ -44,7 +44,7 @@
                 <!-- text input -->
                 <div class="form-group">
                     <label>Password <span class="required_field">*</span></label>
-                    <input type="password" name="password" value="{{ old('password') }}" class="form-control" placeholder="Password" tabindex="3" autocomplete="off">
+                    <input type="password" name="password" value="{{ old('password') }}" class="form-control" placeholder="Password" tabindex="3" autocomplete="new-password">
                     @error('password')
                         <div class="alert alert-danger mt-2">{{ $message }}</div>
                     @enderror
@@ -82,33 +82,33 @@
                     <select class="form-control country" id='country' name='country_id' tabindex="5">
                         <option value="">Select</option>
 
-                        
+
                          @if(!empty($allowedcountry))
                          @php
                          $selectcountry=''
                          @endphp
                             @foreach($allowedcountry as $acountry)
                             @if(!empty($user) && $user->country_id)
-                               @php 
-                               
+                               @php
+
                                 $selectcountry=($user->country_id == $acountry->id)? 'selected' : ''
-                                
+
                                 @endphp
                             @endif
                             @if(old('country_id'))
-                                @php 
-                               
+                                @php
+
                                 $selectcountry=(old('country_id') == $acountry->id)? 'selected' : ''
-                                
+
                                 @endphp
                             @endif
-                            
+
 
                                 <option value="{{$acountry->id}}"  {{$selectcountry}}>{{$acountry->name}}</option>
-                               
+
                                 @endforeach
                         @endif
-                       
+
                     </select>
                     <input type="hidden" id="country_id" value="{{old('country_id')}}">
                     @error('country_id')
@@ -125,10 +125,10 @@
                         @if(!empty($user) && $user->state_id)
                             <option value="{{$user->state_id}}" selected>{{$user->state->name}}</option>
                         @endif
-                        @if(old('state'))     
-                            @php 
+                        @if(old('state'))
+                            @php
                                 $data = $select2Old->getSelect2Data('states',old('state'))
-                            @endphp                   
+                            @endphp
                             <option value="{{$data->id}}" selected>{{$data->name}}</option>
                         @endif
                     </select>
@@ -148,20 +148,20 @@
                         @if(!empty($user) && !empty($user->city_id))
                             <option value="{{$user->city_id}}" selected>{{$user->city->name}}</option>
                         @endif
-                        @if(old('city'))     
-                            @php 
+                        @if(old('city'))
+                            @php
                                 $data = $select2Old->getSelect2Data('cities',old('city'),' state_id='. old('state'))
-                            @endphp          
+                            @endphp
                             @if (!empty($data))
                                 <option value="{{$data->id}}" selected>{{$data->name}}</option>
-                            @endif         
+                            @endif
                         @endif
                     </select>
                     <label><span class="text-red"><strong>Note:</strong> Please select the state before select the city.</span></label>
                     <input type="hidden" id="city_id" value="{{old('city')}}">
                     @error('city')
                         <div class="alert alert-danger mt-2">{{ $message }}</div>
-                    @enderror                    
+                    @enderror
                 </div>
             </div>
             <div class="col-sm-12 col-md-4">
@@ -209,7 +209,7 @@
 @section('plugins.BootstrapSwitch', true)
 @section('js')
 <script>
-    
+
 function phonecode(){
     if($('#country').val() != ''){
         $.ajax({
@@ -224,7 +224,7 @@ function phonecode(){
                 $.each(JSON.parse(res), function(key, val) {
                     $(`#countryCode`).html(val.phonecode);
                 })
-            } 
+            }
         });
     }
     else{
@@ -235,7 +235,7 @@ $("document").ready(function(){
     setTimeout(function(){
         phonecode();
     }, 500);
-    
+
 });
 jQuery(document).ready(function(){
     select2state();
@@ -259,7 +259,7 @@ jQuery(document).ready(function(){
 
     function select2state(){
         if ($('.country').val()) {
-            
+
             $('.state').select2({
                 placeholder: "Select",
                 allowClear: true,
@@ -299,14 +299,14 @@ jQuery(document).ready(function(){
                 allowClear: true,
             });
         select2city();
-        
+
     });
     if ($('#state').val() || $('#city').val()) {
         select2city();
     }
 
     function select2city(){
-        if ($('.state').val()) {            
+        if ($('.state').val()) {
             $('.city').select2({
                 placeholder: "Select",
                 allowClear: true,

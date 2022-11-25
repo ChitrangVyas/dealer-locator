@@ -10,17 +10,17 @@
     <!-- /.card-header -->
     <div class="card-body">
         @if(!empty($user))
-        <form method="POST" action="{{ route('customer.update',$user->id) }}">
+        <form method="POST" action="{{ route('customer.update',$user->id) }}" autocomplete="off">
             @method('PUT')
             <input type="hidden" name="updated_by" value="{{auth()->user()->id}}">
             @else
-            <form method="POST" action="{{ route('customer.index') }}">
+            <form method="POST" action="{{ route('customer.index') }}" autocomplete="off">
                 <input type="hidden" name="created_by" value="{{auth()->user()->id}}">
                 @endif
                 @csrf
                 <input type="hidden" name="id" value="{{ (!empty($user))?$user->id:'' }}">
                 <input type="hidden" name="users_group_id" value="{{ $users_group_id }}">
-                
+
 
                 <div class="row">
                     <div class="col-sm-12 col-md-4">
@@ -69,33 +69,33 @@
                     <label>Country <span class="required_field">*</span></label>
                     <select class="form-control country" id='country' name='country_id' tabindex="5">
                         <option value="">Select</option>
-                        
+
                         @if(!empty($allowedcountry))
                          @php
                          $selectcountry=''
                          @endphp
                             @foreach($allowedcountry as $acountry)
                             @if(!empty($user) && $user->country_id)
-                               @php 
-                               
+                               @php
+
                                 $selectcountry=($user->country_id == $acountry->id)? 'selected' : ''
-                                
+
                                 @endphp
                             @endif
                             @if(old('country_id'))
-                                @php 
-                               
+                                @php
+
                                 $selectcountry=(old('country_id') == $acountry->id)? 'selected' : ''
-                                
+
                                 @endphp
                             @endif
-                            
+
 
                                 <option value="{{$acountry->id}}"  {{$selectcountry}}>{{$acountry->name}}</option>
-                               
+
                                 @endforeach
                         @endif
-                       
+
                     </select>
                     <input type="hidden" id="country_id" value="{{old('country_id')}}">
                     @error('country_id')
@@ -112,10 +112,10 @@
                                 @if(!empty($user) && $user->state_id)
                                 <option value="{{$user->state_id}}" selected>{{$user->state->name}}</option>
                                 @endif
-                                @if(old('state_id'))     
-                                    @php 
+                                @if(old('state_id'))
+                                    @php
                                         $data = $select2Old->getSelect2Data('states',old('state_id'))
-                                    @endphp                   
+                                    @endphp
                                     <option value="{{$data->id}}" selected>{{$data->name}}</option>
                                 @endif
                             </select>
@@ -135,13 +135,13 @@
                                 @if(!empty($user) && !empty($user->city_id))
                                 <option value="{{$user->city_id}}" selected>{{$user->city->name}}</option>
                                 @endif
-                                @if(old('city_id'))     
-                                    @php 
+                                @if(old('city_id'))
+                                    @php
                                         $data = $select2Old->getSelect2Data('cities',old('city_id'),' state_id='. old('state_id'))
-                                    @endphp          
+                                    @endphp
                                     @if (!empty($data))
                                         <option value="{{$data->id}}" selected>{{$data->name}}</option>
-                                    @endif         
+                                    @endif
                                 @endif
                             </select>
                             <label><span class="text-red"><strong>Note:</strong> Please select the state before select the city.</span></label>
@@ -219,7 +219,7 @@ jQuery(document).ready(function() {
             }
         }
     });
-    
+
     $('.country').on('change', function() {
         $(`.state`).empty().append(new Option()).trigger('change');
             $('.state').select2({
@@ -239,7 +239,7 @@ jQuery(document).ready(function() {
 
     function select2state(){
         if ($('.country').val()) {
-            
+
             $('.state').select2({
                 placeholder: "Select",
                 allowClear: true,

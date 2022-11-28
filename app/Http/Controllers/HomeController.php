@@ -46,8 +46,18 @@ class HomeController extends MainController
         } else {
             $total_po = Order::where('type', 'po')->where('from_user', $user->id)->where('deleted_at', NULL)->count();
         }
-        $orders = Order::selectRaw('year(created_at) year, month(created_at) month, count(*) data')
-            ->groupBy('year', 'month')
+        $orders = Order::selectRaw('year(created_at) year, month(created_at) month, count(*) data')->where('type', 'sale');
+        $orders = $orders->where(function ($query) use ($user) {
+            if ((!empty($user->userGroup)) && $user->userGroup->id == '2') {
+                return $query->where('from_user', $user->id);
+            }
+            if ((!empty($user->userGroup)) && $user->userGroup->id == '3') {
+                return $query->where('from_user', $user->id);
+            } else if (empty($user->userGroup) || $user->userGroup->id == '1') {
+                return $query->orWhere('for_manufacturer', 1)->orWhere('from_user', NULL)->orWhere('to_user', NULL);
+            }
+        });
+        $orders = $orders->groupBy('year', 'month')
             ->orderBy('year', 'desc')
             ->get()
             ->groupBy('year');
@@ -69,10 +79,11 @@ class HomeController extends MainController
             }
             $count++;
         }
-        // dd($orderArr);
+
         if (!isset($orderArr[0])) {
             $orderArr[0] = array();
         }
+        // dd($orderArr);
         return view('home', compact('elementActive', 'title', 'total_order', 'total_po', 'total_dealer', 'total_retailer', 'orderArr'));
     }
 
@@ -83,11 +94,11 @@ class HomeController extends MainController
         $user = auth()->user();
         return view('changepassword', compact('elementActive', 'user', 'title'));
     }
-    
+
     public function updatepassword(ChangePasswordRequest $request)
     {
-        if (!Hash::check($request->input('old_password'), auth()->user()->password)) {   
-            $return_array['errors']['old_password'] = 'Old password mismatch';         
+        if (!Hash::check($request->input('old_password'), auth()->user()->password)) {
+            $return_array['errors']['old_password'] = 'Old password mismatch';
             return response(json_encode($return_array), 422)
             ->header('Content-Type', 'application/json');
         }
@@ -96,7 +107,7 @@ class HomeController extends MainController
         $user->update(['password' => Hash::make($request->input('new_password'))]);
         $return_array['code'] = 1;
         $return_array['message'] = 'Password updated sucessfully';
-        \Session::flash('success', 'Password updated sucessfully');         
+        \Session::flash('success', 'Password updated sucessfully');
         return response(json_encode($return_array), 200)
             ->header('Content-Type', 'application/json');
     }

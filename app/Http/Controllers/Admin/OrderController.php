@@ -141,7 +141,7 @@ class OrderController extends MainController
             if ((!empty($user->userGroup)) && $user->userGroup->id == '3') {
                 return $query->where('from_user', $user->id);
             } else if (empty($user->userGroup) || $user->userGroup->id == '1') {
-                return $query->whereOr('for_manufacturer', 1)->whereOr('from_user', NULL)->whereOr('to_user', NULL);
+                return $query->orWhere('for_manufacturer', 1)->orWhere('from_user', NULL)->orWhere('to_user', NULL);
             }
         })->orderBy('updated_at', 'desc')->take(10)->get();
         $json['modal_title'] = "Customers";
@@ -1035,9 +1035,9 @@ class OrderController extends MainController
             if( ( ($user->users_group_id == '1' ||  is_null($user->users_group_id) ) && $order_data->from_user == null) || $user->id == $order_data->from_user)
             {
                 $action_html .= "<span class='ml-3'><a data-url=" . route('cart.sale.edit', $order->id) . " data-order=" . $order->id . " class='btn btn-primary view-order' data-toggle='modal' data-target='#orderModal' title='Edit'><i class='fas fa-pen'></i></a></span>";
-                $action_html .= "<span class='ml-3'><button type=submit data-user=$order->id class='btn btn-danger' onClick=deleteOrder($order->id) title='Delete'><span class='fa fa-trash'></span></button></span>";
+                // $action_html .= "<span class='ml-3'><button type=submit data-user=$order->id class='btn btn-danger' onClick=deleteOrder($order->id) title='Delete'><span class='fa fa-trash'></span></button></span>";
             }
-            // $action_html .= "<span class='ml-3'><button type=submit data-user=$order->id class='btn btn-danger' onClick=deleteOrder($order->id)>Delete</button></span>";
+            $action_html .= "<span class='ml-3'><button type=submit data-user=$order->id class='btn btn-danger' onClick=deleteOrder($order->id) title='Delete'><span class='fa fa-trash'></span></button></span>";
             $amount ="<span class='symbol-icon'>".$this->currency->symbol."</span>".Helpers::number_format($order->amount);
             $data[] = [$order->id, $order->order_number, $amount, ucwords($added_by), ucwords($customer), $order_status, Helpers::dateTime_format($order->created_date), $action_html];
         }
@@ -1416,7 +1416,7 @@ class OrderController extends MainController
         if (!empty($id)) {
             try {
                 $order = Order::findOrFail($id);
-                if (empty($user->users_group_id) || ($order->from_user == $user->id)) {
+                if (empty($user->users_group_id) || ($order->from_user == $user->id || (!empty($user->users_group_id) && $user->users_group_id == '2' && $order->addedBy->parent_id == $user->id))) {
                     $order->delete();
                     $return_array = ['code' => 1, 'status' => 'success', 'data' => 'Order is successfully deleted'];
                 } else {

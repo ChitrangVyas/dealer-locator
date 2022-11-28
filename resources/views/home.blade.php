@@ -239,7 +239,7 @@
                   <i class="fas fa-chart-pie mr-1"></i>
                   Sales
                 </h3>
-                <div class="card-tools">
+                <div class="card-tools d-none">
                   <!-- Basic dropdown -->
                   <button class="btn btn-primary dropdown-toggle mr-4" type="button" data-toggle="dropdown"
                           aria-haspopup="true" aria-expanded="false">Select Year </button>
@@ -292,7 +292,7 @@
               </div>
               <!-- /.card-header -->
               <div class="card-body inquiry-list" id="inquiryList">
-                
+
               </div>
               <!-- /.card-body -->
             </div>
@@ -304,7 +304,7 @@
       </div><!-- /.container-fluid -->
     </section>
     <!-- /.content -->
-  
+
 @endsection
 
 @section('plugins.Chartjs', true)
@@ -322,27 +322,29 @@
     labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July','Augest','September','October','November','December'],
     datasets: [
       {
-        label: 'Digital Goods',
+        label: 'Sales',
         backgroundColor: 'rgba(60,141,188,0.9)',
-        borderColor: 'rgba(60,141,188,0.8)',
-        pointRadius: false,
+        borderColor: 'rgba(120, 214, 222, 1)',
+        pointRadius: "3",
         pointColor: '#3b8bba',
         pointStrokeColor: 'rgba(60,141,188,1)',
         pointHighlightFill: '#fff',
         pointHighlightStroke: 'rgba(60,141,188,1)',
         data:JSON.parse("{{ json_encode($orderArr['0']) }}")
       },
+      @if(!empty($orderArr[1]))
       {
-        label: 'Electronics',
+        label: 'Past Year Sales',
         backgroundColor: 'rgba(210, 214, 222, 1)',
-        borderColor: 'rgba(210, 214, 222, 1)',
-        pointRadius: false,
+        borderColor: 'rgba(120,120,120,1)',
+        pointRadius: "3",
         pointColor: 'rgba(210, 214, 222, 1)',
         pointStrokeColor: '#c1c7d1',
         pointHighlightFill: '#fff',
         pointHighlightStroke: 'rgba(220,220,220,1)',
-        data:[]
+        data:JSON.parse("{{ json_encode($orderArr['1']) }}")
       }
+      @endif
     ]
   }
 
@@ -360,7 +362,7 @@
       }],
       yAxes: [{
         gridLines: {
-          display: false
+          display: true
         }
       }]
     }
@@ -375,7 +377,7 @@
   })
 
   // Sales graph chart
-  
+
   // $('#revenue-chart').get(0).getContext('2d');
 
   var salesGraphChartData = {
@@ -456,7 +458,7 @@
             complete:function(){
                 $('#loader').hide();
             }
-        }); 
+        });
     }
 
 

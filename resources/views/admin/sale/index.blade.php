@@ -59,7 +59,7 @@
                                             </div>
                                         </div>
                                         <div class="col-7">
-                                            <button type="button" class="d-inline btn btn-primary btn-sm form-control-sm" id="filter" value="">Filter</button>    
+                                            <button type="button" class="d-inline btn btn-primary btn-sm form-control-sm" id="filter" value="">Filter</button>
                                         </div>
                                     </div>
                                 </form>
@@ -87,7 +87,7 @@
                                     <th>To</th>
                                     <th>Status</th>
                                     <th>Created Date</th>
-                                    <th>Action</th>
+                                    <th width="18%">Action</th>
                                 </tr>
                             </thead>
                         </table>
@@ -148,7 +148,7 @@
 </script>
 <script>
     jQuery(document).ready(function() {
-        
+
         $('#example').DataTable({
             "columns": [{
                     "name": "orders.id"
@@ -277,7 +277,7 @@
                 }
             }
         });
-       
+
         $('.summernote').summernote({
             height: 150
         });
@@ -288,7 +288,7 @@
             return false;
             }
         });
-        
+
         $('body').on('click','.courier_details_btn',function(){
             saveFormData("{{route('invoice.status.update')}}",$('#invoice').serialize(),'orderModal').then(function(res){
                 $('#example').DataTable().ajax.reload(null, false);
@@ -296,7 +296,7 @@
         });
         $('body').on('click','.view-order',function(){
             var view_url = $(this).data('url');
-            
+
             $("#uploadedPo").html("");
             $(`#orderModal .modal-body`).html("");
             getOrderData(view_url,{'order_id':$(this).data('order')}).then(function(res){
@@ -304,8 +304,8 @@
                     $('.dateimepicker-input').not('.hasDatePicker').datepicker({format:"YYYY-MM-DD"});
                 }else{
                     $('.dateimepicker-input').not('.hasDatePicker').datepicker({format:"YYYY-MM-DD"});
-                }                 
-                
+                }
+
             });
         });
         $('body').on('change','#order_status',function(){
@@ -328,7 +328,7 @@
                 select2Customer();
             });
         });
-       
+
         $('body').on('submit','#saveQuote', function(e){
             e.preventDefault();
             let url = ($('#type').val() == 'sale')?"{{ route('order.sale.store') }}":"{{ route('order.po.store') }}";
@@ -340,7 +340,7 @@
             saveFormData(url,data,'orderModal').then(function(res){
                 // console.log(res);
                 if(res.code == 1){
-                  $(`.create-po-${res.data.quote}`).hide();  
+                  $(`.create-po-${res.data.quote}`).hide();
                 }
                 $('#example').DataTable().ajax.reload(null, false);
             });
@@ -355,10 +355,10 @@
                 formData.append('file', file, file.name);
             }
             saveFormDataForFile(url,formData).then(function(res){
-                
+
             });
         });
-        
+
         $('body').on('change','input[type="file"]',function(e){
             var fileName = e.target.files[0].name;
             $('.custom-file-label').html(fileName);
@@ -370,14 +370,14 @@
                 //cart.po.create
                 $('#invoiceModal').modal('hide');
                 getOrderData("{{route('cart.invoice.create')}}",{'customer':$(this).val()}).then(function(res){
-                    $('#orderModal').modal('show');                                        
+                    $('#orderModal').modal('show');
                     select2Product();
                 });
             }
         });
-        
+
         $('body').on('click','#imageUpload',function(){
-            var avatar = $('#exampleInputFile').val(); 
+            var avatar = $('#exampleInputFile').val();
             let valid = false;
             if(avatar!=""){
                 var extension = avatar.split('.').pop().toUpperCase();
@@ -406,7 +406,7 @@
                     getOrderImage("{{ route('order.po.image') }}",{'order_id':$('input[name=order_id]').val()}).then(function(res){
 
                     });
-                }); 
+                });
             }
         });
 
@@ -433,10 +433,10 @@
         $('body').on('submit','#rutika',function(e){
             e.preventDefault();
             e.stopImmediatePropagation();
-            var avatar = $('input[type=file]').val();           
+            var avatar = $('input[type=file]').val();
             let valid = true;
             if(avatar!=""){
-                var extension = avatar.split('.').pop().toUpperCase(); 
+                var extension = avatar.split('.').pop().toUpperCase();
                 var file_extension = ['PDF', 'DOC', 'DOCX', 'RTF', 'TXT', 'XLS','XLSX', 'PNG', 'JPEG', 'GIF', 'JPG', 'BMP', 'WEBP', 'ODS', 'ODT'];
                 if(jQuery.inArray(extension,file_extension) != -1){
                     valid = true;
@@ -447,7 +447,7 @@
             }
             if(valid){
                 let url = "{{route('order.po.recieved')}}";
-                let formData = new FormData($('#rutika')[0]);                        
+                let formData = new FormData($('#rutika')[0]);
                 let file = $('#rutika input[type=file]')[0].files[0];
                 if(file != '' && file != undefined && file.length != 0){
                     formData.append('file', file, file.name);
@@ -477,15 +477,15 @@
                     UpdateCreatedDateInSession();
                 });
             });
-        });        
-        
+        });
+
         $("body").on("change",".tax, .qty, .price, .discount", function(){
             /* price = $(this).closest('.product-detail').find('.price').val();
             qty =  $(this).closest('.product-detail').find('.qty').val();
             amount = price * qty;
             // amount = ele.closest('.product-detail').find('.amount').val();
             $(this).closest('.product-detail').find('.amount').text(amount); */
-            updateCart().then(function(){     
+            updateCart().then(function(){
                 select2Product();
                 $('.dateimepicker-input').datetimepicker({format:"YYYY-MM-DD"});
                     $('.dateimepicker-input').on('change.datetimepicker',function(){
@@ -590,7 +590,7 @@
             return $.ajax({
                 url: url,
                 type: 'POST',
-                data: formData,                
+                data: formData,
                 beforeSend: function(){
                     $('#overlay').show();
                     $('.btn-save').attr('disabled',true);
@@ -620,8 +620,8 @@
                 error: function (jqXHR, textStatus, errorThrown) {
                     $('.btn-save').attr('disabled',false);
                     var err = JSON.parse(jqXHR.responseText).errors;
-                    $.each(err,function(key,val){                
-                        $(`[name=${key}]`).closest('.form-group').after(`<div class="alert alert-danger mt-2">${val}</div>`);                                        
+                    $.each(err,function(key,val){
+                        $(`[name=${key}]`).closest('.form-group').after(`<div class="alert alert-danger mt-2">${val}</div>`);
                     });
                     Toast.fire({
                         type: 'error',
@@ -673,8 +673,8 @@
                 error: function (jqXHR, textStatus, errorThrown) {
                     $('.btn-save').attr('disabled',false);
                     var err = JSON.parse(jqXHR.responseText).errors;
-                    $.each(err,function(key,val){                
-                        $(`[name=${key}]`).closest('.form-group').after(`<div class="alert alert-danger mt-2">${val}</div>`);                                        
+                    $.each(err,function(key,val){
+                        $(`[name=${key}]`).closest('.form-group').after(`<div class="alert alert-danger mt-2">${val}</div>`);
                     });
                     Toast.fire({
                         type: 'error',
@@ -700,7 +700,7 @@
                 $('.dateimepicker-input').on('change.datetimepicker',function(){
                     UpdateCreatedDateInSession();
                 });
-                getOrderImage("{{ route('order.po.image') }}",{'order_id':$('input[name=order_id]').val()});   
+                getOrderImage("{{ route('order.po.image') }}",{'order_id':$('input[name=order_id]').val()});
             },
             complete:function(){
                 $('#loader').hide();
@@ -717,7 +717,7 @@
             beforeSend : function(){
                 $('#loader').show();
             },
-            success: function(res) {                
+            success: function(res) {
             },
             complete:function(){
                 $('#loader').hide();
@@ -861,7 +861,7 @@
             complete:function(){
                 $('#loader').hide();
             }
-        }); 
+        });
     }
 
     function deleteOrder(id) {

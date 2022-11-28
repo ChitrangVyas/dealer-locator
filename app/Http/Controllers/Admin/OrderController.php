@@ -1035,6 +1035,7 @@ class OrderController extends MainController
             if( ( ($user->users_group_id == '1' ||  is_null($user->users_group_id) ) && $order_data->from_user == null) || $user->id == $order_data->from_user)
             {
                 $action_html .= "<span class='ml-3'><a data-url=" . route('cart.sale.edit', $order->id) . " data-order=" . $order->id . " class='btn btn-primary view-order' data-toggle='modal' data-target='#orderModal' title='Edit'><i class='fas fa-pen'></i></a></span>";
+                $action_html .= "<span class='ml-3'><button type=submit data-user=$order->id class='btn btn-danger' onClick=deleteOrder($order->id) title='Delete'><span class='fa fa-trash'></span></button></span>";
             }
             // $action_html .= "<span class='ml-3'><button type=submit data-user=$order->id class='btn btn-danger' onClick=deleteOrder($order->id)>Delete</button></span>";
             $amount ="<span class='symbol-icon'>".$this->currency->symbol."</span>".Helpers::number_format($order->amount);

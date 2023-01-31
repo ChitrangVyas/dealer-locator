@@ -8,7 +8,7 @@
     <h3 class="card-title">{{$action_title}} {{ ucwords($title) }}</h3>
     </div>
     <!-- /.card-header -->
-    <div class="card-body">     
+    <div class="card-body">
         @if(!empty($inquiry))
             <form method="POST" action="{{ route('inquiry.update',$inquiry->id) }}">
             @method('PUT')
@@ -19,7 +19,7 @@
         @endif
         @csrf
         <input type="hidden" name="id" value="{{ (!empty($inquiry))?$inquiry->id:'' }}">
-        
+
 
         <div class="row">
         <div class="col-sm-12 col-md-4">
@@ -120,9 +120,9 @@
                 <!-- text input -->
                 <div class="form-group summernote-container">
                     <label>Purpose / Comments</label>
-                    <textarea name="comments" class="form-control" tabindex="5">{{ old('comments',(!empty($inquiry))?$inquiry->comments:'') }}</textarea>                    
+                    <textarea name="comments" class="form-control" tabindex="5">{{ old('comments',(!empty($inquiry))?$inquiry->comments:'') }}</textarea>
                 </div>
-            </div> 
+            </div>
             @notCustomer()
                 <div class="col-sm-12 col-md-12">
                     <!-- text input -->
@@ -131,27 +131,27 @@
                     <label>Send dealer/retailer details to customer?</label>
                     </div>
                 </div>
-            @endnotCustomer  
+            @endnotCustomer
             <div class="col-sm-12 col-md-4">
                 <!-- text input -->
                 <div class="form-group">
                     <label>Application</label>
                     <select class="form-control application" id='application' name='application' tabindex="4">
                         <option value="">Select</option>
-                        <option value="Domestic" @if(!empty($inquiry) && !empty($inquiry->application == 'Domestic')) selected   @endif()>Domestic</option>      
-                        <option value="Industrial" @if(!empty($inquiry) && !empty($inquiry->application == 'Industrial')) selected   @endif()>Industrial</option>                   
+                        <option value="Domestic" @if(!empty($inquiry) && !empty($inquiry->application == 'Domestic')) selected   @endif()>Domestic</option>
+                        <option value="Industrial" @if(!empty($inquiry) && !empty($inquiry->application == 'Industrial')) selected   @endif()>Industrial</option>
                     </select>
                 </div>
-            </div>  
+            </div>
             <div class="col-sm-12 col-md-4">
                 <!-- text input -->
                 <div class="form-group">
                     <label>Application Type</label>
                     <select class="form-control application_type" id='application_type' name='application_type' tabindex="4">
-                        <option value="">Select</option>                  
+                        <option value="">Select</option>
                     </select>
                 </div>
-            </div>      
+            </div>
         </div>
         <div class="row">
             <div class="col-sm-12 col-md-12 border-bottom mt-2 mb-2">
@@ -165,42 +165,42 @@
                     <label>Pump Capacity</label>
                     <input type="text" class="form-control" name="pump_capacity" value="{{ old('pump_capacity',(!empty($inquiry))?$inquiry->pump_capacity:'') }}"  tabindex="1">
                 </div>
-            </div>             
+            </div>
             <div class="col-sm-12 col-md-4">
                 <!-- text input -->
                 <div class="form-group">
                     <label>Pressure Pump</label>
                     <input type="text" class="form-control" name="pressure_pump" value="{{ old('pressure_pump',(!empty($inquiry))?$inquiry->pressure_pump:'') }}"  tabindex="1">
                 </div>
-            </div> 
+            </div>
             <div class="col-sm-12 col-md-4">
                 <!-- text input -->
                 <div class="form-group">
                     <label>Submersible Pump</label>
                     <input type="text" class="form-control" name="submersible_pump" value="{{ old('submersible_pump',(!empty($inquiry))?$inquiry->submersible_pump:'') }}"  tabindex="1">
                 </div>
-            </div> 
+            </div>
             <div class="col-sm-12 col-md-4">
                 <!-- text input -->
                 <div class="form-group">
                     <label>Water Flow L/H</label>
                     <input type="text" class="form-control" name="water_flow" value="{{ old('water_flow',(!empty($inquiry))?$inquiry->water_flow:'') }}"  tabindex="1">
                 </div>
-            </div> 
+            </div>
             <div class="col-sm-12 col-md-4">
                 <!-- text input -->
                 <div class="form-group">
                     <label>Other (Gravity)</label>
                     <input type="text" class="form-control" name="other_gravity" value="{{ old('other_gravity',(!empty($inquiry))?$inquiry->other_gravity:'') }}"  tabindex="1">
                 </div>
-            </div> 
+            </div>
             <div class="col-sm-12 col-md-4">
                 <!-- text input -->
                 <div class="form-group">
                     <label>Pipe Diameters</label>
                     <input type="text" class="form-control" name="pipe_diameters" value="{{ old('pipe_diameters',(!empty($inquiry))?$inquiry->pipe_diameters:'') }}"  tabindex="1">
                 </div>
-            </div> 
+            </div>
         </div>
         <div class="row">
             <div class="col-sm-12 col-md-12 border-bottom mt-2 mb-2">
@@ -214,14 +214,14 @@
                     <label>TDS</label>
                     <input type="text" class="form-control" name="tds" value="{{ old('tds',(!empty($inquiry))?$inquiry->tds:'') }}"  tabindex="1">
                 </div>
-            </div>             
+            </div>
             <div class="col-sm-12 col-md-4">
                 <!-- text input -->
                 <div class="form-group">
                     <label>Hardness</label>
                     <input type="text" class="form-control" name="hardness" value="{{ old('hardness',(!empty($inquiry))?$inquiry->hardness:'') }}"  tabindex="1">
                 </div>
-            </div> 
+            </div>
         </div>
         <div class="row">
             <div class="col-sm-12 col-md-12 border-bottom mt-2 mb-2">
@@ -235,7 +235,7 @@
                     <label>Bore well Water</label>
                     <input type="text" class="form-control" name="bore_well_water" value="{{ old('bore_well_water',(!empty($inquiry))?$inquiry->bore_well_water:'') }}"  tabindex="1">
                 </div>
-            </div>             
+            </div>
             <div class="col-sm-12 col-md-4">
                 <!-- text input -->
                 <div class="form-group">
@@ -249,7 +249,7 @@
                     <label>Others</label>
                     <input type="text" class="form-control" name="others_water_type" value="{{ old('others_water_type',(!empty($inquiry))?$inquiry->others_water_type:'') }}"  tabindex="1">
                 </div>
-            </div> 
+            </div>
         </div>
         <div class="row">
             <div class="col-sm-12">
@@ -275,7 +275,7 @@
                     <div class="col-12 col-sm-12">
                         <div class="card card-primary card-outline">
                             <div class="card-body" id="customerBody">
-                                
+
                             </div>
                             <!-- /.card -->
                         </div>
@@ -329,9 +329,9 @@ jQuery(document).ready(function(){
             dataType: 'json',
             data: function (params) {
                 return {
-                    q: params.term, // search term
+                    q: params.term, // search term ,
                     table:'users',
-                    fields: "users.id, CONCAT(`users`.`name`, ' - ', `zipcode`,' - ',`cities`.`name`) as text",
+                    fields: "users.id, CONCAT(`users`.`name`, IF(NULLIF(`zipcode`, '') IS NULL, '', '-'), IFNULL(`zipcode`,''),IF(NULLIF(`cities`.`name`, '') IS NULL, '', '-'), IFNULL(`cities`.`name`,'')) as text",
                     whereOr:` OR (users.name like '%${params.term}%' OR zipcode like '%${params.term}%' OR cities.name like '%${params.term}%')`,
                     groupBy: `users.name`,
                     whereAnd: " AND users.deleted_at IS NULL AND users.users_group_id = 4 AND users.status = 1 AND (users.created_by={{auth()->user()->id}} OR inquiries.dealer_id={{auth()->user()->id}} OR inquiries.retailer_id={{auth()->user()->id}}) ",
@@ -403,11 +403,11 @@ jQuery(document).ready(function(){
     $('#addCustomer').on('click',function(e){
         e.preventDefault();
         e.stopImmediatePropagation();
-        // var data = $('#saveInquiryLog').serialize();        
+        // var data = $('#saveInquiryLog').serialize();
         $.ajax({
             url: "{{ route('customerCreateAjax') }}",
-            type: 'GET',            
-            success: function (data) {                
+            type: 'GET',
+            success: function (data) {
                 $("#customerBody").html(data);
                 $("#modal-lg").modal("show");
             },
@@ -427,22 +427,22 @@ jQuery(document).ready(function(){
     if($('#dealer').val()){
         getRetailers($('#dealer').val());
     }
-    
+
     // ratiler
     function getRetailers(param){
-        
+
        return $.ajax({
             headers: { 'X-CSRF-Token' : $('meta[name=_token]').attr('content') },
             url: "{{ route('get_value') }}",
-            type: 'POST',          
+            type: 'POST',
             data: {
                     // q: param, // search term
                     table:'users',
                     fields: "users.id, CONCAT(`users`.`name`, ' - ', `zipcode`,' - ',`cities`.`name`) as text",
                     where:` (users_group_id = 3) AND (parent_id = ${param}) AND deleted_at IS NULL AND status = 1`,
                     joins:[{'join_table':'cities','to_column':'city_id','from_column':'cities.id','type':'left'}]
-            },            
-            success: function (data) { 
+            },
+            success: function (data) {
                 data = JSON.parse(data);
                 var newOption = new Option();
                 let selected_reatiler = $('#retailer').val();
@@ -465,8 +465,8 @@ jQuery(document).ready(function(){
             },
             error: function (jqXHR, textStatus, errorThrown) {
                 var err = JSON.parse(jqXHR.responseText).errors;
-                $.each(err,function(key,val){                
-                    $(`[name=${key}]`).closest('.form-group').after(`<div class="alert alert-danger mt-2">${val}</div>`);                                        
+                $.each(err,function(key,val){
+                    $(`[name=${key}]`).closest('.form-group').after(`<div class="alert alert-danger mt-2">${val}</div>`);
                 });
                     /* Toast.fire({
                         type: 'error',

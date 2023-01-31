@@ -63,8 +63,8 @@ class AppServiceProvider extends ServiceProvider
         });
 
         Str::macro('getMobileWithCountryCode', function ($mobile,$country){
-            $country_data = Country::findorFail($country);
-            if(!empty($mobile)){
+            if(!empty($mobile) && (!empty($country))){
+                $country_data = Country::findorFail($country);
                 return  $country_data->phonecode." ".$mobile;
             }
             else{
@@ -78,7 +78,7 @@ class AppServiceProvider extends ServiceProvider
         Str::macro('dateTime_format', function ($date){
             return Helpers::dateTime_format($date);
         });
-        
+
         Str::macro('dateOnly_format', function ($date){
             return Helpers::dateOnly_format($date);
         });

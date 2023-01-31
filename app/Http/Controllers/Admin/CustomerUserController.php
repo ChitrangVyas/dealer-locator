@@ -49,17 +49,18 @@ class CustomerUserController extends MainController
      * @return \Illuminate\Http\Response
      */
     public function store(CustomerCreateRequest $request)
-    {   
+    {
         //
         $request_data = $request->all();
         $request_data['password'] = Hash::make('123456');
         $request_data['status'] = (!empty($request_data['status']))?1:0;
+        $request_data['country_id'] = (!empty($request_data['country_id']))?$request_data['country_id']:0;
         if($request_data['users_group_id'] == 4){
             try{
                 $user = User::create($request_data);
                 $user['city'] = $user->city;
                 //$user_data = $user->withAndWhereHas('city', function($query) use ($user){$query->where('id', $user->city_id);})->get()->toArray();
-                
+
                 if($request->ajax()){
                     return response()->json($user,200,[],1);
                 }
@@ -114,6 +115,7 @@ class CustomerUserController extends MainController
         //
         $request_data = $request->except(['_token','_method']);
         $request_data['status'] = (!empty($request_data['status']))?1:0;
+        $request_data['country_id'] = (!empty($request_data['country_id']))?$request_data['country_id']:0;
         if($request_data['users_group_id'] == 4){
             $user = User::where('id',$id)->update($request_data);
         }else{
@@ -140,12 +142,12 @@ class CustomerUserController extends MainController
     }
 
     public function listAjaxData(Request $request){
-        // DB::enableQueryLog(); 
+        // DB::enableQueryLog();
         $user = auth()->user();
         $start =  $request['start'];
         $length=  $request['length'];
         $search = $request['search']['value'];
-        
+
         $radio_user = $request->input('radio_user','');
         $dealer =  $request->input('dealer','');
         $retailer =  $request->input('retailer','');
@@ -154,7 +156,7 @@ class CustomerUserController extends MainController
             $where = 'users.deleted_at IS NULL AND users.users_group_id = 4';
             if($radio_user == "Own"){
                 if((!empty($user->userGroup) && $user->userGroup->id == '1') || $user->users_group_id == null){
-                    $where .= " AND (cr.users_group_id = 1 OR cr.users_group_id IS NULL)"; //Admin 
+                    $where .= " AND (cr.users_group_id = 1 OR cr.users_group_id IS NULL)"; //Admin
                 }else{
                     $where .= " AND (users.created_by=$user->id OR inquiries.dealer_id=$user->id OR inquiries.retailer_id=$user->id)"; //Dealers
                 }
@@ -197,9 +199,9 @@ class CustomerUserController extends MainController
         $users = $users->offset($start)->limit($length)
         ->orderBy($request['columns'][$request['order'][0]['column']]['name'],$request['order'][0]['dir'])
         ->groupBy('users.id')->get();
-        
+
         // $total_users = User::whereIN('users_group_id',['4'])->where('created_by',auth()->user()->id)->count();
-        
+
         // $total_users = User::whereIN('users_group_id',['4'])->where(function($query) use($user) {
         //     return $query->orWhere('users.created_by',$user->id)->orWhere('dealer_id',$user->id)->orWhere('retailer_id',$user->id);
         // })->join('inquiries','inquiries.customer_id','=','users.id','left')->distinct()->count('users.id');
@@ -218,7 +220,7 @@ class CustomerUserController extends MainController
                 $action_html = "<span><a href=".route('customer.edit',$user->id)." class='btn btn-primary'><i class='fas fa-pen' title='Edit'></i></a></span>";
                 $action_html .= "<span class='ml-3'><button type=submit data-user=$user->id class='btn btn-danger' onClick=deleteUser($user->id)><i class='fas fa-trash' title='Delete'></i></button></span>";
             }
-            $data[] = [$user->id,$user->contact_type,$user->name,$user->email,$indiVidual->getMobileWithCountryCode(),$city,$state,$status_html,$action_html];
+            $data[] = [$user->id,$user->contact_type,$user->name,$user->email,((!empty($indiVidual->country))?$indiVidual->getMobileWithCountryCode():$indiVidual->mobile),$city,$state,$status_html,$action_html];
         }
         $return_array = array();
         $return_array['draw'] = $request['draw'];
@@ -237,7 +239,7 @@ class CustomerUserController extends MainController
     {
         //
         return view('admin.customer.create_ajax',['vendor'=>(!empty($request['vendor']))?1:0]);
-    }    
+    }
 
     public function getcustomers(Request $request){
         $user = auth()->user();

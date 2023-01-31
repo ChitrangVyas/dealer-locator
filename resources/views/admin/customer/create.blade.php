@@ -56,7 +56,7 @@
                     <div class="col-sm-12 col-md-4">
                         <!-- text input -->
                         <div class="form-group">
-                            <label>Address <span class="required_field">*</span></label>
+                            <label>Address <span class="required_field d-none">*</span></label>
                             <textarea class="form-control" name="address" rows="1" placeholder="Address" tabindex="4">{{ old('address',(!empty($user))?$user->address:'') }}</textarea>
                             @error('address')
                             <div class="alert alert-danger mt-2">{{ $message }}</div>
@@ -66,7 +66,7 @@
                     <div class="col-sm-12 col-md-4">
                         <!-- text input -->
                 <div class="form-group">
-                    <label>Country <span class="required_field">*</span></label>
+                    <label>Country <span class="required_field d-none">*</span></label>
                     <select class="form-control country" id='country' name='country_id' tabindex="5">
                         <option value="">Select</option>
 
@@ -106,7 +106,7 @@
                     <div class="col-sm-12 col-md-4">
                         <!-- text input -->
                         <div class="form-group">
-                            <label>State <span class="required_field">*</span></label>
+                            <label>State <span class="required_field d-none">*</span></label>
                             <select class="form-control select2 state" id='state' name='state_id' tabindex="5">
                                 <option value="">Select</option>
                                 @if(!empty($user) && $user->state_id)
@@ -129,7 +129,7 @@
                     <div class="col-sm-12 col-md-4">
                         <!-- text input -->
                         <div class="form-group">
-                            <label>City <span class="required_field">*</span></label>
+                            <label>City <span class="required_field d-none">*</span></label>
                             <select class="form-control select2 city" id='city' name='city_id' tabindex="6">
                                 <option value="">Select</option>
                                 @if(!empty($user) && !empty($user->city_id))
@@ -154,7 +154,7 @@
                     <div class="col-sm-12 col-md-4">
                         <!-- text input -->
                         <div class="form-group">
-                            <label>Zip code <span class="required_field">*</span></label>
+                            <label>Zip code <span class="required_field d-none">*</span></label>
                             <input type="text" name="zipcode" value="{{ old('zipcode',(!empty($user))?$user->zipcode:'') }}" class="form-control" placeholder="Enter zipcode" tabindex="7">
                             @error('zipcode')
                             <div class="alert alert-danger mt-2">{{ $message }}</div>

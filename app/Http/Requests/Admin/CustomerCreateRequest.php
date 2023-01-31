@@ -34,10 +34,10 @@ class CustomerCreateRequest extends FormRequest
                        $fail('Enter a valid email address.');
                     }
                 }
-            ],  
-            'name' => 'required|string|max:100',            
+            ],
+            'name' => 'required|string|max:100',
             'mobile'=>'required|digits_between:10,12',
-            'address' => 'required',
+            /* 'address' => 'required',
             'country_id'=>'required|after_or_equal:1',
             'state_id' => [
                 'required',
@@ -51,7 +51,7 @@ class CustomerCreateRequest extends FormRequest
                     return $query->where('state_id', $this->input('state_id'));
                 }),
             ],
-            'zipcode' => 'required|alpha_num|min:5|max:7',
+            'zipcode' => 'required|alpha_num|min:5|max:7',*/
             'users_group_id' => 'required',
         ];
     }

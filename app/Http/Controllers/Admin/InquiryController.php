@@ -58,7 +58,7 @@ class InquiryController extends MainController
      * @return \Illuminate\Http\Response
      */
     public function store(InquiriesCreateRequest $request)
-    {   
+    {
         $request_data = $request->all();
         $dealer_id = NULL;
         if(auth()->user()->users_group_id == '2'){
@@ -184,7 +184,7 @@ class InquiryController extends MainController
         $inquiry_products =  (!empty($inquiry->product->count()))? implode(', ',$inquiry->product->pluck('name')->toArray()):'N/A';
         $json['modal_title'] = "Inquiry View";
         $json['modal_content'] = view('admin.inquiry.view',['inquiry'=>$inquiry,'inquiry_products'=>$inquiry_products])->render();
-        return response()->json(['status' => 'successful','code'=>1, 'data'=>$json, 'message'=>'']);   
+        return response()->json(['status' => 'successful','code'=>1, 'data'=>$json, 'message'=>'']);
     }
 
     /**
@@ -236,10 +236,10 @@ class InquiryController extends MainController
         }
         $update_data['retailer_id'] = (!empty($request_data['retailer']))?$request_data['retailer']:NULL;
         try{
-            $is_inquiry_updated = $inquiry->where('id',$id)->update($update_data);   
-            $inquiry_new = Inquiry::findOrFail($id);               
+            $is_inquiry_updated = $inquiry->where('id',$id)->update($update_data);
+            $inquiry_new = Inquiry::findOrFail($id);
             if(!empty($update_data['dealer_id']) && $inquiry->dealer_id != $update_data['dealer_id'] ){
-                Helpers::storeNotification($update_data['dealer_id'],"Inquiry #$inquiry->id has been assined to you.",0,1);                         
+                Helpers::storeNotification($update_data['dealer_id'],"Inquiry #$inquiry->id has been assined to you.",0,1);
                 $data = array();
                 $data['name'] = $inquiry_new->dealer->name;
                 $data['mobile_number'] = $inquiry_new->dealer->mobile;
@@ -251,7 +251,7 @@ class InquiryController extends MainController
                     //Helpers::storeNotification($update_data['dealer_id'],"Inquiry #$inquiry->id SMS sent to you.",0,1);
                 }else{
                     $msg ="Failed to sent SMS".$sms_res[0];
-                } 
+                }
             }
             if(!empty($update_data['retailer_id']) && $inquiry->retailer_id != $update_data['retailer_id'] ){
                 Helpers::storeNotification($update_data['retailer_id'],"Inquiry #$inquiry->id has been assined to you.",0,1);
@@ -266,7 +266,7 @@ class InquiryController extends MainController
                     //Helpers::storeNotification($update_data['retailer_id'],"Inquiry #$inquiry->id SMS sent to you.",0,1);
                 }else{
                     $msg ="Failed to sent SMS".$sms_res[0];
-                } 
+                }
             }
             if(!empty($request_data['send_mail_to_customer']) && (!empty($update_data['dealer_id']))){
                 try{
@@ -341,7 +341,7 @@ class InquiryController extends MainController
         if($request->ajax()){
             $update_data['retailer_id'] = $request->input('retailer');
             $inquiry = Inquiry::findOrFail($request->input('id'));
-            
+
             try{
                 $is_inquiry_updated = $inquiry->where('id',$request->input('id'))->update($update_data);
                 if(!empty($update_data['retailer_id']) && $inquiry->retailer_id != $update_data['retailer_id'] ){
@@ -422,7 +422,7 @@ class InquiryController extends MainController
         if($request->ajax()){
             $update_data['status'] = $request->input('status');
             $inquiry = Inquiry::findOrFail($request->input('inquiry_id'));
-            
+
             try{
                 $is_inquiry_updated = $inquiry->where('id',$request->input('inquiry_id'))->update($update_data);
             }catch(Exception $e){
@@ -487,7 +487,7 @@ class InquiryController extends MainController
         //$where .= (!empty($retailer_id))?" AND (retailer_id=$retailer_id OR inquiries.created_by=$retailer_id)":'';
         $total_where = $where;
         $where .= (!empty($search)) ? " AND (c.name like '%$search%' OR p.name like '%$search%' OR c.email like '%$search%' OR source like '%$search%' OR (d.name is NOT NULL AND d.name like '%$search%') OR (r.name is NOT NULL AND r.name like '%$search%'))":'';
-        
+
         $inquiries = DB::table('inquiries')
         ->select(DB::raw('DISTINCT(inquiries.id), inquiries.customer_id, inquiries.status, inquiries.created_by,cr.name as added_by,source,c.name as customer,c.email AS customer_email,c.mobile AS customer_mobile,d.name as dealer, r.name as retailer,group_concat(p.name SEPARATOR "<br>") as product'))
         ->join('inquiries_products','inquiries.id','=','inquiries_products.inquiry_id','left')
@@ -504,7 +504,7 @@ class InquiryController extends MainController
         ->limit($length)
         ->orderBy($request['columns'][$request['order'][0]['column']]['name'],$request['order'][0]['dir'])
         ->groupBy('inquiries.id')->get();
-        
+
         $data = [];
         foreach($inquiries as $inquiry){
             $dealer = (!empty($inquiry->dealer))?$inquiry->dealer:'N/A';
@@ -528,7 +528,7 @@ class InquiryController extends MainController
                 $action_html .= "<span class='ml-2'><button type=submit data-user=$inquiry->id class='btn btn-danger' onClick=deleteUser($inquiry->id)><i class='fas fa-trash' title='Delete'></i></button></span>";
             }
             // $action_html .= "<span class='ml-3'><a href=# class='btn btn-primary'>View</a></span>";
-            $data[] = [$inquiry->id,ucwords($inquiry->customer),$inquiry->customer_email,$indiVidual->getMobileWithCountryCode(),$inquiry->source,$inquiry->added_by,$dealer,$retailer,$status_html,$action_html];
+            $data[] = [$inquiry->id,ucwords($inquiry->customer),$inquiry->customer_email,((!empty($indiVidual->country))?$indiVidual->getMobileWithCountryCode():$indiVidual->mobile??"N/A"),$inquiry->source,$inquiry->added_by,$dealer,$retailer,$status_html,$action_html];
         }
         $return_array = array();
         $return_array['draw'] = $request['draw'];
@@ -578,7 +578,7 @@ class InquiryController extends MainController
         ->join('products AS p','inquiries_products.product_id','=','p.id','left')
         ->join('users AS d','inquiries.dealer_id','=','d.id','left')
         ->join('users AS r','inquiries.retailer_id','=','r.id','left');
-        
+
         $total_inquiries = $inquiries->select(DB::raw('inquiries.id, inquiries.status, inquiries.created_by,source,c.name as customer,c.email AS customer_email,c.mobile AS customer_mobile,d.name as dealer, r.name as retailer,group_concat(p.name SEPARATOR "<br>") as product'))
         ->whereRaw($where)->groupBy('inquiries.id')->get()->count();
 
@@ -630,7 +630,7 @@ class InquiryController extends MainController
         $settings['json_data'] = json_decode($settings['json_data'],true);
         $post_response = '';
         if($settings['json_data']['is_enabled'] == '1'){
-            $txt = $this->getMsg($data['msg_index']);           
+            $txt = $this->getMsg($data['msg_index']);
             if($data['msg_index'] == 'inquiry_assign'){
                 $searchReplaceArray = array('{name}'=>$data['name'],'{inquiry_no}'=>$data['inquiry_id']);
             }else{
@@ -648,13 +648,13 @@ class InquiryController extends MainController
             $sms_data['TemplateID'] = $settings['json_data']['template_id'][$data['msg_index']];
             $query_string= "";
             foreach($sms_data as $k=>$v){
-                $query_string .=$k."=".urlencode($v)."&"; 
+                $query_string .=$k."=".urlencode($v)."&";
             }
             $url = "http://web.shreesms.net/API/SendSMS.aspx?".$query_string;
             $ch = curl_init($url);
                     curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "GET");
                     curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-                    $post_response = curl_exec($ch); 
+                    $post_response = curl_exec($ch);
             curl_close($ch);
         }
         return $post_response;

@@ -36,7 +36,7 @@ class CommonController extends MainController
             if(!empty($where)){
                 $query .= " where $where  order by name asc";
             }
-            DB::enableQueryLog(); 
+            DB::enableQueryLog();
             if(!empty($request_data['option_group'])){
                 $options_group=array();
                 foreach($request_data['option_group'] as $key=>$optionGroup){
@@ -55,11 +55,11 @@ class CommonController extends MainController
                         }
                     }
                     if(!empty($optionGroup['groupBy'])){
-                        $obj->groupBy($optionGroup['groupBy']);                
+                        $obj->groupBy($optionGroup['groupBy']);
                     }
                     $resultset = $obj->get();
                     if(count($resultset)){
-                    $options_group[] = 
+                    $options_group[] =
                         [
                             'id'=> '',
                             'text'=> ucwords($optionGroup['name']),
@@ -80,11 +80,11 @@ class CommonController extends MainController
                     }
                 }
                 if(!empty($request_data['groupBy'])){
-                    $obj->groupBy($request_data['groupBy']);                
+                    $obj->groupBy($request_data['groupBy']);
                 }
                 $data = $obj->get();
                 echo json_encode($data);
-            }  
+            }
         }
     }
 
@@ -99,8 +99,8 @@ class CommonController extends MainController
             'Industrial'=>['Cooling Tower','Boiler','Common Utility','RO System','Others']
         ];
         $option[] = '<option value="">Please Select</option>';
-       
-        if(array_key_exists($request['q'],$application)){            
+
+        if(array_key_exists($request['q'],$application)){
             foreach($application[$request['q']] as $k=>$v){
                 if($request['app_type'] == $v){
                     $selected = "selected";
@@ -149,7 +149,7 @@ class CommonController extends MainController
                 'name.required'=>"Name is required.",
                 'mobile.required' => "Mobile is required.",
                 'address.required' => "Address is required.",
-            ])->validate();            
+            ])->validate();
             //dd($request);
                 $request_data = $request->except('_method','_token','id','logo');
                 //print_r($request_data);exit;

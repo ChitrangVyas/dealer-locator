@@ -3,7 +3,7 @@
     <h3 class="card-title">{{ ($vendor)? 'Vendor' :$title}}</h3>
     </div>
     <!-- /.card-header -->
-    <div class="card-body">     
+    <div class="card-body">
         @if(!empty($user))
             <form method="POST" id="customerForm">
             @method('PUT')
@@ -31,10 +31,10 @@
                           <input class="form-check-input" type="radio" name="users_group_id"  {{ (!empty($user) && $user->users_group_id==5) ? 'checked' : '' }}  value="5">
                           <label class="form-check-label">Vendor</label>
                     </div>
-                    
+
                 </div>
             </div> -->
-            
+
             <div class="col-sm-12 col-md-4">
                 <!-- text input -->
                 <div class="form-group">
@@ -59,43 +59,43 @@
             <div class="col-sm-12 col-md-4">
                 <!-- text input -->
                 <div class="form-group">
-                    <label>Address <span class="required_field">*</span></label>
+                    <label>Address <span class="required_field d-none">*</span></label>
                     <textarea class="form-control" name="address" rows="1" placeholder="Address" tabindex="24">{{ (!empty($user))?$user->address:'' }}</textarea>
                 </div>
             </div>
             <div class="col-sm-12 col-md-4">
                         <!-- text input -->
                 <div class="form-group">
-                    <label>Country <span class="required_field">*</span></label>
+                    <label>Country <span class="required_field d-none">*</span></label>
                     <select class="form-control country" id='country' name='country_id' tabindex="25">
                         <option value="">Select</option>
-                        
+
                         @if(!empty($allowedcountry))
                          @php
                          $selectcountry=''
                          @endphp
                             @foreach($allowedcountry as $acountry)
                             @if(!empty($user) && $user->country_id)
-                               @php 
-                               
+                               @php
+
                                 $selectcountry=($user->country_id == $acountry->id)? 'selected' : ''
-                                
+
                                 @endphp
                             @endif
                             @if(old('country_id'))
-                                @php 
-                               
+                                @php
+
                                 $selectcountry=(old('country_id') == $acountry->id)? 'selected' : ''
-                                
+
                                 @endphp
                             @endif
-                            
+
 
                                 <option value="{{$acountry->id}}"  {{$selectcountry}}>{{$acountry->name}}</option>
-                               
+
                                 @endforeach
                         @endif
-                       
+
                     </select>
                     <input type="hidden" id="country_id" value="{{old('country_id')}}">
                     @error('country_id')
@@ -106,16 +106,16 @@
                     <div class="col-sm-12 col-md-4">
                         <!-- text input -->
                         <div class="form-group">
-                            <label>State <span class="required_field">*</span></label>
+                            <label>State <span class="required_field d-none">*</span></label>
                             <select class="form-control select2 state" id='state' name='state_id' tabindex="26">
                                 <option value="">Select</option>
                                 @if(!empty($user) && $user->state_id)
                                 <option value="{{$user->state_id}}" selected>{{$user->state->name}}</option>
                                 @endif
-                                @if(old('state_id'))     
-                                    @php 
+                                @if(old('state_id'))
+                                    @php
                                         $data = $select2Old->getSelect2Data('states',old('state_id'))
-                                    @endphp                   
+                                    @endphp
                                     <option value="{{$data->id}}" selected>{{$data->name}}</option>
                                 @endif
                             </select>
@@ -129,19 +129,19 @@
                     <div class="col-sm-12 col-md-4">
                         <!-- text input -->
                         <div class="form-group">
-                            <label>City <span class="required_field">*</span></label>
+                            <label>City <span class="required_field d-none">*</span></label>
                             <select class="form-control select2 city" id='city' name='city_id' tabindex="27">
                                 <option value="">Select</option>
                                 @if(!empty($user) && !empty($user->city_id))
                                 <option value="{{$user->city_id}}" selected>{{$user->city->name}}</option>
                                 @endif
-                                @if(old('city_id'))     
-                                    @php 
+                                @if(old('city_id'))
+                                    @php
                                         $data = $select2Old->getSelect2Data('cities',old('city_id'),' state_id='. old('state_id'))
-                                    @endphp          
+                                    @endphp
                                     @if (!empty($data))
                                         <option value="{{$data->id}}" selected>{{$data->name}}</option>
-                                    @endif         
+                                    @endif
                                 @endif
                             </select>
                             <label><span class="text-red"><strong>Note:</strong> Please select the state before select the city.</span></label>
@@ -154,7 +154,7 @@
             <div class="col-sm-12 col-md-4">
                 <!-- text input -->
                 <div class="form-group">
-                    <label>Zip code <span class="required_field">*</span></label>
+                    <label>Zip code <span class="required_field d-none">*</span></label>
                     <input type="text" name="zipcode" value="{{ (!empty($user))?$user->zipcode:'' }}" class="form-control" placeholder="Enter zipcode" tabindex="28">
                 </div>
             </div>
@@ -223,7 +223,7 @@ jQuery(document).ready(function(){
 
     function select2state(){
         if ($('.country').val()) {
-            
+
             $('.state').select2({
                 placeholder: "Select",
                 allowClear: true,
@@ -333,7 +333,8 @@ jQuery(document).ready(function(){
         createCustomer((contact=='customer')?"{{ route('customer.store') }}":"{{ route('vendor.store') }}").then(function(data){
             $("#modal-lg").modal("hide");
             if(contact == 'customer'){
-                var newOption = new Option(data.name+" - " + data.zipcode + " - " + data.city.name, data.id, true, true);
+                let customer_name = `${data.name}${(data?.zipcode && data.zipcode.length > 0)?` - ${data.zipcode}`:''}${(data?.city && data?.city?.name.length > 0)?` - ${data?.city?.name}`:''}`;
+                var newOption = new Option(customer_name, data.id, true, true);
             }else{
                 var newOption = new Option(data.name, data.id, true, true);
             }
@@ -345,15 +346,15 @@ jQuery(document).ready(function(){
        return $.ajax({
             headers: { 'X-CSRF-Token' : $('meta[name=_token]').attr('content') },
             url: url,
-            type: 'POST',            
+            type: 'POST',
             data: $('#customerForm').serialize(),
-            success: function (data) { 
-                
+            success: function (data) {
+
             },
             error: function (jqXHR, textStatus, errorThrown) {
                 var err = JSON.parse(jqXHR.responseText).errors;
-                $.each(err,function(key,val){                
-                    $(`[name=${key}]`).closest('.form-group').after(`<div class="alert alert-danger mt-2">${val}</div>`);                                        
+                $.each(err,function(key,val){
+                    $(`[name=${key}]`).closest('.form-group').after(`<div class="alert alert-danger mt-2">${val}</div>`);
                 });
                     /* Toast.fire({
                         type: 'error',
@@ -363,7 +364,7 @@ jQuery(document).ready(function(){
         });
 
     }
-    
+
 
 });
 </script>

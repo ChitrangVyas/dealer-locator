@@ -35,9 +35,9 @@
         @if(!empty($order->customer))
             <strong>{{ucwords($order->customer->name)}}</strong><br>
             {{ucwords($order->customer->address)}},<br>
-            {{ucwords($order->customer->city->name)}},<br>
-            {{ucwords($order->customer->state->name)}} - {{$order->customer->zipcode}},<br>
-            {{ucwords($order->customer->country->name)}}<br>
+            {{ucwords($order->customer->city?->name)}},<br>
+            {{ucwords($order->customer->state?->name)}} - {{$order->customer?->zipcode}},<br>
+            {{ucwords($order->customer->country?->name)}}<br>
             Phone: {{$order->customer->getMobileWithCountryCode()}}<br>
             Email: {{$order->customer->email}}<br>
             GSTIN: {{ ((!empty($to_user->gstin))?$to_user->gstin:' N/A ') }}
@@ -62,7 +62,7 @@
         <br><b>{{ucfirst($order->type)}} #{{$order->order_number}}</b>
         <br>
         @endif
-                
+
         @php $inquiries = $order->getInquiries(); @endphp
         @if(count($inquiries))
         <br><b class="">Inquiries : @foreach($inquiries as $inquiry) {{$inquiry->name}} - {{ Str::dateOnly_format($inquiry->created_at)}}<br/> @endforeach</b>
@@ -97,7 +97,7 @@
                             <small>{{(!empty($orderProduct->product->installation_place))? 'Installation place: ':'-'}} {{(!empty($orderProduct->product->installation_place))?$orderProduct->product->installation_place:'-'}}</small>
                         </div>
                     </div>
-                    
+
                     </td>
                     <td class="text-center">{{ (!empty($orderProduct->product->hsn_sac)) ? $orderProduct->product->hsn_sac : '-' }}</td>
                     <td class="text-right"><span class="symbol-icon">{!! $currency->symbol !!}</span> {{ Str::number_format($orderProduct->amount)}}</td>
@@ -116,7 +116,7 @@
                     <td colspan="4"></td>
                     <td><strong>{{$tax->name}}</strong></td>
                     <td class="text-right"><span class="symbol-icon">{!! $currency->symbol !!}</span> {{ Str::number_format($tax->total_tax) }}</td>
-                </tr>    
+                </tr>
                 @endforeach
                 <tr>
                     <td colspan="4"></td>

@@ -20,7 +20,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $guarded = [
-        
+
     ];
 
     /**
@@ -67,10 +67,15 @@ class User extends Authenticatable
         }
     } */
     public function getMobileWithCountryCode(){
-        if(!empty($this->mobile))
-            return $this->country->phonecode." ".$this->mobile;
-        else
+        if(!empty($this->mobile)){
+            if(!empty($this->country) && $this->country !== 0){
+                return $this->country->phonecode." ".$this->mobile;
+            }
+            return $this->mobile;
+        }
+        else{
             return "";
+        }
     }
     public function parentUser(){
         $this->parent_id;

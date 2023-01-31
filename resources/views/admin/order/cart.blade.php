@@ -25,7 +25,7 @@
                 </div>
                 <div class="col-sm-4 invoice-col">
                     <div class="form-group">
-                        <label for="date">Date:</label>                                                
+                        <label for="date">Date:</label>
                         <input type="text" class="mr-3 dateimepicker-input form-control col-md-6" name="created_at" id="datetimepickerM" data-toggle="datetimepicker" data-target="#datetimepickerM"  value="{{$myCart->getCreatedat($id)}}"/>
                     </div>
                 </div>
@@ -34,8 +34,8 @@
                 <div class="col-sm-12 col-md-4 mt-2">
                     <!-- text input -->
                     <div class="form-group">
-                        <label>Inquiry</label>                        
-                        <select class="form-control select2 select-inquiry" name="inquiries[]" multiple="true" id='selectInquiry'>                            
+                        <label>Inquiry</label>
+                        <select class="form-control select2 select-inquiry" name="inquiries[]" multiple="true" id='selectInquiry'>
                             @foreach($myCart->getInquires($id) as $key=>$value)
                                 <option selected="true" value="{{$key}}">{{$value}}</option>
                             @endforeach
@@ -44,7 +44,7 @@
                 </div>
                 @endif
                 @endnotadmin()
-            </div>        
+            </div>
             <div class="row">
                 @if($is_new_product)
                 <div class="col-sm-12 col-md-4 mt-2">
@@ -97,7 +97,7 @@
                     <h5><strong>Discount (%)</strong></h5>
                 </div>
                 @endif
-                   
+
                 <div class="col-sm-12 col-md-1">
                     <h5><strong>Amount</strong></h5>
                 </div>
@@ -117,7 +117,7 @@
                         @endif
                     </div>
                 </div>
-            </div>  
+            </div>
             @if(!$is_new_product)
             <div class="col-sm-12 col-md-1 text-break text-center">
                 <div class="form-group">
@@ -148,17 +148,17 @@
                     <input type="text" class="form-control price d-inline" id="price-{{$product->id}}" value="{{$product->price}}" name="amount[{{$product->id}}]" min="1" required />
                 </div>
             </div>
-            
+
            @if($createtype != 'PO')
             <div class="col-sm-12 col-md-1">
-                <div class="form-group">                    
+                <div class="form-group">
                     <input type="text" class="form-control discount d-inline" id="price-{{$product->id}}" value="{{  $myCart->getDiscountPerProductPercentage($product->id,$id,$cart) }}" name="discount[{{$product->id}}]" min="1" required />
                 </div>
             </div>
             @endif
-            
+
             <!-- <div class="col-sm-12 col-md-1">
-                <div class="form-group">                    
+                <div class="form-group">
                     <input type="number" class="form-control discount d-inline" id="price-{{$product->id}}" value="{{  $myCart->getDiscountPerProductPercentage($product->id,$id,$cart) }}" name="discount[{{$product->id}}]" min="1" required />
                 </div>
             </div> -->

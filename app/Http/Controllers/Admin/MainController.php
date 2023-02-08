@@ -23,12 +23,12 @@ class MainController extends Controller
     public $allowedcountry=[];
     public $currency= false;
     public $msg = array(
-        'inquiry_assign'=>'Hello {name} You are assigned a new Inquiry No. {inquiry_no} Please login to your account to view more details. - Kashyap Technology EWTIND',
-        'inquiry_customer_assigned'=>'Hello {name},\nyour Inquiry No. {inquiry_no} has been assigned.\n{user_type} : {fullname},\nM: {mobile}\nEmail : {email}\nKashyap Technology\nEWTIND',
+        'inquiry_assign'=>'Hello {name} You are assigned a new Inquiry No. {inquiry_no} Please login to your account to view more details. - Kashyap Anti Scale System EWTIND',
+        'inquiry_customer_assigned'=>'Hello {name},\nyour Inquiry No. {inquiry_no} has been assigned.\n{user_type} : {fullname},\nM: {mobile}\nEmail : {email}\nKashyap Anti Scale System\nEWTIND',
     );
-    
-    public function __construct() {                
-        list(, $action) = explode('@', Route::getCurrentRoute()->getActionName());        
+
+    public function __construct() {
+        list(, $action) = explode('@', Route::getCurrentRoute()->getActionName());
         if($action=="create" || $action=="store"){
             View::share ( 'action_title', 'Add' );
         }else if($action=="edit" || $action=="update"){
@@ -36,7 +36,7 @@ class MainController extends Controller
         }
         View::share ( 'select2Old', new User());
         $settings = Settings::find(1);
-        
+
         if(!empty($settings)){
             $this->settingJson = json_decode($settings->json_data,true);
             $this->country = (!empty($this->settingJson['country'])) ? $this->settingJson['country'] : 101;
@@ -54,12 +54,12 @@ class MainController extends Controller
                     config(['icon.logo' => $this->settingJson['icon_logo']]);
                 }
                 if(!empty($this->settingJson['currency'])){
-                    $this->currency=Currency::find($this->settingJson['currency']);                    
+                    $this->currency=Currency::find($this->settingJson['currency']);
                 }else{
                     $this->currency=Currency::find(1);
                 }
 
-                // here we set session 
+                // here we set session
                 if(!empty($this->settingJson['number_format'])){
                     Session::put('number_format', $this->settingJson['number_format']);
                 }else{
@@ -72,7 +72,7 @@ class MainController extends Controller
                     Session::put('date_format', 1);
                     Session::put('datetime_like_format', $this->dateTimeLikeFormat(0));
                 }
-                
+
                 $state = State::find($this->settingJson['state']);
                 $city = City::find($this->settingJson['city']);
                 $country = Country::find($this->settingJson['country']);
@@ -83,7 +83,7 @@ class MainController extends Controller
                 if($this->settingJson['mail_mailer']=="sendmail"){
                     $mailConfig['path']='/usr/sbin/sendmail -bs';
                 }else{
-                    $mailConfig = array_merge($mailConfig,[                    
+                    $mailConfig = array_merge($mailConfig,[
                         'host' => $this->settingJson['mail_host'],
                         'port' => $this->settingJson['mail_port'],
                         'encryption' => ($this->settingJson['mail_encryption']=='null') ? null :$this->settingJson['mail_encryption'],
@@ -92,18 +92,18 @@ class MainController extends Controller
                         'timeout' => null
                     ]);
                 }
-                config(['mail.mailers.smtp' => $mailConfig]);            
+                config(['mail.mailers.smtp' => $mailConfig]);
                 config(['mail.from.address' => $this->settingJson['mail_from_email']]);
                 config(['mail.from.name' => $this->settingJson['mail_from_name']]);
                 $allowedcountry=$this->getAllowedCountries($this->allowed_country);
             }
         }
-        
+
         View::share('country',$this->country);
-        View::share('allowedcountry',$allowedcountry);        
-        View::share('setting',$this->settingJson);  
+        View::share('allowedcountry',$allowedcountry);
+        View::share('setting',$this->settingJson);
         View::share('currency',$this->currency);
-        
+
     }
 
 
@@ -115,15 +115,15 @@ class MainController extends Controller
         date_default_timezone_set($zone);
         $zones_array[$key]['zone'] = $zone;
         $zones_array[$key]['diff_from_GMT'] = 'UTC/GMT ' . date('P', $timestamp);
-    
+
         $tz = new \DateTimeZone($zone);
         $zones_array[$key]['offset'] = $tz->getOffset($dummy_datetime_object);
         }
-  
+
         return $zones_array;
     }
-    public function getAllowedCountries($countryalllowed){      
-      return  Country::whereIn('id',$countryalllowed)->get();   
+    public function getAllowedCountries($countryalllowed){
+      return  Country::whereIn('id',$countryalllowed)->get();
     }
     public function getMsg($key){
         return $this->msg[$key];
@@ -131,7 +131,7 @@ class MainController extends Controller
     public function currency_list()
     {
         $currency_list = array();
-        $currency_data = DB::select('select * from currencies where status = 1'); 
+        $currency_data = DB::select('select * from currencies where status = 1');
         foreach ($currency_data as $key => $currency) {
             $currency_list[$key]['id'] = $currency->id;
             $currency_list[$key]['name'] = $currency->name;

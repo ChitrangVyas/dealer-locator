@@ -45,7 +45,7 @@
                         <select class="form-control select2 customer" id='customer' name='customer' tabindex="2">
                             <option value="">Select</option>
                             @if(!empty($inquiry) && !empty($inquiry->customer_id))
-                                <option value="{{$inquiry->customer_id}}" selected>{{$inquiry->customer->name.' - ' .$inquiry->customer->zipcode.' - '. $inquiry->customer->city->name  }}</option>
+                                <option value="{{$inquiry->customer_id}}" selected>{{$inquiry->customer->name. ((!empty($inquiry->customer->zipcode)) ? (' - ' .$inquiry->customer->zipcode) : '') . ((!empty($inquiry->customer->city))? (' - '.$inquiry->customer->city->name):'')  }}</option>
                             @endif
                         </select>
                         <span class="input-group-append">

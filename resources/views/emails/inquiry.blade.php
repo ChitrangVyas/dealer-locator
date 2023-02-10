@@ -12,6 +12,7 @@
             <p class="col-sm-4 invoice-col">
                 <hr>
                 <strong>Dealer Details</strong>
+                <br>
                 <address>
                     <strong>{{ucwords($inquiry->dealer->name)}}</strong><br>
                     {{ucwords($inquiry->dealer->address)}},<br>
@@ -31,6 +32,7 @@
             <hr>
             <p class="col-sm-4 invoice-col">
                 <strong>Retailer Details</strong>
+                <br>
                 <address>
                     <strong>{{ucwords($inquiry->retailer->name)}}</strong><br>
                     {{ucwords($inquiry->retailer->address)}},<br>

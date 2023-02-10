@@ -23,8 +23,8 @@ class MainController extends Controller
     public $allowedcountry=[];
     public $currency= false;
     public $msg = array(
-        'inquiry_assign'=>'Hello {name} You are assigned a new Inquiry No. {inquiry_no} Please login to your account to view more details. - Kashyap Anti Scale System EWTIND',
-        'inquiry_customer_assigned'=>'Hello {name},\nyour Inquiry No. {inquiry_no} has been assigned.\n{user_type} : {fullname},\nM: {mobile}\nEmail : {email}\nKashyap Anti Scale System\nEWTIND',
+        'inquiry_assign'=>'Hello {name} You are assigned a new Inquiry No. {inquiry_no} Please login to your account to view more details. - Kashyap Technology EWTIND',
+        'inquiry_customer_assigned'=>'Hello {name},\nyour Inquiry No. {inquiry_no} has been assigned.\n{user_type} : {fullname},\nM: {mobile}\nEmail : {email}\nKashyap Technology\nEWTIND',
     );
 
     public function __construct() {

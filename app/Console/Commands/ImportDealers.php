@@ -13,65 +13,104 @@ use PhpOffice\PhpSpreadsheet\IOFactory;
 
 class ImportDealers extends Command
 {
-    protected $signature = 'dealers:import {file : Path to the .xlsx file} {--dry-run : Parse and report without touching the database}';
+    protected $signature = 'dealers:import
+        {files* : Path(s) to the .xlsx file(s)}
+        {--category=* : Category id for each file, in the same order as the files}
+        {--dry-run : Parse and report without touching the database}';
 
-    protected $description = 'Replace all dealers (users_group_id = 2) with the rows from an Excel file';
+    protected $description = 'Replace all dealers (users_group_id = 2) with the rows from one or more Excel files';
 
     const DEALER_GROUP = 2;
 
     public function handle()
     {
-        $file = $this->argument('file');
-        if (!is_file($file)) {
-            $this->error("File not found: $file");
+        $files = $this->argument('files');
+        $categoryIds = $this->option('category');
+        if (count($categoryIds) !== count($files)) {
+            $this->error('Pass one --category=ID per file, in the same order as the files.');
             return 1;
         }
-
-        $sheet = IOFactory::load($file)->getActiveSheet();
-        $rows = [];
-        $skipped = 0;
-        foreach ($sheet->toArray(null, true, false, false) as $i => $r) {
-            if ($i === 0) {
-                continue; // header
+        try {
+            $known = DB::table('categories')->pluck('name', 'id');
+            if ($missing = array_diff($categoryIds, $known->keys()->map(fn ($i) => (string) $i)->all())) {
+                $this->error('Unknown category id(s): ' . implode(', ', $missing));
+                $this->line('Categories: ' . $known->map(fn ($n, $id) => "$id=$n")->implode(', '));
+                return 1;
             }
-            $name = trim((string) ($r[1] ?? ''));
-            if ($name === '') {
-                $skipped++;
-                continue;
+        } catch (\Exception $e) {
+            if (!$this->option('dry-run')) {
+                throw $e;
             }
-            $rows[] = [
-                'name' => $name,
-                'address' => trim((string) ($r[2] ?? '')),
-                'town' => trim((string) ($r[3] ?? '')),
-                'district' => trim((string) ($r[4] ?? '')),
-                'state' => trim((string) ($r[5] ?? '')),
-                'zipcode' => trim((string) ($r[6] ?? '')),
-                'latitude' => is_numeric($r[7] ?? null) ? $r[7] : null,
-                'longitude' => is_numeric($r[8] ?? null) ? $r[8] : null,
-                'mobile' => preg_replace('/\D+/', '', (string) ($r[9] ?? '')),
-            ];
+            $this->warn('DB unreachable: category ids not validated.');
         }
+
+        // keyed by sympark id (or name|mobile when absent) so a dealer in two files gets both categories
+        $dealers = [];
+        $skipped = 0;
+        foreach ($files as $n => $file) {
+            if (!is_file($file)) {
+                $this->error("File not found: $file");
+                return 1;
+            }
+            $sheet = IOFactory::load($file)->getActiveSheet();
+            $count = 0;
+            foreach ($sheet->toArray(null, true, false, false) as $i => $r) {
+                if ($i === 0) {
+                    continue; // header
+                }
+                $name = trim((string) ($r[1] ?? ''));
+                if ($name === '') {
+                    $skipped++;
+                    continue;
+                }
+                $mobile = preg_replace('/\D+/', '', (string) ($r[9] ?? ''));
+                $sympark = trim((string) ($r[0] ?? ''));
+                $key = $sympark !== '' ? $sympark : strtolower($name) . '|' . $mobile;
+                if (!isset($dealers[$key])) {
+                    $dealers[$key] = [
+                        'sympark_id' => $sympark !== '' ? $sympark : null,
+                        'name' => $name,
+                        'address' => trim((string) ($r[2] ?? '')),
+                        'town' => trim((string) ($r[3] ?? '')),
+                        'district' => trim((string) ($r[4] ?? '')),
+                        'state' => trim((string) ($r[5] ?? '')),
+                        'zipcode' => trim((string) ($r[6] ?? '')),
+                        'latitude' => is_numeric($r[7] ?? null) ? $r[7] : null,
+                        'longitude' => is_numeric($r[8] ?? null) ? $r[8] : null,
+                        'mobile' => $mobile,
+                        'dealer_type' => trim((string) ($r[10] ?? '')) ?: null,
+                        'categories' => [],
+                    ];
+                }
+                $dealers[$key]['categories'][$categoryIds[$n]] = true;
+                $count++;
+            }
+            $this->line(basename($file) . ": $count rows -> category {$categoryIds[$n]}");
+        }
+        $rows = array_values($dealers);
 
         try {
             $existing = DB::table('users')->where('users_group_id', self::DEALER_GROUP)->count();
         } catch (\Exception $e) {
             $existing = 'unknown (DB unreachable)';
         }
-        $this->info(count($rows) . " dealers in file ($skipped blank rows skipped); $existing existing dealers will be removed.");
+        $this->info(count($rows) . " unique dealers ($skipped blank rows skipped); $existing existing dealers will be removed.");
 
         if ($this->option('dry-run')) {
             $this->line('Dry run: no changes made.');
             return 0;
         }
-        if (!$this->confirm('Delete all existing dealers and import the file?')) {
+        if (!$this->confirm('Delete all existing dealers and import these files?')) {
             return 1;
         }
 
         $country = Country::where('name', 'India')->first();
         $hasGeo = Schema::hasColumn('users', 'latitude') && Schema::hasColumn('users', 'longitude');
+        $hasSympark = Schema::hasColumn('users', 'sympark_id');
+        $hasType = Schema::hasColumn('users', 'dealer_type');
         $newStates = $newCities = 0;
 
-        DB::transaction(function () use ($rows, $country, $hasGeo, &$newStates, &$newCities) {
+        DB::transaction(function () use ($rows, $country, $hasGeo, $hasSympark, $hasType, &$newStates, &$newCities) {
             $ids = DB::table('users')->where('users_group_id', self::DEALER_GROUP)->pluck('id');
             DB::table('dealer_category')->whereIn('dealer_id', $ids)->delete();
             DB::table('users')->where('users_group_id', self::DEALER_GROUP)->delete();
@@ -116,7 +155,13 @@ class ImportDealers extends Command
                     $data['latitude'] = $row['latitude'];
                     $data['longitude'] = $row['longitude'];
                 }
-                User::create($data);
+                if ($hasType) {
+                    $data['dealer_type'] = $row['dealer_type'];
+                }
+                if ($hasSympark) {
+                    $data['sympark_id'] = $row['sympark_id'];
+                }
+                User::create($data)->dealerCategory()->sync(array_keys($row['categories']));
             }
         });
 

@@ -66,6 +66,10 @@ class User extends Authenticatable
             return "Vendor";
         }
     } */
+    public function dealerCategory()
+   {
+       return $this->belongsToMany(Category::class,DealerCategory::class,'dealer_id','category_id');
+   }
     public function getMobileWithCountryCode(){
         if(!empty($this->mobile)){
             if(!empty($this->country) && $this->country !== 0){

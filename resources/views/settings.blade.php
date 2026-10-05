@@ -68,68 +68,6 @@
                 </div>
                 @endif
             </div>
-            <div class="col-sm-12 col-md-6">
-                <!-- text input -->
-                <div class="form-group col-md-12">
-                    <label>Timezone</label>
-                    <select class="form-control select2 timezone" id='timezone' name='timezone' tabindex="3">
-                        <option value="">Select</option>
-                        @foreach ($timezone_list as $timezone)
-                            <option value="{{$timezone['zone']}}" {{(!empty($settings) && !empty($settings->json_data['timezone']) && ($timezone['zone']==$settings->json_data['timezone']))?'selected':''}} >{{$timezone['zone']}}</option>
-                        @endforeach
-                    </select>
-                    @error('timezone')
-                        <div class="alert alert-danger mt-2">{{ $message }}</div>
-                    @enderror
-                </div>
-            </div>
-            <div class="col-sm-12 col-md-6">
-                <!-- text input -->
-                <div class="form-group col-sm-12 col-md-12">
-                    <label>Currency</label>
-                    <select class="form-control select2 timezone" id='currency' name='currency' tabindex="4">
-                        <option value="">Select</option>
-                        @foreach ($currency_list as $currency)
-                            <option value="{{$currency['id']}}" {{(!empty($settings) && !empty($settings->json_data['currency']) && ($currency['id']==$settings->json_data['currency']))?'selected':''}} >{{$currency['name']}}</option>
-                        @endforeach
-                    </select>
-                    @error('currency')
-                        <div class="alert alert-danger mt-2">{{ $message }}</div>
-                    @enderror
-                </div>
-            </div>
-            <div class="col-sm-12 col-md-6">
-                <!-- text input -->
-                <div class="form-group col-sm-12 col-md-12">
-                    <label>Number Format</label>                  
-                    <select class="form-control" id='number_format' name='number_format' tabindex="5">
-                        <option value="" {{(!empty($settings) && empty($settings->json_data['number_format']))?'selected':''}}>Select</option>
-                        <option value="1" {{(!empty($settings) && !empty($settings->json_data['number_format']) && (1==$settings->json_data['number_format']))?'selected':''}}>123,456.99</option>
-                        <option value="2" {{(!empty($settings) && !empty($settings->json_data['number_format']) && (2==$settings->json_data['number_format']))?'selected':''}}>123.456,99</option>
-                    </select>
-                    @error('number_format')
-                        <div class="alert alert-danger mt-2">{{ $message }}</div>
-                    @enderror
-                </div>
-            </div>
-            <div class="col-sm-12 col-md-6">
-                <!-- text input -->
-                <div class="form-group col-sm-12 col-md-12">
-                    <label>Date Format</label>                  
-                    <select class="form-control " id='date_format' name='date_format' tabindex="6">
-                        <option value="" {{(!empty($settings) && empty($settings->json_data['date_format']))?'selected':''}}>Select</option>
-                        <option value="1" {{(!empty($settings) && !empty($settings->json_data['date_format']) && (1==$settings->json_data['date_format']))?'selected':''}}>{{ date('d-m-Y H:i:s')}}</option>
-                        <option value="2" {{(!empty($settings) && !empty($settings->json_data['date_format']) && (2==$settings->json_data['date_format']))?'selected':''}}>{{ date('m-d-Y H:i:s')}}</option>
-                        <option value="3" {{(!empty($settings) && !empty($settings->json_data['date_format']) && (3==$settings->json_data['date_format']))?'selected':''}}>{{ date('Y-m-d H:i:s')}}</option>
-                        <option value="4" {{(!empty($settings) && !empty($settings->json_data['date_format']) && (4==$settings->json_data['date_format']))?'selected':''}}>{{ date('d-M-Y H:i:s')}}</option>
-                        <option value="5" {{(!empty($settings) && !empty($settings->json_data['date_format']) && (5==$settings->json_data['date_format']))?'selected':''}}>{{ date('M-d-Y H:i:s')}}</option>
-                        <option value="6" {{(!empty($settings) && !empty($settings->json_data['date_format']) && (6==$settings->json_data['date_format']))?'selected':''}}>{{ date('Y-M-d H:i:s')}}</option>
-                    </select>
-                    @error('date_format')
-                        <div class="alert alert-danger mt-2">{{ $message }}</div>
-                    @enderror
-                </div>
-            </div>
         </div>
         <div class="row">
             <div class="col-sm-12 col-md-12 border-bottom mt-2 mb-2">
@@ -271,83 +209,19 @@
                     @enderror
                 </div>
             </div>
-            <div class="col-sm-12 col-md-4">
-                <!-- text input -->
-                <div class="form-group">
-                    <label>Allowed countries to sale</label>
-                    <select class="form-control select2 allowedcountry" id='allowed_countries' name='allowed_countries[]' tabindex="15" multiple="multiple">
-                        <option value="">Select</option>
-                        @if(!empty($settings) && (!empty($settings->json_data['allowed_countries'])))
-                        @foreach($settings->json_data['allowed_countries'] as $allowedcountrys)     
-                        @php 
-                                $selectedCountry = $select2Old->getSelect2Data('countries',$allowedcountrys)
-                            @endphp
-                            <option value="{{$allowedcountrys}}" selected>{{$selectedCountry->name}}</option>
-                            @endforeach
-                            @endif
-                        @if(old('allowed_countries'))
-                            @foreach(old('allowed_countries') as $oldcountrys)     
-                            @php 
-                                $data = $select2Old->getSelect2Data('countries',$oldcountrys)
-                            @endphp
-                                               
-                            <option value="{{$data->id}}" selected>{{$data->name}}</option>
-                            @endforeach
-                        @endif
-                    </select>
-                    @error('allowed_countries')
-                        <div class="alert alert-danger mt-2">{{ $message }}</div>
-                    @enderror
-                </div>
-            </div>
-            <div class="col-sm-12 col-md-12">
-                <!-- text input -->
-                <div class="form-group">
-                    <label>Terms and Conditions for sale</label>
-                    <textarea class="form-control" name="terms_condition_sale" placeholder="Terms and Conditions for Sale">{{ old('terms_condition_sale',(!empty($settings) && (!empty($settings->json_data['terms_condition_sale'])))?$settings->json_data['terms_condition_sale']:'')}}</textarea>
-                   
-                    @error('terms_condition_sale')
-                        <div class="alert alert-danger mt-2">{{ $message }}</div>
-                    @enderror
-                </div>
-            </div>
-            <div class="col-sm-12 col-md-12">
-                <!-- text input -->
-                <div class="form-group">
-                    <label>Terms and Conditions for PO</label>
-                    <textarea class="form-control" name="terms_condition_po" placeholder="Terms and Conditions for PO">{{ old('terms_condition_po',(!empty($settings) && (!empty($settings->json_data['terms_condition_po'])))?$settings->json_data['terms_condition_po']:'')}}</textarea>
-                    @error('terms_condition_po')
-                        <div class="alert alert-danger mt-2">{{ $message }}</div>
-                    @enderror
-                </div>
-            </div>
-            <div class="col-sm-12 col-md-12">
-                <!-- text input -->
-                <div class="form-group">
-                    <label>Terms and Conditions for Quote</label>
-                    <textarea class="form-control" name="terms_condition_quote" placeholder="Terms and Conditions for Quote">{{ old('terms_condition_quote',(!empty($settings) && (!empty($settings->json_data['terms_condition_quote'])))?$settings->json_data['terms_condition_quote']:'')}}</textarea>
-                    @error('terms_condition_quote')
-                        <div class="alert alert-danger mt-2">{{ $message }}</div>
-                    @enderror
-                </div>
-            </div>
         </div>
         <div class="row">
             <div class="col-sm-12 col-md-12 border-bottom mt-2 mb-2">
                     <div class="col-6">
-                        <h4 class="text-muted">Mail Settings</h4>
+                        <h4 class="text-muted">Google Map Settings</h4>
                     </div>
             </div>
-            <div class="col-sm-12 col-md-4">
+            <div class="col-sm-12 col-md-4 mail_more_info">
                 <!-- text input -->
                 <div class="form-group">
-                    <label>Mailer</label>
-                    <select name="mail_mailer" id="mail_mailer" class="form-control" tabindex="12">
-                        <option value="sendmail" {{ (old('mail_mailer') == 'sendmail'||(!empty($settings->json_data['mail_mailer']) && $settings->json_data['mail_mailer'] == 'mail')) ?'selected':''}}>Default</option>
-                        <option value="smtp" {{ (old('mail_mailer') == 'smtp'||(!empty($settings->json_data['mail_mailer']) && $settings->json_data['mail_mailer'] == 'smtp')) ?'selected':''}}>SMTP</option>
-                        <option value="pop" {{ (old('mail_mailer') == 'pop' ||(!empty($settings->json_data['mail_mailer']) && $settings->json_data['mail_mailer']== 'pop')) ?'selected':''}}>POP</option>
-                    </select>
-                    @error('mail_mailer')
+                    <label>Google Map API Key</label>
+                    <input type="text" class="form-control" name="google_map_api_key" value="{{ old('google_map_api_key',(!empty($settings->json_data['google_map_api_key']))?$settings->json_data['google_map_api_key']:'')}}" placeholder="Google Map API" tabindex="13">
+                    @error('google_map_api_key')
                         <div class="alert alert-danger mt-2">{{ $message }}</div>
                     @enderror
                 </div>
@@ -355,75 +229,9 @@
             <div class="col-sm-12 col-md-4 mail_more_info">
                 <!-- text input -->
                 <div class="form-group">
-                    <label>User Name</label>
-                    <input type="text" class="form-control" name="mail_username" value="{{ old('mail_username',(!empty($settings->json_data['mail_username']))?$settings->json_data['mail_username']:'')}}" placeholder="User Name" tabindex="13">
-                    @error('mail_username')
-                        <div class="alert alert-danger mt-2">{{ $message }}</div>
-                    @enderror
-                </div>
-            </div>
-            <div class="col-sm-12 col-md-4 mail_more_info">
-                <!-- text input -->
-                <div class="form-group">
-                    <label>Password</label>
-                    <input type="password" class="form-control" id="mail_password" name="mail_password" value="{{ old('mail_password',(!empty($settings->json_data['mail_password']))?$settings->json_data['mail_password']:'')}}" placeholder="Password" tabindex="14">
-                    <span toggle="#mail_password" class="fa fa-fw fa-eye eye-icon toggle-password"></span>
-                    @error('mail_password')
-                        <div class="alert alert-danger mt-2">{{ $message }}</div>
-                    @enderror
-                </div>
-            </div>
-            <div class="col-sm-12 col-md-4 mail_more_info">
-                <!-- text input -->
-                <div class="form-group">
-                    <label>Mail Host</label>
-                    <input type="text" class="form-control" name="mail_host" value="{{ old('mail_host',(!empty($settings->json_data['mail_host']))?$settings->json_data['mail_host']:'')}}" placeholder="Mail Host" tabindex="15">
-                    @error('mail_server')
-                        <div class="alert alert-danger mt-2">{{ $message }}</div>
-                    @enderror
-                </div>
-            </div>
-            <div class="col-sm-12 col-md-4 mail_more_info">
-                <!-- text input -->
-                <div class="form-group">
-                    <label>Mail Port</label>
-                    <input type="text" class="form-control" name="mail_port" value="{{ old('mail_port',(!empty($settings->json_data['mail_port']))?$settings->json_data['mail_port']:'')}}" placeholder="Mail Port" tabindex="16">
-                    @error('mail_port')
-                        <div class="alert alert-danger mt-2">{{ $message }}</div>
-                    @enderror
-                </div>
-            </div>
-            <div class="col-sm-12 col-md-4 mail_more_info">
-                <!-- text input -->
-                <div class="form-group">
-                    <label>Mail Encryption</label>
-                    <!-- <input type="text" class="form-control" name="mail_encryption" value="{{ old('mail_encryption',(!empty($settings->json_data['mail_encryption']))?$settings->json_data['mail_encryption']:'')}}" placeholder="Mail Encryption" tabindex="2"> -->
-                    <select name="mail_encryption" id="mail_encryption" class="form-control" tabindex="17">
-                        <option value="null" {{ (old('mail_encryption') == 'null'||(!empty($settings->json_data['mail_encryption']) && $settings->json_data['mail_encryption'] == 'null')) ?'selected':''}}>Default</option>
-                        <option value="ssl" {{ (old('mail_encryption') == 'ssl'||(!empty($settings->json_data['mail_encryption']) && $settings->json_data['mail_encryption'] == 'ssl')) ?'selected':''}}>SSL</option>
-                        <option value="tls" {{ (old('mail_encryption') == 'tls' ||(!empty($settings->json_data['mail_encryption']) && $settings->json_data['mail_encryption'] == 'tls')) ?'selected':''}}>TLS</option>
-                    </select>
-                    @error('mail_encryption')
-                        <div class="alert alert-danger mt-2">{{ $message }}</div>
-                    @enderror
-                </div>
-            </div>
-            <div class="col-sm-12 col-md-4">
-                <!-- text input -->
-                <div class="form-group">
-                    <label>Mail From Email</label>
-                    <input type="text" class="form-control" name="mail_from_email" value="{{ old('mail_from_email',(!empty($settings->json_data['mail_from_email']))?$settings->json_data['mail_from_email']:'')}}" placeholder="Mail From Name" tabindex="18">
-                    @error('mail_from_email')
-                        <div class="alert alert-danger mt-2">{{ $message }}</div>
-                    @enderror
-                </div>
-            </div>
-            <div class="col-sm-12 col-md-4">
-                <!-- text input -->
-                <div class="form-group">
-                    <label>Mail From Name</label>
-                    <input type="text" class="form-control" name="mail_from_name" value="{{ old('mail_from_name',(!empty($settings->json_data['mail_from_name']))?$settings->json_data['mail_from_name']:'')}}" placeholder="Mail From Name" tabindex="19">
-                    @error('mail_from_name')
+                    <label>Google Map Radius</label>
+                    <input type="text" class="form-control" id="google_map_radius" name="google_map_radius" value="{{ old('google_map_radius',(!empty($settings->json_data['google_map_radius']))?$settings->json_data['google_map_radius']:'')}}" placeholder="Google Map Radius" tabindex="14">
+                    @error('google_map_radius')
                         <div class="alert alert-danger mt-2">{{ $message }}</div>
                     @enderror
                 </div>

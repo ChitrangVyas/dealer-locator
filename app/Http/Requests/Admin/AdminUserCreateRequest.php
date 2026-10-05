@@ -38,23 +38,7 @@ class AdminUserCreateRequest extends FormRequest
                 })->ignore($this->id)
             ],
             'name' => 'required|string|max:100',
-            'password' => 'required|min:6|max:16',
-            'address'=>'required',
-            'mobile'=>'required|digits_between:10,12',
-            'country_id'=>'required|after_or_equal:1',
-            'state' => [
-                'required',
-                Rule::exists('states','id')->where(function ($query) {
-                    return $query->where('country_id', $this->input('country_id'));
-                }),
-            ],
-            'city' => [
-                'required',
-                Rule::exists('cities','id')->where(function ($query) {
-                    return $query->where('state_id', $this->input('state'));
-                }),
-            ],
-            'zipcode' => 'required|alpha_num|min:5|max:7',
+            'password' => 'required|min:6',
         ];
     }
 
@@ -72,15 +56,6 @@ class AdminUserCreateRequest extends FormRequest
             'name.required' => 'Name is required.',
             'password.required' => 'Password is required.',
             'password.min' => 'Password must be at least :min characters.',
-            'password.max' => 'Password must not be greater than :max characters.',
-            'address.required' => 'Address is required.',
-            'mobile.required'=> 'Mobile is required.',
-            'country_id.required'=>'Country is required',
-            'state.required' => 'State is required.',
-            'city.required' => 'City is required.',
-            'zipcode.required' => 'Zip code is required.',
-            'zipcode.min' => 'Zip code must be at least :min characters.',
-            'zipcode.max' => 'Zip code must not be greater than :max characters.'
         ];
     }
 }

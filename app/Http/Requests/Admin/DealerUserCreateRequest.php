@@ -24,21 +24,8 @@ class DealerUserCreateRequest extends FormRequest
      */
     public function rules()
     {
-        return [
-            'email' => [
-                'required',
-                'email' => 'email:rfc',function($attribute, $value, $fail) {
-                    if (!filter_var($value, FILTER_VALIDATE_EMAIL)) {
-                       $fail('Enter a valid email address.');
-                    }
-                },
-                Rule::unique('users')->where(function ($query) {
-                    return $query->whereNull('deleted_at')->where('users_group_id','=', $this->input('user_group'));
-                })->ignore($this->id)                
-            ],
+        return [          
             'name' => 'required|string|max:100',
-            'password' => 'required|min:6|max:16',
-            'mobile'=>'required|digits_between:10,12',
             'address' => 'required',
             'country_id'=>'required|after_or_equal:1',
             'state' => [
@@ -54,7 +41,6 @@ class DealerUserCreateRequest extends FormRequest
                 }),
             ],
             'zipcode' => 'required|alpha_num|min:5|max:7',
-            'logo' => 'mimes:png,jpeg,jpg,svg,webp'
         ];
     }
 
@@ -66,11 +52,7 @@ class DealerUserCreateRequest extends FormRequest
     public function messages()
     {
         return [
-            'email.required' => 'Email is required.',
-            'email.unique' => 'Email is already exist.',
-            'email.email' => 'Invalid Email.',
             'name.required' => 'Name is required.',
-            'password.required' => 'Password is required.',
             'mobile.required'=> 'Mobile is required.',
             'address.required'=> 'Address is required.',
             'country_id.required'=>'Country is required',

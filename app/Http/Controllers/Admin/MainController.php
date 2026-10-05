@@ -53,24 +53,11 @@ class MainController extends Controller
                 if(!empty($this->settingJson['icon_logo'])){
                     config(['icon.logo' => $this->settingJson['icon_logo']]);
                 }
-                if(!empty($this->settingJson['currency'])){
-                    $this->currency=Currency::find($this->settingJson['currency']);
-                }else{
-                    $this->currency=Currency::find(1);
+                if(!empty($this->settingJson['google_map_api_key'])){
+                    config(['app.google_map_api_key' => $this->settingJson['google_map_api_key']]);
                 }
-
-                // here we set session
-                if(!empty($this->settingJson['number_format'])){
-                    Session::put('number_format', $this->settingJson['number_format']);
-                }else{
-                    Session::put('number_format',1);
-                }
-                if(!empty($this->settingJson['date_format'])){
-                    Session::put('date_format', $this->settingJson['date_format']);
-                    Session::put('datetime_like_format', $this->dateTimeLikeFormat(Session::get('date_format')));
-                }else{
-                    Session::put('date_format', 1);
-                    Session::put('datetime_like_format', $this->dateTimeLikeFormat(0));
+                if(!empty($this->settingJson['google_map_radius'])){
+                    config(['app.google_map_radius' => $this->settingJson['google_map_radius']]);
                 }
 
                 $state = State::find($this->settingJson['state']);
@@ -79,6 +66,7 @@ class MainController extends Controller
                 $this->settingJson['state_name']=(!empty($state))?$state->name:'';
                 $this->settingJson['city_name']=(!empty($city))?$city->name:'';
                 $this->settingJson['country_name']=(!empty($country))?$country->name:'';
+                /* 
                 $mailConfig['transport'] = $this->settingJson['mail_mailer'];
                 if($this->settingJson['mail_mailer']=="sendmail"){
                     $mailConfig['path']='/usr/sbin/sendmail -bs';
@@ -94,15 +82,14 @@ class MainController extends Controller
                 }
                 config(['mail.mailers.smtp' => $mailConfig]);
                 config(['mail.from.address' => $this->settingJson['mail_from_email']]);
-                config(['mail.from.name' => $this->settingJson['mail_from_name']]);
-                $allowedcountry=$this->getAllowedCountries($this->allowed_country);
+                config(['mail.from.name' => $this->settingJson['mail_from_name']]); */
+                //$allowedcountry=$this->getAllowedCountries($this->allowed_country);
             }
         }
 
         View::share('country',$this->country);
-        View::share('allowedcountry',$allowedcountry);
+        //View::share('allowedcountry',$allowedcountry);
         View::share('setting',$this->settingJson);
-        View::share('currency',$this->currency);
 
     }
 

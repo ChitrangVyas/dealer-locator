@@ -52,6 +52,13 @@ return [
             'endpoint' => env('AWS_ENDPOINT'),
             'use_path_style_endpoint' => env('AWS_USE_PATH_STYLE_ENDPOINT', false),
         ],
+        'symfony' => [
+            'driver' => 'ftp',
+            'host' => 'md-in-52.webhostbox.net',            
+            'username' => 'symphi5m',
+            'password' => '2SYM$4TuV_Ne',   
+            'root'=>'/locator.symphonylimited.com',            
+        ],
 
     ],
 

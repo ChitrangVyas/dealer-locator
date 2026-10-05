@@ -19,7 +19,6 @@
                                     <tr>
                                         <th>ID</th>
                                         <th>Name</th>
-                                        <th>Parent Category</th>
                                         <th>Images</th>
                                         <th>Status</th>
                                         <th>Action</th>
@@ -41,8 +40,7 @@
         $('#example').DataTable({
             "columns": [
                 { "name": "categories.id" },
-                { "name": "categories.name" },              
-                { "name": "parent_category.name" },
+                { "name": "categories.name" },      
                 { "name": "image" },
                 { "name": "status" },
                 { "name": "action" }
@@ -53,7 +51,7 @@
                 "orderable": false
             },
             {
-                "targets": [ 4,5 ],
+                "targets": [ 4],
                 "orderable": false
             },
             {

@@ -31,9 +31,8 @@
 @section('auth_body')
     <form action="{{ $login_url }}" method="post">
         {{ csrf_field() }}
-        @if(!empty($user_group))
-            <input type="hidden" name="user_group" value="{{$user_group}}">
-        @endif
+       
+            <input type="hidden" name="user_group" value="1">
         {{-- Email field --}}
         <div class="input-group mb-3">
             <input type="email" name="email" class="form-control {{ $errors->has('email') ? 'is-invalid' : '' }}"
@@ -96,23 +95,6 @@
     @endif
 
     
-        <p class="my-0 pull-left">
-            @if(isset($user_group))
-            <a href="{{route('login')}}">
-                {{ __('Sign in as Staff') }}
-            </a>&nbsp;
-            @endif
-            @if(!isset($user_group) || $user_group!=2)
-            <a href="{{route('dealer.login')}}">
-                {{ __('Sign in as Dealer') }}
-            </a>&nbsp;
-            @endif
-            @if(!isset($user_group) ||$user_group!=3)
-            <a href="{{route('retailer.login')}}">
-                {{ __('Sign in as Retailer') }}
-            </a>
-            @endif
-        </p>            
 
     {{-- Register link --}}
     @if(!$register_url)

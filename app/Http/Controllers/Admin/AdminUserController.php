@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Requests\Admin\AdminUserCreateRequest;
 use App\Http\Requests\Admin\AdminUserUpdateRequest;
+use App\Models\Country;
 use App\Models\User;
 use Exception;
 use Illuminate\Http\Request;
@@ -14,7 +15,7 @@ class AdminUserController extends MainController
 {
     public function __construct() {
         parent::__construct();
-        View::share ( 'title', 'Staff' );
+        View::share ( 'title', 'User' );
         View::share ( 'elementActive', 'staff' );        
     }
     /**
@@ -36,7 +37,8 @@ class AdminUserController extends MainController
     public function create()
     {
         //
-        return view('staff.create');
+        $countries = Country::get();   
+        return view('staff.create',compact('countries'));
     }
 
     
@@ -66,7 +68,6 @@ class AdminUserController extends MainController
                     'state_id' => $request_data['state'],
                     'zipcode' => $request_data['zipcode'],
                     'status' => (!empty($request_data['status']))?1:0,
-                    'gstin' => $request_data['gstin'],
                 ]);
             }catch(Exception $e){               
                 return redirect(route('staff.create'))->with('exception', $e->getMessage());
@@ -95,8 +96,9 @@ class AdminUserController extends MainController
     public function edit($id)
     {
         //
-        $user = User::findOrFail($id);        
-        return view('staff.create',compact('user'));
+        $user = User::findOrFail($id);   
+        $countries = Country::get();     
+        return view('staff.create',compact('user','countries'));
     }
 
     /**
@@ -121,7 +123,6 @@ class AdminUserController extends MainController
             'city_id' => $request_data['city'],
             'state_id' => $request_data['state'],
             'zipcode' => $request_data['zipcode'],
-            'gstin' => $request_data['gstin'],
         ];
         $data['status'] = (!empty($request_data['status']))?1:0;
         if(!empty($request['password'])){
@@ -165,8 +166,8 @@ class AdminUserController extends MainController
         $where .= (!empty($search)) ? " AND (users.name like '%$search%' OR email like '%$search%' OR mobile like '%$search%' OR cities.name like '%$search%' OR states.name like '%$search%')":'';
         $users = DB::table('users')
         ->selectRaw('users.id,users.name,email,mobile,cities.name as city, states.name as state,users.status')
-        ->join('cities','users.city_id','=','cities.id')
-        ->join('states','users.state_id','=','states.id')
+        ->leftJoin('cities','users.city_id','=','cities.id')
+        ->leftJoin('states','users.state_id','=','states.id')
         ->whereRaw($where)
         ->where('deleted_at', NULL)
         ->offset($start)

@@ -5,7 +5,7 @@
 @section('content')
 <div class="card card-primary">
     <div class="card-header">
-    <h3 class="card-title">{{$action_title}} Staff</h3>
+    <h3 class="card-title">{{$action_title}} User</h3>
     </div>
     <!-- /.card-header -->
     <div class="card-body">
@@ -53,7 +53,7 @@
             <div class="col-sm-12 col-md-4">
                 <!-- text input -->
                 <div class="form-group">
-                    <label>Mobile <span class="required_field">*</span></label>
+                    <label>Mobile</label>
                     <div class="input-group">
                         <div class="input-group-prepend">
                             <span class="input-group-text" id="countryCode"></span>
@@ -68,7 +68,7 @@
             <div class="col-sm-12 col-md-4">
                 <!-- text input -->
                 <div class="form-group">
-                    <label>Address <span class="required_field">*</span></label>
+                    <label>Address </label>
                     <textarea class="form-control" name="address" rows="1" placeholder="Address" tabindex="5">{{ old('address',(!empty($user))?$user->address:'') }}</textarea>
                     @error('address')
                         <div class="alert alert-danger mt-2">{{ $message }}</div>
@@ -78,36 +78,16 @@
             <div class="col-sm-12 col-md-4">
                         <!-- text input -->
                 <div class="form-group">
-                    <label>Country <span class="required_field">*</span></label>
+                    <label>Country </label>
                     <select class="form-control country" id='country' name='country_id' tabindex="5">
                         <option value="">Select</option>
 
 
-                         @if(!empty($allowedcountry))
-                         @php
-                         $selectcountry=''
-                         @endphp
-                            @foreach($allowedcountry as $acountry)
-                            @if(!empty($user) && $user->country_id)
-                               @php
+                        @foreach($countries as $acountry)
 
-                                $selectcountry=($user->country_id == $acountry->id)? 'selected' : ''
+                        <option value="{{$acountry->id}}" @if(!empty($user) && $user->country_id == $acountry->id) selected @endif >{{$acountry->name}}</option>
 
-                                @endphp
-                            @endif
-                            @if(old('country_id'))
-                                @php
-
-                                $selectcountry=(old('country_id') == $acountry->id)? 'selected' : ''
-
-                                @endphp
-                            @endif
-
-
-                                <option value="{{$acountry->id}}"  {{$selectcountry}}>{{$acountry->name}}</option>
-
-                                @endforeach
-                        @endif
+                        @endforeach
 
                     </select>
                     <input type="hidden" id="country_id" value="{{old('country_id')}}">
@@ -119,7 +99,7 @@
             <div class="col-sm-12 col-md-4">
                 <!-- text input -->
                 <div class="form-group">
-                    <label>State <span class="required_field">*</span></label>
+                    <label>State </label>
                     <select class="form-control select2 state" id='state' name='state' tabindex="5">
                         <option value="">Select</option>
                         @if(!empty($user) && $user->state_id)
@@ -142,7 +122,7 @@
             <div class="col-sm-12 col-md-4">
                 <!-- text input -->
                 <div class="form-group">
-                    <label>City <span class="required_field">*</span></label>
+                    <label>City</label>
                     <select class="form-control select2 city" id='city' name='city' tabindex="6">
                         <option value="">Select</option>
                         @if(!empty($user) && !empty($user->city_id))
@@ -167,19 +147,9 @@
             <div class="col-sm-12 col-md-4">
                 <!-- text input -->
                 <div class="form-group">
-                    <label>Zip code <span class="required_field">*</span></label>
+                    <label>Zip code </label>
                     <input type="text" name="zipcode" value="{{ old('zipcode',(!empty($user))?$user->zipcode:'') }}" class="form-control" placeholder="Enter zipcode" tabindex="7">
                     @error('zipcode')
-                        <div class="alert alert-danger mt-2">{{ $message }}</div>
-                    @enderror
-                </div>
-            </div>
-            <div class="col-sm-12 col-md-4">
-                <!-- text input -->
-                <div class="form-group">
-                    <label>GSTIN</label>
-                    <input type="text" class="form-control" name="gstin" value="{{ old('gstin',(!empty($user))?$user->gstin:'')}}" placeholder="GSTIN" tabindex="8">
-                    @error('gstin')
                         <div class="alert alert-danger mt-2">{{ $message }}</div>
                     @enderror
                 </div>

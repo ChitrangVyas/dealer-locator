@@ -8,6 +8,7 @@ use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Http\Requests\Admin\ChangePasswordRequest;
+use App\Models\Category;
 use Hash;
 
 
@@ -34,57 +35,9 @@ class HomeController extends MainController
         $elementActive = "home";
         $title = 'Dashboard';
         $user = auth()->user();
-        $total_order = Order::where('type', 'sale')->where('from_user', auth()->user()->id)->where('deleted_at', NULL)->count();
-        $total_po = 0;
-        $total_dealer = 0;
-        $total_dealer = User::where('users_group_id', 2)->where('deleted_at', NULL)->count();
-        $total_retailer = User::where('users_group_id', 3)->where('deleted_at', NULL)->count();
-        if (empty($user->userGroup) || $user->userGroup->id == '1') {
-            $total_po = Order::where('type', 'po')->where('from_user', $user->id, function ($query) {
-                return $query->orWhere('for_manufacturer', 1);
-            })->where('deleted_at', NULL)->count();
-        } else {
-            $total_po = Order::where('type', 'po')->where('from_user', $user->id)->where('deleted_at', NULL)->count();
-        }
-        $orders = Order::selectRaw('year(created_at) year, month(created_at) month, count(*) data')->where('type', 'sale');
-        $orders = $orders->where(function ($query) use ($user) {
-            if ((!empty($user->userGroup)) && $user->userGroup->id == '2') {
-                return $query->where('from_user', $user->id);
-            }
-            if ((!empty($user->userGroup)) && $user->userGroup->id == '3') {
-                return $query->where('from_user', $user->id);
-            } else if (empty($user->userGroup) || $user->userGroup->id == '1') {
-                return $query->orWhere('for_manufacturer', 1)->orWhere('from_user', NULL)->orWhere('to_user', NULL);
-            }
-        });
-        $orders = $orders->groupBy('year', 'month')
-            ->orderBy('year', 'desc')
-            ->get()
-            ->groupBy('year');
-        $ordercount = [];
-        $orderArr = [];
-        foreach ($orders as $key => $value) {
-            foreach ($value as $k => $val) {
-                $ordercount[(int)$key][(int)$val['month']] = $val['data'];
-            }
-        }
-        $count = 0;
-        foreach ($ordercount as $key => $ordermcount) {
-            for ($i = 1; $i <= 12; $i++) {
-                if (!empty($ordermcount[$i])) {
-                    $orderArr[$count][] = $ordermcount[$i];
-                } else {
-                    $orderArr[$count][] = 0;
-                }
-            }
-            $count++;
-        }
-
-        if (!isset($orderArr[0])) {
-            $orderArr[0] = array();
-        }
-        // dd($orderArr);
-        return view('home', compact('elementActive', 'title', 'total_order', 'total_po', 'total_dealer', 'total_retailer', 'orderArr'));
+        $category_count = Category::count();
+        $dealer_count = User::where('users_group_id','=','2')->count();
+        return view('home', compact('elementActive', 'title','category_count','dealer_count'));
     }
 
     public function changepassword(Request $request)

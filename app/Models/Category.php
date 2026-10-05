@@ -16,8 +16,8 @@ class Category extends Model
         'description',       
     ];
 
-   public function products()
+   public function dealerCategory()
    {
-       return $this->belongsToMany(Product::class,'product_category');
+       return $this->belongsToMany(User::class,DealerCategory::class,'category_id','dealer_id');
    }
 }

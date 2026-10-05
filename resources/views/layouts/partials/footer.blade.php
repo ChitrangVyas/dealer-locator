@@ -1,7 +1,7 @@
 <footer class="main-footer">
     <strong>Copyright © <script>
             document.write(new Date().getFullYear())
-        </script> <a href="https://www.TechCelerity.com">TechCelerity</a>.</strong>
+        </script> <a href="https://www.hvinfotech.com">HV Infotech</a>.</strong>
     All rights reserved.
     <div class="float-right d-none d-sm-inline-block">
         <b>Version</b> 3.1.0

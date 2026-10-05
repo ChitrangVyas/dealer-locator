@@ -33,7 +33,7 @@
             <div class="col-sm-12 col-md-4">
                 <!-- text input -->
                 <div class="form-group">
-                    <label>Email <span class="required_field">*</span></label>
+                    <label>Email </label>
                     <input type="email" class="form-control" name="email" value="{{ old('email',(!empty($user))?$user->email:'') }}" placeholder="Email" autocomplete="false" tabindex="2">
                     @error('email')
                         <div class="alert alert-danger mt-2">{{ $message }}</div>
@@ -43,17 +43,7 @@
             <div class="col-sm-12 col-md-4">
                 <!-- text input -->
                 <div class="form-group">
-                    <label>Password <span class="required_field">*</span></label>
-                    <input type="password" name="password" value="{{old('password')}}" class="form-control" placeholder="Password" autocomplete="new-password" tabindex="3">
-                    @error('password')
-                        <div class="alert alert-danger mt-2">{{ $message }}</div>
-                    @enderror
-                </div>
-            </div>
-            <div class="col-sm-12 col-md-4">
-                <!-- text input -->
-                <div class="form-group">
-                    <label>Mobile <span class="required_field">*</span></label>
+                    <label>Mobile </label>
                     <div class="input-group">
                         <div class="input-group-prepend">
                             <span class="input-group-text" id="countryCode"></span>
@@ -77,39 +67,33 @@
             </div>
             <div class="col-sm-12 col-md-4">
                         <!-- text input -->
+                        <div class="form-group">
+                            <label>Categories <span class="required_field">*</span></label>
+                            <select class="form-control select2 categories" id='categories' name='categories[]' tabindex="5" multiple="multiple">
+                                <option value="">Select</option>
+                                    @foreach($categories as $category)
+                                        <option value="{{$category->id}}"  @if((!empty($dealer_category) && in_array($category->id,$dealer_category))) selected @endif >{{$category->name}}</option>
+                                    @endforeach
+                            </select>
+                            @error('country_id')
+                            <div class="alert alert-danger mt-2">{{ $message }}</div>
+                            @enderror
+                        </div>
+                    </div>
+            <div class="col-sm-12 col-md-4">
+                        <!-- text input -->
                 <div class="form-group">
                     <label>Country <span class="required_field">*</span></label>
                     <select class="form-control country" id='country' name='country_id' tabindex="5">
                         <option value="">Select</option>
 
-                        @if(!empty($allowedcountry))
-                         @php
-                         $selectcountry=''
-                         @endphp
-                            @foreach($allowedcountry as $acountry)
-                            @if(!empty($user) && $user->country_id)
-                               @php
+                       
+                            @foreach($countries as $acountry)
 
-                                $selectcountry=($user->country_id == $acountry->id)? 'selected' : ''
-
-                                @endphp
-                            @endif
-                            @if(old('country_id'))
-                                @php
-
-                                $selectcountry=(old('country_id') == $acountry->id)? 'selected' : ''
-
-                                @endphp
-                            @endif
-
-
-                                <option value="{{$acountry->id}}"  {{$selectcountry}}>{{$acountry->name}}</option>
+                                <option value="{{$acountry->id}}" @if(!empty($user) && $user->country_id == $acountry->id) selected @endif >{{$acountry->name}}</option>
 
                                 @endforeach
-                        @endif
-
                     </select>
-                    <input type="hidden" id="country_id" value="{{old('country_id')}}">
                     @error('country_id')
                     <div class="alert alert-danger mt-2">{{ $message }}</div>
                     @enderror
@@ -174,28 +158,21 @@
                 </div>
             </div>
             <div class="col-sm-12 col-md-4">
-                <!-- file input -->
+                <!-- text input -->
                 <div class="form-group">
-                    <label>Logo</label>
-                    <div class="input-group">
-                        <div class="custom-file">
-                            <input type="file" class="custom-file-input restrictFileUpload" id="logo" value='' name="logo" tabindex="4">
-                            <label class="custom-file-label" for="logo">Choose file</label>
-                        </div>
-                    </div>
-                    @if(!empty($user->logo))
-                    <div class="user_logo">
-                        <img class='img logo mt-3 mb-4' src="{{ url($user->logo) }}" width=100 />
-                    </div>
-                    @endif
+                    <label>Latitude</label>
+                    <input type="text" class="form-control" name="latitude" value="{{ old('latitude',(!empty($user))?$user->latitude:'')}}" placeholder="Latitude" tabindex="9">
+                    @error('latitude')
+                        <div class="alert alert-danger mt-2">{{ $message }}</div>
+                    @enderror
                 </div>
             </div>
             <div class="col-sm-12 col-md-4">
                 <!-- text input -->
                 <div class="form-group">
-                    <label>GSTIN</label>
-                    <input type="text" class="form-control" name="gstin" value="{{ old('gstin',(!empty($user))?$user->gstin:'')}}" placeholder="GSTIN" tabindex="9">
-                    @error('gstin')
+                    <label>Longitude</label>
+                    <input type="text" class="form-control" name="longitude" value="{{ old('longitude',(!empty($user))?$user->longitude:'')}}" placeholder="longitude" tabindex="9">
+                    @error('longitude')
                         <div class="alert alert-danger mt-2">{{ $message }}</div>
                     @enderror
                 </div>
@@ -208,13 +185,6 @@
                     @error('status')
                     <div class="alert alert-danger mt-2">{{ $message }}</div>
                     @enderror
-                </div>
-            </div>
-            <div class="col-sm-12 col-md-12">
-                <!-- text input -->
-                <div class="form-group summernote-container">
-                    <label>Footer Text</label>
-                    <textarea name="footer_text" class="form-control summernote" tabindex="5">{{ old('footer_text',(!empty($user))?$user->footer_text:'') }}</textarea>
                 </div>
             </div>
         </div>
@@ -233,6 +203,7 @@
 @section('plugins.summernote', true)
 @section('js')
 <script>
+    $('.categories').select2();
     function phonecode(){
     console.log("Triger has been executed");
     if($('#country').val() != ''){

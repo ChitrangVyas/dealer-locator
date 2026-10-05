@@ -28,23 +28,7 @@
                             <div class="alert alert-danger mt-2">{{ $message }}</div>
                             @enderror
                         </div>
-                    </div>       
-                    <div class="col-sm-12 col-md-6">
-                        <!-- text input -->
-                        <div class="form-group">
-                            <label>Parent category</label>
-                            <select class="form-control select2" id='parent_category' name='parent_category' tabindex="2">
-                                <option value="0">Select</option>
-                                @foreach($parent_category as $tc)
-                                <option value="{{$tc->id}}" {{ (!empty($category) && $category->parent_category == $tc->id ) ? 'selected' :''}} >{{$tc->name}}</option>
-                                @endforeach
-                                
-                            </select>
-                            @error('parent_category')
-                            <div class="alert alert-danger mt-2">{{ $message }}</div>
-                            @enderror
-                        </div>
-                    </div>
+                    </div>     
                     <div class="col-sm-12 col-md-6">
                         <!-- file input -->
                         <div class="form-group">
@@ -65,6 +49,7 @@
                             @enderror
                         </div>
                     </div> 
+                    
                     <div class="col-sm-12 col-md-12">
                         <!-- text input -->
                         <div class="form-group">
@@ -102,13 +87,10 @@
 @section('js')
 <script>
     jQuery(document).ready(function() {
-      $('#parent_category').select2({
-        placeholder: "Select",
-        allowClear: true,
-      });
       $('.summernote').summernote({
             height: 200
-    });
+        });
+        $('.dealer').select2();
     });
 </script>
 @endsection

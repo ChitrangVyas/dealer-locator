@@ -1,0 +1,238 @@
+body{font-family: 'Poppins', sans-serif !important; font-size:16px;}
+h1,h2,h3,h4,h5,h6,strong{font-family:'Poppins', sans-serif !important, sans-serif; }
+a,a:focus,a:hover{outline:none;text-decoration:none;  -webkit-transition: .3s all ease; transition: .3s ease all;}
+ul{list-style:none;margin:0;}
+img{max-width:100%;}
+
+/*Font famliy declaration*/
+@font-face {
+  font-family: "custom-icons";
+  src:url("/web/20210216182221im_/http://www.rx-catalyst.com/fonts/custom-icons/custom-icons.eot");
+  src:url("/web/20210216182221im_/http://www.rx-catalyst.com/fonts/custom-icons/custom-icons.eot#iefix") format("embedded-opentype"),
+    url("/web/20210216182221im_/http://www.rx-catalyst.com/fonts/custom-icons/custom-icons.woff") format("woff"),
+    url("/web/20210216182221im_/http://www.rx-catalyst.com/fonts/custom-icons/custom-icons.ttf") format("truetype"),
+    url("/web/20210216182221im_/http://www.rx-catalyst.com/fonts/custom-icons/custom-icons.svg#custom-icons") format("svg");
+  font-weight: normal;
+  font-style: normal;
+
+}
+
+[data-icon]:before {
+  font-family: "custom-icons" !important;
+  content: attr(data-icon);
+  font-style: normal !important;
+  font-weight: normal !important;
+  font-variant: normal !important;
+  text-transform: none !important;
+  speak: none;
+  line-height: 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+[class^="icon-"]:before,
+[class*=" icon-"]:before {
+  font-family: "custom-icons" !important;
+  font-style: normal !important;
+  font-weight: normal !important;
+  font-variant: normal !important;
+  text-transform: none !important;
+  speak: none;
+  line-height: 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-clinic:before {
+  content: "\61";
+}
+.icon-email:before {
+  content: "\62";
+}
+.icon-facebook:before {
+  content: "\63";
+}
+.icon-fax:before {
+  content: "\64";
+}
+.icon-instagram:before {
+  content: "\65";
+}
+.icon-location:before {
+  content: "\66";
+}
+.icon-menu-bullet:before {
+  content: "\67";
+}
+.icon-phone:before {
+  content: "\68";
+}
+.icon-play-button:before {
+  content: "\69";
+}
+.icon-twitter:before {
+  content: "\6a";
+}
+
+/* General Margin - padding CSS */
+.m-0{margin:0!important}
+.mt-0{margin-top:0!important}
+.mb-0{margin-bottom:0!important}
+.ml-0{margin-left:0!important}
+.mr-0{margin-right:0!important}
+.mt-5{margin-top:5px!important}
+.mb-5{margin-bottom:5px!important}
+.ml-5{margin-left:5px!important}
+.mr-5{margin-right:5px!important}
+.mt-10{margin-top:10px!important}
+.mb-10{margin-bottom:10px!important}
+.ml-10{margin-left:10px!important}
+.mr-10{margin-right:10px!important}
+.mt-15{margin-top:15px!important}
+.mb-15{margin-bottom:15px!important}
+.ml-15{margin-left:15px!important}
+.mr-15{margin-right:15px!important}
+.mt-20{margin-top:20px!important}
+.mb-20{margin-bottom:20px!important}
+.ml-20{margin-left:20px!important}
+.mr-20{margin-right:20px!important}
+.mt-30{margin-top:30px!important}
+.mb-30{margin-bottom:30px!important}
+.ml-30{margin-left:30px!important}
+.mr-30{margin-right:30px!important}
+.mt-40{margin-top:40px!important}
+.mb-40{margin-bottom:40px!important}
+.ml-40{margin-left:40px!important}
+.mr-40{margin-right:40px!important}
+.mt-50{margin-top:50px!important}
+.mb-50{margin-bottom:50px!important}
+.ml-50{margin-left:50px!important}
+.mr-50{margin-right:50px!important}
+.p-0{padding:0!important}
+.pt-0{padding-top:0!important}
+.pb-0{padding-bottom:0!important}
+.pl-0{padding-left:0!important}
+.pr-0{padding-right:0!important}
+.pt-5{padding-top:5px!important}
+.pb-5{padding-bottom:5px!important}
+.pl-5{padding-left:5px!important}
+.pr-5{padding-right:5px!important}
+.pt-10{padding-top:10px!important}
+.pb-10{padding-bottom:10px!important}
+.pl-10{padding-left:10px!important}
+.pr-10{padding-right:10px!important}
+.pt-20{padding-top:20px!important}
+.pb-20{padding-bottom:20px!important}
+.pl-20{padding-left:20px!important}
+.pr-20{padding-right:20px!important}
+.pt-30{padding-top:30px!important}
+.pb-30{padding-bottom:30px!important}
+.pt-50{padding-top:50px!important}
+.pb-50{padding-bottom:50px!important}
+.pl-30{padding-left:30px!important}
+.pr-30{padding-right:30px!important}
+.pt-40{padding-top:40px!important}
+.pb-40{padding-bottom:40px!important}
+.pl-40{padding-left:40px!important}
+.pr-40{padding-right:40px!important}
+ 
+.container{max-width:1920px !important; width:100% !important}
+
+/* Header CSS */
+header{width: 100%; padding: 0; margin: 0 0 35px 0; background: #fff; }
+header h1{margin: 0; padding:0px; position: absolute; z-index: 999;}
+.logo img{max-width: 200px; margin: 5px; }
+.c-burger{display:none;position:absolute;right:0;z-index:1;top:0;}
+.m-phone{display: none}
+
+.shrink { position: fixed; top: 0; left: 0; right: 0; animation: stickMefromTop 0.4s linear forwards; -webkit-animation: stickMefromTop 0.4s linear forwards; -moz-animation: stickMefromTop 0.4s linear forwards;   -o-animation: stickMefromTop 0.4s linear forwards; z-index: 3; background: #fff; box-shadow: 0px 0px 20px 0px rgba(0,0,0,0.3); }
+
+ @-webkit-keyframes stickMefromTop {
+     0% {
+     -webkit-transform:translateY(-100px);
+    }
+     100% {
+     -webkit-transform:translateY(0);
+    }
+}
+ @-moz-keyframes stickMefromTop {
+     0% {
+     -moz-transform:translateY(-100px);
+    }
+     100% {
+     -moz-transform:translateY(0);
+    }
+}
+ @-o-keyframes stickMefromTop {
+     0% {
+     -o-transform:translateY(-100px);
+    }
+     100% {
+     -o-transform:translateY(0);
+    }
+}
+ @keyframes stickMefromTop {
+     0% {
+     transform:translateY(-100px);
+    }
+     100% {
+     transform:translateY(0);
+    }
+}
+
+
+/* menu CSS */
+.nav-menu{margin:0; padding: 0; float: right; position: relative; top: 15px}
+.nav-menu ul{margin: 0px 0 0 80px; padding: 0px 0 0 0}
+.nav-menu ul li{float: left; padding: 0; }
+.nav-menu ul li a{padding:10px 20px; color: #000; display: block; font-size: 16px; font-weight: 400; text-transform: uppercase; }
+.nav-menu ul li a.last{border: 0 none}
+.nav-menu ul li a:hover{text-decoration: none; color: #fff; background: #BCD018 }
+.nav-menu ul li a.cta-btn{background:#1758b2; color: #fff; }
+
+.hdr-icon{float: right; position: relative; top: 10px; margin:0; padding: 0;}
+.hdr-icon img{max-width: 32px; margin:0px 0 0 15px; padding: 15px 0 0 0;}
+
+/* Banner CSS */
+.banner{height: 100%; position: relative}
+.banner img{ max-width: 100%; width: 100%; }
+.main_title{background: #040C31; padding: 10px; font-weight: bold; text-align: center;}
+.main_title h2{color: #fff; font-weight: 500; font-size: 36px;}
+
+/* Search Area */
+.main_search{padding: 50px 25px 15px 25px; border-bottom: 5px solid #EBEBEB;}
+.main_search label{font-weight: 500; font-size: 16px; padding: 10px 0; color: #1758b2}
+.main_search input[type=text]{border: 1px solid #0798B5; border-radius: 50px; padding: 10px 100px 10px 10px !important; height: auto; margin: 0 0 15px 0; max-width: 250px; width: 100%;}
+.main_search select{border: 1px solid #0798B5; border-radius: 50px; padding: 10px 100px 10px 10px !important; height: auto; margin: 0 0 15px 0; max-width: 250px; width: 100%;}
+.main_search input[type=button]{border: 0px solid #1758b2; border-radius:50px; padding: 10px 25px !important; height: auto; margin: 15px 0; background:#BCD018; color: #fff; cursor: pointer;}
+.main_search label span{color: #FF0004}
+
+.range-slider{color: #0685A6; font-size: 16px; font-weight: 600; text-transform: uppercase;}
+.total_result{padding: 15px 10px; font-weight: 700; color: #0685A6;}
+.srch_btn {text-align: center;}
+.map-responsive{
+    overflow:hidden;
+    padding-bottom:50%;
+    position:relative;
+    height:0;
+}
+.map-responsive iframe{
+    left:0;
+    top:0;
+    height:100%;
+    width:100%;
+    position:absolute;
+}
+
+ul.location_details{margin:0; padding:15px 10px 0 10px; overflow-y: auto; max-height: 510px;}
+ul.location_details li img{width: 30px;}
+ul.location_details li{cursor: pointer;font-size: 14px; border-bottom: 1px solid #e2e2e2; margin: 0 0 15px 0; padding: 0;}
+ul.location_details li p{padding: 0 15px 0 0;}
+ul.location_details li img{vertical-align: middle; position: relative; top: 0px;}
+
+
+footer{background: #393939; font-size: 14px; padding: 15px; color: #fff; text-align: center;}
+footer a, footer a:hover{color: #fff; text-decoration: none; padding: 0 5px;}
+
+
+

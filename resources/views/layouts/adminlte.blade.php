@@ -60,11 +60,6 @@
 <!-- ./wrapper -->
 <script src="{{asset('js/app.js') }}"></script>
 <script>
-  jQuery(document).ready(function() {
-    @auth
-    getNotification();
-    @endauth  
-  });
   
 
     $(".restrictFileUpload").change(function(e) {
@@ -94,54 +89,6 @@
                     d._token = $("meta[name='csrf-token']").attr("content");
                 }
             }
-    }
-    function getNotification(){
-      var token = $("meta[name='csrf-token']").attr("content");
-      return $.ajax({
-              url: "{{route('notification.all')}}",
-              type: 'POST',
-              data:{'_token':token},
-              success: function(res) {
-                  $(`.notify-counter`).text(res.total_notifications);
-                  $(`.notification-menu`).html(res.content);
-              }
-          });
-    }
-
-    function getUserNotification(id){
-      var token = $("meta[name='csrf-token']").attr("content");
-      if(id != '' || id != undefined){
-        return $.ajax({
-                url: "{{route('notification.get')}}",
-                type: 'POST',
-                data:{'id':id,'_token':token},
-                success: function(res) {
-                  if(res != '' && res.code == "1"){
-                    html = `<div class='col-8 float-left'>
-                    <span class="text text-secondary">${res.data.icon} ${res.data.content.message}</span>
-                    </div>
-                    <div>
-                    <span class="badge badge-secondary float-right"><i class="far fa-calendar-alt"></i>${new Date(res.data.content.created_at).toLocaleString('en-US')}</span></div>`;
-                    $(`#notificationModal .modal-body`).html(html);
-                    $('#notificationModal .modal-title').text(res.data.title);
-                    $('#notificationModal').modal('show');
-                  }
-                }
-            });
-        }
-    }
-    function markAsRead(id,is_read){
-      var token = $("meta[name='csrf-token']").attr("content");
-      return $.ajax({
-              url: "{{route('notification.markasread')}}",
-              type: 'POST',
-              data:{'id':id,'is_read':is_read,'_token':token},
-              success: function(res) {
-                  if(res.code == 1){
-                    getNotification();
-                  }
-              }
-          });
     }
   </script>
 <!-- AdminLTE for demo purposes -->

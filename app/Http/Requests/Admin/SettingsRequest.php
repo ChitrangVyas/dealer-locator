@@ -25,8 +25,7 @@ class SettingsRequest extends FormRequest
     {
         return [
             'site_name'=>'required',
-            'timezone'=>'required',
-            'mail_from_email'=>'required',
+           
         ];
     }
 
@@ -39,8 +38,6 @@ class SettingsRequest extends FormRequest
     {
         return [
             'site_name.required' => 'Site name is required.',
-            'timezone.required' => 'Timezone is required.',
-            'mail_from_email.required' => 'Mail from email is required.',
         ];
     }
 }

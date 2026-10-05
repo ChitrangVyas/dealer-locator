@@ -24,9 +24,7 @@ class CategoryCreateRequest extends FormRequest
     public function rules()
     {        
         return [            
-            'name' => 'required|string|max:100',                    
-            'image' => 'required|mimes:jpeg,png,jpg,gif',                    
-            'parent_category' => 'required'
+            'name' => 'required|string|max:100',         
         ];
     }
 }
